@@ -5,11 +5,19 @@
   "description": "AI-powered i18n translation plugin for Next.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/joaquin.terrasamoya/intl-ai.git"
+    "url": "git+https://github.com/espetro/intl-ai.git"
   },
-  "homepage": "https://github.com/joaquin.terrasamoya/intl-ai#readme",
-  "bugs": "https://github.com/joaquin.terrasamoya/intl-ai/issues",
-  "keywords": ["nextjs", "next", "i18n", "internationalization", "translation", "ai", "intl"],
+  "homepage": "https://github.com/espetro/intl-ai#readme",
+  "bugs": "https://github.com/espetro/intl-ai/issues",
+  "keywords": [
+    "nextjs",
+    "next",
+    "i18n",
+    "internationalization",
+    "translation",
+    "ai",
+    "intl"
+  ],
   "type": "module",
   "files": [
     "dist",

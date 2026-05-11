@@ -1,8 +1,5 @@
 import { defineConfig } from "vitepress";
-import {
-  groupIconMdPlugin,
-  groupIconVitePlugin,
-} from "vitepress-plugin-group-icons";
+import { groupIconMdPlugin, groupIconVitePlugin } from "vitepress-plugin-group-icons";
 
 export default defineConfig({
   title: "unplugin-intl-ai",
@@ -19,7 +16,7 @@ export default defineConfig({
   themeConfig: {
     nav: [
       { text: "Guide", link: "/guide/getting-started" },
-      { text: "GitHub", link: "https://github.com/joaquin.terrasamoya/intl-ai" },
+      { text: "GitHub", link: "https://github.com/espetro/intl-ai" },
     ],
     sidebar: {
       "/guide/": [
@@ -51,8 +48,7 @@ export default defineConfig({
       ],
     },
     editLink: {
-      pattern:
-        "https://github.com/joaquin.terrasamoya/intl-ai/edit/main/docs/:path",
+      pattern: "https://github.com/espetro/intl-ai/edit/main/docs/:path",
     },
   },
 });
