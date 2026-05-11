@@ -4,10 +4,10 @@
   "description": "AI-powered i18n translation plugin for all bundlers",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/joaquin.terrasamoya/intl-ai.git"
+    "url": "git+https://github.com/espetro/intl-ai.git"
   },
-  "homepage": "https://github.com/joaquin.terrasamoya/intl-ai#readme",
-  "bugs": "https://github.com/joaquin.terrasamoya/intl-ai/issues",
+  "homepage": "https://github.com/espetro/intl-ai#readme",
+  "bugs": "https://github.com/espetro/intl-ai/issues",
   "license": "MIT",
   "keywords": [
     "ai",

@@ -10,7 +10,7 @@ hero:
       link: /guide/getting-started
     - theme: alt
       text: View on GitHub
-      link: https://github.com/joaquin.terrasamoya/intl-ai
+      link: https://github.com/espetro/intl-ai
 
 features:
   - title: Vite
