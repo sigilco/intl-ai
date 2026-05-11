@@ -1,0 +1,129 @@
+{
+  "name": "@intl-ai/unplugin",
+  "version": "0.1.0",
+  "description": "AI-powered i18n translation plugin for all bundlers",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/joaquin.terrasamoya/intl-ai.git"
+  },
+  "homepage": "https://github.com/joaquin.terrasamoya/intl-ai#readme",
+  "bugs": "https://github.com/joaquin.terrasamoya/intl-ai/issues",
+  "license": "MIT",
+  "keywords": [
+    "ai",
+    "esbuild",
+    "i18n",
+    "intl",
+    "rollup",
+    "translation",
+    "unplugin",
+    "vite",
+    "webpack"
+  ],
+  "type": "module",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "types": "./dist/index.d.mts",
+      "default": "./dist/index.mjs"
+    },
+    "./vite": {
+      "import": "./dist/vite.mjs",
+      "types": "./dist/vite.d.mts",
+      "default": "./dist/vite.mjs"
+    },
+    "./rollup": {
+      "import": "./dist/rollup.mjs",
+      "types": "./dist/rollup.d.mts",
+      "default": "./dist/rollup.mjs"
+    },
+    "./webpack": {
+      "import": "./dist/webpack.mjs",
+      "types": "./dist/webpack.d.mts",
+      "default": "./dist/webpack.mjs"
+    },
+    "./esbuild": {
+      "import": "./dist/esbuild.mjs",
+      "types": "./dist/esbuild.d.mts",
+      "default": "./dist/esbuild.mjs"
+    },
+    "./rspack": {
+      "import": "./dist/rspack.mjs",
+      "types": "./dist/rspack.d.mts",
+      "default": "./dist/rspack.mjs"
+    },
+    "./rolldown": {
+      "import": "./dist/rolldown.mjs",
+      "types": "./dist/rolldown.d.mts",
+      "default": "./dist/rolldown.mjs"
+    },
+    "./farm": {
+      "import": "./dist/farm.mjs",
+      "types": "./dist/farm.d.mts",
+      "default": "./dist/farm.mjs"
+    },
+    "./bun": {
+      "import": "./dist/bun.mjs",
+      "types": "./dist/bun.d.mts",
+      "default": "./dist/bun.mjs"
+    },
+    "./nuxt": {
+      "import": "./dist/nuxt.mjs",
+      "types": "./dist/nuxt.d.mts",
+      "default": "./dist/nuxt.mjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public",
+    "name": "unplugin-intl-ai",
+    "provenance": true,
+    "registry": "http://localhost:4873"
+  },
+  "dependencies": {
+    "@intl-ai/core": "workspace:*",
+    "unplugin": "^1.0.0"
+  },
+  "devDependencies": {
+    "tsdown": "^0.21.4",
+    "vitest": "^4.1.0"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "peerDependencies": {
+    "@rspack/core": ">=1.0.0",
+    "esbuild": ">=0.18.0",
+    "next": ">=14.0.0",
+    "rollup": ">=3.0.0",
+    "vite": ">=5.0.0",
+    "webpack": ">=5.0.0"
+  },
+  "peerDependenciesMeta": {
+    "vite": {
+      "optional": true
+    },
+    "rollup": {
+      "optional": true
+    },
+    "webpack": {
+      "optional": true
+    },
+    "esbuild": {
+      "optional": true
+    },
+    "@rspack/core": {
+      "optional": true
+    },
+    "next": {
+      "optional": true
+    }
+  }
+}
