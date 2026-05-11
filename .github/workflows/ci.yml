@@ -17,7 +17,7 @@ jobs:
           version: "10.32.1"
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
           cache: "pnpm"
       - run: pnpm install --frozen-lockfile
       - run: pnpm format:check
@@ -32,7 +32,7 @@ jobs:
           version: "10.32.1"
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
           cache: "pnpm"
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
@@ -41,7 +41,7 @@ jobs:
   test:
     strategy:
       matrix:
-        node: [20, 22]
+        node: [22, 24]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
