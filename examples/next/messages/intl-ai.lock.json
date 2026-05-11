@@ -1,0 +1,59 @@
+{
+  "version": 1,
+  "entries": {
+    "es:IndexPage.title": {
+      "key": "IndexPage.title",
+      "locale": "es",
+      "sourceHash": "70f8bb9a8a5393ef080507a89e4b98d139000d65",
+      "translated": "Inicio",
+      "origin": "ai",
+      "model": "[object Object]",
+      "timestamp": "2026-03-18T09:04:09.463Z"
+    },
+    "es:IndexPage.description": {
+      "key": "IndexPage.description",
+      "locale": "es",
+      "sourceHash": "f59e3662b82e0ea40d426d54772cc7ebc30b6dc9",
+      "translated": "Esta es la página principal.",
+      "origin": "ai",
+      "model": "[object Object]",
+      "timestamp": "2026-03-18T09:04:09.464Z"
+    },
+    "es:RootLayout.title": {
+      "key": "RootLayout.title",
+      "locale": "es",
+      "sourceHash": "5fc8c1600b6ff1cb0e08b682f064625b36591720",
+      "translated": "next-intl example",
+      "origin": "ai",
+      "model": "[object Object]",
+      "timestamp": "2026-03-18T09:04:09.464Z"
+    },
+    "fr:IndexPage.title": {
+      "key": "IndexPage.title",
+      "locale": "fr",
+      "sourceHash": "70f8bb9a8a5393ef080507a89e4b98d139000d65",
+      "translated": "Accueil",
+      "origin": "ai",
+      "model": "[object Object]",
+      "timestamp": "2026-03-18T09:05:32.788Z"
+    },
+    "fr:IndexPage.description": {
+      "key": "IndexPage.description",
+      "locale": "fr",
+      "sourceHash": "f59e3662b82e0ea40d426d54772cc7ebc30b6dc9",
+      "translated": "Cette est la page d'accueil.",
+      "origin": "ai",
+      "model": "[object Object]",
+      "timestamp": "2026-03-18T09:05:32.789Z"
+    },
+    "fr:RootLayout.title": {
+      "key": "RootLayout.title",
+      "locale": "fr",
+      "sourceHash": "5fc8c1600b6ff1cb0e08b682f064625b36591720",
+      "translated": "next-intl example",
+      "origin": "ai",
+      "model": "[object Object]",
+      "timestamp": "2026-03-18T09:05:32.789Z"
+    }
+  }
+}

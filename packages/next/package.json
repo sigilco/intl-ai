@@ -1,0 +1,54 @@
+{
+  "name": "@intl-ai/next",
+  "version": "0.0.1",
+  "license": "MIT",
+  "description": "AI-powered i18n translation plugin for Next.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/joaquin.terrasamoya/intl-ai.git"
+  },
+  "homepage": "https://github.com/joaquin.terrasamoya/intl-ai#readme",
+  "bugs": "https://github.com/joaquin.terrasamoya/intl-ai/issues",
+  "keywords": ["nextjs", "next", "i18n", "internationalization", "translation", "ai", "intl"],
+  "type": "module",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "types": "./dist/index.d.mts",
+      "default": "./dist/index.mjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true,
+    "registry": "http://localhost:4873"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "dev": "tsup --watch",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@intl-ai/core": "workspace:*"
+  },
+  "devDependencies": {
+    "@repo/typescript-config": "workspace:*",
+    "@types/node": "^20.0.0",
+    "@types/webpack": "^5.28.5",
+    "next": "^14.0.0",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
+    "tsdown": "^0.21.4",
+    "typescript": "5.5.4"
+  },
+  "peerDependencies": {
+    "next": ">=14.0.0"
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "name": "@intl-ai/core",
+  "version": "0.0.1",
+  "description": "AI-powered i18n translation core library",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/joaquin.terrasamoya/intl-ai.git"
+  },
+  "homepage": "https://github.com/joaquin.terrasamoya/intl-ai#readme",
+  "bugs": "https://github.com/joaquin.terrasamoya/intl-ai/issues",
+  "keywords": ["i18n", "internationalization", "translation", "ai", "intl"],
+  "files": ["dist/", "README.md", "LICENSE"],
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "types": "./dist/index.d.mts",
+      "default": "./dist/index.mjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "registry": "http://localhost:4873"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "dev": "tsup --watch",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@ai-sdk/provider": "^0.0.1",
+    "@formatjs/icu-messageformat-parser": "^3.5.2",
+    "ai": "^6.0.116",
+    "jiti": "^1.21.0",
+    "yaml": "^2.4.0",
+    "zod": "^3.23.0"
+  },
+  "devDependencies": {
+    "@repo/typescript-config": "workspace:*",
+    "@types/node": "^20.0.0",
+    "tsdown": "^0.21.4",
+    "typescript": "5.5.4"
+  }
+}

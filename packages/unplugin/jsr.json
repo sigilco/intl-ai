@@ -1,0 +1,20 @@
+{
+  "name": "@intl-ai/unplugin",
+  "version": "0.1.0",
+  "exports": {
+    ".": "./dist/index.js",
+    "./vite": "./dist/vite.js",
+    "./rollup": "./dist/rollup.js",
+    "./webpack": "./dist/webpack.js",
+    "./esbuild": "./dist/esbuild.js",
+    "./rspack": "./dist/rspack.js",
+    "./rolldown": "./dist/rolldown.js",
+    "./farm": "./dist/farm.js",
+    "./bun": "./dist/bun.js",
+    "./nuxt": "./dist/nuxt.js",
+    "./next": "./dist/next.js"
+  },
+  "publish": {
+    "include": ["dist/**", "README.md", "LICENSE", "package.json"]
+  }
+}
