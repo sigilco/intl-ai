@@ -1,6 +1,6 @@
 # intl-ai Vite Example
 
-A minimal example demonstrating the use of `@intl-ai/unplugin` with Vite 6.
+A minimal example demonstrating the use of `@intl-ai/unplugin` with Vite 8.
 
 ## Setup
 
