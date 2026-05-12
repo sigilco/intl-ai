@@ -115,7 +115,7 @@ export async function translateBatch(
       });
       return results;
     } catch (error) {
-      console.error("[intl-ai] Translation attempt " + (attempt + 1) + " failed:", error);
+      console.warn("[intl-ai] Translation attempt " + (attempt + 1) + " failed:", error);
       if (attempt === maxRetries - 1) {
         return entries.map((e) => ({
           key: e.key,
