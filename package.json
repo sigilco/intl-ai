@@ -42,6 +42,7 @@
       "@swc/core",
       "esbuild",
       "sharp",
+      "tsdown",
       "unrs-resolver"
     ]
   }
