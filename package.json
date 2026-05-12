@@ -35,15 +35,5 @@
   "engines": {
     "node": ">=22.0.0"
   },
-  "packageManager": "pnpm@11.1.0",
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "@parcel/watcher",
-      "@swc/core",
-      "esbuild",
-      "sharp",
-      "tsdown",
-      "unrs-resolver"
-    ]
-  }
+  "packageManager": "pnpm@11.1.0"
 }
