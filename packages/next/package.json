@@ -48,13 +48,13 @@
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
-    "@types/node": "20.19.40",
+    "@types/node": "^22.0.0",
     "@types/webpack": "5.28.5",
     "next": "15.5.18",
     "react": "18.3.1",
     "react-dom": "18.3.1",
-    "tsdown": "0.22.0",
-    "typescript": "5.5.4"
+    "tsdown": "0.21.10",
+    "typescript": "6.0.3"
   },
   "peerDependencies": {
     "next": ">=14.0.0"
