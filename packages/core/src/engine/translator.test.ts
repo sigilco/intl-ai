@@ -56,7 +56,9 @@ describe("translateBatch", () => {
     const body = JSON.parse(call[1].body);
     const prompt = body.messages[1].content;
     expect(prompt).toContain(icuProcessor.getSyntaxHint());
-    expect(prompt).not.toContain("Preserve any placeholders like {variable} exactly as they appear.");
+    expect(prompt).not.toContain(
+      "Preserve any placeholders like {variable} exactly as they appear.",
+    );
   });
 
   it("Test 2: translateBatch without processor - prompt contains exactly the old {variable} text", async () => {

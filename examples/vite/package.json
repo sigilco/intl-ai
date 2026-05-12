@@ -1,7 +1,7 @@
 {
   "name": "@examples/vite",
-  "private": true,
   "version": "0.0.1",
+  "private": true,
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -12,7 +12,7 @@
     "@intl-ai/unplugin": "workspace:*"
   },
   "devDependencies": {
-    "vite": "6.4.2",
-    "typescript": "5.5.4"
+    "typescript": "5.5.4",
+    "vite": "8.0.12"
   }
 }

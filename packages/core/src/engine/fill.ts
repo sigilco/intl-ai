@@ -86,7 +86,9 @@ export async function runFill(options: RunFillOptions = {}): Promise<void> {
     if (entriesToTranslate.length === 0) continue;
 
     if (debug) {
-      console.log(`[intl-ai] Translating ${entriesToTranslate.length} entries for locale: ${locale}`);
+      console.log(
+        `[intl-ai] Translating ${entriesToTranslate.length} entries for locale: ${locale}`,
+      );
     }
 
     const results = await translateBatch({

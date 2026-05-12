@@ -133,16 +133,14 @@ import { initReactI18next } from "react-i18next";
 import en from "./locales/en.json";
 import es from "./locales/es.json";
 
-i18next
-  .use(initReactI18next)
-  .init({
-    lng: "en",
-    fallbackLng: "en",
-    resources: {
-      en: { translation: en },
-      es: { translation: es },
-    },
-  });
+i18next.use(initReactI18next).init({
+  lng: "en",
+  fallbackLng: "en",
+  resources: {
+    en: { translation: en },
+    es: { translation: es },
+  },
+});
 ```
 
 ### Using Translations
@@ -164,6 +162,7 @@ function App() {
 ## Processor Benefits
 
 The custom processor ensures:
+
 - AI translations preserve `{{variable}}` placeholders
 - Missing or malformed placeholders are caught at build time
 - The LLM receives syntax-specific instructions via `getSyntaxHint()`

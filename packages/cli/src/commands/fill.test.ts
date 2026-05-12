@@ -30,8 +30,6 @@ describe("fill command", () => {
   test("command description is set", async () => {
     const { fillCommand } = await import("./fill");
 
-    expect(fillCommand.description()).toBe(
-      "Fill missing translations using AI",
-    );
+    expect(fillCommand.description()).toBe("Fill missing translations using AI");
   });
 });

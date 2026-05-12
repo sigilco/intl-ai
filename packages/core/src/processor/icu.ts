@@ -1,5 +1,8 @@
 import { parse } from "@formatjs/icu-messageformat-parser";
-import type { MessageFormatElement, PluralOrSelectOption } from "@formatjs/icu-messageformat-parser";
+import type {
+  MessageFormatElement,
+  PluralOrSelectOption,
+} from "@formatjs/icu-messageformat-parser";
 import type { IntlAiProcessor, ValidationResult } from "../types";
 
 export const icuProcessor: IntlAiProcessor = {
@@ -39,7 +42,10 @@ export const icuProcessor: IntlAiProcessor = {
   },
 };
 
-function extractTokensFromAst(nodes: MessageFormatElement | MessageFormatElement[], parentType?: number): string[] {
+function extractTokensFromAst(
+  nodes: MessageFormatElement | MessageFormatElement[],
+  parentType?: number,
+): string[] {
   if (Array.isArray(nodes)) {
     return nodes.flatMap((n) => extractTokensFromAst(n, parentType));
   }

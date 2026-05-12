@@ -43,11 +43,11 @@ export default {
 
 **Recommended Models:**
 
-| Model | Input / 1M tokens | Output / 1M tokens | Context |
-|---|---|---|---|
-| `gpt-4.1-nano` | $0.10 | $0.40 | 1M |
-| `gpt-4.1-mini` | $0.40 | $1.60 | 1M |
-| `gpt-4.1` | $2.00 | $8.00 | 1M |
+| Model          | Input / 1M tokens | Output / 1M tokens | Context |
+| -------------- | ----------------- | ------------------ | ------- |
+| `gpt-4.1-nano` | $0.10             | $0.40              | 1M      |
+| `gpt-4.1-mini` | $0.40             | $1.60              | 1M      |
+| `gpt-4.1`      | $2.00             | $8.00              | 1M      |
 
 ### 3. Anthropic Claude
 
@@ -63,10 +63,10 @@ export default {
 
 **Recommended Models:**
 
-| Model | Input / 1M tokens | Output / 1M tokens | Context |
-|---|---|---|---|
-| `claude-haiku-4-5` | $1.00 | $5.00 | 200K |
-| `claude-sonnet-4-5` | $3.00 | $15.00 | 200K |
+| Model               | Input / 1M tokens | Output / 1M tokens | Context |
+| ------------------- | ----------------- | ------------------ | ------- |
+| `claude-haiku-4-5`  | $1.00             | $5.00              | 200K    |
+| `claude-sonnet-4-5` | $3.00             | $15.00             | 200K    |
 
 ### 4. Google Gemini
 
@@ -82,10 +82,10 @@ export default {
 
 **Recommended Models:**
 
-| Model | Input / 1M tokens | Output / 1M tokens | Context |
-|---|---|---|---|
-| `gemini-2.5-flash` | $0.15 | $0.60 | 1M |
-| `gemini-2.5-pro` | $1.25 | $10.00 | 1M |
+| Model              | Input / 1M tokens | Output / 1M tokens | Context |
+| ------------------ | ----------------- | ------------------ | ------- |
+| `gemini-2.5-flash` | $0.15             | $0.60              | 1M      |
+| `gemini-2.5-pro`   | $1.25             | $10.00             | 1M      |
 
 > **Best value for translations:** `gemini-2.5-flash` — cheapest capable model with a 1M context window. `gpt-4.1-nano` is a close second if you're already in the OpenAI ecosystem.
 

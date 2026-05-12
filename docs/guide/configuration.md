@@ -11,7 +11,7 @@ API reference for `@intl-ai/core` configuration. This is the internal package th
 Configuration is automatically discovered from these files in your project root:
 
 - `intl-ai.config.ts` (TypeScript, recommended)
-- `intl-ai.config.js` (JavaScript)  
+- `intl-ai.config.js` (JavaScript)
 - `.intl-airc` (JSON)
 
 ## Core Options
@@ -130,8 +130,6 @@ maxRetries: 5;
 
 ---
 
-
-
 ## Type Definitions
 
 ```typescript
@@ -157,13 +155,13 @@ interface ValidationResult {
   errors?: string[];
 }
 ```
+
 ---
-
-
 
 ---
 
 ## Validation
+
 Configuration is validated using Zod schemas. Invalid configurations throw errors during plugin initialization, checking that required fields are present, types are correct, and values are within valid ranges.
 
 ---

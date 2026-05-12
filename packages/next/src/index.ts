@@ -18,11 +18,7 @@ export interface IntlAiNextOptions extends Partial<IntlAiConfig> {
   debug?: boolean;
 }
 
-function setNestedValue(
-  obj: Record<string, unknown>,
-  path: string,
-  value: unknown,
-): void {
+function setNestedValue(obj: Record<string, unknown>, path: string, value: unknown): void {
   const parts = path.split(".");
   const lastPart = parts.pop()!;
   let current: Record<string, unknown> = obj;
@@ -36,12 +32,10 @@ function setNestedValue(
 async function runFill(options?: IntlAiNextOptions): Promise<void> {
   try {
     const config = await loadConfig();
-    const { defaultLocale, locales, localeDir, model, glossary, maxRetries } =
-      config;
+    const { defaultLocale, locales, localeDir, model, glossary, maxRetries } = config;
 
     if (!localeDir) {
-      if (options?.debug)
-        console.log("[intl-ai] No localeDir configured, skipping");
+      if (options?.debug) console.log("[intl-ai] No localeDir configured, skipping");
       return;
     }
 
@@ -79,8 +73,7 @@ async function runFill(options?: IntlAiNextOptions): Promise<void> {
         });
 
         if (diff.missing.length === 0 && diff.stale.length === 0) {
-          if (options?.debug)
-            console.log(`[intl-ai] ${targetLocale}: up to date`);
+          if (options?.debug) console.log(`[intl-ai] ${targetLocale}: up to date`);
           continue;
         }
 
@@ -119,9 +112,7 @@ async function runFill(options?: IntlAiNextOptions): Promise<void> {
           if (result.success) {
             setNestedValue(targetLocaleData, result.key, result.translated);
 
-            const source =
-              entriesToTranslate.find((e) => e.key === result.key)?.source ||
-              "";
+            const source = entriesToTranslate.find((e) => e.key === result.key)?.source || "";
             lockfileManager.setEntry(result.key, targetLocale, {
               key: result.key,
               locale: targetLocale,
@@ -146,10 +137,7 @@ async function runFill(options?: IntlAiNextOptions): Promise<void> {
           );
         }
       } catch (localeError) {
-        console.warn(
-          `[intl-ai] Error processing locale ${targetLocale}:`,
-          localeError,
-        );
+        console.warn(`[intl-ai] Error processing locale ${targetLocale}:`, localeError);
         // Continue to next locale - don't throw
       }
     }
@@ -187,134 +175,120 @@ class IntlAiWebpackPlugin {
       }
     });
 
-    compiler.hooks.emit.tapPromise(
-      "intl-ai",
-      async (compilation: Compilation) => {
-        try {
+    compiler.hooks.emit.tapPromise("intl-ai", async (compilation: Compilation) => {
+      try {
+        if (this.options.debug) {
+          console.log("[intl-ai] Running translations during build");
+        }
+
+        const config = await loadConfig();
+        const { defaultLocale, locales, localeDir, model, glossary, maxRetries } = config;
+
+        if (!localeDir) {
+          console.warn("[intl-ai] No localeDir configured, skipping translations");
+          return;
+        }
+
+        if (this.options.debug) {
+          console.log(
+            `[intl-ai] Config: defaultLocale=${defaultLocale}, locales=${locales.join(", ")}`,
+          );
+        }
+
+        const lockfileManager = new LockfileManager(localeDir);
+
+        const sourceLocalePath = join(localeDir, `${defaultLocale}.json`);
+        const sourceLocaleData = await readJsonFile(sourceLocalePath);
+
+        for (const targetLocale of locales) {
+          if (targetLocale === defaultLocale) continue;
+
           if (this.options.debug) {
-            console.log("[intl-ai] Running translations during build");
+            console.log(`[intl-ai] Processing locale: ${targetLocale}`);
           }
 
-          const config = await loadConfig();
-          const {
-            defaultLocale,
-            locales,
-            localeDir,
-            model,
-            glossary,
-            maxRetries,
-          } = config;
-
-          if (!localeDir) {
-            console.warn(
-              "[intl-ai] No localeDir configured, skipping translations",
-            );
-            return;
+          // Build lockfileEntries map filtered to current locale (from fill.ts pattern)
+          const lockfileEntries = new Map<string, { sourceHash: string }>();
+          const allEntries = lockfileManager.getAllEntries();
+          for (const [key, entry] of Object.entries(allEntries)) {
+            const [entryLocale, entryKey] = key.split(":");
+            if (entryLocale === targetLocale) {
+              lockfileEntries.set(entryKey, { sourceHash: entry.sourceHash });
+            }
           }
+
+          const targetLocalePath = join(localeDir, `${targetLocale}.json`);
+          const targetLocaleData = await readJsonFile(targetLocalePath);
+
+          const diff = findMissingTranslations({
+            sourceLocale: sourceLocaleData,
+            targetLocale: targetLocaleData,
+            locale: targetLocale,
+            lockfileEntries,
+          });
 
           if (this.options.debug) {
             console.log(
-              `[intl-ai] Config: defaultLocale=${defaultLocale}, locales=${locales.join(", ")}`,
+              `[intl-ai] Found ${diff.missing.length} missing, ${diff.stale.length} stale translations for ${targetLocale}`,
             );
           }
 
-          const lockfileManager = new LockfileManager(localeDir);
-
-          const sourceLocalePath = join(localeDir, `${defaultLocale}.json`);
-          const sourceLocaleData = await readJsonFile(sourceLocalePath);
-
-          for (const targetLocale of locales) {
-            if (targetLocale === defaultLocale) continue;
-
-            if (this.options.debug) {
-              console.log(`[intl-ai] Processing locale: ${targetLocale}`);
-            }
-
-            // Build lockfileEntries map filtered to current locale (from fill.ts pattern)
-            const lockfileEntries = new Map<string, { sourceHash: string }>();
-            const allEntries = lockfileManager.getAllEntries();
-            for (const [key, entry] of Object.entries(allEntries)) {
-              const [entryLocale, entryKey] = key.split(":");
-              if (entryLocale === targetLocale) {
-                lockfileEntries.set(entryKey, { sourceHash: entry.sourceHash });
-              }
-            }
-
-            const targetLocalePath = join(localeDir, `${targetLocale}.json`);
-            const targetLocaleData = await readJsonFile(targetLocalePath);
-
-            const diff = findMissingTranslations({
-              sourceLocale: sourceLocaleData,
-              targetLocale: targetLocaleData,
-              locale: targetLocale,
-              lockfileEntries,
-            });
-
-            if (this.options.debug) {
-              console.log(
-                `[intl-ai] Found ${diff.missing.length} missing, ${diff.stale.length} stale translations for ${targetLocale}`,
-              );
-            }
-
-            if (diff.missing.length === 0 && diff.stale.length === 0) {
-              continue;
-            }
-
-            const entriesToTranslate = [
-              ...diff.missing,
-              ...diff.stale.map((s) => ({
-                key: s.key,
-                source: this.getNestedValue(sourceLocaleData, s.key),
-              })),
-            ];
-
-            const results = await translateBatch({
-              model,
-              entries: entriesToTranslate.map((e) => ({
-                key: e.key,
-                source: e.source,
-              })),
-              targetLocale,
-              sourceLocale: defaultLocale,
-              glossary,
-              maxRetries,
-            });
-
-            for (const result of results) {
-              if (result.success) {
-                const source =
-                  entriesToTranslate.find((e) => e.key === result.key)
-                    ?.source || "";
-                lockfileManager.setEntry(result.key, targetLocale, {
-                  key: result.key,
-                  locale: targetLocale,
-                  sourceHash: lockfileManager.hashSource(source),
-                  translated: result.translated,
-                  origin: "ai",
-                  model: config.model.toString(),
-                  timestamp: new Date().toISOString(),
-                });
-              }
-            }
-
-            if (this.options.debug) {
-              const successful = results.filter((r) => r.success).length;
-              console.log(
-                `[intl-ai] Translated ${successful}/${results.length} entries for ${targetLocale}`,
-              );
-            }
+          if (diff.missing.length === 0 && diff.stale.length === 0) {
+            continue;
           }
 
-          lockfileManager.save();
+          const entriesToTranslate = [
+            ...diff.missing,
+            ...diff.stale.map((s) => ({
+              key: s.key,
+              source: this.getNestedValue(sourceLocaleData, s.key),
+            })),
+          ];
+
+          const results = await translateBatch({
+            model,
+            entries: entriesToTranslate.map((e) => ({
+              key: e.key,
+              source: e.source,
+            })),
+            targetLocale,
+            sourceLocale: defaultLocale,
+            glossary,
+            maxRetries,
+          });
+
+          for (const result of results) {
+            if (result.success) {
+              const source = entriesToTranslate.find((e) => e.key === result.key)?.source || "";
+              lockfileManager.setEntry(result.key, targetLocale, {
+                key: result.key,
+                locale: targetLocale,
+                sourceHash: lockfileManager.hashSource(source),
+                translated: result.translated,
+                origin: "ai",
+                model: config.model.toString(),
+                timestamp: new Date().toISOString(),
+              });
+            }
+          }
 
           if (this.options.debug) {
-            console.log("[intl-ai] Translation process complete");
+            const successful = results.filter((r) => r.success).length;
+            console.log(
+              `[intl-ai] Translated ${successful}/${results.length} entries for ${targetLocale}`,
+            );
           }
-        } catch (error) {
-          console.warn("[intl-ai] Translation error:", error);
         }
-      },
-    );
+
+        lockfileManager.save();
+
+        if (this.options.debug) {
+          console.log("[intl-ai] Translation process complete");
+        }
+      } catch (error) {
+        console.warn("[intl-ai] Translation error:", error);
+      }
+    });
   }
 
   private getNestedValue(obj: Record<string, unknown>, path: string): string {
@@ -335,27 +309,16 @@ class IntlAiWebpackPlugin {
 
 export function withIntlAi(options?: IntlAiNextOptions) {
   return async (
-    nextConfig?: NextConfig | (() => NextConfig) | (() => Promise<NextConfig>),
+    nextConfig?: NextConfig,
   ): Promise<NextConfig> => {
     // Run fill before webpack starts
     try {
       await runFill(options);
     } catch (error) {
-      console.warn(
-        "[intl-ai] Translation startup error (build continues):",
-        error,
-      );
+      console.warn("[intl-ai] Translation startup error (build continues):", error);
     }
 
-    // Resolve config if it's a function
-    let resolvedConfig: NextConfig | undefined;
-    if (typeof nextConfig === "function") {
-      resolvedConfig = await nextConfig();
-    } else {
-      resolvedConfig = nextConfig;
-    }
-
-    return addIntlAiToConfig(resolvedConfig, options);
+    return addIntlAiToConfig(nextConfig, options);
   };
 }
 

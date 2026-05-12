@@ -217,7 +217,9 @@ describe("integration: processor → translator → validation pipeline", () => 
 
   it("Test 6: icuProcessor.validate correctly handles plural messages after translation", async () => {
     const model = createMockModel();
-    const entries = [{ key: "item_count", source: "{count, plural, one {# item} other {# items}}" }];
+    const entries = [
+      { key: "item_count", source: "{count, plural, one {# item} other {# items}}" },
+    ];
 
     mockFetch.mockResolvedValueOnce({
       ok: true,
@@ -227,7 +229,10 @@ describe("integration: processor → translator → validation pipeline", () => 
             message: {
               content: JSON.stringify({
                 translations: [
-                  { key: "item_count", translated: "{count, plural, one {# artículo} other {# artículos}}" },
+                  {
+                    key: "item_count",
+                    translated: "{count, plural, one {# artículo} other {# artículos}}",
+                  },
                 ],
               }),
             },

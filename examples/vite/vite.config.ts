@@ -1,8 +1,7 @@
 import { defineConfig } from "vite";
 import intlAi from "@intl-ai/unplugin/vite";
 
-const intlAiPlugin =
-  process.env.NODE_ENV === "production" ? null : intlAi();
+const intlAiPlugin = process.env.NODE_ENV === "production" ? null : intlAi();
 
 export default defineConfig({
   plugins: [intlAiPlugin],

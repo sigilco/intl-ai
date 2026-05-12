@@ -109,8 +109,8 @@ In Vue templates:
 
 ```vue
 <template>
-  <p>{{ $t('greeting', { name: 'World' }) }}</p>
-  <p>{{ $t('items.one', { count: 5 }) }}</p>
+  <p>{{ $t("greeting", { name: "World" }) }}</p>
+  <p>{{ $t("items.one", { count: 5 }) }}</p>
 </template>
 ```
 

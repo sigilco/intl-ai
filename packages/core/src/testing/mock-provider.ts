@@ -40,9 +40,7 @@ export class MockLanguageModel implements LanguageModelV3 {
     return {};
   }
 
-  async doGenerate(
-    options: LanguageModelV3CallOptions,
-  ): Promise<LanguageModelV3GenerateResult> {
+  async doGenerate(options: LanguageModelV3CallOptions): Promise<LanguageModelV3GenerateResult> {
     this.callCount++;
 
     if (this.options.shouldFail && this.callCount <= (this.options.failureCount || 1)) {
@@ -96,7 +94,7 @@ export class MockLanguageModel implements LanguageModelV3 {
       const parts = lastMessage.content as Array<LanguageModelV3TextPart>;
       return parts
         .filter((part): part is LanguageModelV3TextPart => part.type === "text")
-        .map(part => part.text)
+        .map((part) => part.text)
         .join("");
     }
 
@@ -104,7 +102,7 @@ export class MockLanguageModel implements LanguageModelV3 {
       const parts = lastMessage.content as Array<LanguageModelV3TextPart>;
       return parts
         .filter((part): part is LanguageModelV3TextPart => part.type === "text")
-        .map(part => part.text)
+        .map((part) => part.text)
         .join("");
     }
 
@@ -156,9 +154,7 @@ export class MockLanguageModel implements LanguageModelV3 {
     return entries;
   }
 
-  async doStream(
-    options: LanguageModelV3CallOptions,
-  ): Promise<LanguageModelV3StreamResult> {
+  async doStream(options: LanguageModelV3CallOptions): Promise<LanguageModelV3StreamResult> {
     this.callCount++;
 
     if (this.options.shouldFail && this.callCount <= (this.options.failureCount || 1)) {

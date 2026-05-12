@@ -24,7 +24,15 @@ export interface TranslateBatchOptions {
 export async function translateBatch(
   options: TranslateBatchOptions,
 ): Promise<Array<{ key: string; translated: string; success: boolean; error?: string }>> {
-  const { model, entries, targetLocale, sourceLocale, glossary, maxRetries = 3, processor } = options;
+  const {
+    model,
+    entries,
+    targetLocale,
+    sourceLocale,
+    glossary,
+    maxRetries = 3,
+    processor,
+  } = options;
 
   const prompt = buildTranslationPrompt(entries, sourceLocale, targetLocale, glossary, processor);
 
@@ -160,7 +168,7 @@ function buildTranslationPrompt(
     targetLocale +
     ".\n" +
     syntaxHint +
-    "\nReturn ONLY a JSON object in this exact format:\n{\n  \"translations\": [\n    { \"key\": \"original_key\", \"translated\": \"translated_text\" },\n    ...\n  ]\n}\n\nTexts to translate:\n" +
+    '\nReturn ONLY a JSON object in this exact format:\n{\n  "translations": [\n    { "key": "original_key", "translated": "translated_text" },\n    ...\n  ]\n}\n\nTexts to translate:\n' +
     entries.map((e, i) => i + 1 + '. "' + e.source + '" (key: ' + e.key + ")").join("\n");
 
   if (glossary && Object.keys(glossary).length > 0) {

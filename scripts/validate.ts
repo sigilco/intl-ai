@@ -2,10 +2,20 @@ import { parseArgs } from "node:util";
 import { $ } from "bun";
 import task from "tasuku";
 
-interface TaskError { errors?: string; warnings?: string; }
-interface Task { display: string; cmd: string; filter?: string; onError?: (_: $.ShellError) => TaskError; }
+interface TaskError {
+  errors?: string;
+  warnings?: string;
+}
+interface Task {
+  display: string;
+  cmd: string;
+  filter?: string;
+  onError?: (_: $.ShellError) => TaskError;
+}
 
-const defaultOnError = ({ stderr }: $.ShellError): TaskError => ({ errors: stderr.toString("utf8") });
+const defaultOnError = ({ stderr }: $.ShellError): TaskError => ({
+  errors: stderr.toString("utf8"),
+});
 
 const getLintErrors = ({ stdout, stderr }: $.ShellError): TaskError => {
   const output = stdout.toString("utf-8") + stderr.toString("utf-8");
@@ -13,7 +23,10 @@ const getLintErrors = ({ stdout, stderr }: $.ShellError): TaskError => {
   if (lintResults.length > 0) {
     const totalErrors = lintResults.reduce((sum, match) => sum + parseInt(match[2]!, 10), 0);
     const totalWarnings = lintResults.reduce((sum, match) => sum + parseInt(match[1]!, 10), 0);
-      if (totalErrors === 0 && totalWarnings > 0) return { warnings: `WARN: (${totalWarnings} linter warning${totalWarnings === 1 ? "" : "s"})` };
+    if (totalErrors === 0 && totalWarnings > 0)
+      return {
+        warnings: `WARN: (${totalWarnings} linter warning${totalWarnings === 1 ? "" : "s"})`,
+      };
   }
   return {};
 };
@@ -69,13 +82,14 @@ const main = async (): Promise<void> => {
   const input = getInput();
   const packageName = input.cwd ? getPackageName(input.cwd) : undefined;
 
-  await task.group((task) =>
-    TASKS.map((t) =>
-      task(t.display, async () => {
-        await quietTaskRunner(t, packageName);
-      })
-    ),
-    { concurrency: Infinity, stopOnError: false }
+  await task.group(
+    (task) =>
+      TASKS.map((t) =>
+        task(t.display, async () => {
+          await quietTaskRunner(t, packageName);
+        }),
+      ),
+    { concurrency: Infinity, stopOnError: false },
   );
 };
 

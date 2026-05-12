@@ -4,7 +4,7 @@ import withIntlAi from "@intl-ai/next";
 
 const withConfigProcessors = async (
   _: NextConfig,
-  ...processors: ((nextConfig?: NextConfig) => NextConfig | Promise<NextConfig>)[]
+  ...processors: ((nextConfig?: NextConfig | undefined) => NextConfig | Promise<NextConfig>)[]
 ) => {
   let current = _;
 
@@ -18,6 +18,7 @@ const withConfigProcessors = async (
 const withNextIntl = createNextIntlPlugin();
 const withNextIntlAi = withIntlAi({ debug: true });
 
-const config: NextConfig = {};
+const config = {} as NextConfig;
 
-export default withConfigProcessors(config, withNextIntlAi, withNextIntl);
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export default withConfigProcessors(config, withNextIntlAi as any, withNextIntl);
