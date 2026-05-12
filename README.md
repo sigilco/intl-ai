@@ -4,7 +4,7 @@
 
 [![GitHub stars](https://img.shields.io/github/stars/espetro/intl-ai?style=social)](https://github.com/espetro/intl-ai)
 
-[Documentation](https://intl-ai.dev) · [Report an issue](https://github.com/espetro/intl-ai/issues)
+[Documentation](https://intl-ai.illo.fyi/) · [Report an issue](https://github.com/espetro/intl-ai/issues)
 
 Automatically translate your app with AI. intl-ai hooks into your build pipeline to generate and update translations on every build.
 
