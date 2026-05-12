@@ -7,7 +7,7 @@
     "type": "git",
     "url": "git+https://github.com/espetro/intl-ai.git"
   },
-  "homepage": "https://github.com/espetro/intl-ai#readme",
+  "homepage": "https://intl-ai.illo.fyi/",
   "bugs": "https://github.com/espetro/intl-ai/issues",
   "keywords": [
     "cli",
