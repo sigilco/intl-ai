@@ -54,7 +54,7 @@ export const IntlAiConfigSchema = z.object({
     message: "model must be a valid LanguageModel",
   }),
   processor: z.custom<IntlAiProcessor>().optional(),
-  glossary: z.record(z.string()).optional(),
+  glossary: z.record(z.string(), z.string()).optional(),
   maxRetries: z.number().int().min(0).max(10).optional().default(3),
 });
 
