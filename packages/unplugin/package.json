@@ -2,13 +2,6 @@
   "name": "@intl-ai/unplugin",
   "version": "0.1.0",
   "description": "AI-powered i18n translation plugin for all bundlers",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/espetro/intl-ai.git"
-  },
-  "homepage": "https://intl-ai.illo.fyi/",
-  "bugs": "https://github.com/espetro/intl-ai/issues",
-  "license": "MIT",
   "keywords": [
     "ai",
     "esbuild",
@@ -20,15 +13,19 @@
     "vite",
     "webpack"
   ],
-  "type": "module",
-  "engines": {
-    "node": ">=22.0.0"
+  "homepage": "https://intl-ai.illo.fyi/",
+  "bugs": "https://github.com/espetro/intl-ai/issues",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/espetro/intl-ai.git"
   },
   "files": [
     "dist",
     "README.md",
     "LICENSE"
   ],
+  "type": "module",
   "exports": {
     ".": {
       "import": "./dist/index.mjs",
@@ -83,23 +80,23 @@
     "./package.json": "./package.json"
   },
   "publishConfig": {
-    "access": "public",
     "name": "unplugin-intl-ai",
+    "access": "public",
     "provenance": true,
     "registry": "http://localhost:4873"
-  },
-  "dependencies": {
-    "@intl-ai/core": "workspace:*",
-    "unplugin": "1.16.1"
-  },
-  "devDependencies": {
-    "tsdown": "0.21.10",
-    "vitest": "4.1.6"
   },
   "scripts": {
     "build": "tsdown",
     "typecheck": "tsc --noEmit",
     "test": "vitest run"
+  },
+  "dependencies": {
+    "@intl-ai/core": "workspace:*",
+    "unplugin": "3.0.0"
+  },
+  "devDependencies": {
+    "tsdown": "0.22.0",
+    "vitest": "4.1.6"
   },
   "peerDependencies": {
     "@rspack/core": ">=1.0.0",
@@ -128,5 +125,8 @@
     "next": {
       "optional": true
     }
+  },
+  "engines": {
+    "node": ">=22.0.0"
   }
 }
