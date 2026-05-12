@@ -4,7 +4,7 @@ import { groupIconMdPlugin, groupIconVitePlugin } from "vitepress-plugin-group-i
 export default defineConfig({
   title: "unplugin-intl-ai",
   description: "AI-powered i18n translation for any bundler",
-  base: "/intl-ai/",
+  base: "/",
   markdown: {
     config(md) {
       md.use(groupIconMdPlugin);
