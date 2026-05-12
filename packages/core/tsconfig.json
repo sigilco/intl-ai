@@ -6,5 +6,6 @@
     "verbatimModuleSyntax": true,
     "lib": ["ES2020"],
     "types": ["node"]
-  }
+  },
+  "exclude": ["src/**/*.test.ts", "src/testing"]
 }

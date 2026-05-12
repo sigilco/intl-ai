@@ -4,7 +4,7 @@ import withIntlAi from "@intl-ai/next";
 
 const withConfigProcessors = async (
   _: NextConfig,
-  ...processors: ((nextConfig?: NextConfig) => Promise<NextConfig>)[]
+  ...processors: ((nextConfig?: NextConfig) => NextConfig | Promise<NextConfig>)[]
 ) => {
   let current = _;
 

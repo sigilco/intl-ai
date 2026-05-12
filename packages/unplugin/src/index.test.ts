@@ -13,13 +13,13 @@ describe("unplugin-intl-ai", () => {
   });
 
   test("creates plugin with correct name", () => {
-    const plugin = unplugin.raw({});
-    expect(plugin.name).toBe("unplugin-intl-ai");
-    expect(plugin.buildStart).toBeDefined();
+    const plugin = unplugin.raw({}, { root: "" } as any);
+    expect((plugin as any).name).toBe("unplugin-intl-ai");
+    expect((plugin as any).buildStart).toBeDefined();
   });
 
   test("accepts options", () => {
-    const plugin = unplugin.raw({ debug: true });
-    expect(plugin.name).toBe("unplugin-intl-ai");
+    const plugin = unplugin.raw({ debug: true }, { root: "" } as any);
+    expect((plugin as any).name).toBe("unplugin-intl-ai");
   });
 });

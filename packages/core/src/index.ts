@@ -1,6 +1,7 @@
 export * from "./types";
 export { loadConfig } from "./config/loader";
 export { findMissingTranslations } from "./engine/diff";
+export { runFill } from "./engine/fill";
 export { translateBatch } from "./engine/translator";
 export { LockfileManager } from "./lockfile/manager";
 export { readJsonFile, writeJsonFile } from "./formats/json";

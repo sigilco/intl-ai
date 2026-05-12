@@ -10,21 +10,21 @@
     "test": "echo 'No tests yet'"
   },
   "dependencies": {
-    "@ai-sdk/openai-compatible": "^0.0.1",
+    "@ai-sdk/openai-compatible": "0.0.1",
     "@intl-ai/next": "workspace:*",
-    "next": "~15.5.13",
-    "next-intl": "^4.0.0",
-    "react": "^18.3.0",
-    "react-dom": "^18.3.0"
+    "next": "15.5.18",
+    "next-intl": "4.11.2",
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "^3.1.0",
-    "@types/react": "^18.3.0",
-    "@types/react-dom": "^18.3.0",
-    "eslint": "^9.38.0",
-    "eslint-config-next": "~15.5.13",
-    "prettier": "^3.3.3",
-    "typescript": "^5.5.3"
+    "@eslint/eslintrc": "3.3.5",
+    "@types/react": "18.3.28",
+    "@types/react-dom": "18.3.7",
+    "eslint": "9.39.4",
+    "eslint-config-next": "15.5.18",
+    "prettier": "3.8.3",
+    "typescript": "5.5.4"
   },
   "prettier": {
     "bracketSpacing": false,

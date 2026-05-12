@@ -67,7 +67,7 @@ describe("withIntlAi", () => {
     expect(typeof wrapped.webpack).toBe("function");
 
     const mockConfig = { plugins: [] };
-    const result = wrapped.webpack!(mockConfig, {});
+    const result = wrapped.webpack!(mockConfig, {} as any);
 
     expect(called).toBe(true);
     expect(result.custom).toBe(true);
@@ -78,7 +78,7 @@ describe("withIntlAi", () => {
     const wrapped = await withIntlAi()(config);
 
     const mockConfig = { plugins: [] };
-    const result = wrapped.webpack!(mockConfig, {});
+    const result = wrapped.webpack!(mockConfig, {} as any);
 
     expect(result.plugins).toBeDefined();
     expect(Array.isArray(result.plugins)).toBe(true);
@@ -95,7 +95,7 @@ describe("withIntlAi", () => {
     const wrapped = await withIntlAi({ debug: true })(config);
 
     const mockConfig = { plugins: [] };
-    const result = wrapped.webpack!(mockConfig, {});
+    const result = wrapped.webpack!(mockConfig, {} as any);
 
     const intlAiPlugin = result.plugins.find(
       (p: any) => p.name === "intl-ai-webpack-plugin",
@@ -109,7 +109,7 @@ describe("withIntlAi", () => {
       reactStrictMode: true,
       swcMinify: true,
       experimental: {
-        appDir: true,
+        caseSensitiveRoutes: true,
       },
     };
     const wrapped = await withIntlAi()(config);
@@ -117,7 +117,7 @@ describe("withIntlAi", () => {
     expect(wrapped.reactStrictMode).toBe(true);
     expect(wrapped.swcMinify).toBe(true);
     expect(wrapped.experimental).toBeDefined();
-    expect(wrapped.experimental?.appDir).toBe(true);
+    expect(wrapped.experimental?.caseSensitiveRoutes).toBe(true);
     expect(wrapped.webpack).toBeDefined();
   });
 });
