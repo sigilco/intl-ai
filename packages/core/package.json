@@ -16,6 +16,9 @@
     "ai",
     "intl"
   ],
+  "engines": {
+    "node": ">=22.0.0"
+  },
   "files": [
     "dist/",
     "README.md",
@@ -39,17 +42,17 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@ai-sdk/provider": "^0.0.1",
-    "@formatjs/icu-messageformat-parser": "^3.5.2",
-    "ai": "^6.0.116",
-    "jiti": "^1.21.0",
-    "yaml": "^2.4.0",
-    "zod": "^3.23.0"
+    "@ai-sdk/provider": "0.0.1",
+    "@formatjs/icu-messageformat-parser": "3.5.7",
+    "ai": "6.0.177",
+    "jiti": "1.21.7",
+    "yaml": "2.9.0",
+    "zod": "3.25.76"
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
-    "@types/node": "^20.0.0",
-    "tsdown": "^0.21.4",
+    "@types/node": "20.19.40",
+    "tsdown": "0.21.10",
     "typescript": "5.5.4"
   }
 }
