@@ -42,12 +42,12 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@ai-sdk/provider": "0.0.1",
+    "@ai-sdk/provider": "3.0.10",
     "@formatjs/icu-messageformat-parser": "3.5.7",
     "ai": "6.0.177",
-    "jiti": "1.21.7",
+    "jiti": "2.7.0",
     "yaml": "2.9.0",
-    "zod": "3.25.76"
+    "zod": "4.4.3"
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
