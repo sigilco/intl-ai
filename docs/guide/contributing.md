@@ -14,7 +14,7 @@ Our documentation is built with [VitePress](https://vitepress.dev/), a static si
 
 ### Prerequisites
 
-- Node.js 22+ and pnpm 10+
+- Node.js 22+ and pnpm 11+
 - Basic familiarity with Markdown
 - A text editor (VS Code recommended)
 

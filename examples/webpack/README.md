@@ -1,6 +1,6 @@
 # Webpack Example
 
-This example demonstrates how to use the `@intl-ai/unplugin` with Webpack 5.
+This example demonstrates how to use the `@intl-ai/unplugin` with Webpack 5 (webpack-cli 7).
 
 ## Setup
 
@@ -30,7 +30,7 @@ pnpm dev
 
 The example uses:
 
-- **Webpack 5** as the bundler
+- **Webpack 5 (webpack-cli 7)** as the bundler
 - **TypeScript** for type safety
 - **intl-ai** plugin for internationalization
 - **LM Studio** as the AI backend (running on `http://127.0.0.1:1234/v1`)
