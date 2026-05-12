@@ -23,16 +23,19 @@
     "validate": "bun scripts/validate.ts"
   },
   "devDependencies": {
-    "@vitest/coverage-v8": "^4.1.0",
-    "oxfmt": "^0.41.0",
-    "oxlint": "^1.56.0",
-    "tasuku": "^2.3.0",
-    "turbo": "^2.8.17",
-    "vitepress": "^1.5.0",
-    "vitepress-plugin-group-icons": "^1.7.5",
-    "vitest": "^4.1.0"
+    "@vitest/coverage-v8": "4.1.6",
+    "oxfmt": "0.41.0",
+    "oxlint": "1.64.0",
+    "tasuku": "2.3.0",
+    "turbo": "2.9.12",
+    "vitepress": "1.6.4",
+    "vitepress-plugin-group-icons": "1.7.5",
+    "vitest": "4.1.6"
   },
-  "packageManager": "pnpm@10.32.1",
+  "packageManager": "pnpm@11.1.0",
+  "pnpm": {
+    "onlyBuiltDependencies": ["@parcel/watcher", "@swc/core", "esbuild", "sharp", "unrs-resolver"]
+  },
   "engines": {
     "node": ">=22.0.0"
   }
