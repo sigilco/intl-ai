@@ -1,11 +1,13 @@
 // packages/core/src/testing/mock-provider.ts
 
 import type {
-  LanguageModelV1,
-  LanguageModelV1CallOptions,
-  LanguageModelV1GenerateMessageResult,
-  LanguageModelV1StreamMessagePart,
-  LanguageModelV1CallWarning,
+  LanguageModelV3,
+  LanguageModelV3CallOptions,
+  LanguageModelV3GenerateResult,
+  LanguageModelV3StreamResult,
+  LanguageModelV3StreamPart,
+  LanguageModelV3TextPart,
+  SharedV3Warning,
 } from "@ai-sdk/provider";
 
 export interface MockProviderOptions {
@@ -14,8 +16,8 @@ export interface MockProviderOptions {
   failureCount?: number;
 }
 
-export class MockLanguageModel implements LanguageModelV1 {
-  readonly specificationVersion = "v1";
+export class MockLanguageModel implements LanguageModelV3 {
+  readonly specificationVersion = "v3";
   readonly provider = "mock";
   readonly modelId = "mock-model";
 
@@ -34,29 +36,79 @@ export class MockLanguageModel implements LanguageModelV1 {
     this.callCount = 0;
   }
 
+  get supportedUrls(): Record<string, RegExp[]> {
+    return {};
+  }
+
   async doGenerate(
-    options: LanguageModelV1CallOptions,
-  ): Promise<LanguageModelV1GenerateMessageResult> {
+    options: LanguageModelV3CallOptions,
+  ): Promise<LanguageModelV3GenerateResult> {
     this.callCount++;
 
     if (this.options.shouldFail && this.callCount <= (this.options.failureCount || 1)) {
       throw new Error("Mock provider failure for testing");
     }
 
-    const messages = options.messages;
-    const lastMessage = messages[messages.length - 1];
-    const inputText =
-      typeof lastMessage === "string" ? lastMessage : (lastMessage.content as string);
-
+    const inputText = this.extractTextFromPrompt(options.prompt);
     const targetLocale = this.extractTargetLocale(inputText) || "en";
     const translation = this.getTranslation(inputText, targetLocale);
 
     return {
-      text: this.formatTranslationResponse(inputText, translation),
-      finishReason: "stop",
-      usage: { promptTokens: 1, completionTokens: 1, totalTokens: 2 },
-      responseId: `mock-response-${this.callCount}`,
+      content: [
+        {
+          type: "text" as const,
+          text: this.formatTranslationResponse(inputText, translation),
+        },
+      ],
+      finishReason: { unified: "stop" as const, raw: undefined },
+      usage: {
+        inputTokens: {
+          total: 50,
+          noCache: 50,
+          cacheRead: undefined,
+          cacheWrite: undefined,
+        },
+        outputTokens: {
+          total: 20,
+          text: 20,
+          reasoning: undefined,
+        },
+      },
+      warnings: [],
     };
+  }
+
+  private extractTextFromPrompt(
+    prompt: Array<{
+      role: string;
+      content: unknown;
+      providerOptions?: unknown;
+    }>,
+  ): string {
+    const lastMessage = prompt[prompt.length - 1];
+    if (!lastMessage) return "";
+
+    if (lastMessage.role === "system") {
+      return lastMessage.content as string;
+    }
+
+    if (lastMessage.role === "user" && Array.isArray(lastMessage.content)) {
+      const parts = lastMessage.content as Array<LanguageModelV3TextPart>;
+      return parts
+        .filter((part): part is LanguageModelV3TextPart => part.type === "text")
+        .map(part => part.text)
+        .join("");
+    }
+
+    if (lastMessage.role === "assistant" && Array.isArray(lastMessage.content)) {
+      const parts = lastMessage.content as Array<LanguageModelV3TextPart>;
+      return parts
+        .filter((part): part is LanguageModelV3TextPart => part.type === "text")
+        .map(part => part.text)
+        .join("");
+    }
+
+    return "";
   }
 
   private extractTargetLocale(input: string): string | null {
@@ -104,36 +156,30 @@ export class MockLanguageModel implements LanguageModelV1 {
     return entries;
   }
 
-  doStream(
-    options: LanguageModelV1CallOptions,
-  ): AsyncGenerator<LanguageModelV1StreamMessagePart, void, unknown> {
+  async doStream(
+    options: LanguageModelV3CallOptions,
+  ): Promise<LanguageModelV3StreamResult> {
     this.callCount++;
 
     if (this.options.shouldFail && this.callCount <= (this.options.failureCount || 1)) {
       throw new Error("Mock provider failure for testing");
     }
 
-    const messages = options.messages;
-    const lastMessage = messages[messages.length - 1];
-    const inputText =
-      typeof lastMessage === "string" ? lastMessage : (lastMessage.content as string);
-
+    const inputText = this.extractTextFromPrompt(options.prompt);
     const translation = this.getTranslation(inputText, options.headers?.["x-locale"] || "en");
 
-    return (async function* () {
-      yield {
-        role: "assistant",
-        content: [{ type: "text", text: translation }],
-      };
-    })();
-  }
+    const stream = new ReadableStream<LanguageModelV3StreamPart>({
+      start(controller) {
+        controller.enqueue({ type: "text-start" as const, id: "1" });
+        for (const char of translation) {
+          controller.enqueue({ type: "text-delta" as const, id: "1", delta: char });
+        }
+        controller.enqueue({ type: "text-end" as const, id: "1" });
+        controller.close();
+      },
+    });
 
-  get warnings(): LanguageModelV1CallWarning[] {
-    return [];
-  }
-
-  get embeddingModel(): LanguageModelV1 | undefined {
-    return undefined;
+    return { stream };
   }
 
   private getTranslation(input: string, locale: string): string {
