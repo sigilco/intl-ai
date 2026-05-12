@@ -207,13 +207,13 @@ Create a PR with your new page following the [main Contributing Guide](https://g
 
 ## Deployment
 
-Documentation is automatically deployed to GitHub Pages via GitHub Actions when changes are merged to the `main` branch.
+Documentation is automatically deployed to Cloudflare Pages when changes are merged to the `main` branch.
 
 The deployment workflow:
 
 1. Detects changes to the `docs/` directory
 2. Runs `pnpm docs:build` to generate static files
-3. Deploys to GitHub Pages at `https://OWNER.github.io/unplugin-intl-ai/`
+3. Deploys to `https://intl-ai.illo.fyi/`
 
 No manual deployment steps are required.
 
