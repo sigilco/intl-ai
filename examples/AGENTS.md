@@ -1,0 +1,39 @@
+# examples — Agent Context
+
+Reference consumer applications. Minimal context — these are not under active development and have no tests.
+
+---
+
+## What's Here
+
+Each example app is a working integration test for a bundler setup:
+
+| Example | Bundler | Integration |
+|---|---|---|
+| `next` | Next.js (App Router) | `withIntlAi()` wrapper on webpack/Turbopack |
+| `legacy-next` | Next.js 12 (Pages Router) | `withIntlAi()` on legacy webpack |
+| `vite` | Vite | `@intl-ai/unplugin` with Vite adapter |
+| `webpack` | Webpack 5 | `@intl-ai/unplugin` with Webpack adapter |
+
+---
+
+## Setup
+
+Each example has:
+- `intl-ai.config.ts` — configuration for translations
+- `locales/` — locale files (JSON or YAML)
+- `package.json` — local dev script
+
+To test against local unpublished changes:
+```bash
+pnpm publish:local  # starts Verdaccio at localhost:4873
+cd examples/vite
+pnpm install  # pulls from local Verdaccio
+pnpm dev
+```
+
+---
+
+## No Testing
+
+Examples are reference implementations, not test suites. If you need to verify bundler integration, use the example app with `pnpm publish:local` + manual verification.
