@@ -1,30 +1,30 @@
 {
   "name": "@intl-ai/cli",
   "version": "0.0.1",
-  "description": "CLI for AI-powered i18n translation",
-  "keywords": [
-    "ai",
-    "cli",
-    "i18n",
-    "internationalization",
-    "intl",
-    "translation"
-  ],
-  "homepage": "https://intl-ai.illo.fyi/",
-  "bugs": "https://github.com/espetro/intl-ai/issues",
   "license": "MIT",
+  "description": "CLI for AI-powered i18n translation",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/espetro/intl-ai.git"
   },
-  "bin": {
-    "intl-ai": "./dist/cli.js"
-  },
+  "homepage": "https://github.com/espetro/intl-ai#readme",
+  "bugs": "https://github.com/espetro/intl-ai/issues",
+  "keywords": [
+    "cli",
+    "i18n",
+    "internationalization",
+    "translation",
+    "ai",
+    "intl"
+  ],
   "files": [
     "dist",
     "README.md",
     "LICENSE"
   ],
+  "bin": {
+    "intl-ai": "./dist/cli.js"
+  },
   "exports": {
     ".": {
       "types": "./dist/index.d.mts",
@@ -45,16 +45,13 @@
   },
   "dependencies": {
     "@intl-ai/core": "workspace:*",
-    "commander": "14.0.3",
-    "ora": "9.4.0"
+    "commander": "^14.0.3",
+    "ora": "^8.2.0"
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
-    "@types/node": "^22.0.0",
-    "tsdown": "0.22.0",
+    "@types/node": "^22.19.19",
+    "tsdown": "^0.22.0",
     "typescript": "6.0.3"
-  },
-  "engines": {
-    "node": ">=22.0.0"
   }
 }

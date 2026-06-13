@@ -1,29 +1,29 @@
 {
   "name": "@intl-ai/next",
   "version": "0.0.1",
-  "description": "AI-powered i18n translation plugin for Next.js",
-  "keywords": [
-    "ai",
-    "i18n",
-    "internationalization",
-    "intl",
-    "next",
-    "nextjs",
-    "translation"
-  ],
-  "homepage": "https://intl-ai.illo.fyi/",
-  "bugs": "https://github.com/espetro/intl-ai/issues",
   "license": "MIT",
+  "description": "AI-powered i18n translation plugin for Next.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/espetro/intl-ai.git"
   },
+  "homepage": "https://github.com/espetro/intl-ai#readme",
+  "bugs": "https://github.com/espetro/intl-ai/issues",
+  "keywords": [
+    "nextjs",
+    "next",
+    "i18n",
+    "internationalization",
+    "translation",
+    "ai",
+    "intl"
+  ],
+  "type": "module",
   "files": [
     "dist",
     "README.md",
     "LICENSE"
   ],
-  "type": "module",
   "exports": {
     ".": {
       "import": "./dist/index.mjs",
@@ -48,12 +48,12 @@
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
-    "@types/node": "^22.0.0",
-    "@types/webpack": "5.28.5",
-    "next": "15.5.18",
-    "react": "18.3.1",
-    "react-dom": "18.3.1",
-    "tsdown": "0.21.10",
+    "@types/node": "^22.19.19",
+    "@types/webpack": "^5.28.5",
+    "next": "^14.0.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "tsdown": "^0.22.0",
     "typescript": "6.0.3"
   },
   "peerDependencies": {
