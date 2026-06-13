@@ -34,8 +34,7 @@
   },
   "publishConfig": {
     "access": "public",
-    "provenance": true,
-    "registry": "http://localhost:4873"
+    "provenance": true
   },
   "scripts": {
     "build": "tsdown",

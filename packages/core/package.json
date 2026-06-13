@@ -29,9 +29,7 @@
     },
     "./package.json": "./package.json"
   },
-  "publishConfig": {
-    "registry": "http://localhost:4873"
-  },
+  "publishConfig": {},
   "scripts": {
     "build": "tsdown",
     "dev": "tsup --watch",
