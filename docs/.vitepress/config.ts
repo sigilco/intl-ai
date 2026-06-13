@@ -2,7 +2,7 @@ import { defineConfig } from "vitepress";
 import { groupIconMdPlugin, groupIconVitePlugin } from "vitepress-plugin-group-icons";
 
 export default defineConfig({
-  title: "unplugin-intl-ai",
+  title: "@intl-ai/unplugin",
   description: "AI-powered i18n translation for any bundler",
   base: "/",
   markdown: {

@@ -7,7 +7,7 @@ export interface UnpluginIntlAiOptions {
 
 const unpluginFactory: UnpluginFactory<UnpluginIntlAiOptions | undefined> = (options) => {
   return {
-    name: "unplugin-intl-ai",
+    name: "@intl-ai/unplugin",
     async buildStart() {
       try {
         const { runFill, loadConfig } = await import("@intl-ai/core");

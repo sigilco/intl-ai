@@ -1,6 +1,6 @@
 {
   "name": "@intl-ai/unplugin",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "AI-powered i18n translation plugin for all bundlers",
   "keywords": [
     "ai",
@@ -80,10 +80,7 @@
     "./package.json": "./package.json"
   },
   "publishConfig": {
-    "name": "unplugin-intl-ai",
-    "access": "public",
-    "provenance": true,
-    "registry": "http://localhost:4873"
+    "access": "public"
   },
   "scripts": {
     "build": "tsdown",

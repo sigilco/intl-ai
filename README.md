@@ -13,7 +13,7 @@ Automatically translate your app with AI. intl-ai hooks into your build pipeline
 **Vite / Rollup / Webpack / esbuild / Rspack**
 
 ```bash
-npm install -D unplugin-intl-ai
+npm install -D @intl-ai/unplugin
 ```
 
 **Next.js**
@@ -29,7 +29,7 @@ npm install -D @intl-ai/next
 ```ts
 // vite.config.ts
 import { defineConfig } from "vite";
-import IntlAi from "unplugin-intl-ai/vite";
+import IntlAi from "@intl-ai/unplugin/vite";
 
 export default defineConfig({
   plugins: [
@@ -63,7 +63,7 @@ export default withIntlAi({
 
 | Package                                                              | Description              | Registry  |
 | -------------------------------------------------------------------- | ------------------------ | --------- |
-| [`unplugin-intl-ai`](https://www.npmjs.com/package/unplugin-intl-ai) | Universal bundler plugin | npm       |
+| [`@intl-ai/unplugin`](https://www.npmjs.com/package/@intl-ai/unplugin) | Universal bundler plugin | npm       |
 | [`@intl-ai/next`](https://www.npmjs.com/package/@intl-ai/next)       | Next.js integration      | npm |
 
 ## License
