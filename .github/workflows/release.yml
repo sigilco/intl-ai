@@ -24,7 +24,7 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
       - name: Publish to npm
-        run: pnpm --filter "@intl-ai/core" --filter "@intl-ai/unplugin" --filter "@intl-ai/next" --filter "@intl-ai/cli" publish --no-git-checks
+        run: pnpm --filter "@intl-ai/core" --filter "@intl-ai/unplugin" --filter "@intl-ai/next" --filter "@intl-ai/cli" publish --no-git-checks --registry https://registry.npmjs.org
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       - name: Extract changelog for release
