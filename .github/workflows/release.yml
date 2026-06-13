@@ -27,13 +27,15 @@ jobs:
         run: pnpm --filter "@intl-ai/core" --filter "@intl-ai/unplugin" --filter "@intl-ai/next" --filter "@intl-ai/cli" publish --no-git-checks
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-      - name: Publish to JSR (@intl-ai/unplugin)
-        run: npx jsr publish --allow-dirty
-        working-directory: packages/unplugin
-      - name: Publish to JSR (@intl-ai/next)
-        run: npx jsr publish --allow-dirty
-        working-directory: packages/next
+      - name: Extract changelog for release
+        id: changelog
+        run: |
+          content=$(cat CHANGELOG.md)
+          content="${content///github.com/espetro/intl-ai/blob/main/}"
+          echo "content<<EOF" >> $GITHUB_OUTPUT
+          echo "$content" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v3
         with:
-          generate_release_notes: true
+          body: ${{ steps.changelog.outputs.content }}

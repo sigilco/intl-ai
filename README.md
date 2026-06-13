@@ -64,7 +64,7 @@ export default withIntlAi({
 | Package                                                              | Description              | Registry  |
 | -------------------------------------------------------------------- | ------------------------ | --------- |
 | [`unplugin-intl-ai`](https://www.npmjs.com/package/unplugin-intl-ai) | Universal bundler plugin | npm       |
-| [`@intl-ai/next`](https://www.npmjs.com/package/@intl-ai/next)       | Next.js integration      | npm + JSR |
+| [`@intl-ai/next`](https://www.npmjs.com/package/@intl-ai/next)       | Next.js integration      | npm |
 
 ## License
 

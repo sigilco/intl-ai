@@ -30,8 +30,8 @@ pnpm add unplugin-intl-ai
 yarn add unplugin-intl-ai
 ```
 
-```sh [JSR]
-npx jsr add @intl-ai/unplugin
+```sh [bun]
+bun add unplugin-intl-ai
 ```
 
 :::
