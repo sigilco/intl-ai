@@ -1,6 +1,6 @@
 {
   "name": "@intl-ai/core",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "AI-powered i18n translation core library",
   "keywords": [
     "ai",
