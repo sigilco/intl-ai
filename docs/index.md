@@ -2,7 +2,7 @@
 layout: home
 
 hero:
-  name: "unplugin-intl-ai"
+  name: "@intl-ai/unplugin"
   tagline: "AI-powered i18n translation for any bundler"
   actions:
     - theme: brand

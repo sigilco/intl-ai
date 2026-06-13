@@ -4,9 +4,9 @@ title: Contributing
 
 # Contributing to the Documentation
 
-Thank you for your interest in improving the unplugin-intl-ai documentation! This guide covers everything you need to know about contributing to our docs.
+Thank you for your interest in improving the @intl-ai/unplugin documentation! This guide covers everything you need to know about contributing to our docs.
 
-For general contribution guidelines, branch workflows, commit conventions, and the full development process, please see our [main Contributing Guide](https://github.com/OWNER/unplugin-intl-ai/blob/main/CONTRIBUTING.md).
+For general contribution guidelines, branch workflows, commit conventions, and the full development process, please see our [main Contributing Guide](https://github.com/espetro/intl-ai/blob/main/CONTRIBUTING.md).
 
 ## Documentation Setup
 
@@ -195,7 +195,7 @@ pnpm docs:dev
 
 ### 5. Submit a Pull Request
 
-Create a PR with your new page following the [main Contributing Guide](https://github.com/OWNER/unplugin-intl-ai/blob/main/CONTRIBUTING.md).
+Create a PR with your new page following the [main Contributing Guide](https://github.com/espetro/intl-ai/blob/main/CONTRIBUTING.md).
 
 ## Documentation Commands Reference
 
@@ -230,7 +230,7 @@ No manual deployment steps are required.
 
 ## Code of Conduct
 
-All contributors must adhere to our [Code of Conduct](https://github.com/OWNER/unplugin-intl-ai/blob/main/CODE_OF_CONDUCT.md). We are committed to providing a welcoming and inclusive environment for all contributors.
+All contributors must adhere to our [Code of Conduct](https://github.com/espetro/intl-ai/blob/main/CODE_OF_CONDUCT.md). We are committed to providing a welcoming and inclusive environment for all contributors.
 
 ## Questions or Issues?
 
@@ -238,4 +238,4 @@ All contributors must adhere to our [Code of Conduct](https://github.com/OWNER/u
 - **Found a typo or error**: Open an issue or submit a PR
 - **Feature suggestions**: Open an issue to discuss before implementing
 
-Thank you for helping improve the unplugin-intl-ai documentation! 🚀
+Thank you for helping improve the @intl-ai/unplugin documentation! 🚀

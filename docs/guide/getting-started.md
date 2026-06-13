@@ -4,7 +4,7 @@ title: Getting Started
 
 # Getting Started
 
-This guide will help you set up `unplugin-intl-ai` in your project.
+This guide will help you set up `@intl-ai/unplugin` in your project.
 
 ## Installation
 
@@ -19,19 +19,19 @@ This guide will help you set up `unplugin-intl-ai` in your project.
 ::: code-group
 
 ```sh [npm]
-npm install unplugin-intl-ai
+npm install @intl-ai/unplugin
 ```
 
 ```sh [pnpm]
-pnpm add unplugin-intl-ai
+pnpm add @intl-ai/unplugin
 ```
 
 ```sh [yarn]
-yarn add unplugin-intl-ai
+yarn add @intl-ai/unplugin
 ```
 
 ```sh [bun]
-bun add unplugin-intl-ai
+bun add @intl-ai/unplugin
 ```
 
 :::
@@ -99,7 +99,7 @@ export default defineConfig({
 ```
 
 ```javascript [Webpack]
-const IntlAiPlugin = require("unplugin-intl-ai/webpack");
+const IntlAiPlugin = require("@intl-ai/unplugin/webpack");
 
 module.exports = {
   plugins: [new IntlAiPlugin()],
@@ -107,7 +107,7 @@ module.exports = {
 ```
 
 ```javascript [Rollup]
-import IntlAiPlugin from "unplugin-intl-ai/rollup";
+import IntlAiPlugin from "@intl-ai/unplugin/rollup";
 
 export default {
   plugins: [IntlAiPlugin()],
@@ -116,7 +116,7 @@ export default {
 
 ```javascript [esbuild]
 import { build } from "esbuild";
-import IntlAiPlugin from "unplugin-intl-ai/esbuild";
+import IntlAiPlugin from "@intl-ai/unplugin/esbuild";
 
 build({
   plugins: [IntlAiPlugin()],
@@ -124,7 +124,7 @@ build({
 ```
 
 ```javascript [Rspack]
-const IntlAiPlugin = require("unplugin-intl-ai/rspack");
+const IntlAiPlugin = require("@intl-ai/unplugin/rspack");
 
 module.exports = {
   plugins: [new IntlAiPlugin()],
@@ -157,7 +157,7 @@ Create the directory specified in your config (default: `./locales`), then add y
 
 ## Supported Bundlers
 
-`unplugin-intl-ai` works with all major bundlers:
+`@intl-ai/unplugin` works with all major bundlers:
 
 - **Vite** - Modern, fast build tool
 - **Webpack** - Industry standard bundler
