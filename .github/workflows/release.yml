@@ -23,6 +23,7 @@ jobs:
           registry-url: "https://registry.npmjs.org"
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
+      - run: pnpm changeset:version
       - name: Publish to npm
         run: pnpm --filter "@intl-ai/core" --filter "@intl-ai/unplugin" --filter "@intl-ai/next" --filter "@intl-ai/cli" publish --no-git-checks
         env:

@@ -1,7 +1,7 @@
 {
   "name": "@intl-ai/core",
-  "version": "0.1.0",
-  "description": "AI-powered i18n translation core library",
+  "version": "0.2.0",
+  "description": "DEPRECATED — re-exports from @intl-ai/api plus legacy loadConfig(). Migrate to @intl-ai/api.",
   "keywords": [
     "ai",
     "i18n",
@@ -14,7 +14,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/espetro/intl-ai.git"
+    "url": "git+git+https://github.com/sigilco/intl-ai.git"
   },
   "files": [
     "dist/",
@@ -39,12 +39,9 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@ai-sdk/provider": "3.0.10",
-    "@formatjs/icu-messageformat-parser": "3.5.7",
-    "ai": "6.0.177",
+    "@intl-ai/api": "workspace:*",
     "jiti": "2.7.0",
-    "yaml": "2.9.0",
-    "zod": "4.4.3"
+    "pathe": "2.0.3"
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",

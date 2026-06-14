@@ -15,7 +15,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/espetro/intl-ai.git"
+    "url": "git+https://github.com/sigilco/intl-ai.git"
   },
   "bin": {
     "intl-ai": "./dist/index.mjs"
