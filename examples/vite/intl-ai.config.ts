@@ -1,3 +1,4 @@
+/** @see https://www.schemastore.org/intl-ai.json */
 import { createOpenAICompatible } from "@ai-sdk/openai-compatible";
 
 const lmstudio = createOpenAICompatible({
