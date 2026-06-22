@@ -1,7 +1,7 @@
 {
   "name": "@intl-ai/core",
   "version": "0.2.0",
-  "description": "DEPRECATED — re-exports from @intl-ai/api plus legacy loadConfig(). Migrate to @intl-ai/api.",
+  "description": "DEPRECATED — thin re-export of @intl-ai/api. Will be removed in v1.0. Migrate to @intl-ai/api.",
   "keywords": [
     "ai",
     "i18n",
@@ -14,17 +14,22 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+git+https://github.com/sigilco/intl-ai.git"
+    "url": "git+https://github.com/sigilco/intl-ai.git"
   },
   "files": [
     "dist/",
     "README.md",
     "LICENSE"
   ],
+  "type": "module",
+  "main": "./dist/index.mjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.mts",
   "exports": {
     ".": {
-      "import": "./dist/index.mjs",
       "types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.mjs",
       "default": "./dist/index.mjs"
     },
     "./package.json": "./package.json"
