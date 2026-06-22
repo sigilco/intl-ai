@@ -1,6 +1,6 @@
 {
   "name": "@intl-ai/cli",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "CLI for AI-powered i18n translation",
   "keywords": [
     "ai",
@@ -25,10 +25,16 @@
     "README.md",
     "LICENSE"
   ],
+  "type": "module",
+  "main": "./dist/index.mjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.mts",
   "exports": {
     ".": {
       "types": "./dist/index.d.mts",
-      "import": "./dist/index.mjs"
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.mjs",
+      "default": "./dist/index.mjs"
     },
     "./package.json": "./package.json"
   },
@@ -42,9 +48,11 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@intl-ai/core": "workspace:*",
-    "commander": "14.0.3",
-    "ora": "9.4.0"
+    "@intl-ai/api": "workspace:*",
+
+    "citty": "0.1.6",
+    "consola": "3.4.2",
+    "pathe": "1.1.2"
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
