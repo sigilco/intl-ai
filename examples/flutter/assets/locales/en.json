@@ -1,0 +1,5 @@
+{
+  "hello": "Hello",
+  "goodbye": "Goodbye",
+  "counter": "You have pushed the button {count, plural, =0{zero times} one{one time} other{# times}}."
+}

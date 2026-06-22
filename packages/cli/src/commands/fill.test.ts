@@ -1,35 +1,27 @@
 import { describe, test, expect } from "vitest";
-import { Command } from "commander";
 
-// Simple unit tests for fill command
 describe("fill command", () => {
   test("module can be imported without error", async () => {
-    // This test verifies the module can be loaded
-    const { fillCommand, fillAction } = await import("./fill");
+    const { fillCommand } = await import("./fill");
 
-    // Verify exports exist
     expect(fillCommand).toBeDefined();
-    expect(fillAction).toBeDefined();
-    expect(fillCommand).toBeInstanceOf(Command);
+
+    const meta = await Promise.resolve(fillCommand.meta as any);
+    expect(meta?.name).toBe("fill");
+    expect(meta?.description).toBe("Fill missing translations using AI");
   });
 
-  test("command options are configured correctly", async () => {
+  test("command args are configured correctly", async () => {
     const { fillCommand } = await import("./fill");
-    const options = fillCommand.options;
+    const args = await Promise.resolve(fillCommand.args as any);
 
-    // Check that the expected options exist
-    expect(options).toBeDefined();
-
-    // Verify options array contains expected flags
-    const optionNames = options.map((opt: any) => opt.long);
-    expect(optionNames).toContain("--dry-run");
-    expect(optionNames).toContain("--locale");
-    expect(optionNames).toContain("--force");
-  });
-
-  test("command description is set", async () => {
-    const { fillCommand } = await import("./fill");
-
-    expect(fillCommand.description()).toBe("Fill missing translations using AI");
+    expect(args).toBeDefined();
+    expect(args?.config?.type).toBe("string");
+    expect(args?.config?.default).toBe("intl-ai.config.json");
+    expect(args?.locale?.type).toBe("string");
+    expect(args?.force?.type).toBe("boolean");
+    expect(args?.force?.default).toBe(false);
+    expect(args?.silent?.type).toBe("boolean");
+    expect(args?.["dry-run"]?.type).toBe("boolean");
   });
 });

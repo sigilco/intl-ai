@@ -1,0 +1,27 @@
+name: intl_ai_flutter_example
+description: Example Flutter app showing intl-ai build_runner integration.
+publish_to: "none"
+version: 0.2.0
+
+environment:
+  sdk: ^3.0.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  intl: any
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  intl_ai_flutter:
+    path: plugin
+  build_runner: ^2.4.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/locales/en.json
+    - assets/locales/es.json

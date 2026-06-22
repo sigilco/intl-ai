@@ -42,6 +42,7 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@intl-ai/api": "workspace:*",
     "@intl-ai/core": "workspace:*"
   },
   "devDependencies": {

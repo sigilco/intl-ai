@@ -1,23 +1,28 @@
 import { describe, test, expect, vi, beforeEach } from "vitest";
 import { withIntlAi } from "./index";
 import type { NextConfig } from "next";
-import * as coreModule from "@intl-ai/core";
 
-// Mock loadConfig to prevent "No intl-ai config file found" errors
-vi.mock("@intl-ai/core", async () => {
-  const actual = await vi.importActual<typeof coreModule>("@intl-ai/core");
-  return {
-    ...actual,
-    loadConfig: vi.fn().mockResolvedValue({
-      defaultLocale: "en",
-      locales: ["en", "es", "fr"],
-      localeDir: "./locales",
-      model: "gpt-4",
-      glossary: {},
-      maxRetries: 3,
-    }),
-  };
-});
+// Mock @intl-ai/core for loadConfig
+vi.mock("@intl-ai/core", () => ({
+  loadConfig: vi.fn().mockResolvedValue({
+    defaultLocale: "en",
+    locales: ["en", "es", "fr"],
+    localeDir: "./locales",
+    model: "gpt-4",
+    glossary: {},
+    maxRetries: 3,
+  }),
+}));
+
+// Mock @intl-ai/api for runFill
+vi.mock("@intl-ai/api", () => ({
+  runFill: vi.fn().mockResolvedValue({
+    locales: ["es", "fr"],
+    translated: 0,
+    skipped: 0,
+    errors: 0,
+  }),
+}));
 
 describe("withIntlAi", () => {
   test("wraps object config", async () => {

@@ -1,0 +1,12 @@
+builders:
+  intl_ai:
+    import: "package:intl_ai_flutter/builder.dart"
+    builder_factories: ["intlAiBuilder"]
+    build_extensions:
+      "$package$": ["intl-ai.done"]
+    build_to: source
+    auto_apply: dependents
+    defaults:
+      options:
+        configPath: "intl-ai.config.json"
+        executable: "intl-ai"

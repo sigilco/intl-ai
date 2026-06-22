@@ -49,7 +49,6 @@
   },
   "dependencies": {
     "@intl-ai/api": "workspace:*",
-
     "citty": "0.1.6",
     "consola": "3.4.2",
     "pathe": "1.1.2"

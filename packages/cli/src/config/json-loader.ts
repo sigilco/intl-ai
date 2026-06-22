@@ -1,6 +1,10 @@
 import { readFile } from "node:fs/promises";
 import { existsSync } from "node:fs";
-import { IntlAiJsonConfigSchema, jsonConfigToIntlAiConfig, type IntlAiJsonConfig } from "@intl-ai/api/internal";
+import {
+  IntlAiJsonConfigSchema,
+  jsonConfigToIntlAiConfig,
+  type IntlAiJsonConfig,
+} from "@intl-ai/api/internal";
 import type { IntlAiConfig } from "@intl-ai/api";
 
 export interface LoadJsonConfigOptions {

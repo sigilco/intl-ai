@@ -1,0 +1,61 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://intl-ai.pages.dev/schema/v1.json",
+  "title": "intl-ai config",
+  "description": "Configuration for intl-ai translation build step",
+  "type": "object",
+  "required": ["defaultLocale", "locales", "localeDir", "model", "apiKey"],
+  "properties": {
+    "defaultLocale": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Source locale used as the basis for translation (e.g. 'en')"
+    },
+    "locales": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "minItems": 1,
+      "description": "All locales to produce, including the defaultLocale"
+    },
+    "localeDir": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Directory containing <locale>.json files"
+    },
+    "model": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Model id (e.g. 'gpt-4o-mini', 'claude-3-5-sonnet-latest')"
+    },
+    "apiKey": {
+      "type": "string",
+      "minLength": 1,
+      "description": "API key for the model provider"
+    },
+    "baseURL": {
+      "type": "string",
+      "format": "uri",
+      "default": "https://api.openai.com/v1",
+      "description": "OpenAI-compatible chat completions endpoint base URL"
+    },
+    "glossary": {
+      "type": "object",
+      "additionalProperties": { "type": "string" },
+      "description": "Per-domain translations that should always be used as-is"
+    },
+    "maxRetries": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 10,
+      "default": 3,
+      "description": "Max retry attempts for failed translations"
+    },
+    "processor": {
+      "type": "string",
+      "enum": ["passthrough", "icu"],
+      "default": "passthrough",
+      "description": "Predefined token processor for syntax validation"
+    }
+  },
+  "additionalProperties": false
+}

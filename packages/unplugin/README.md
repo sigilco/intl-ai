@@ -63,9 +63,7 @@ module.exports = {
 import IntlAi from "@intl-ai/unplugin/rollup";
 
 export default {
-  plugins: [
-    IntlAi({ sourceLanguage: "en", targetLanguages: ["es", "fr", "de"] }),
-  ],
+  plugins: [IntlAi({ sourceLanguage: "en", targetLanguages: ["es", "fr", "de"] })],
 };
 ```
 
@@ -95,9 +93,8 @@ module.exports = {
 
 ```ts
 // bunfig.toml
-[plugins]
-[plugins.prebuild]
-script = "intl-ai fill"
+[plugins][plugins.prebuild];
+script = "intl-ai fill";
 ```
 
 Or use the plugin directly:

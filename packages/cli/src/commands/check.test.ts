@@ -1,45 +1,66 @@
 import { describe, test, expect, beforeEach, afterEach } from "vitest";
-import { checkAction } from "./check";
-import {
-  createTempDir,
-  cleanupTempDir,
-  sampleLocaleEn,
-  sampleLocaleFr,
-  createLocaleFile,
-} from "../../../core/src/testing/fixtures";
-import { writeFileSync, mkdirSync } from "fs";
-import { join } from "path";
+import { checkCommand } from "./check";
+import { mkdirSync, writeFileSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "pathe";
+
+const sampleLocaleEn = {
+  greeting: "Hello",
+  farewell: "Goodbye",
+  nested: {
+    message: "Welcome",
+  },
+};
+
+const sampleLocaleFr = {
+  greeting: "Bonjour",
+  // farewell missing intentionally
+  nested: {
+    message: "Bienvenue",
+  },
+};
 
 describe("check command", () => {
   let tempDir: string;
 
   beforeEach(() => {
-    tempDir = createTempDir("check-test");
+    tempDir = join(tmpdir(), `check-test-${Date.now()}-${Math.random().toString(36).slice(2)}`);
+    mkdirSync(tempDir, { recursive: true });
   });
 
   afterEach(() => {
-    cleanupTempDir(tempDir);
+    rmSync(tempDir, { recursive: true, force: true });
+  });
+
+  function createConfig(localeDir: string) {
+    writeFileSync(
+      join(tempDir, "intl-ai.config.json"),
+      JSON.stringify({
+        defaultLocale: "en",
+        locales: ["en", "fr"],
+        localeDir,
+        model: "gpt-4o-mini",
+        apiKey: "test-key",
+      }),
+    );
+  }
+
+  function createLocales(localeDir: string, fr: Record<string, unknown>) {
+    mkdirSync(localeDir, { recursive: true });
+    writeFileSync(join(localeDir, "en.json"), JSON.stringify(sampleLocaleEn, null, 2));
+    writeFileSync(join(localeDir, "fr.json"), JSON.stringify(fr, null, 2));
+  }
+
+  test("module exports check command", async () => {
+    expect(checkCommand).toBeDefined();
+    const meta = await Promise.resolve(checkCommand.meta as any);
+    expect(meta?.name).toBe("check");
   });
 
   test("should report missing translations", async () => {
     const localeDir = join(tempDir, "locales");
-    mkdirSync(localeDir, { recursive: true });
-
-    const configPath = join(tempDir, "intl-ai.config.ts");
-    writeFileSync(
-      configPath,
-      `
-export default {
-  defaultLocale: "en",
-  locales: ["en", "fr"],
-  localeDir: "${localeDir}",
-  model: { id: "test-model" },
-};
-`,
-    );
-
-    createLocaleFile(localeDir, "en", sampleLocaleEn);
-    createLocaleFile(localeDir, "fr", sampleLocaleFr);
+    createConfig(localeDir);
+    createLocales(localeDir, sampleLocaleFr);
 
     const originalCwd = process.cwd();
     process.chdir(tempDir);
@@ -51,7 +72,7 @@ export default {
         exitCode = code;
       }) as never;
 
-      await checkAction({ locale: "fr" });
+      await checkCommand.run?.({ args: { config: "intl-ai.config.json" } } as any);
 
       process.exit = originalExit;
       expect(exitCode).toBe(10);
@@ -62,23 +83,8 @@ export default {
 
   test("should exit 0 when all translations complete", async () => {
     const localeDir = join(tempDir, "locales");
-    mkdirSync(localeDir, { recursive: true });
-
-    const configPath = join(tempDir, "intl-ai.config.ts");
-    writeFileSync(
-      configPath,
-      `
-export default {
-  defaultLocale: "en",
-  locales: ["en", "fr"],
-  localeDir: "${localeDir}",
-  model: { id: "test-model" },
-};
-`,
-    );
-
-    createLocaleFile(localeDir, "en", sampleLocaleEn);
-    createLocaleFile(localeDir, "fr", sampleLocaleEn);
+    createConfig(localeDir);
+    createLocales(localeDir, sampleLocaleEn);
 
     const originalCwd = process.cwd();
     process.chdir(tempDir);
@@ -90,7 +96,7 @@ export default {
         exitCode = code;
       }) as never;
 
-      await checkAction({ locale: "fr" });
+      await checkCommand.run?.({ args: { config: "intl-ai.config.json" } } as any);
 
       process.exit = originalExit;
       expect(exitCode).toBe(0);
@@ -101,24 +107,10 @@ export default {
 
   test("should support --locale option", async () => {
     const localeDir = join(tempDir, "locales");
+    createConfig(localeDir);
+    createLocales(localeDir, sampleLocaleFr);
     mkdirSync(localeDir, { recursive: true });
-
-    const configPath = join(tempDir, "intl-ai.config.ts");
-    writeFileSync(
-      configPath,
-      `
-export default {
-  defaultLocale: "en",
-  locales: ["en", "fr", "es"],
-  localeDir: "${localeDir}",
-  model: { id: "test-model" },
-};
-`,
-    );
-
-    createLocaleFile(localeDir, "en", sampleLocaleEn);
-    createLocaleFile(localeDir, "fr", sampleLocaleFr);
-    createLocaleFile(localeDir, "es", sampleLocaleEn);
+    writeFileSync(join(localeDir, "es.json"), JSON.stringify(sampleLocaleEn, null, 2));
 
     const originalCwd = process.cwd();
     process.chdir(tempDir);
@@ -130,7 +122,7 @@ export default {
         exitCode = code;
       }) as never;
 
-      await checkAction({ locale: "fr" });
+      await checkCommand.run?.({ args: { config: "intl-ai.config.json", locale: "fr" } } as any);
 
       process.exit = originalExit;
       expect(exitCode).toBe(10);

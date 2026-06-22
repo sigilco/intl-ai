@@ -1,15 +1,17 @@
 #!/usr/bin/env node
-import { Command } from "commander";
-import { fillCommand } from "./commands/fill";
-import { checkCommand } from "./commands/check";
+import { defineCommand, runMain } from "citty";
 
-const program = new Command();
+const main = defineCommand({
+  meta: {
+    name: "intl-ai",
+    version: "0.2.0",
+    description:
+      "AI-powered i18n translation. Config schema: https://www.schemastore.org/intl-ai.json",
+  },
+  subCommands: {
+    fill: () => import("./commands/fill").then((m) => m.fillCommand),
+    check: () => import("./commands/check").then((m) => m.checkCommand),
+  },
+});
 
-program
-  .name("intl-ai")
-  .version("0.0.1")
-  .description("AI-powered i18n translation CLI")
-  .option("--silent", "Suppress all output except errors")
-  .addCommand(fillCommand)
-  .addCommand(checkCommand)
-  .parse(process.argv);
+runMain(main);

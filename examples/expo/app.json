@@ -1,0 +1,11 @@
+{
+  "expo": {
+    "name": "intl-ai-expo-example",
+    "slug": "intl-ai-expo-example",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "assetBundlePatterns": ["**/*"],
+    "plugins": [["./plugin", { "configPath": "intl-ai.config.json" }]]
+  }
+}

@@ -10,11 +10,10 @@ const unpluginFactory: UnpluginFactory<UnpluginIntlAiOptions | undefined> = (opt
     name: "@intl-ai/unplugin",
     async buildStart() {
       try {
-        const { runFill, loadConfig } = await import("@intl-ai/core");
+        const { runFill } = await import("@intl-ai/api");
+        const { loadConfig } = await import("@intl-ai/core");
         const config = await loadConfig();
-        if (config) {
-          await runFill({ debug: options?.debug ?? false });
-        }
+        await runFill(config);
       } catch (error) {
         console.warn(`[intl-ai] Skipping translation fill due to error: ${error}`);
       }
