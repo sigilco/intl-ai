@@ -8,13 +8,13 @@ This page is for contributors who want to understand how intl-ai is built. User-
 
 ## Package layout
 
-| Package | Purpose |
-| ------- | ------- |
-| `@intl-ai/api` | Runtime-agnostic translation core. Public surface: `runFill`, `IntlAiConfig`, `RunFillOptions`, `RunFillResult`, `IntlAiConfigSchema`. |
-| `@intl-ai/cli` | `intl-ai fill` and `intl-ai check` commands. JSON config only. |
-| `@intl-ai/unplugin` | Universal bundler plugin adapters. |
-| `@intl-ai/next` | Next.js wrapper around the webpack plugin and Turbopack loader. |
-| `@intl-ai/core` | Deprecated. Thin re-export of `@intl-ai/api` plus a legacy `loadConfig()` helper. Will be removed in v1.0. |
+| Package             | Purpose                                                                                                                                |
+| ------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| `@intl-ai/api`      | Runtime-agnostic translation core. Public surface: `runFill`, `IntlAiConfig`, `RunFillOptions`, `RunFillResult`, `IntlAiConfigSchema`. |
+| `@intl-ai/cli`      | `intl-ai fill` and `intl-ai check` commands. JSON config only.                                                                         |
+| `@intl-ai/unplugin` | Universal bundler plugin adapters.                                                                                                     |
+| `@intl-ai/next`     | Next.js wrapper around the webpack plugin and Turbopack loader.                                                                        |
+| `@intl-ai/core`     | Deprecated. Thin re-export of `@intl-ai/api` plus a legacy `loadConfig()` helper. Will be removed in v1.0.                             |
 
 ## Internal subpath
 

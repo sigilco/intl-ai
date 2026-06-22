@@ -88,6 +88,7 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@intl-ai/api": "workspace:*",
     "@intl-ai/core": "workspace:*",
     "unplugin": "3.0.0"
   },

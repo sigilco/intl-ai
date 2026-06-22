@@ -4,13 +4,13 @@
 
 Every item added to GitHub Project #10 must have all five fields before moving out of "Backlog":
 
-| Field | Values | Notes |
-|---|---|---|
-| **Iteration / Quarter** | `Q2 2026`, `Q3 2026`, `Q4 2026` | Quarter granularity |
-| **Effort** | `S` / `M` / `L` / `XL` | S=hours, M=1-2d, L=3-5d, XL=1+w |
-| **Start date** | `YYYY-MM-DD` | Approximate is fine |
-| **Target date** | `YYYY-MM-DD` | Default: end of iteration quarter |
-| **Classification label** | `feature` / `bug` / `cosmetic` / `infra` / `docs` | One per issue |
+| Field                    | Values                                            | Notes                             |
+| ------------------------ | ------------------------------------------------- | --------------------------------- |
+| **Iteration / Quarter**  | `Q2 2026`, `Q3 2026`, `Q4 2026`                   | Quarter granularity               |
+| **Effort**               | `S` / `M` / `L` / `XL`                            | S=hours, M=1-2d, L=3-5d, XL=1+w   |
+| **Start date**           | `YYYY-MM-DD`                                      | Approximate is fine               |
+| **Target date**          | `YYYY-MM-DD`                                      | Default: end of iteration quarter |
+| **Classification label** | `feature` / `bug` / `cosmetic` / `infra` / `docs` | One per issue                     |
 
 Additional labels: `release-blocker`, `priority/high`, `priority/low`.
 
@@ -30,6 +30,7 @@ ghx update <item-id> --field "Iteration" --value "Q3 2026"
 ```
 
 Fallback (raw `gh`):
+
 ```bash
 gh project item-add 10 --owner espetro --url <issue-url>
 gh project item-list 10 --owner espetro --format json
@@ -57,6 +58,7 @@ Plans go to `.agents/plans/<YYYY-MM-DD>-<kebab-purpose>.md`. Each plan header mu
 
 ```markdown
 ## TL;DR
+
 > **GitHub Issue**: #42
 > **Project Item**: https://github.com/users/espetro/projects/10/items/<N>
 ```
@@ -65,12 +67,12 @@ Plans go to `.agents/plans/<YYYY-MM-DD>-<kebab-purpose>.md`. Each plan header mu
 
 ## Effort Calibration
 
-| Effort | Typical scope |
-|---|---|
-| `S` | Single-file, ≤50 LOC, no new APIs |
-| `M` | 1-3 files, new function or small feature, tests included |
-| `L` | New module or command, cross-package change, integration test |
-| `XL` | New architectural layer, multiple packages, full doc update |
+| Effort | Typical scope                                                 |
+| ------ | ------------------------------------------------------------- |
+| `S`    | Single-file, ≤50 LOC, no new APIs                             |
+| `M`    | 1-3 files, new function or small feature, tests included      |
+| `L`    | New module or command, cross-package change, integration test |
+| `XL`   | New architectural layer, multiple packages, full doc update   |
 
 ---
 

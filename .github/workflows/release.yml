@@ -8,11 +8,42 @@ permissions:
   id-token: write
 
 jobs:
-  release:
+  build-binaries:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        target:
+          - bun-darwin-arm64
+          - bun-linux-x64
+          - bun-linux-arm64
+    steps:
+      - uses: actions/checkout@v6
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - name: Build binary
+        run: |
+          mkdir -p dist/binaries
+          bun build packages/cli/src/index.ts --compile --target ${{ matrix.target }} --outfile dist/binaries/intl-ai-${{ matrix.target }}
+      - name: Upload binary artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: intl-ai-${{ matrix.target }}
+          path: ./dist/binaries/intl-ai-${{ matrix.target }}
+          if-no-files-found: error
+
+  publish:
+    needs: build-binaries
     runs-on: ubuntu-latest
     environment: npm-publish
     steps:
       - uses: actions/checkout@v6
+      - name: Download all binary artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: ./dist/binaries
+          merge-multiple: true
       - uses: pnpm/action-setup@v6
         with:
           version: "10.32.1"
@@ -24,19 +55,13 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
       - run: pnpm changeset:version
-      - name: Publish to npm
-        run: pnpm --filter "@intl-ai/core" --filter "@intl-ai/unplugin" --filter "@intl-ai/next" --filter "@intl-ai/cli" publish --no-git-checks
+      - run: pnpm changeset publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-      - name: Extract changelog for release
-        id: changelog
-        run: |
-          content=$(cat CHANGELOG.md)
-          content="${content///github.com/espetro/intl-ai/blob/main/}"
-          echo "content<<EOF" >> $GITHUB_OUTPUT
-          echo "$content" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
       - name: Create GitHub Release
-        uses: softprops/action-gh-release@v3
+        uses: softprops/action-gh-release@v2
         with:
-          body: ${{ steps.changelog.outputs.content }}
+          generate_release_notes: true
+          files: |
+            dist/binaries/intl-ai-*
+            packages/api/src/schema/intl-ai.schema.json

@@ -1,0 +1,18 @@
+.dart_tool/
+.packages
+build/
+pubspec.lock
+intl-ai.done
+# Flutter/Dart specific
+.flutter-plugins
+.flutter-plugins-dependencies
+.melos_tool/
+*.iml
+.idea/
+.vscode/
+android/
+ios/
+linux/
+macos/
+windows/
+web/

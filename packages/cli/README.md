@@ -40,9 +40,9 @@ Exits with code 1 if there are stale or missing translations.
 
 ## Commands
 
-| Command | Description |
-|---|---|
-| `fill` | Translate missing keys using AI |
+| Command | Description                                     |
+| ------- | ----------------------------------------------- |
+| `fill`  | Translate missing keys using AI                 |
 | `check` | Validate translation state and exit with status |
 
 [Documentation](https://intl-ai.illo.fyi/) · [Report an issue](https://github.com/espetro/intl-ai/issues)
