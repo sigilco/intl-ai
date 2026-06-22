@@ -1,6 +1,6 @@
 packages:
   - "packages/*"
-  - "examples/*"
+
 autoInstallPeers: true
 saveExact: true
 strictPeerDependencies: true
