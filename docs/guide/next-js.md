@@ -37,7 +37,7 @@ The `@intl-ai/next` package automatically handles both Turbopack and webpack:
 - **Turbopack**: Runs configuration evaluation at build time. The `withIntlAi` HOF applies `turbopack.rules` to configure the loader for processing internationalization files.
 - **Webpack**: Continues to work seamlessly with the same configuration approach.
 
-Both bundlers are supported automatically—no additional configuration needed to switch between them. Next.js 16+ with Turbopack is the primary target, but the package maintains full compatibility with webpack-based setups.
+Both bundlers are supported automatically, with no additional configuration needed to switch between them. Next.js 16+ with Turbopack is the primary target, but the package maintains full compatibility with webpack-based setups.
 
 ### How It Works
 

@@ -18,50 +18,51 @@ title: Product Requirements Document
 
 ### Core Objective (One Sentence)
 
-AI-powered build-time i18n translation plugin that works with any bundler and any AI model — plug in, translate, ship.
+AI-powered build-time i18n translation plugin that works with any bundler and any AI model. Plug in, translate, ship.
 
 ### Product Positioning
 
-**Swiss army knife (modular)** — core plugin + CLI + management features, not a full platform
+**Swiss army knife (modular):** core plugin + CLI + management features, not a full platform
 
 **Target Users:** Indie developers AND mid-size companies
 
 **Core Differentiators:**
-1. Build-time AI translation — zero runtime overhead, works with existing i18n libraries
-2. Universal bundler support — one plugin via unplugin, works with every bundler
-3. Model agnostic / privacy — use any AI model (local, self-hosted, or cloud), no vendor lock-in
+
+1. Build-time AI translation: zero runtime overhead, works with existing i18n libraries
+2. Universal bundler support: one plugin via unplugin, works with every bundler
+3. Model agnostic / privacy: use any AI model (local, self-hosted, or cloud), no vendor lock-in
 
 ## Product Vision
 
 ### Delivered (as of 0.1.0):
 
-- **Core plugin** — `@intl-ai/core` AI translation pipeline
-- **Bundler plugins** — unplugin for Vite, Webpack, Rollup, esbuild, Rspack
-- **Next.js integration** — `@intl-ai/next`
-- **CLI** — `packages/cli` with `fill` and `check` commands
+- **Core plugin:** `@intl-ai/core` AI translation pipeline
+- **Bundler plugins:** unplugin for Vite, Webpack, Rollup, esbuild, Rspack
+- **Next.js integration:** `@intl-ai/next`
+- **CLI:** `packages/cli` with `fill` and `check` commands
 
 ### 12-Month Feature Roadmap (Modules in Scope):
 
-1. ~~**CLI**~~ — **DELIVERED** — `packages/cli` with `fill` + `check` commands
-2. **Incremental/delta translation** — git diff based, only translate new/changed keys
-3. **Translation quality scoring** — LLM-as-a-Judge (same model, different session, self-score 0-1 per key, flag low scores)
+1. ~~**CLI**~~: **DELIVERED**: `packages/cli` with `fill` + `check` commands
+2. **Incremental/delta translation:** git diff based, only translate new/changed keys
+3. **Translation quality scoring:** LLM-as-a-Judge (same model, different session, self-score 0-1 per key, flag low scores)
 
 ### 0.1.0 Release Scope:
 
-**Minimal** — ship current state as-is (bundler plugin works, basic translation works)
+**Minimal:** ship current state as-is (bundler plugin works, basic translation works)
 
 Get it out, iterate from there.
 
 ### Monetization:
 
-**Free / OSS only** — fully open source, no paid tiers, community-driven
+**Free / OSS only:** fully open source, no paid tiers, community-driven
 
 ## Technical Decisions
 
 ### i18n Library Support (All of These):
 
-- vue-i18n ✅ (already documented)
-- i18next ✅ (already documented)
+- vue-i18n (already documented)
+- i18next (already documented)
 - next-intl
 - FormatJS / react-intl
 - Paraglide
@@ -73,7 +74,7 @@ Get it out, iterate from there.
 
 Agent-executed QA via Playwright for docs site
 
-### Open Questions (Deferred — Decide During Implementation):
+### Open Questions (Deferred, decide during implementation):
 
 - Delta translation: git diff at key level (new keys + changed values). Deleted keys: TBD.
 - Quality scoring: scoring prompt design, confidence threshold TBD.
@@ -111,7 +112,7 @@ Agent-executed QA via Playwright for docs site
 
 ## 0.1.0 Release Blockers (Must Complete Before Publish):
 
-- [ ] Merge develop → main
+- [ ] Merge develop to main
 - [ ] Publish to npm
 - [ ] Docs site live (VitePress)
 - [ ] Working examples (next, vite, webpack at minimum)
@@ -121,7 +122,7 @@ Agent-executed QA via Playwright for docs site
 ### INCLUDE:
 
 - Build-time translation (bundler plugin)
-- On-demand CLI translation (packages/cli — already delivered)
+- On-demand CLI translation (packages/cli, already delivered)
 - Incremental/delta translation (git diff based)
 - Translation quality scoring (LLM-as-a-Judge, same model, different session)
 - i18n library support: vue-i18n, i18next, next-intl, FormatJS, Paraglide, any JSON-based
@@ -139,4 +140,4 @@ Agent-executed QA via Playwright for docs site
 - No CLI subcommands beyond `fill` and `check` (no serve, deploy, config wizard)
 - No external evaluation service for quality scoring (same model, different session only)
 - No support for binary i18n formats (PO, XLIFF) unless community-contributed
-- No RTL-specific handling (out of scope — handled by user's i18n lib)
+- No RTL-specific handling (out of scope; handled by user's i18n lib)

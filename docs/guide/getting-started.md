@@ -60,7 +60,10 @@ yarn add @intl-ai/next
 
 ### 1. Create Configuration File
 
-Create an `intl-ai.config.ts` file in your project root:
+Create an `intl-ai.config.ts` file in your project root.
+If you do not have a local model or cloud API key, you can use OpenRouter's free tier with no account setup beyond an API key.
+
+### Local model (LM Studio)
 
 ```typescript
 import { createOpenAICompatible } from "@ai-sdk/openai-compatible";
@@ -71,16 +74,36 @@ const lmstudio = createOpenAICompatible({
 });
 
 export default {
-  model: lmstudio("qwen3.5-4b-instruct"),
+  model: lmstudio("your-model-name"),
   defaultLocale: "en",
   locales: ["en", "de", "es", "fr"],
   localeDir: "./locales",
 };
 ```
 
+### Cloud model (OpenRouter free tier)
+
+```typescript
+import { createOpenAICompatible } from "@ai-sdk/openai-compatible";
+
+const openrouter = createOpenAICompatible({
+  name: "openrouter",
+  baseURL: "https://openrouter.ai/api/v1",
+});
+
+export default {
+  model: openrouter("google/gemini-2.0-flash-exp:free"),
+  defaultLocale: "en",
+  locales: ["en", "de", "es", "fr"],
+  localeDir: "./locales",
+};
+```
+
+See [AI model setup](/guide/ai-model) for all provider options.
+
 **Key Configuration:**
 
-- `model`: Your AI model instance (see [AI Model Setup](/guide/ai-model) for other providers)
+- `model`: Your AI model instance (see [AI model setup](/guide/ai-model) for other providers)
 - `defaultLocale`: The primary language for your application
 - `locales`: Array of supported language codes
 - `localeDir`: Directory where translation files will be stored
@@ -174,4 +197,4 @@ To verify everything is working:
 2. Check that your bundler loads without errors and translation files are being processed
 3. Verify translations render correctly in your application
 
-If you encounter issues, check the [AI Model Setup](/guide/ai-model) guide to ensure your model provider is configured correctly.
+If you encounter issues, check the [AI model setup](/guide/ai-model) guide to ensure your model provider is configured correctly.
