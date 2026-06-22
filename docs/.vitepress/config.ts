@@ -53,6 +53,7 @@ export default defineConfig({
             { text: "API reference", link: "/guide/api" },
             { text: "Migration", link: "/guide/migration" },
             { text: "Contributing", link: "/guide/contributing" },
+            { text: "Internals", link: "/guide/internals" },
           ],
         },
       ],
