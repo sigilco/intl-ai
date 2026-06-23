@@ -12,17 +12,23 @@ npm install -D @intl-ai/unplugin
 
 ## Quick Start
 
-Create an `intl-ai.config.{ts,js,intl-airc}` at your project root:
+Create an `intl-ai.config.ts` (or `.json`) at your project root:
 
 ```ts
 // intl-ai.config.ts
+import { createOpenAICompatible } from "@ai-sdk/openai-compatible";
+
+const openai = createOpenAICompatible({
+  name: "openai",
+  baseURL: "https://api.openai.com/v1",
+  apiKey: process.env.OPENAI_API_KEY,
+});
+
 export default {
-  provider: "openai",
-  model: "gpt-4o",
-  apiKey: process.env.INTL_AI_API_KEY,
+  model: openai("your-model-name"),
+  defaultLocale: "en",
+  locales: ["en", "es", "fr"],
   localeDir: "./locales",
-  baseLocale: "en",
-  languages: ["es", "fr", "de"],
 };
 ```
 

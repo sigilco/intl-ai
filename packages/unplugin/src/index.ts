@@ -1,5 +1,6 @@
 import { createUnplugin } from "unplugin";
 import type { UnpluginFactory } from "unplugin";
+import { loadConfig } from "./config";
 
 export interface UnpluginIntlAiOptions {
   debug?: boolean;
@@ -11,7 +12,6 @@ const unpluginFactory: UnpluginFactory<UnpluginIntlAiOptions | undefined> = (opt
     async buildStart() {
       try {
         const { runFill } = await import("@intl-ai/api");
-        const { loadConfig } = await import("@intl-ai/core");
         const config = await loadConfig();
         await runFill(config);
       } catch (error) {
