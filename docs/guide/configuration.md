@@ -10,10 +10,8 @@ intl-ai reads a single config file. The JSON format is validated against a publi
 
 The CLI and bundler plugins look for one of these files in your project root:
 
-- `intl-ai.config.json` (recommended for JSON)
+- `intl-ai.config.json` (recommended for runtime-agnostic setups and non-Node consumers)
 - `intl-ai.config.ts` (when you need a live Vercel AI SDK model instance)
-- `intl-ai.config.js`
-- `.intl-airc` (JSON)
 
 ## JSON config
 
@@ -23,7 +21,7 @@ The CLI and bundler plugins look for one of these files in your project root:
   "defaultLocale": "en",
   "locales": ["en", "es", "fr"],
   "localeDir": "./locales",
-  "model": "openai/gpt-4o-mini",
+  "model": "your-provider/your-model",
   "apiKey": "${OPENAI_API_KEY}",
   "baseURL": "https://api.openai.com/v1",
   "maxRetries": 3
@@ -61,7 +59,7 @@ Directory containing locale JSON files.
 Model identifier for your provider. Use the full `provider/name` form if your provider supports it.
 
 ```json
-"model": "openai/gpt-4o-mini"
+"model": "your-provider/your-model"
 ```
 
 ### `apiKey`

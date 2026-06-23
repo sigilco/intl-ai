@@ -11,10 +11,9 @@ This page is for contributors who want to understand how intl-ai is built. User-
 | Package             | Purpose                                                                                                                                |
 | ------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
 | `@intl-ai/api`      | Runtime-agnostic translation core. Public surface: `runFill`, `IntlAiConfig`, `RunFillOptions`, `RunFillResult`, `IntlAiConfigSchema`. |
-| `@intl-ai/cli`      | `intl-ai fill` and `intl-ai check` commands. JSON config only.                                                                         |
-| `@intl-ai/unplugin` | Universal bundler plugin adapters.                                                                                                     |
-| `@intl-ai/next`     | Next.js wrapper around the webpack plugin and Turbopack loader.                                                                        |
-| `@intl-ai/core`     | Deprecated. Thin re-export of `@intl-ai/api` plus a legacy `loadConfig()` helper. Will be removed in v1.0.                             |
+| `@intl-ai/cli`      | `intl-ai fill` and `intl-ai check` commands. Loads `intl-ai.config.ts` or `intl-ai.config.json`.                                       |
+| `@intl-ai/unplugin` | Universal bundler plugin adapters. Loads config and calls `runFill` at `buildStart`.                                                   |
+| `@intl-ai/next`     | Next.js wrapper around the webpack plugin and Turbopack loader. Loads config at startup and on the webpack `emit` hook.                |
 
 ## Internal subpath
 
@@ -32,7 +31,7 @@ This writes both the package-local schema and `docs/public/schema/v1.json`, whic
 
 ## SchemaStore
 
-The schema is submitted to SchemaStore so editors discover it automatically for files matching `intl-ai.config.json`, `intl-ai.json`, `.intl-ai.json`, or `.intl-ai.config.json`. See the plan at `.agents/plans/2026-06-22-runtime-agnostic-rethink.md` for the catalog entry format.
+The schema is submitted to SchemaStore so editors discover it automatically for files matching `intl-ai.config.ts` and `intl-ai.config.json`. See the plan at `.agents/plans/2026-06-22-runtime-agnostic-rethink.md` for the catalog entry format.
 
 ## Release pipeline
 
