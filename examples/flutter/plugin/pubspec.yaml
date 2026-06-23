@@ -1,7 +1,7 @@
 name: intl_ai_flutter
 description: build_runner builder for intl-ai — translate locale files at build time.
 version: 0.2.0
-homepage: https://intl-ai.illo.fyi/
+homepage: https://intl-ai.pages.dev
 repository: https://github.com/sigilco/intl-ai
 issue_tracker: https://github.com/sigilco/intl-ai/issues
 
