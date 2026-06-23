@@ -4,7 +4,7 @@ title: Vue (vue-i18n)
 
 # Vue (vue-i18n)
 
-This guide covers vue-i18n consumption. For bundler setup, see [Build systems](/guide/build-systems).
+This guide covers vue-i18n consumption. For bundler setup, see [Build systems](/guide/build-systems/).
 
 ## Overview
 
