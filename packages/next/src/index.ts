@@ -1,8 +1,8 @@
 import type { NextConfig } from "next";
-import type { IntlAiConfig } from "@intl-ai/core";
+import type { IntlAiConfig } from "@intl-ai/api";
 import type { Compiler } from "webpack";
-import { loadConfig } from "@intl-ai/core";
 import { runFill } from "@intl-ai/api";
+import { loadConfig } from "./config";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "url";
 

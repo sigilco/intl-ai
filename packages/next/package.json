@@ -43,7 +43,8 @@
   },
   "dependencies": {
     "@intl-ai/api": "workspace:*",
-    "@intl-ai/core": "workspace:*"
+    "jiti": "2.7.0",
+    "pathe": "2.0.3"
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",

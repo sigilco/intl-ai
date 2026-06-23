@@ -2,8 +2,8 @@ import { describe, test, expect, vi, beforeEach } from "vitest";
 import { withIntlAi } from "./index";
 import type { NextConfig } from "next";
 
-// Mock @intl-ai/core for loadConfig
-vi.mock("@intl-ai/core", () => ({
+// Mock the inlined config loader
+vi.mock("./config", () => ({
   loadConfig: vi.fn().mockResolvedValue({
     defaultLocale: "en",
     locales: ["en", "es", "fr"],

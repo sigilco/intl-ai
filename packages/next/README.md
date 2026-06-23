@@ -12,17 +12,31 @@ npm install -D @intl-ai/next
 
 ## Quick Start
 
-Create an `intl-ai.config.{ts,js,intl-airc}` at your project root, then wrap your Next.js config:
+Create an `intl-ai.config.ts` (or `.json`) at your project root:
+
+```ts
+// intl-ai.config.ts
+import { createOpenAICompatible } from "@ai-sdk/openai-compatible";
+
+const openai = createOpenAICompatible({
+  name: "openai",
+  baseURL: "https://api.openai.com/v1",
+  apiKey: process.env.OPENAI_API_KEY,
+});
+
+export default {
+  model: openai("your-model-name"),
+  defaultLocale: "en",
+  locales: ["en", "es", "fr"],
+  localeDir: "./locales",
+};
+```
+
+Then wrap your Next.js config:
 
 ```ts
 // next.config.ts
-import createIntlAi from "@intl-ai/next";
-
-const withIntlAi = createIntlAi({
-  sourceLanguage: "en",
-  targetLanguages: ["es", "fr", "de"],
-  apiKey: process.env.INTL_AI_API_KEY,
-});
+import withIntlAi from "@intl-ai/next";
 
 export default withIntlAi({
   // your existing Next.js config
