@@ -57,6 +57,9 @@ jobs:
       - run: pnpm changeset:version
       - run: pnpm changeset publish
         env:
+          # Changesets action reads NPM_TOKEN to generate its internal .npmrc
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          # Also map to NODE_AUTH_TOKEN for the npm CLI directly
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
