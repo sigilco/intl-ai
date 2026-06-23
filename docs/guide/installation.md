@@ -18,7 +18,7 @@ Override the install directory or version with environment variables:
 
 ```bash
 export INTL_AI_INSTALL_DIR="$HOME/.local/bin"
-export INTL_AI_VERSION="v0.2.0"
+export INTL_AI_VERSION="v0.3.0"
 curl -fsSL https://sigilco.github.io/intl-ai/install.sh | bash
 ```
 
@@ -40,6 +40,8 @@ bun add -D @intl-ai/cli
 
 ## Homebrew (macOS / Linux)
 
+The tap formula is populated automatically as part of the release, so `brew install sigilco/tap/intl-ai` works immediately after each release.
+
 ```bash
 brew install sigilco/tap/intl-ai
 brew upgrade intl-ai
@@ -51,7 +53,7 @@ Add to your project's `.mise.toml`:
 
 ```toml
 [tools]
-intl-ai = "0.2.0"
+intl-ai = "0.3.0"
 ```
 
 Then run:
@@ -59,6 +61,8 @@ Then run:
 ```bash
 mise install
 ```
+
+Note: until the registry entry is merged into mise's official registry, use `mise use npm:intl-ai@0.3.0` or add `packaging/mise/intl-ai.toml` from this repo to your custom registry.
 
 ## Verify
 
