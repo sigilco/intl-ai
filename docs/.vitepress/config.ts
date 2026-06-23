@@ -34,12 +34,33 @@ export default defineConfig({
           ],
         },
         {
-          text: "Framework integration",
-          collapsed: false,
+          text: "Build systems",
+          collapsed: true,
           items: [
-            { text: "Next.js", link: "/guide/next-js" },
+            { text: "Build systems", link: "/guide/build-systems/" },
+            { text: "Vite", link: "/guide/build-systems/vite" },
+            { text: "Webpack", link: "/guide/build-systems/webpack" },
+            { text: "Rollup", link: "/guide/build-systems/rollup" },
+            { text: "esbuild", link: "/guide/build-systems/esbuild" },
+            { text: "Rspack", link: "/guide/build-systems/rspack" },
+            { text: "Rolldown", link: "/guide/build-systems/rolldown" },
+            { text: "Farm", link: "/guide/build-systems/farm" },
+            { text: "Next.js", link: "/guide/build-systems/next-js" },
+          ],
+        },
+        {
+          text: "i18n libraries",
+          collapsed: true,
+          items: [
+            { text: "i18n libraries", link: "/guide/i18n-libraries" },
             { text: "Vue (vue-i18n)", link: "/guide/vue-i18n" },
             { text: "i18next", link: "/guide/i18next" },
+          ],
+        },
+        {
+          text: "Mobile & desktop",
+          collapsed: true,
+          items: [
             { text: "Expo", link: "/guide/mobile/expo" },
             { text: "Flutter", link: "/guide/mobile/flutter" },
             { text: "SwiftUI", link: "/guide/mobile/swiftui" },
