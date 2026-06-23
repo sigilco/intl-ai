@@ -4,7 +4,7 @@ title: i18next
 
 # i18next
 
-This guide covers i18next consumption. For bundler setup, see [Build systems](/guide/build-systems).
+This guide covers i18next consumption. For bundler setup, see [Build systems](/guide/build-systems/).
 
 ## Overview
 

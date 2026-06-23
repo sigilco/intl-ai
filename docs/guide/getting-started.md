@@ -133,40 +133,9 @@ module.exports = {
 };
 ```
 
-```javascript [Rollup]
-import IntlAiPlugin from "@intl-ai/unplugin/rollup";
-
-export default {
-  plugins: [IntlAiPlugin()],
-};
-```
-
-```javascript [esbuild]
-import { build } from "esbuild";
-import IntlAiPlugin from "@intl-ai/unplugin/esbuild";
-
-build({
-  plugins: [IntlAiPlugin()],
-});
-```
-
-```javascript [Rspack]
-const IntlAiPlugin = require("@intl-ai/unplugin/rspack");
-
-module.exports = {
-  plugins: [new IntlAiPlugin()],
-};
-```
-
-```javascript [Next.js]
-const withIntlAi = require("@intl-ai/next");
-
-module.exports = withIntlAi({
-  // Your other Next.js config options
-});
-```
-
 :::
+
+See [Build systems](/guide/build-systems/) for Next.js, Rollup, esbuild, Rspack, Rolldown, Farm, and more.
 
 ### 3. Create Directory and Translation Files
 
@@ -184,14 +153,16 @@ Create the directory specified in your config (default: `./locales`), then add y
 
 ## Supported Bundlers
 
-`@intl-ai/unplugin` works with all major bundlers:
+`@intl-ai/unplugin` works with all major bundlers. See [Build systems](/guide/build-systems/) for dedicated setup guides:
 
-- **Vite** - Modern, fast build tool
-- **Webpack** - Industry standard bundler
-- **Rollup** - Flexible module bundler
-- **esbuild** - Extremely fast JavaScript bundler
-- **Rspack** - Rust-based bundler (Webpack-compatible)
-- **Next.js** - React framework with Turbopack support
+- [Vite](/guide/build-systems/vite) - Modern, fast build tool
+- [Webpack](/guide/build-systems/webpack) - Industry standard bundler
+- [Rollup](/guide/build-systems/rollup) - Flexible module bundler
+- [esbuild](/guide/build-systems/esbuild) - Extremely fast JavaScript bundler
+- [Rspack](/guide/build-systems/rspack) - Rust-based, webpack-compatible bundler
+- [Rolldown](/guide/build-systems/rolldown) - Rust-powered Rollup-compatible bundler
+- [Farm](/guide/build-systems/farm) - Rust-based web build tool
+- [Next.js](/guide/build-systems/next-js) - React framework with Turbopack bridge
 
 ## Verify Installation
 
