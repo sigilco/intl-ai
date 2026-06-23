@@ -50,4 +50,4 @@ No changes to your app code required — translations are generated at build tim
 
 Next.js 15+ with Turbopack is fully supported. The same `withIntlAi()` wrapper registers both the Webpack plugin (for `next build`) and the Turbopack loader (for `next dev` with Turbopack).
 
-[Documentation](https://intl-ai.illo.fyi/) · [Report an issue](https://github.com/espetro/intl-ai/issues)
+[Documentation](https://intl-ai.illo.fyi/) · [Report an issue](https://github.com/sigilco/intl-ai/issues)
