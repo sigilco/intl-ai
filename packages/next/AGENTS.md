@@ -1,6 +1,6 @@
 # packages/next — Agent Context
 
-Next.js integration layer. Provides `withIntlAi()` wrapper that hooks Webpack (for webpack builds) and Turbopack (for Next.js 15+ dev/build). No changes to app code — just wrap the config.
+Next.js integration layer. Provides `withIntlAi()` wrapper that delegates webpack integration to `@intl-ai/unplugin/webpack` and registers a Turbopack loader for Next.js 15+. No changes to app code; just wrap the config.
 
 ---
 
@@ -8,8 +8,8 @@ Next.js integration layer. Provides `withIntlAi()` wrapper that hooks Webpack (f
 
 | File/Dir                            | Purpose                                                                |
 | ----------------------------------- | ---------------------------------------------------------------------- |
-| `src/index.ts`                      | `withIntlAi(nextConfig)` — HOF + inline webpack plugin, registers Turbopack loader |
-| `src/next-loader.ts`               | Turbopack loader — path resolution, dual CJS/ESM strategy              |
+| `src/index.ts`                      | `withIntlAi()` HOF — registers Turbopack loader + delegates webpack integration to @intl-ai/unplugin/webpack |
+| `src/next-loader.ts`               | Turbopack loader — path resolution, compiled-JS/TS fallback strategy              |
 | `src/__mocks__/mock-next-config.ts` | Mock Next.js config for tests                                          |
 
 ---
@@ -28,33 +28,22 @@ export default withIntlAi({
 
 No changes to app code. The wrapper:
 
-1. Registers webpack plugin for `next build` + `next dev`
+1. Registers the `@intl-ai/unplugin/webpack` plugin for `next build` + `next dev`
 2. Registers Turbopack loader for Turbopack builds (Next.js 15+)
 3. Translation happens at build time, zero runtime overhead
 
----
-
-## Known Duplication: runFill() Implementation
-
-⚠️ **Known Issue**: `runFill()` is re-implemented locally in `src/index.ts` instead of imported from `@intl-ai/core/engine/fill.ts`.
-
-If you fix a translation bug, **check both files**:
-
-- `packages/core/src/engine/fill.ts`
-- `packages/next/src/index.ts`
-
-Ideally, the Next.js layer would import `runFill` from core, but current Turbopack constraints require a local copy. This is on the backlog for refactoring.
+For Next.js 14 with webpack, users should use `@intl-ai/unplugin/webpack` directly with the `webpack` config callback (not `withIntlAi`).
 
 ---
 
 ## Loader Path Resolution
 
-The Turbopack loader uses a dual CJS/ESM strategy:
+The Turbopack loader uses a compiled-JS/TS fallback strategy:
 
-- CJS context (Webpack): resolve via `require.resolve()`
-- ESM context (Turbopack): resolve via `import.meta.url`
+- Compiled-JS context: resolve via `require.resolve()`
+- TS context (development): resolve via `import.meta.url`
 
-This is intentional — Turbopack and Webpack have different module resolution semantics. Do not simplify to a single strategy without testing both build modes.
+This handles both the published package (compiled to JS) and local development (source .ts files).
 
 ---
 
