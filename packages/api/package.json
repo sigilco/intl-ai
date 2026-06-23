@@ -1,0 +1,60 @@
+{
+  "name": "@intl-ai/api",
+  "version": "0.3.0",
+  "description": "Runtime-agnostic translation core for intl-ai (zero Node.js-only deps)",
+  "license": "MIT",
+  "files": [
+    "dist",
+    "src/schema"
+  ],
+  "type": "module",
+  "sideEffects": false,
+  "main": "./dist/index.mjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.mts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.mjs",
+      "default": "./dist/index.mjs"
+    },
+    "./internal": {
+      "types": "./dist/internal.d.mts",
+      "import": "./dist/internal.mjs",
+      "require": "./dist/internal.mjs",
+      "default": "./dist/internal.mjs"
+    },
+    "./schema": {
+      "types": "./dist/schema/index.d.mts",
+      "import": "./dist/schema/index.mjs",
+      "require": "./dist/schema/index.mjs",
+      "default": "./dist/schema/index.mjs"
+    },
+    "./schema.json": "./src/schema/intl-ai.schema.json"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "dev": "tsdown --watch",
+    "schema:build": "tsx scripts/build-schema.ts",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@formatjs/icu-messageformat-parser": "3.5.7",
+    "pathe": "2.0.3",
+    "yaml": "2.9.0",
+    "zod": "4.4.3"
+  },
+  "devDependencies": {
+    "@repo/typescript-config": "workspace:*",
+    "@types/node": "^22.0.0",
+    "tsdown": "0.22.0",
+    "tsx": "^4.19.0",
+    "typescript": "6.0.3",
+    "vitest": "4.1.6"
+  },
+  "engines": {
+    "node": ">=22.0.0"
+  }
+}

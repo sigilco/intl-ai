@@ -8,11 +8,42 @@ permissions:
   id-token: write
 
 jobs:
-  release:
+  build-binaries:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        target:
+          - bun-darwin-arm64
+          - bun-linux-x64
+          - bun-linux-arm64
+    steps:
+      - uses: actions/checkout@v6
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - name: Build binary
+        run: |
+          mkdir -p dist/binaries
+          bun build packages/cli/src/index.ts --compile --target ${{ matrix.target }} --outfile dist/binaries/intl-ai-${{ matrix.target }}
+      - name: Upload binary artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: intl-ai-${{ matrix.target }}
+          path: ./dist/binaries/intl-ai-${{ matrix.target }}
+          if-no-files-found: error
+
+  publish:
+    needs: build-binaries
     runs-on: ubuntu-latest
     environment: npm-publish
     steps:
       - uses: actions/checkout@v6
+      - name: Download all binary artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: ./dist/binaries
+          merge-multiple: true
       - uses: pnpm/action-setup@v6
         with:
           version: "11.1.0"
@@ -23,19 +54,76 @@ jobs:
           registry-url: "https://registry.npmjs.org"
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
-      - name: Publish to npm
-        run: pnpm --filter "@intl-ai/core" --filter "@intl-ai/unplugin" --filter "@intl-ai/next" --filter "@intl-ai/cli" publish --no-git-checks --registry https://registry.npmjs.org
+      - run: pnpm changeset:version
+      - run: pnpm changeset publish
         env:
+          # Changesets action reads NPM_TOKEN to generate its internal .npmrc
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          # Also map to NODE_AUTH_TOKEN for the npm CLI directly
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-      - name: Extract changelog for release
-        id: changelog
-        run: |
-          content=$(cat CHANGELOG.md)
-          content="${content///github.com/espetro/intl-ai/blob/main/}"
-          echo "content<<EOF" >> $GITHUB_OUTPUT
-          echo "$content" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
       - name: Create GitHub Release
-        uses: softprops/action-gh-release@v3
+        uses: softprops/action-gh-release@v2
         with:
-          body: ${{ steps.changelog.outputs.content }}
+          generate_release_notes: true
+          files: |
+            dist/binaries/intl-ai-*
+            packages/api/src/schema/intl-ai.schema.json
+
+  update-homebrew-tap:
+    needs: publish
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v6
+      - name: Extract version from tag
+        id: version
+        run: echo "VERSION=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+      - name: Download release binaries
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          mkdir -p binaries
+          gh release download "$GITHUB_REF_NAME" \
+            --pattern 'intl-ai-bun-*' \
+            --dir binaries
+      - name: Compute SHA256 checksums
+        id: sha
+        run: |
+          SHA_DARWIN_ARM64=$(sha256sum binaries/intl-ai-bun-darwin-arm64 | cut -d' ' -f1)
+          SHA_LINUX_X64=$(sha256sum binaries/intl-ai-bun-linux-x64 | cut -d' ' -f1)
+          SHA_LINUX_ARM64=$(sha256sum binaries/intl-ai-bun-linux-arm64 | cut -d' ' -f1)
+          echo "darwin_arm64=$SHA_DARWIN_ARM64" >> "$GITHUB_OUTPUT"
+          echo "linux_x64=$SHA_LINUX_X64" >> "$GITHUB_OUTPUT"
+          echo "linux_arm64=$SHA_LINUX_ARM64" >> "$GITHUB_OUTPUT"
+      - name: Generate formula from template
+        run: |
+          sed \
+            -e 's/VERSION_PLACEHOLDER/${{ steps.version.outputs.VERSION }}/' \
+            -e 's/SHA256_DARWIN_ARM64/${{ steps.sha.outputs.darwin_arm64 }}/' \
+            -e 's/SHA256_LINUX_X64/${{ steps.sha.outputs.linux_x64 }}/' \
+            -e 's/SHA256_LINUX_ARM64/${{ steps.sha.outputs.linux_arm64 }}/' \
+            packaging/homebrew/intl-ai.rb > Formula/intl-ai.rb
+          cat Formula/intl-ai.rb
+      - name: Clone and update homebrew-tap
+        env:
+          # HOMEBREW_TAP_TOKEN is recommended for cross-repo push.
+          # Falls back to GITHUB_TOKEN which only works if the token
+          # has write access to sigilco/homebrew-tap.
+          GH_TOKEN: ${{ secrets.HOMEBREW_TAP_TOKEN || secrets.GITHUB_TOKEN }}
+        run: |
+          git clone https://x-access-token:${GH_TOKEN}@github.com/sigilco/homebrew-tap.git /tmp/homebrew-tap
+          cp Formula/intl-ai.rb /tmp/homebrew-tap/Formula/intl-ai.rb
+          cd /tmp/homebrew-tap
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add Formula/intl-ai.rb
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "intl-ai ${{ steps.version.outputs.VERSION }}"
+            git push origin main
+          fi
+      - name: Print mise install hint
+        run: |
+          echo "::notice::mise install: mise use npm:intl-ai@${{ steps.version.outputs.VERSION }}"

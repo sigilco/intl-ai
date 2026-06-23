@@ -6,13 +6,13 @@ Command-line interface for intl-ai. Two commands: `intl-ai fill` (translate miss
 
 ## Architecture
 
-| File/Dir | Purpose |
-|---|---|
-| `src/index.ts` | CLI entry, argument parsing, command routing |
-| `src/commands/fill.ts` | `fill` command — loads config, runs translation, outputs progress |
-| `src/commands/check.ts` | `check` command — validates lockfile, exits 1 if issues found |
-| `src/utils/progress.ts` | `createProgressReporter()` — terminal output, respects `--silent` |
-| `src/__mocks__/mock-core.ts` | Mocks for `loadConfig`, `findMissingTranslations`, `translateBatch` |
+| File/Dir                | Purpose                                                                             |
+| ----------------------- | ----------------------------------------------------------------------------------- |
+| `src/index.ts`          | CLI entry, argument parsing, command routing                                        |
+| `src/commands/fill.ts`  | `fill` command — loads config, runs translation, outputs progress                   |
+| `src/commands/check.ts` | `check` command — validates lockfile, exits 1 if issues found                       |
+| `src/config/loader.ts`  | `loadConfig()` — loads `intl-ai.config.ts` (via `jiti`) or `.json` (via `readFile`) |
+| `src/utils/progress.ts` | `createProgressReporter()` — terminal output, respects `--silent`                   |
 
 ---
 
@@ -23,12 +23,14 @@ Command-line interface for intl-ai. Two commands: `intl-ai fill` (translate miss
 Translates missing keys.
 
 **Flags:**
+
 - `--locale <lang>` — only fill specified language (default: all)
 - `--force` — re-translate human-edited entries (default: skip)
 - `--dry-run` — preview changes without writing lockfile
 - `--silent` — suppress progress output
 
 **Exit codes:**
+
 - `0` — success
 - `1` — config or translation error
 
@@ -37,6 +39,7 @@ Translates missing keys.
 Validates translation state.
 
 **Exit codes:**
+
 - `0` — all translations present and valid
 - `1` — stale entries, missing translations, or config error
 
@@ -47,13 +50,13 @@ Validates translation state.
 `createProgressReporter()` outputs to stderr (so stdout stays clean for piping):
 
 ```typescript
-const reporter = createProgressReporter({ silent: args['--silent'] });
+const reporter = createProgressReporter({ silent: args["--silent"] });
 
-reporter.start('Translating...');
+reporter.start("Translating...");
 reporter.progress(50);
-reporter.success('Done');
+reporter.success("Done");
 // or
-reporter.error('Something failed');
+reporter.error("Something failed");
 ```
 
 Respects `--silent` flag — no output if set.
@@ -62,13 +65,15 @@ Respects `--silent` flag — no output if set.
 
 ## Test Patterns
 
-Mock core functions directly — don't import real implementations:
+Mock the config loader and `@intl-ai/api` — don't import real implementations:
 
 ```typescript
-vi.mock("@intl-ai/core", () => ({
+vi.mock("../config/loader", () => ({
   loadConfig: vi.fn(async () => mockConfig),
-  findMissingTranslations: vi.fn(async () => mockBatch),
-  translateBatch: vi.fn(async () => mockResults),
+}));
+
+vi.mock("@intl-ai/api", () => ({
+  runFill: vi.fn(async () => mockResult),
 }));
 ```
 
@@ -79,20 +84,10 @@ Never run real translations in unit tests. Use mock provider.
 ## Example: Testing `fill` Command
 
 ```typescript
-import { fill } from '../commands/fill';
-import * as core from '@intl-ai/core';
+import { fillCommand } from "../commands/fill";
 
-vi.mock('@intl-ai/core');
-
-it('translates missing keys', async () => {
-  const result = await fill({
-    locale: 'es',
-    dryRun: false,
-    force: false,
-    silent: true,
-  });
-
-  expect(core.translateBatch).toHaveBeenCalled();
-  expect(result.success).toBe(true);
+it("translates missing keys", async () => {
+  await fillCommand.run({ args: { config: "x", silent: true, force: false, "dry-run": false } });
+  expect(runFill).toHaveBeenCalled();
 });
 ```

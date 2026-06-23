@@ -1,171 +1,146 @@
 ---
-title: SDK Reference
+title: Configuration
 ---
 
-# SDK Reference
+# Configuration
 
-API reference for `@intl-ai/core` configuration. This is the internal package that powers intl-ai's translation pipeline — you interact with it through `intl-ai.config.ts`.
+intl-ai reads a single config file. The JSON format is validated against a published JSON Schema and works in any runtime.
 
-## Configuration Files
+## Config file discovery
 
-Configuration is automatically discovered from these files in your project root:
+The CLI and bundler plugins look for one of these files in your project root:
 
-- `intl-ai.config.ts` (TypeScript, recommended)
-- `intl-ai.config.js` (JavaScript)
-- `.intl-airc` (JSON)
+- `intl-ai.config.json` (recommended for runtime-agnostic setups and non-Node consumers)
+- `intl-ai.config.ts` (when you need a live Vercel AI SDK model instance)
 
-## Core Options
+## JSON config
 
-### `defaultLocale` (required)
-
-**Type:** `string`
-
-The default locale code used as the source language for translations.
-
-```typescript
-defaultLocale: "en";
-```
-
-### `locales` (required)
-
-**Type:** `string[]`
-
-Array of all supported locale codes in your application.
-
-```typescript
-locales: ["en", "de", "es", "fr", "ja"];
-```
-
-### `localeDir` (required)
-
-**Type:** `string`
-
-Path to the directory containing your locale JSON files.
-
-```typescript
-localeDir: "./locales";
-```
-
-Locale files should be named after each locale (e.g., `en.json`, `de.json`) and support dot-notation for nested keys.
-
----
-
-### `model` (required)
-
-**Type:** `LanguageModel` (from Vercel AI SDK)
-
-The AI language model to use for translations.
-
-```typescript
-import { openai } from "@ai-sdk/openai";
-
-model: openai("gpt-4-turbo");
-```
-
-**Supported Providers:** OpenAI, Anthropic, Google, Azure OpenAI, Cohere, Mistral, Local Models.
-
----
-
-### `processor` (optional)
-
-**Type:** `IntlAiProcessor`
-
-Custom syntax processor for validating and extracting tokens from translation strings.
-
-```typescript
-interface IntlAiProcessor {
-  name: string;
-  extractTokens(message: string): string[];
-  validate(source: string, translated: string): ValidationResult;
-  getSyntaxHint(): string;
-}
-
-interface ValidationResult {
-  valid: boolean;
-  errors?: string[];
+```json
+{
+  "$schema": "https://www.schemastore.org/intl-ai.json",
+  "defaultLocale": "en",
+  "locales": ["en", "es", "fr"],
+  "localeDir": "./locales",
+  "model": "your-provider/your-model",
+  "apiKey": "${OPENAI_API_KEY}",
+  "baseURL": "https://api.openai.com/v1",
+  "maxRetries": 3
 }
 ```
 
-**Built-in Processors:** ICU MessageFormat (`icuProcessor`), Passthrough (`passthroughProcessor`).
+## Required options
+
+### `defaultLocale`
+
+Source language for translations.
+
+```json
+"defaultLocale": "en"
+```
+
+### `locales`
+
+All supported locale codes.
+
+```json
+"locales": ["en", "es", "fr"]
+```
+
+### `localeDir`
+
+Directory containing locale JSON files.
+
+```json
+"localeDir": "./locales"
+```
+
+### `model`
+
+Model identifier for your provider. Use the full `provider/name` form if your provider supports it.
+
+```json
+"model": "your-provider/your-model"
+```
+
+### `apiKey`
+
+API key for your provider. We recommend reading it from an environment variable.
+
+```json
+"apiKey": "${OPENAI_API_KEY}"
+```
+
+## Optional options
+
+### `baseURL`
+
+Provider endpoint. Defaults to `https://api.openai.com/v1`.
+
+```json
+"baseURL": "https://api.openai.com/v1"
+```
+
+### `glossary`
+
+Terms to preserve during translation.
+
+```json
+"glossary": {
+  "React": "React",
+  "TypeScript": "TypeScript"
+}
+```
+
+### `maxRetries`
+
+Maximum retry attempts for failed translations. Default is `3`.
+
+```json
+"maxRetries": 3
+```
+
+### `processor`
+
+Syntax processor. Use `icu` for ICU MessageFormat or omit for passthrough.
+
+```json
+"processor": "icu"
+```
+
+Built-in processors: `passthrough`, `icu`.
+
+## Editor intellisense
+
+Add `"$schema": "https://www.schemastore.org/intl-ai.json"` to your JSON config for autocomplete and validation in VS Code, JetBrains, and other editors.
+
+## CI validation
+
+Validate a config file in CI with any JSON Schema tool:
+
+```bash
+# check-jsonschema
+pip install check-jsonschema
+check-jsonschema --schemafile https://www.schemastore.org/intl-ai.json intl-ai.config.json
+```
+
+## TypeScript config
+
+When you need to pass a live Vercel AI SDK model instance, use a TypeScript config:
 
 ```typescript
-import { icuProcessor } from "@intl-ai/core";
+import { createOpenAICompatible } from "@ai-sdk/openai-compatible";
+
+const lmstudio = createOpenAICompatible({
+  name: "lmstudio",
+  baseURL: "http://127.0.0.1:1234/v1",
+});
 
 export default {
-  model: openai("gpt-4-turbo"),
+  model: lmstudio("your-model-name"),
   defaultLocale: "en",
-  locales: ["en", "de", "es"],
+  locales: ["en", "es"],
   localeDir: "./locales",
-  processor: icuProcessor,
 };
 ```
 
-**ICU MessageFormat Syntax:** `{name}`, `{count, plural, one {# item} other {# items}}`
-
-### `glossary` (optional)
-
-**Type:** `Record<string, string>`
-
-Domain-specific terminology that should be preserved during translation.
-
-```typescript
-glossary: {
-  "React": "React",
-  "TypeScript": "TypeScript",
-  "intl-ai": "intl-ai",
-}
-```
-
-### `maxRetries` (optional)
-
-**Type:** `number`
-
-**Default:** `3`
-
-Maximum number of retry attempts for failed translation requests.
-
-```typescript
-maxRetries: 5;
-```
-
----
-
-## Type Definitions
-
-```typescript
-interface IntlAiConfig {
-  defaultLocale: string;
-  locales: string[];
-  localeDir: string;
-  model: LanguageModel;
-  processor?: IntlAiProcessor;
-  glossary?: Record<string, string>;
-  maxRetries?: number;
-}
-
-interface IntlAiProcessor {
-  name: string;
-  extractTokens(message: string): string[];
-  validate(source: string, translated: string): ValidationResult;
-  getSyntaxHint(): string;
-}
-
-interface ValidationResult {
-  valid: boolean;
-  errors?: string[];
-}
-```
-
----
-
----
-
-## Validation
-
-Configuration is validated using Zod schemas. Invalid configurations throw errors during plugin initialization, checking that required fields are present, types are correct, and values are within valid ranges.
-
----
-
-## Environment Variables
-
-Use environment variables for API keys as shown in the [AI Model Setup](/guide/ai-model) guide.
+See [AI model setup](/guide/ai-model) for provider details.

@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "defaultLocale": {
+      "type": "string",
+      "minLength": 1
+    },
+    "locales": {
+      "minItems": 1,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "localeDir": {
+      "type": "string",
+      "minLength": 1
+    },
+    "model": {
+      "type": "string",
+      "minLength": 1
+    },
+    "apiKey": {
+      "type": "string",
+      "minLength": 1
+    },
+    "baseURL": {
+      "type": "string",
+      "format": "uri"
+    },
+    "glossary": {
+      "type": "object",
+      "propertyNames": {
+        "type": "string"
+      },
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "maxRetries": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 10
+    },
+    "processor": {
+      "type": "string",
+      "enum": ["passthrough", "icu"]
+    }
+  },
+  "required": ["defaultLocale", "locales", "localeDir", "model", "apiKey"],
+  "additionalProperties": false,
+  "$id": "https://www.schemastore.org/intl-ai.json",
+  "title": "intl-ai config",
+  "description": "Configuration for the intl-ai translation build step"
+}

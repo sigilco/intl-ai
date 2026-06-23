@@ -16,6 +16,5 @@ export default defineConfig({
     "@farmfe/core",
     "next",
     "@intl-ai/next",
-    "@intl-ai/core",
   ],
 });

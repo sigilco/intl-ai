@@ -1,20 +1,20 @@
 ---
-title: AI Model Setup
+title: AI model setup
 ---
 
-# AI Model Setup
+# AI model setup
 
-Configure your AI provider for translation generation. Translation tasks are structured and instruction-following — budget models handle them well, so there's no need to reach for flagship pricing.
+Translation is structured and instruction-following. Budget models handle it well, so you do not need a flagship model.
 
-## Supported Providers
+## Pick a provider
 
-### 1. LM Studio (Recommended for Local Development)
+Three paths work: local, cloud, or an aggregator.
 
-LM Studio allows you to run AI models locally without cloud dependencies. This is ideal for development, testing, and privacy-sensitive work.
+### Local: LM Studio
 
-Download from [lmstudio.ai](https://lmstudio.ai), load a model (recommended: Qwen 3 4B), and start the local server.
+[LM Studio](https://lmstudio.ai) runs models locally. This is ideal for development, testing, and privacy-sensitive work.
 
-#### Configuration
+Download LM Studio, load any model that fits your hardware, and start the local server.
 
 ```typescript
 import { createOpenAICompatible } from "@ai-sdk/openai-compatible";
@@ -25,72 +25,60 @@ const lmstudio = createOpenAICompatible({
 });
 
 export default {
-  model: lmstudio("qwen3-4b"),
+  model: lmstudio("your-model-name"),
 };
 ```
 
-### 2. OpenAI
+### Cloud: OpenAI-compatible providers
 
-Get an API key from [platform.openai.com](https://platform.openai.com) and set `OPENAI_API_KEY` in your environment.
+Any provider with an OpenAI-compatible endpoint works the same way: import the provider wrapper, pass a model identifier, and set your API key in the environment.
+
+- **OpenAI**: set `OPENAI_API_KEY`. See [platform.openai.com](https://platform.openai.com).
+- **Anthropic**: set `ANTHROPIC_API_KEY`. See [console.anthropic.com](https://console.anthropic.com).
+- **Google**: set `GOOGLE_GENERATIVE_AI_API_KEY`. See [aistudio.google.com](https://aistudio.google.com).
+- **Azure OpenAI**, **Cohere**, **Mistral**, and others: use the matching Vercel AI SDK provider package.
+
+Example with OpenAI:
 
 ```typescript
 import { openai } from "@ai-sdk/openai";
 
 export default {
-  model: openai("gpt-4.1-nano"),
+  model: openai("your-model-name"),
 };
 ```
 
-**Recommended Models:**
+### Aggregator: OpenRouter
 
-| Model          | Input / 1M tokens | Output / 1M tokens | Context |
-| -------------- | ----------------- | ------------------ | ------- |
-| `gpt-4.1-nano` | $0.10             | $0.40              | 1M      |
-| `gpt-4.1-mini` | $0.40             | $1.60              | 1M      |
-| `gpt-4.1`      | $2.00             | $8.00              | 1M      |
-
-### 3. Anthropic Claude
-
-Get an API key from [console.anthropic.com](https://console.anthropic.com) and set `ANTHROPIC_API_KEY` in your environment.
+[OpenRouter](https://openrouter.ai) gives you one API key for many providers and a free tier.
+A stable free model at the time of writing is `google/gemini-2.0-flash-exp:free`.
+If it stops working, check OpenRouter's free model list and update this single reference.
 
 ```typescript
-import { anthropic } from "@ai-sdk/anthropic";
+import { createOpenAICompatible } from "@ai-sdk/openai-compatible";
+
+const openrouter = createOpenAICompatible({
+  name: "openrouter",
+  baseURL: "https://openrouter.ai/api/v1",
+  headers: {
+    "HTTP-Referer": "https://your-site.com",
+    "X-Title": "your-app-name",
+  },
+});
 
 export default {
-  model: anthropic("claude-haiku-4-5-20250414"),
+  model: openrouter("google/gemini-2.0-flash-exp:free"),
 };
 ```
 
-**Recommended Models:**
+## Context window
 
-| Model               | Input / 1M tokens | Output / 1M tokens | Context |
-| ------------------- | ----------------- | ------------------ | ------- |
-| `claude-haiku-4-5`  | $1.00             | $5.00              | 200K    |
-| `claude-sonnet-4-5` | $3.00             | $15.00             | 200K    |
+Use a model with a minimum context window of 16,000 tokens. Every provider listed above exceeds this.
 
-### 4. Google Gemini
+## Troubleshooting
 
-Set up a Google AI project and get an API key from [aistudio.google.com](https://aistudio.google.com). Set `GOOGLE_GENERATIVE_AI_API_KEY` in your environment.
+If translation fails, check:
 
-```typescript
-import { google } from "@ai-sdk/google";
-
-export default {
-  model: google("gemini-2.5-flash"),
-};
-```
-
-**Recommended Models:**
-
-| Model              | Input / 1M tokens | Output / 1M tokens | Context |
-| ------------------ | ----------------- | ------------------ | ------- |
-| `gemini-2.5-flash` | $0.15             | $0.60              | 1M      |
-| `gemini-2.5-pro`   | $1.25             | $10.00             | 1M      |
-
-> **Best value for translations:** `gemini-2.5-flash` — cheapest capable model with a 1M context window. `gpt-4.1-nano` is a close second if you're already in the OpenAI ecosystem.
-
-## Context Window Requirements
-
-All models must support a **minimum of 16,000 tokens** context window. Every model listed above exceeds this by a wide margin.
-
-If you encounter connection issues, verify your API key is set and your provider's server is accessible.
+- The API key environment variable is set.
+- The provider's server is reachable from your machine.
+- Your model identifier matches the provider's documentation.

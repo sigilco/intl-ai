@@ -1,100 +1,92 @@
-import { Command } from "commander";
-import { loadConfig, findMissingTranslations, readJsonFile, LockfileManager } from "@intl-ai/core";
-import { existsSync } from "fs";
-import { join } from "path";
+import { defineCommand } from "citty";
+import { consola } from "consola";
+import {
+  findMissingTranslations,
+  LockfileManager,
+  readJsonFile,
+  lockfileEntryToMap,
+} from "@intl-ai/api/internal";
+import { join } from "pathe";
+import { loadConfig } from "../config/loader";
 
-export interface CheckOptions {
-  locale?: string;
-}
+export const checkCommand = defineCommand({
+  meta: {
+    name: "check",
+    description: "Check for missing or stale translations",
+  },
+  args: {
+    config: {
+      type: "string",
+      default: "intl-ai.config.json",
+      description: "Path to JSON config file",
+    },
+    locale: {
+      type: "string",
+      description: "Check a specific locale only",
+    },
+  },
+  async run({ args }) {
+    const config = await loadConfig(args.config);
 
-export async function checkAction(options: CheckOptions): Promise<void> {
-  const { locale: targetLocale } = options;
+    const localesToCheck = args.locale
+      ? [args.locale]
+      : config.locales.filter((l) => l !== config.defaultLocale);
 
-  const config = await loadConfig();
+    const lockfileManager = new LockfileManager(config.localeDir);
+    await lockfileManager.load();
 
-  const lockfileManager = new LockfileManager(config.localeDir);
+    const sourceLocalePath = join(config.localeDir, `${config.defaultLocale}.json`);
+    const sourceLocale = await readJsonFile(sourceLocalePath);
 
-  const sourceLocalePath = join(config.localeDir, `${config.defaultLocale}.json`);
+    let hasIssues = false;
 
-  if (!existsSync(sourceLocalePath)) {
-    throw new Error(`Source locale file not found: ${sourceLocalePath}`);
-  }
+    for (const locale of localesToCheck) {
+      const targetLocalePath = join(config.localeDir, `${locale}.json`);
+      let targetLocale: Record<string, unknown> = {};
 
-  const sourceLocale = readJsonFile(sourceLocalePath);
+      try {
+        targetLocale = await readJsonFile(targetLocalePath);
+      } catch {
+        // Missing target file is treated as "all keys missing"
+      }
 
-  const localesToCheck = targetLocale
-    ? [targetLocale]
-    : config.locales.filter((l) => l !== config.defaultLocale);
+      const lockfileEntries = lockfileEntryToMap(lockfileManager.getAllEntries(), locale);
 
-  let hasIssues = false;
+      const diff = await findMissingTranslations({
+        sourceLocale,
+        targetLocale,
+        locale,
+        lockfileEntries,
+      });
 
-  for (const locale of localesToCheck) {
-    const targetLocalePath = join(config.localeDir, `${locale}.json`);
-    let targetLocaleData: Record<string, unknown> = {};
+      if (diff.missing.length > 0) {
+        hasIssues = true;
+        consola.error(`[${locale}] Missing translations:`);
+        for (const missing of diff.missing) {
+          consola.log(`  - ${missing.key}: "${missing.source}"`);
+        }
+      }
 
-    if (existsSync(targetLocalePath)) {
-      targetLocaleData = readJsonFile(targetLocalePath);
-    }
+      if (diff.stale.length > 0) {
+        hasIssues = true;
+        consola.warn(`[${locale}] Stale translations (source changed):`);
+        for (const stale of diff.stale) {
+          consola.log(`  - ${stale.key}: previously "${stale.previous}"`);
+        }
+      }
 
-    const lockfileEntries = new Map<string, { sourceHash: string }>();
-    const allEntries = lockfileManager.getAllEntries();
+      if (diff.extra.length > 0) {
+        consola.info(`[${locale}] Extra translations (not in source):`);
+        for (const extra of diff.extra) {
+          consola.log(`  - ${extra}`);
+        }
+      }
 
-    for (const [key, entry] of Object.entries(allEntries)) {
-      const [entryLocale, entryKey] = key.split(":");
-      if (entryLocale === locale) {
-        lockfileEntries.set(entryKey, { sourceHash: entry.sourceHash });
+      if (diff.missing.length === 0 && diff.stale.length === 0) {
+        consola.success(`[${locale}] All translations complete`);
       }
     }
 
-    const diff = findMissingTranslations({
-      sourceLocale,
-      targetLocale: targetLocaleData,
-      locale,
-      lockfileEntries,
-    });
-
-    if (diff.missing.length > 0) {
-      hasIssues = true;
-      console.log(`\n[${locale}] Missing translations:`);
-      for (const missing of diff.missing) {
-        console.log(`  - ${missing.key}: "${missing.source}"`);
-      }
-    }
-
-    if (diff.stale.length > 0) {
-      hasIssues = true;
-      console.log(`\n[${locale}] Stale translations (source changed):`);
-      for (const stale of diff.stale) {
-        console.log(`  - ${stale.key}: ${stale.reason}`);
-      }
-    }
-
-    if (diff.extra.length > 0) {
-      console.log(`\n[${locale}] Extra translations (not in source):`);
-      for (const extra of diff.extra) {
-        console.log(`  - ${extra}`);
-      }
-    }
-
-    if (diff.missing.length === 0 && diff.stale.length === 0) {
-      console.log(`[${locale}] ✓ All translations complete`);
-    }
-  }
-
-  if (hasIssues) {
-    process.exit(10);
-  }
-}
-
-export const checkCommand = new Command("check")
-  .description("Check for missing translations")
-  .option("--locale <locale>", "Check a specific locale only")
-  .action(async (options) => {
-    try {
-      await checkAction(options);
-      process.exit(0);
-    } catch (error) {
-      console.error("Error during check:", error);
-      process.exit(1);
-    }
-  });
+    process.exit(hasIssues ? 10 : 0);
+  },
+});

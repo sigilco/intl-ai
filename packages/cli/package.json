@@ -1,6 +1,6 @@
 {
   "name": "@intl-ai/cli",
-  "version": "0.1.0",
+  "version": "0.3.0",
   "description": "CLI for AI-powered i18n translation",
   "keywords": [
     "ai",
@@ -10,31 +10,36 @@
     "intl",
     "translation"
   ],
-  "homepage": "https://intl-ai.illo.fyi/",
+  "homepage": "https://intl-ai.pages.dev",
   "bugs": "https://github.com/espetro/intl-ai/issues",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/espetro/intl-ai.git"
+    "url": "git+https://github.com/sigilco/intl-ai.git"
   },
   "bin": {
-    "intl-ai": "./dist/cli.js"
+    "intl-ai": "./dist/index.mjs"
   },
   "files": [
     "dist",
     "README.md",
     "LICENSE"
   ],
+  "type": "module",
+  "main": "./dist/index.mjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.mts",
   "exports": {
     ".": {
       "types": "./dist/index.d.mts",
-      "import": "./dist/index.mjs"
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.mjs",
+      "default": "./dist/index.mjs"
     },
     "./package.json": "./package.json"
   },
   "publishConfig": {
-    "access": "public",
-    "provenance": true
+    "access": "public"
   },
   "scripts": {
     "build": "tsdown",
@@ -43,9 +48,11 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@intl-ai/core": "workspace:*",
-    "commander": "14.0.3",
-    "ora": "9.4.0"
+    "@intl-ai/api": "workspace:*",
+    "citty": "0.1.6",
+    "consola": "3.4.2",
+    "jiti": "2.7.0",
+    "pathe": "1.1.2"
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",

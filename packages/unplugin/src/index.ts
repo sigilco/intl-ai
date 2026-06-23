@@ -1,5 +1,6 @@
 import { createUnplugin } from "unplugin";
 import type { UnpluginFactory } from "unplugin";
+import { loadConfig } from "./config";
 
 export interface UnpluginIntlAiOptions {
   debug?: boolean;
@@ -7,14 +8,12 @@ export interface UnpluginIntlAiOptions {
 
 const unpluginFactory: UnpluginFactory<UnpluginIntlAiOptions | undefined> = (options) => {
   return {
-    name: "unplugin-intl-ai",
+    name: "@intl-ai/unplugin",
     async buildStart() {
       try {
-        const { runFill, loadConfig } = await import("@intl-ai/core");
+        const { runFill } = await import("@intl-ai/api");
         const config = await loadConfig();
-        if (config) {
-          await runFill({ debug: options?.debug ?? false });
-        }
+        await runFill(config);
       } catch (error) {
         console.warn(`[intl-ai] Skipping translation fill due to error: ${error}`);
       }

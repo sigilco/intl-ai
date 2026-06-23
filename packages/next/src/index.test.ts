@@ -1,21 +1,14 @@
-import { describe, test, expect, vi, beforeEach } from "vitest";
+import { describe, test, expect, vi } from "vitest";
 import { withIntlAi } from "./index";
 import type { NextConfig } from "next";
-import * as coreModule from "@intl-ai/core";
 
-// Mock loadConfig to prevent "No intl-ai config file found" errors
-vi.mock("@intl-ai/core", async () => {
-  const actual = await vi.importActual<typeof coreModule>("@intl-ai/core");
+// Mock @intl-ai/unplugin/webpack — the factory returns a webpack plugin object
+// with an `apply` method (standard unplugin webpack shape).
+vi.mock("@intl-ai/unplugin/webpack", () => {
+  const apply = vi.fn();
+  const plugin = { apply };
   return {
-    ...actual,
-    loadConfig: vi.fn().mockResolvedValue({
-      defaultLocale: "en",
-      locales: ["en", "es", "fr"],
-      localeDir: "./locales",
-      model: "gpt-4",
-      glossary: {},
-      maxRetries: 3,
-    }),
+    default: vi.fn().mockReturnValue(plugin),
   };
 });
 
@@ -73,7 +66,7 @@ describe("withIntlAi", () => {
     expect(result.custom).toBe(true);
   });
 
-  test("adds intl-ai webpack plugin", async () => {
+  test("adds intl-ai unplugin to webpack plugins", async () => {
     const config: NextConfig = { reactStrictMode: true };
     const wrapped = await withIntlAi()(config);
 
@@ -84,20 +77,21 @@ describe("withIntlAi", () => {
     expect(Array.isArray(result.plugins)).toBe(true);
     expect(result.plugins.length).toBeGreaterThan(0);
 
-    const intlAiPlugin = result.plugins.find((p: any) => p.name === "intl-ai-webpack-plugin");
+    // unplugin webpack returns an object with an `apply` method
+    const intlAiPlugin = result.plugins.find((p: any) => typeof p.apply === "function");
     expect(intlAiPlugin).toBeDefined();
   });
 
-  test("passes options to webpack plugin", async () => {
+  test("passes debug option to unplugin factory", async () => {
     const config: NextConfig = { reactStrictMode: true };
     const wrapped = await withIntlAi({ debug: true })(config);
 
     const mockConfig = { plugins: [] };
-    const result = wrapped.webpack!(mockConfig, {} as any);
+    wrapped.webpack!(mockConfig, {} as any);
 
-    const intlAiPlugin = result.plugins.find((p: any) => p.name === "intl-ai-webpack-plugin");
-    expect(intlAiPlugin).toBeDefined();
-    expect(intlAiPlugin.options.debug).toBe(true);
+    // Verify the unplugin factory was called with the correct options
+    const intlAiUnplugin = (await import("@intl-ai/unplugin/webpack")).default;
+    expect(intlAiUnplugin).toHaveBeenCalledWith({ debug: true });
   });
 
   test("preserves all NextConfig properties", async () => {

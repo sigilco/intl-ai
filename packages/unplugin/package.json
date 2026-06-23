@@ -1,6 +1,6 @@
 {
   "name": "@intl-ai/unplugin",
-  "version": "0.1.0",
+  "version": "0.3.0",
   "description": "AI-powered i18n translation plugin for all bundlers",
   "keywords": [
     "ai",
@@ -13,12 +13,12 @@
     "vite",
     "webpack"
   ],
-  "homepage": "https://intl-ai.illo.fyi/",
+  "homepage": "https://intl-ai.pages.dev",
   "bugs": "https://github.com/espetro/intl-ai/issues",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/espetro/intl-ai.git"
+    "url": "git+https://github.com/sigilco/intl-ai.git"
   },
   "files": [
     "dist",
@@ -80,9 +80,7 @@
     "./package.json": "./package.json"
   },
   "publishConfig": {
-    "name": "unplugin-intl-ai",
-    "access": "public",
-    "provenance": true
+    "access": "public"
   },
   "scripts": {
     "build": "tsdown",
@@ -90,7 +88,9 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@intl-ai/core": "workspace:*",
+    "@intl-ai/api": "workspace:*",
+    "jiti": "2.7.0",
+    "pathe": "2.0.3",
     "unplugin": "3.0.0"
   },
   "devDependencies": {

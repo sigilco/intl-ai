@@ -1,7 +1,7 @@
 {
   "name": "@intl-ai/next",
-  "version": "0.1.0",
-  "description": "AI-powered i18n translation plugin for Next.js",
+  "version": "0.3.0",
+  "description": "Turbopack bridge for @intl-ai/unplugin in Next.js 15+ apps",
   "keywords": [
     "ai",
     "i18n",
@@ -11,12 +11,12 @@
     "nextjs",
     "translation"
   ],
-  "homepage": "https://intl-ai.illo.fyi/",
-  "bugs": "https://github.com/espetro/intl-ai/issues",
+  "homepage": "https://intl-ai.pages.dev",
+  "bugs": "https://github.com/sigilco/intl-ai/issues",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/espetro/intl-ai.git"
+    "url": "git+https://github.com/sigilco/intl-ai.git"
   },
   "files": [
     "dist",
@@ -33,8 +33,7 @@
     "./package.json": "./package.json"
   },
   "publishConfig": {
-    "access": "public",
-    "provenance": true
+    "access": "public"
   },
   "scripts": {
     "build": "tsdown",
@@ -43,12 +42,14 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@intl-ai/core": "workspace:*"
+    "@intl-ai/api": "workspace:*",
+    "@intl-ai/unplugin": "workspace:*",
+    "jiti": "2.7.0",
+    "pathe": "2.0.3"
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
     "@types/node": "^22.0.0",
-    "@types/webpack": "5.28.5",
     "next": "15.5.18",
     "react": "18.3.1",
     "react-dom": "18.3.1",
