@@ -54,6 +54,10 @@ pnpm add @intl-ai/next
 yarn add @intl-ai/next
 ```
 
+```sh [bun]
+bun add @intl-ai/next
+```
+
 :::
 
 ## Quick Start
