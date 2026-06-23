@@ -43,7 +43,6 @@ export default {
 
 ## Per-library guides
 
-- [Next.js](/guide/next-js)
 - [Vue (vue-i18n)](/guide/vue-i18n)
 - [i18next](/guide/i18next)
 
