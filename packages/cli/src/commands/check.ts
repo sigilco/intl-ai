@@ -7,7 +7,7 @@ import {
   lockfileEntryToMap,
 } from "@intl-ai/api/internal";
 import { join } from "pathe";
-import { loadJsonConfig } from "../config/json-loader";
+import { loadConfig } from "../config/loader";
 
 export const checkCommand = defineCommand({
   meta: {
@@ -26,7 +26,7 @@ export const checkCommand = defineCommand({
     },
   },
   async run({ args }) {
-    const config = await loadJsonConfig(args.config);
+    const config = await loadConfig(args.config);
 
     const localesToCheck = args.locale
       ? [args.locale]

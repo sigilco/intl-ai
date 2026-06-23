@@ -1,7 +1,7 @@
 import { defineCommand } from "citty";
 import { consola } from "consola";
 import { runFill } from "@intl-ai/api";
-import { loadJsonConfig } from "../config/json-loader";
+import { loadConfig } from "../config/loader";
 
 export const fillCommand = defineCommand({
   meta: {
@@ -39,7 +39,7 @@ export const fillCommand = defineCommand({
       consola.level = 0;
     }
 
-    const config = await loadJsonConfig(args.config);
+    const config = await loadConfig(args.config);
     consola.start("Translating missing keys...");
 
     try {
