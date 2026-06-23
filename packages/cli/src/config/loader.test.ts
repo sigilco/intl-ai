@@ -2,15 +2,15 @@ import { describe, test, expect, beforeEach, afterEach } from "vitest";
 import { writeFileSync, mkdirSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "pathe";
-import { loadJsonConfig, validateJsonConfig } from "./json-loader";
+import { loadConfig, validateJsonConfig } from "./loader";
 
-describe("json-loader", () => {
+describe("config loader", () => {
   let tempDir: string;
 
   beforeEach(() => {
     tempDir = join(
       tmpdir(),
-      `json-loader-test-${Date.now()}-${Math.random().toString(36).slice(2)}`,
+      `intl-ai-loader-test-${Date.now()}-${Math.random().toString(36).slice(2)}`,
     );
     mkdirSync(tempDir, { recursive: true });
   });
@@ -19,7 +19,7 @@ describe("json-loader", () => {
     rmSync(tempDir, { recursive: true, force: true });
   });
 
-  test("loads and converts valid JSON config", async () => {
+  test("loads and converts a valid JSON config", async () => {
     const configPath = join(tempDir, "intl-ai.config.json");
     writeFileSync(
       configPath,
@@ -35,7 +35,7 @@ describe("json-loader", () => {
       }),
     );
 
-    const config = await loadJsonConfig(configPath, { validate: false });
+    const config = await loadConfig(configPath, { validate: false });
 
     expect(config.defaultLocale).toBe("en");
     expect(config.locales).toEqual(["en", "fr"]);
@@ -43,14 +43,37 @@ describe("json-loader", () => {
     expect(config.maxRetries).toBe(2);
     expect(config.processor?.name).toBe("icu");
 
-    const model = config.model as { modelId: string; config: { baseURL: string; apiKey: string } };
+    const model = config.model as {
+      modelId: string;
+      config: { baseURL: string; apiKey: string };
+    };
     expect(model.modelId).toBe("gpt-4o-mini");
     expect(model.config.apiKey).toBe("sk-test");
     expect(model.config.baseURL).toBe("https://api.example.com/v1");
   });
 
+  test("loads a TypeScript config via jiti", async () => {
+    const configPath = join(tempDir, "intl-ai.config.ts");
+    writeFileSync(
+      configPath,
+      `export default {
+        defaultLocale: "en",
+        locales: ["en", "fr"],
+        localeDir: "./locales",
+        model: { modelId: "gpt-4o-mini", config: { apiKey: "x", baseURL: "https://x" } },
+      };`,
+      "utf-8",
+    );
+
+    const config = await loadConfig(configPath, { validate: false });
+
+    expect(config.defaultLocale).toBe("en");
+    expect(config.locales).toEqual(["en", "fr"]);
+    expect(config.localeDir).toBe("./locales");
+  });
+
   test("throws on missing file", async () => {
-    await expect(loadJsonConfig(join(tempDir, "missing.json"))).rejects.toThrow(
+    await expect(loadConfig(join(tempDir, "missing.json"))).rejects.toThrow(
       "Config file not found",
     );
   });
@@ -58,7 +81,7 @@ describe("json-loader", () => {
   test("throws on invalid JSON", async () => {
     const configPath = join(tempDir, "bad.json");
     writeFileSync(configPath, "{ not json");
-    await expect(loadJsonConfig(configPath)).rejects.toThrow("Invalid JSON");
+    await expect(loadConfig(configPath)).rejects.toThrow("Invalid JSON");
   });
 
   test("throws on schema validation failure", async () => {
@@ -70,7 +93,7 @@ describe("json-loader", () => {
         // missing required locales, localeDir, model, apiKey
       }),
     );
-    await expect(loadJsonConfig(configPath)).rejects.toThrow(/Config validation failed/);
+    await expect(loadConfig(configPath)).rejects.toThrow(/Config validation failed/);
   });
 
   test("validateJsonConfig accepts valid config", () => {
