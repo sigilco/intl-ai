@@ -15,8 +15,8 @@ hero:
 features:
   - title: Bundler Plugins
     details: Universal unplugin for Vite, Webpack, Rollup, esbuild, Rspack, and Next.js.
-  - title: Mobile Ready
-    details: Native Expo and Flutter example integrations ship translations into mobile builds.
+  - title: Cross-Platform
+    details: Native Expo, .NET and Flutter example integrations ship translations into mobile builds.
   - title: Standalone Binary
     details: Zero-dependency compiled binaries for CI, servers, and any platform.
   - title: Zero Runtime
