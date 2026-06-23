@@ -8,7 +8,7 @@ intl-ai generates translation files at build time. You choose the runtime i18n l
 
 ## ICU MessageFormat
 
-Most modern i18n libraries speak ICU MessageFormat. The main exceptions are i18next (uses `{{var}}` and plural suffixes) and vue-i18n (uses its own syntax by default). Pick a library that fits your app's needs.
+Most modern i18n libraries speak ICU MessageFormat. The main exceptions are i18next (uses `&#123;&#123;var&#125;&#125;` and plural suffixes) and vue-i18n (uses its own syntax by default). Pick a library that fits your app's needs.
 
 ## Library compatibility
 
@@ -28,7 +28,7 @@ Most modern i18n libraries speak ICU MessageFormat. The main exceptions are i18n
 
 ## Configuration
 
-Set `processor: "icu"` in your `intl-ai.config.ts` if your target library uses ICU MessageFormat. Without it, intl-ai uses the default processor which preserves literal `{{var}}` placeholders for i18next.
+Set `processor: "icu"` in your `intl-ai.config.ts` if your target library uses ICU MessageFormat. Without it, intl-ai uses the default processor which preserves literal `&#123;&#123;var&#125;&#125;` placeholders for i18next.
 
 ```ts
 // intl-ai.config.ts
