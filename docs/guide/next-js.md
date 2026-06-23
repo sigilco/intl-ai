@@ -24,6 +24,10 @@ pnpm add @intl-ai/next
 yarn add @intl-ai/next
 ```
 
+```sh [bun]
+bun add @intl-ai/next
+```
+
 :::
 
 This package provides a Higher-Order Function (HOF) that integrates `intl-ai` with your Next.js configuration, supporting both Turbopack and webpack bundlers.
