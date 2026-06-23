@@ -126,6 +126,6 @@ export default defineNuxtConfig({
 });
 ```
 
-Zero-config usage also works — the plugin auto-discovers `intl-ai.config.{ts,js,intl-airc}` from your project root.
+Zero-config usage also works — the plugin auto-discovers `intl-ai.config.{ts,json}` from your project root.
 
-[Documentation](https://intl-ai.illo.fyi/) · [Report an issue](https://github.com/espetro/intl-ai/issues)
+[Documentation](https://intl-ai.illo.fyi/) · [Report an issue](https://github.com/sigilco/intl-ai/issues)
