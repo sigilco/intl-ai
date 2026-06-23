@@ -24,13 +24,17 @@ pnpm add @intl-ai/unplugin i18next react-i18next
 yarn add @intl-ai/unplugin i18next react-i18next
 ```
 
+```sh [bun]
+bun add @intl-ai/unplugin i18next react-i18next
+```
+
 :::
 
 You only need `@intl-ai/unplugin`. The translation engine lives in `@intl-ai/api` and is bundled automatically.
 
 ## i18next Syntax Note
 
-i18next uses `{{variable}}` for interpolation (not ICU `{variable}`). For example:
+i18next uses `&#123;&#123;variable&#125;&#125;` for interpolation (not ICU `&#123;variable&#125;`). For example:
 
 ```json
 {
@@ -119,4 +123,4 @@ function App() {
 
 ## Example Project
 
-See the [Next.js example](/guide/next-js.html) for a complete framework integration.
+See the [Next.js example](/guide/next-js) for a complete framework integration.

@@ -26,6 +26,10 @@ pnpm add @intl-ai/unplugin vue-i18n
 yarn add @intl-ai/unplugin vue-i18n
 ```
 
+```sh [bun]
+bun add @intl-ai/unplugin vue-i18n
+```
+
 :::
 
 You only need `@intl-ai/unplugin`. The translation engine lives in `@intl-ai/api` and is bundled automatically.
@@ -126,4 +130,4 @@ vue-i18n supports ICU MessageFormat. Set `processor: "icu"` in your config so AI
 
 ## Example Project
 
-See the [Vite example](/guide/getting-started.html) for a complete working setup.
+See the [Vite example](/guide/getting-started) for a complete working setup.
