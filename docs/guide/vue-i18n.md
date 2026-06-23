@@ -4,6 +4,8 @@ title: Vue (vue-i18n)
 
 # Vue (vue-i18n)
 
+This guide covers vue-i18n consumption. For bundler setup, see [Build systems](/guide/build-systems).
+
 ## Overview
 
 intl-ai generates translation JSON files at build time. vue-i18n consumes these files at runtime in your Vue application. This guide shows how to set up both tools together.
@@ -54,20 +56,6 @@ export default {
   localeDir: "./locales",
   processor: "icu",
 };
-```
-
-## Vite Integration
-
-In your `vite.config.ts`:
-
-```typescript
-import { defineConfig } from "vite";
-import vue from "@vitejs/plugin-vue";
-import IntlAi from "@intl-ai/unplugin";
-
-export default defineConfig({
-  plugins: [vue(), IntlAi.vite()],
-});
 ```
 
 ## Vue App Setup
@@ -127,7 +115,3 @@ const { t } = useI18n();
 ## Processor Note
 
 vue-i18n supports ICU MessageFormat. Set `processor: "icu"` in your config so AI-generated translations preserve ICU placeholders correctly.
-
-## Example Project
-
-See the [Vite example](/guide/getting-started) for a complete working setup.

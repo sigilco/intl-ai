@@ -4,6 +4,8 @@ title: i18next
 
 # i18next
 
+This guide covers i18next consumption. For bundler setup, see [Build systems](/guide/build-systems).
+
 ## Overview
 
 intl-ai generates translation JSON files at build time. i18next consumes these files at runtime. This guide shows how to integrate both tools.
@@ -34,7 +36,7 @@ You only need `@intl-ai/unplugin`. The translation engine lives in `@intl-ai/api
 
 ## i18next Syntax Note
 
-i18next uses `&#123;&#123;variable&#125;&#125;` for interpolation (not ICU `&#123;variable&#125;`). For example:
+i18next uses `{{variable}}` for interpolation (not ICU `{variable}`). For example:
 
 ```json
 {
@@ -63,29 +65,6 @@ export default {
   localeDir: "./public/locales",
 };
 ```
-
-## Bundler Integration
-
-::: code-group
-
-```typescript [Vite]
-import { defineConfig } from "vite";
-import IntlAi from "@intl-ai/unplugin";
-
-export default defineConfig({
-  plugins: [IntlAi.vite()],
-});
-```
-
-```javascript [Webpack]
-const IntlAi = require("@intl-ai/unplugin");
-
-module.exports = {
-  plugins: [new IntlAi.webpack()],
-};
-```
-
-:::
 
 ## React App Usage
 
@@ -120,7 +99,3 @@ function App() {
   );
 }
 ```
-
-## Example Project
-
-See the [Next.js example](/guide/next-js) for a complete framework integration.
