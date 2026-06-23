@@ -22,11 +22,11 @@ Reference the local plugin in your `app.json`:
 
 ```json
 {
-  "$schema": "https://sigilco.github.io/intl-ai/schema/v1.json",
+  "$schema": "https://www.schemastore.org/intl-ai.json",
   "defaultLocale": "en",
   "locales": ["en", "es"],
   "localeDir": "locales",
-  "model": "openai/gpt-4o-mini",
+  "model": "your-provider/your-model",
   "apiKey": "${OPENAI_API_KEY}",
   "baseURL": "https://api.openai.com/v1",
   "maxRetries": 3

@@ -6,13 +6,13 @@ Command-line interface for intl-ai. Two commands: `intl-ai fill` (translate miss
 
 ## Architecture
 
-| File/Dir                     | Purpose                                                             |
-| ---------------------------- | ------------------------------------------------------------------- |
-| `src/index.ts`               | CLI entry, argument parsing, command routing                        |
-| `src/commands/fill.ts`       | `fill` command — loads config, runs translation, outputs progress   |
-| `src/commands/check.ts`      | `check` command — validates lockfile, exits 1 if issues found       |
-| `src/utils/progress.ts`      | `createProgressReporter()` — terminal output, respects `--silent`   |
-| `src/__mocks__/mock-core.ts` | Mocks for `loadConfig`, `findMissingTranslations`, `translateBatch` |
+| File/Dir                | Purpose                                                                             |
+| ----------------------- | ----------------------------------------------------------------------------------- |
+| `src/index.ts`          | CLI entry, argument parsing, command routing                                        |
+| `src/commands/fill.ts`  | `fill` command — loads config, runs translation, outputs progress                   |
+| `src/commands/check.ts` | `check` command — validates lockfile, exits 1 if issues found                       |
+| `src/config/loader.ts`  | `loadConfig()` — loads `intl-ai.config.ts` (via `jiti`) or `.json` (via `readFile`) |
+| `src/utils/progress.ts` | `createProgressReporter()` — terminal output, respects `--silent`                   |
 
 ---
 
@@ -65,13 +65,15 @@ Respects `--silent` flag — no output if set.
 
 ## Test Patterns
 
-Mock core functions directly — don't import real implementations:
+Mock the config loader and `@intl-ai/api` — don't import real implementations:
 
 ```typescript
-vi.mock("@intl-ai/core", () => ({
+vi.mock("../config/loader", () => ({
   loadConfig: vi.fn(async () => mockConfig),
-  findMissingTranslations: vi.fn(async () => mockBatch),
-  translateBatch: vi.fn(async () => mockResults),
+}));
+
+vi.mock("@intl-ai/api", () => ({
+  runFill: vi.fn(async () => mockResult),
 }));
 ```
 
@@ -82,20 +84,10 @@ Never run real translations in unit tests. Use mock provider.
 ## Example: Testing `fill` Command
 
 ```typescript
-import { fill } from "../commands/fill";
-import * as core from "@intl-ai/core";
-
-vi.mock("@intl-ai/core");
+import { fillCommand } from "../commands/fill";
 
 it("translates missing keys", async () => {
-  const result = await fill({
-    locale: "es",
-    dryRun: false,
-    force: false,
-    silent: true,
-  });
-
-  expect(core.translateBatch).toHaveBeenCalled();
-  expect(result.success).toBe(true);
+  await fillCommand.run({ args: { config: "x", silent: true, force: false, "dry-run": false } });
+  expect(runFill).toHaveBeenCalled();
 });
 ```

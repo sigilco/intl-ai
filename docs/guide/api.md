@@ -70,7 +70,7 @@ Add it to your config for editor intellisense and CI validation:
   "defaultLocale": "en",
   "locales": ["en", "es"],
   "localeDir": "./locales",
-  "model": "openai/gpt-4o-mini",
+  "model": "your-provider/your-model",
   "apiKey": "${OPENAI_API_KEY}"
 }
 ```

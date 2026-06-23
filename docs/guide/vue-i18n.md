@@ -15,43 +15,44 @@ Install intl-ai and vue-i18n:
 ::: code-group
 
 ```sh [npm]
-npm install @intl-ai/core @intl-ai/unplugin vue-i18n
+npm install @intl-ai/unplugin vue-i18n
 ```
 
 ```sh [pnpm]
-pnpm add @intl-ai/core @intl-ai/unplugin vue-i18n
+pnpm add @intl-ai/unplugin vue-i18n
 ```
 
 ```sh [yarn]
-yarn add @intl-ai/core @intl-ai/unplugin vue-i18n
+yarn add @intl-ai/unplugin vue-i18n
 ```
 
 :::
 
-> **Note:** `@intl-ai/core` is a dependency of `@intl-ai/unplugin` and will be installed automatically. Install it explicitly if you need direct imports from `@intl-ai/core` (e.g., `defineConfig`, `icuProcessor`).
+You only need `@intl-ai/unplugin`. The translation engine lives in `@intl-ai/api` and is bundled automatically.
 
 ## Configuration
 
-## Configuration
-
-### intl-ai.config.ts
-
-Create an `intl-ai.config.ts` file in your project root:
+Create an `intl-ai.config.ts` (or `.json`) at your project root. See [Configuration](/guide/configuration) for the full schema. For a live Vercel AI SDK model instance:
 
 ```typescript
-import { defineConfig } from "@intl-ai/core";
-import { icuProcessor } from "@intl-ai/core";
+import { createOpenAICompatible } from "@ai-sdk/openai-compatible";
 
-export default defineConfig({
+const openai = createOpenAICompatible({
+  name: "openai",
+  baseURL: "https://api.openai.com/v1",
+  apiKey: process.env.OPENAI_API_KEY,
+});
+
+export default {
+  model: openai("your-model-name"),
   defaultLocale: "en",
   locales: ["en", "es", "fr"],
   localeDir: "./locales",
-  processor: icuProcessor, // Enable ICU MessageFormat validation
-  model: /* your AI model */,
-});
+  processor: "icu",
+};
 ```
 
-### Vite Integration
+## Vite Integration
 
 In your `vite.config.ts`:
 
@@ -61,12 +62,7 @@ import vue from "@vitejs/plugin-vue";
 import IntlAi from "@intl-ai/unplugin";
 
 export default defineConfig({
-  plugins: [
-    vue(),
-    IntlAi.vite({
-      configPath: "./intl-ai.config.ts",
-    }),
-  ],
+  plugins: [vue(), IntlAi.vite()],
 });
 ```
 
@@ -126,7 +122,7 @@ const { t } = useI18n();
 
 ## Processor Note
 
-vue-i18n supports ICU MessageFormat via the `@formatjs/icu-messageformat-parser` package. The `icuProcessor` ensures AI-generated translations preserve ICU placeholders correctly.
+vue-i18n supports ICU MessageFormat. Set `processor: "icu"` in your config so AI-generated translations preserve ICU placeholders correctly.
 
 ## Example Project
 

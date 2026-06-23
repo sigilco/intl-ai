@@ -10,9 +10,9 @@ AI-powered build-time i18n translation plugin. Hooks into any bundler via unplug
 | ---------------------- | -------------------------------------------------- |
 | Install                | `pnpm install`                                     |
 | Build all              | `pnpm build`                                       |
-| Build one package      | `pnpm --filter @intl-ai/core build`                |
+| Build one package      | `pnpm --filter @intl-ai/api build`                 |
 | Test all               | `pnpm test`                                        |
-| Test one package       | `pnpm --filter @intl-ai/core test`                 |
+| Test one package       | `pnpm --filter @intl-ai/api test`                  |
 | Lint                   | `pnpm lint`                                        |
 | Format                 | `pnpm format`                                      |
 | Format check           | `pnpm format:check`                                |
@@ -29,14 +29,14 @@ AI-powered build-time i18n translation plugin. Hooks into any bundler via unplug
 
 ## Workspace Map
 
-| Package                                    | npm name                  | Purpose                                                                           |
-| ------------------------------------------ | ------------------------- | --------------------------------------------------------------------------------- |
-| `packages/core`                            | `@intl-ai/core`           | AI translation engine — config, diff, fill, lockfile, processor, formats          |
-| `packages/unplugin`                        | `@intl-ai/unplugin`       | Universal bundler plugin via unplugin 3 (Vite/Rollup/Webpack/esbuild/Rspack/etc.) |
-| `packages/next`                            | `@intl-ai/next`           | Next.js `withIntlAi()` wrapper — webpack plugin + Turbopack loader                |
-| `packages/cli`                             | `@intl-ai/cli`            | CLI: `intl-ai fill` and `intl-ai check`                                           |
-| `packages/typescript-config`               | `@repo/typescript-config` | Shared tsconfig — internal only, not published                                    |
-| `examples/{next,legacy-next,vite,webpack}` | —                         | Reference consumer apps, not published                                            |
+| Package                                                 | npm name                  | Purpose                                                                           |
+| ------------------------------------------------------- | ------------------------- | --------------------------------------------------------------------------------- |
+| `packages/api`                                          | `@intl-ai/api`            | Runtime-agnostic core — `runFill`, `IntlAiConfig`, JSON schema                    |
+| `packages/unplugin`                                     | `@intl-ai/unplugin`       | Universal bundler plugin via unplugin 3 (Vite/Rollup/Webpack/esbuild/Rspack/etc.) |
+| `packages/next`                                         | `@intl-ai/next`           | Next.js `withIntlAi()` wrapper — webpack plugin + Turbopack loader                |
+| `packages/cli`                                          | `@intl-ai/cli`            | CLI: `intl-ai fill` and `intl-ai check`                                           |
+| `packages/typescript-config`                            | `@repo/typescript-config` | Shared tsconfig — internal only, not published                                    |
+| `examples/{next,legacy-next,vite,webpack,expo,flutter}` | —                         | Reference consumer apps, not published                                            |
 
 ---
 
@@ -60,7 +60,7 @@ Types: `feat` · `fix` · `docs` · `test` · `chore` · `ci` · `refactor` · `
 
 ### Config Files
 
-Users place `intl-ai.config.ts` (or `.js` / `.intl-airc`) at project root. Loaded via `jiti`. Search order: `.ts` → `.js` → `.intl-airc`.
+Users place `intl-ai.config.ts` or `intl-ai.config.json` at project root. TypeScript is loaded via `jiti`; JSON is read and validated against the published JSON Schema. These are the only supported filenames; the legacy `.js` / `.mjs` / `.cjs` / `.intl-airc` filenames were removed in v0.2.0.
 
 ### Lockfile
 
