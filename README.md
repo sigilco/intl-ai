@@ -4,7 +4,7 @@
 
 [![GitHub stars](https://img.shields.io/github/stars/sigilco/intl-ai?style=social)](https://github.com/sigilco/intl-ai)
 
-[Documentation](https://intl-ai.illo.fyi/) · [Report an issue](https://github.com/sigilco/intl-ai/issues)
+[Documentation](https://intl-ai.pages.dev) · [Report an issue](https://github.com/sigilco/intl-ai/issues)
 
 Automatically translate your app with AI. intl-ai hooks into your build pipeline to generate and update translations on every build.
 
@@ -65,7 +65,7 @@ export default {
 };
 ```
 
-See [Configuration](https://intl-ai.illo.fyi/guide/configuration) for the full schema.
+See [Configuration](https://intl-ai.pages.dev/guide/configuration) for the full schema.
 
 ## Usage
 

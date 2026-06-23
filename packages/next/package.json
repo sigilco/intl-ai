@@ -1,7 +1,7 @@
 {
   "name": "@intl-ai/next",
   "version": "0.2.0",
-  "description": "AI-powered i18n translation plugin for Next.js",
+  "description": "Turbopack bridge for @intl-ai/unplugin in Next.js 15+ apps",
   "keywords": [
     "ai",
     "i18n",
@@ -11,7 +11,7 @@
     "nextjs",
     "translation"
   ],
-  "homepage": "https://intl-ai.illo.fyi/",
+  "homepage": "https://intl-ai.pages.dev",
   "bugs": "https://github.com/sigilco/intl-ai/issues",
   "license": "MIT",
   "repository": {
@@ -43,13 +43,13 @@
   },
   "dependencies": {
     "@intl-ai/api": "workspace:*",
+    "@intl-ai/unplugin": "workspace:*",
     "jiti": "2.7.0",
     "pathe": "2.0.3"
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
     "@types/node": "^22.0.0",
-    "@types/webpack": "5.28.5",
     "next": "15.5.18",
     "react": "18.3.1",
     "react-dom": "18.3.1",

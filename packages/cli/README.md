@@ -45,4 +45,4 @@ Exits with code 1 if there are stale or missing translations.
 | `fill`  | Translate missing keys using AI                 |
 | `check` | Validate translation state and exit with status |
 
-[Documentation](https://intl-ai.illo.fyi/) · [Report an issue](https://github.com/espetro/intl-ai/issues)
+[Documentation](https://intl-ai.pages.dev) · [Report an issue](https://github.com/espetro/intl-ai/issues)
