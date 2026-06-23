@@ -30,6 +30,7 @@ export default defineConfig({
             { text: "Installation", link: "/guide/installation" },
             { text: "AI model setup", link: "/guide/ai-model" },
             { text: "Configuration", link: "/guide/configuration" },
+            { text: "i18n libraries", link: "/guide/i18n-libraries" },
           ],
         },
         {
