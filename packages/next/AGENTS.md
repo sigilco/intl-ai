@@ -8,9 +8,8 @@ Next.js integration layer. Provides `withIntlAi()` wrapper that hooks Webpack (f
 
 | File/Dir                            | Purpose                                                                |
 | ----------------------------------- | ---------------------------------------------------------------------- |
-| `src/index.ts`                      | `withIntlAi(nextConfig)` — registers webpack plugin + Turbopack loader |
-| `src/webpack-plugin.ts`             | Webpack `emit` hook — calls core `runFill()`, writes lockfile          |
-| `src/turbopack-loader.ts`           | Turbopack loader — path resolution, dual CJS/ESM strategy              |
+| `src/index.ts`                      | `withIntlAi(nextConfig)` — HOF + inline webpack plugin, registers Turbopack loader |
+| `src/next-loader.ts`               | Turbopack loader — path resolution, dual CJS/ESM strategy              |
 | `src/__mocks__/mock-next-config.ts` | Mock Next.js config for tests                                          |
 
 ---
