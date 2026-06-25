@@ -126,13 +126,13 @@ External links open in a new tab automatically.
 
 ## Deployment
 
-Documentation is deployed to GitHub Pages when changes are merged to the `main` branch.
+Documentation is deployed to Cloudflare Pages at `https://intl-ai.pages.dev/` when changes are merged to the `main` branch.
 
-The deployment workflow:
+The deployment process:
 
 1. Detects changes to the `docs/` directory
 2. Runs `pnpm docs:build` to generate static files
-3. Deploys to `https://sigilco.github.io/intl-ai/`
+3. Deploys the output to Cloudflare Pages
 
 No manual deployment steps are required.
 
