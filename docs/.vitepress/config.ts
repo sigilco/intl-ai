@@ -19,6 +19,13 @@ export default defineConfig({
     nav: [
       { text: "Guide", link: "/guide/getting-started" },
       { text: "GitHub", link: "https://github.com/sigilco/intl-ai" },
+      {
+        text: "LLMs",
+        items: [
+          { text: "llms.txt", link: "/llms.txt" },
+          { text: "llms-full.txt", link: "/llms-full.txt" },
+        ],
+      },
     ],
     sidebar: {
       "/guide/": [
