@@ -11,7 +11,7 @@ Choose the install method that fits your platform and workflow.
 Download a pre-built binary from GitHub Releases:
 
 ```bash
-curl -fsSL https://sigilco.github.io/intl-ai/install.sh | bash
+curl -fsSL https://intl-ai.pages.dev/install.sh | bash
 ```
 
 Override the install directory or version with environment variables:
@@ -19,7 +19,7 @@ Override the install directory or version with environment variables:
 ```bash
 export INTL_AI_INSTALL_DIR="$HOME/.local/bin"
 export INTL_AI_VERSION="v0.3.0"
-curl -fsSL https://sigilco.github.io/intl-ai/install.sh | bash
+curl -fsSL https://intl-ai.pages.dev/install.sh | bash
 ```
 
 ## npm / npx (any platform with Node.js 22+)

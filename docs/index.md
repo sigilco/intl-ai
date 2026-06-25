@@ -28,7 +28,7 @@ features:
 Install the standalone CLI with a single command on macOS or Linux:
 
 ```bash
-curl -fsSL https://sigilco.github.io/intl-ai/install.sh | bash
+curl -fsSL https://intl-ai.pages.dev/install.sh | bash
 ```
 
 Or use it without installing via npm or Bun:
