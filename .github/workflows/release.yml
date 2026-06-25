@@ -110,8 +110,8 @@ jobs:
             -e 's/SHA256_DARWIN_ARM64/${{ steps.sha.outputs.darwin_arm64 }}/' \
             -e 's/SHA256_LINUX_X64/${{ steps.sha.outputs.linux_x64 }}/' \
             -e 's/SHA256_LINUX_ARM64/${{ steps.sha.outputs.linux_arm64 }}/' \
-            packaging/homebrew/intl-ai.rb > Formula/intl-ai.rb
-          cat Formula/intl-ai.rb
+            packaging/homebrew/intl-ai.rb > /tmp/intl-ai.rb
+          cat /tmp/intl-ai.rb
       - name: Clone and update homebrew-tap
         env:
           # HOMEBREW_TAP_TOKEN is recommended for cross-repo push.
@@ -120,7 +120,7 @@ jobs:
           GH_TOKEN: ${{ secrets.HOMEBREW_TAP_TOKEN || secrets.GITHUB_TOKEN }}
         run: |
           git clone https://x-access-token:${GH_TOKEN}@github.com/sigilco/homebrew-tap-intl-ai.git /tmp/homebrew-tap
-          cp Formula/intl-ai.rb /tmp/homebrew-tap/Formula/intl-ai.rb
+          cp /tmp/intl-ai.rb /tmp/homebrew-tap/Formula/intl-ai.rb
           cd /tmp/homebrew-tap
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
