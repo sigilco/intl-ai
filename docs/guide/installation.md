@@ -40,10 +40,11 @@ bun add -D @intl-ai/cli
 
 ## Homebrew (macOS / Linux)
 
-The tap formula is populated automatically as part of the release, so `brew install sigilco/tap/intl-ai` works immediately after each release.
+The tap formula is populated automatically as part of the release, so `brew install sigilco/tap-intl-ai/intl-ai` works immediately after each release.
 
 ```bash
-brew install sigilco/tap/intl-ai
+brew tap sigilco/tap-intl-ai
+brew install intl-ai
 brew upgrade intl-ai
 ```
 

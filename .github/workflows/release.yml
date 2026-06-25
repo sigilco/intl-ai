@@ -111,10 +111,10 @@ jobs:
         env:
           # HOMEBREW_TAP_TOKEN is recommended for cross-repo push.
           # Falls back to GITHUB_TOKEN which only works if the token
-          # has write access to sigilco/homebrew-tap.
+          # has write access to sigilco/homebrew-tap-intl-ai.
           GH_TOKEN: ${{ secrets.HOMEBREW_TAP_TOKEN || secrets.GITHUB_TOKEN }}
         run: |
-          git clone https://x-access-token:${GH_TOKEN}@github.com/sigilco/homebrew-tap.git /tmp/homebrew-tap
+          git clone https://x-access-token:${GH_TOKEN}@github.com/sigilco/homebrew-tap-intl-ai.git /tmp/homebrew-tap
           cp Formula/intl-ai.rb /tmp/homebrew-tap/Formula/intl-ai.rb
           cd /tmp/homebrew-tap
           git config user.name "github-actions[bot]"
