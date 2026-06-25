@@ -18,7 +18,7 @@ export const URLs = {
   },
   schema: "https://intl-ai.pages.dev/schema/v1.json",
   installScript: "https://intl-ai.pages.dev/install.sh",
-  homebrew: "brew install sigilco/tap/intl-ai",
+  homebrew: "brew install sigilco/tap-intl-ai/intl-ai",
   mise: 'mise use npm:intl-ai@latest',
 } as const;
 
