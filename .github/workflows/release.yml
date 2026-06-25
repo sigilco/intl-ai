@@ -19,11 +19,20 @@ jobs:
           - bun-linux-arm64
     steps:
       - uses: actions/checkout@v6
+      - uses: pnpm/action-setup@v6
+        with:
+          version: "11.1.0"
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: "pnpm"
+      - name: Install dependencies (with public hoist for bun workspace resolution)
+        run: pnpm install --frozen-lockfile --public-hoist-pattern=@intl-ai/*
+      - name: Build workspace dependencies
+        run: pnpm --filter @intl-ai/api --filter @intl-ai/cli build
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
-      - name: Install dependencies
-        run: bun install --ignore-scripts
       - name: Build binary
         run: |
           mkdir -p dist/binaries
