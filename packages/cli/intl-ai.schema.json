@@ -4,7 +4,7 @@
   "title": "intl-ai config",
   "description": "Configuration for intl-ai translation build step",
   "type": "object",
-  "required": ["defaultLocale", "locales", "localeDir", "model", "apiKey"],
+  "required": ["defaultLocale", "locales", "localeDir", "provider", "apiKey"],
   "properties": {
     "defaultLocale": {
       "type": "string",
@@ -22,10 +22,15 @@
       "minLength": 1,
       "description": "Directory containing <locale>.json files"
     },
-    "model": {
+    "provider": {
       "type": "string",
       "minLength": 1,
-      "description": "Model id (e.g. 'gpt-4o-mini', 'claude-3-5-sonnet-latest')"
+      "default": "openai",
+      "description": "Provider ID (e.g. 'openai', 'anthropic') or custom provider ID"
+    },
+    "model": {
+      "type": "string",
+      "description": "Model name passed to the provider (e.g. gpt-4o-mini)"
     },
     "apiKey": {
       "type": "string",
@@ -55,6 +60,10 @@
       "enum": ["passthrough", "icu"],
       "default": "passthrough",
       "description": "Predefined token processor for syntax validation"
+    },
+    "modelParams": {
+      "type": "object",
+      "description": "Additional parameters passed to the provider (e.g. max_tokens, extra_body)"
     }
   },
   "additionalProperties": false
