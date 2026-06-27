@@ -1,0 +1,53 @@
+{
+  "$schema": "../node_modules/oxlint/configuration_schema.json",
+  "plugins": ["typescript", "import"],
+  "categories": {
+    "correctness": "error"
+  },
+  "rules": {
+    "no-console": "warn",
+    "typescript/no-explicit-any": "warn"
+  },
+  "overrides": [
+    {
+      "files": ["src/core/**/*.ts", "src/ports/**/*.ts"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              "../adapters/**",
+              "../infrastructure/**",
+              "../services/**",
+              "../../adapters/**",
+              "../../infrastructure/**",
+              "../../services/**"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["src/services/fill/**/*.ts"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": ["../check/**", "../../services/check/**"]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["src/services/check/**/*.ts"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": ["../fill/**", "../../services/fill/**"]
+          }
+        ]
+      }
+    }
+  ]
+}
