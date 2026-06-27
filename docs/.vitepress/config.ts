@@ -37,7 +37,6 @@ export default defineConfig({
             { text: "Installation", link: "/guide/installation" },
             { text: "AI model setup", link: "/guide/ai-model" },
             { text: "Configuration", link: "/guide/configuration" },
-            { text: "i18n libraries", link: "/guide/i18n-libraries" },
           ],
         },
         {
@@ -59,9 +58,9 @@ export default defineConfig({
           text: "i18n libraries",
           collapsed: true,
           items: [
-            { text: "i18n libraries", link: "/guide/i18n-libraries" },
-            { text: "Vue (vue-i18n)", link: "/guide/vue-i18n" },
-            { text: "i18next", link: "/guide/i18next" },
+            { text: "i18n libraries", link: "/guide/i18n-libraries/" },
+            { text: "Vue (vue-i18n)", link: "/guide/i18n-libraries/vue-i18n" },
+            { text: "i18next", link: "/guide/i18n-libraries/i18next" },
           ],
         },
         {
