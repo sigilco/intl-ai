@@ -27,7 +27,7 @@ describe("config loader", () => {
         defaultLocale: "en",
         locales: ["en", "fr"],
         localeDir: "./locales",
-        model: "gpt-4o-mini",
+        provider: "gpt-4o-mini",
         apiKey: "sk-test",
         baseURL: "https://api.example.com/v1",
         maxRetries: 2,
@@ -43,13 +43,9 @@ describe("config loader", () => {
     expect(config.maxRetries).toBe(2);
     expect(config.processor?.name).toBe("icu");
 
-    const model = config.model as {
-      modelId: string;
-      config: { baseURL: string; apiKey: string };
-    };
-    expect(model.modelId).toBe("gpt-4o-mini");
-    expect(model.config.apiKey).toBe("sk-test");
-    expect(model.config.baseURL).toBe("https://api.example.com/v1");
+    expect(config.model).toBe("gpt-4o-mini");
+    expect(config.apiKey).toBe("sk-test");
+    expect(config.baseURL).toBe("https://api.example.com/v1");
   });
 
   test("loads a TypeScript config via jiti", async () => {
