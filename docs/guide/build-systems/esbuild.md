@@ -39,4 +39,4 @@ build({
 });
 ```
 
-Pair with an i18n library from [i18n libraries](/guide/i18n-libraries).
+Pair with an i18n library from [i18n libraries](/guide/i18n-libraries/).

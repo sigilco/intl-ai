@@ -70,15 +70,13 @@ If you do not have a local model or cloud API key, you can use OpenRouter's free
 ### Local model (LM Studio)
 
 ```typescript
-import { createOpenAICompatible } from "@ai-sdk/openai-compatible";
-
-const lmstudio = createOpenAICompatible({
-  name: "lmstudio",
-  baseURL: "http://127.0.0.1:1234/v1",
-});
+import { resolveProvider } from "@intl-ai/api/internal";
 
 export default {
-  model: lmstudio("your-model-name"),
+  provider: resolveProvider("openai"),
+  model: "qwen3.5-4b-instruct",
+  apiKey: "lm-studio",
+  baseURL: "http://127.0.0.1:1234/v1",
   defaultLocale: "en",
   locales: ["en", "de", "es", "fr"],
   localeDir: "./locales",
@@ -88,15 +86,15 @@ export default {
 ### Cloud model (OpenRouter free tier)
 
 ```typescript
-import { createOpenAICompatible } from "@ai-sdk/openai-compatible";
+import { resolveProvider } from "@intl-ai/api/internal";
 
-const openrouter = createOpenAICompatible({
-  name: "openrouter",
-  baseURL: "https://openrouter.ai/api/v1",
-});
+const openrouter = resolveProvider("openai");
 
 export default {
-  model: openrouter("google/gemini-2.0-flash-exp:free"),
+  provider: openrouter,
+  model: "google/gemini-2.0-flash-exp:free",
+  apiKey: "${OPENROUTER_API_KEY}",
+  baseURL: "https://openrouter.ai/api/v1",
   defaultLocale: "en",
   locales: ["en", "de", "es", "fr"],
   localeDir: "./locales",
@@ -107,10 +105,11 @@ See [AI model setup](/guide/ai-model) for all provider options.
 
 **Key Configuration:**
 
-- `model`: Your AI model instance (see [AI model setup](/guide/ai-model) for other providers)
+- `provider`: Provider ID or AIProvider instance (e.g. `"openai"`, `"anthropic"`, or a custom provider)
+- `model`: Model name passed to the provider
+- `apiKey`: Your API key (use `${ENV_VAR}` for environment variables)
+- `baseURL`: Provider endpoint URL
 - `defaultLocale`: The primary language for your application
-- `locales`: Array of supported language codes
-- `localeDir`: Directory where translation files will be stored
 
 ### 2. Set Up Your Bundler
 
