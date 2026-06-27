@@ -39,4 +39,4 @@ export default defineConfig({
 });
 ```
 
-Works with any Vite-based framework (Vue, React, Svelte, Solid). Pair with an i18n library from [i18n libraries](/guide/i18n-libraries).
+Works with any Vite-based framework (Vue, React, Svelte, Solid). Pair with an i18n library from [i18n libraries](/guide/i18n-libraries/).

@@ -45,7 +45,11 @@ interface IntlAiConfig {
   defaultLocale: string;
   locales: string[];
   localeDir: string;
-  model: unknown; // pass a Vercel AI SDK LanguageModel instance
+  model: AIProvider | string; // provider ID string or AIProvider instance
+  apiKey: ApiKeyValue;        // supports $VAR and ${VAR} env interpolation
+  baseURL: string;
+  modelParams?: Record<string, unknown>; // passthrough to provider
+  hook?: TranslationHook;
   processor?: IntlAiProcessor;
   glossary?: Record<string, string>;
   maxRetries?: number;
@@ -70,7 +74,9 @@ Add it to your config for editor intellisense and CI validation:
   "defaultLocale": "en",
   "locales": ["en", "es"],
   "localeDir": "./locales",
-  "model": "your-provider/your-model",
-  "apiKey": "${OPENAI_API_KEY}"
+  "provider": "openai",
+  "model": "gpt-4o-mini",
+  "apiKey": "${OPENAI_API_KEY}",
+  "baseURL": "https://api.openai.com/v1"
 }
 ```

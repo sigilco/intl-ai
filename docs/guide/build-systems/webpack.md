@@ -38,4 +38,4 @@ module.exports = {
 };
 ```
 
-For Next.js, see [Next.js](/guide/build-systems/next-js). Pair with an i18n library from [i18n libraries](/guide/i18n-libraries).
+For Next.js, see [Next.js](/guide/build-systems/next-js). Pair with an i18n library from [i18n libraries](/guide/i18n-libraries/).
