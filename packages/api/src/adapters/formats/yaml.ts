@@ -1,6 +1,8 @@
-import { readText, writeText, pathExists } from "../utils/fs";
+import { readText, writeText, pathExists, dirname } from "../../infrastructure/fs";
 import { parse, stringify } from "yaml";
-import { dirname } from "../utils/fs";
+import type { LocaleFormat } from "../../ports/format";
+
+export { dirname };
 
 export async function readYamlFile<T = Record<string, unknown>>(path: string): Promise<T> {
   if (!(await pathExists(path))) {
@@ -13,4 +15,8 @@ export async function writeYamlFile(path: string, data: Record<string, unknown>)
   await writeText(path, stringify(data));
 }
 
-export { dirname };
+export const yamlFormat: LocaleFormat = {
+  extension: ".yaml",
+  read: (path) => readYamlFile(path),
+  write: writeYamlFile,
+};

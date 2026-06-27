@@ -1,17 +1,48 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { translateBatch } from "./translator";
-import { icuProcessor } from "../processor/icu";
+import { icuProcessor } from "../../adapters/processors/icu";
+import type { AIProvider } from "../../ports/provider";
 
-const createMockModel = () => {
-  return {
-    modelId: "test-model",
-    provider: "test",
-    config: {
-      baseURL: "https://api.test/v1",
-      apiKey: "test-key",
-    },
-  };
-};
+const createTestProvider = (): AIProvider => ({
+  id: "test",
+  buildRequest({ model, systemPrompt, userPrompt, temperature, modelParams }) {
+    return {
+      url: "/chat/completions",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: {
+        model,
+        messages: [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: userPrompt },
+        ],
+        temperature,
+        ...modelParams,
+      },
+    };
+  },
+  parseResponse(data: unknown) {
+    return {
+      content:
+        (data as { choices?: Array<{ message?: { content?: string } }> }).choices?.[0]?.message
+          ?.content ?? "",
+    };
+  },
+});
+
+const mockOkResponse = (translations: Array<{ key: string; translated: string }>) => ({
+  ok: true as const,
+  json: async () => ({
+    choices: [
+      {
+        message: {
+          content: JSON.stringify({ translations }),
+        },
+      },
+    ],
+  }),
+});
 
 describe("translateBatch (api)", () => {
   const mockFetch = vi.fn();
@@ -27,29 +58,17 @@ describe("translateBatch (api)", () => {
   });
 
   it("uses icuProcessor syntax hint in prompt", async () => {
-    const model = createMockModel();
-    const entries = [{ key: "greeting", source: "Hello {name}" }];
-
-    mockFetch.mockResolvedValueOnce({
-      ok: true,
-      json: async () => ({
-        choices: [
-          {
-            message: {
-              content: JSON.stringify({
-                translations: [{ key: "greeting", translated: "Hola {name}" }],
-              }),
-            },
-          },
-        ],
-      }),
-    });
+    mockFetch.mockResolvedValueOnce(
+      mockOkResponse([{ key: "greeting", translated: "Hola {name}" }]),
+    );
 
     await translateBatch({
-      model,
-      entries,
+      provider: createTestProvider(),
+      entries: [{ key: "greeting", source: "Hello {name}" }],
       targetLocale: "es",
       sourceLocale: "en",
+      baseURL: "https://api.test/v1",
+      apiKey: "test-key",
       processor: icuProcessor,
     });
 
@@ -60,27 +79,17 @@ describe("translateBatch (api)", () => {
   });
 
   it("uses default placeholder hint when no processor", async () => {
-    const model = createMockModel();
-    mockFetch.mockResolvedValueOnce({
-      ok: true,
-      json: async () => ({
-        choices: [
-          {
-            message: {
-              content: JSON.stringify({
-                translations: [{ key: "greeting", translated: "Hola {name}" }],
-              }),
-            },
-          },
-        ],
-      }),
-    });
+    mockFetch.mockResolvedValueOnce(
+      mockOkResponse([{ key: "greeting", translated: "Hola {name}" }]),
+    );
 
     await translateBatch({
-      model,
+      provider: createTestProvider(),
       entries: [{ key: "greeting", source: "Hello {name}" }],
       targetLocale: "es",
       sourceLocale: "en",
+      baseURL: "https://api.test/v1",
+      apiKey: "test-key",
     });
 
     const call = mockFetch.mock.calls[0];
@@ -90,27 +99,17 @@ describe("translateBatch (api)", () => {
   });
 
   it("returns successful TranslationResult on valid response", async () => {
-    const model = createMockModel();
-    mockFetch.mockResolvedValueOnce({
-      ok: true,
-      json: async () => ({
-        choices: [
-          {
-            message: {
-              content: JSON.stringify({
-                translations: [{ key: "greeting", translated: "Hola {name}" }],
-              }),
-            },
-          },
-        ],
-      }),
-    });
+    mockFetch.mockResolvedValueOnce(
+      mockOkResponse([{ key: "greeting", translated: "Hola {name}" }]),
+    );
 
     const result = await translateBatch({
-      model,
+      provider: createTestProvider(),
       entries: [{ key: "greeting", source: "Hello {name}" }],
       targetLocale: "es",
       sourceLocale: "en",
+      baseURL: "https://api.test/v1",
+      apiKey: "test-key",
       processor: icuProcessor,
     });
 
@@ -123,29 +122,19 @@ describe("translateBatch (api)", () => {
   });
 
   it("rejects translations missing required tokens (validation)", async () => {
-    const model = createMockModel();
     const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
 
-    mockFetch.mockResolvedValueOnce({
-      ok: true,
-      json: async () => ({
-        choices: [
-          {
-            message: {
-              content: JSON.stringify({
-                translations: [{ key: "greeting", translated: "Hola mundo" }],
-              }),
-            },
-          },
-        ],
-      }),
-    });
+    mockFetch.mockResolvedValueOnce(
+      mockOkResponse([{ key: "greeting", translated: "Hola mundo" }]),
+    );
 
     const result = await translateBatch({
-      model,
+      provider: createTestProvider(),
       entries: [{ key: "greeting", source: "Hello {name}" }],
       targetLocale: "es",
       sourceLocale: "en",
+      baseURL: "https://api.test/v1",
+      apiKey: "test-key",
       processor: icuProcessor,
     });
 
@@ -154,25 +143,13 @@ describe("translateBatch (api)", () => {
     warnSpy.mockRestore();
   });
 
-  it("supports baseURL/apiKey overrides on the call", async () => {
-    const model = createMockModel();
-    mockFetch.mockResolvedValueOnce({
-      ok: true,
-      json: async () => ({
-        choices: [
-          {
-            message: {
-              content: JSON.stringify({
-                translations: [{ key: "greeting", translated: "Bonjour" }],
-              }),
-            },
-          },
-        ],
-      }),
-    });
+  it("uses provider.buildRequest and baseURL for fetch", async () => {
+    mockFetch.mockResolvedValueOnce(
+      mockOkResponse([{ key: "greeting", translated: "Bonjour" }]),
+    );
 
     await translateBatch({
-      model,
+      provider: createTestProvider(),
       entries: [{ key: "greeting", source: "Hello" }],
       targetLocale: "fr",
       sourceLocale: "en",

@@ -1,4 +1,5 @@
-import { readText, writeText, pathExists } from "../utils/fs";
+import { readText, writeText, pathExists } from "../../infrastructure/fs";
+import type { LocaleFormat } from "../../ports/format";
 
 export async function readJsonFile<T = Record<string, unknown>>(path: string): Promise<T> {
   if (!(await pathExists(path))) {
@@ -16,3 +17,9 @@ export async function writeJsonFile<T = Record<string, unknown>>(
   const serialized = pretty ? JSON.stringify(data, null, indent) : JSON.stringify(data);
   await writeText(path, serialized);
 }
+
+export const jsonFormat: LocaleFormat = {
+  extension: ".json",
+  read: (path) => readJsonFile(path),
+  write: (path, data) => writeJsonFile(path, data),
+};

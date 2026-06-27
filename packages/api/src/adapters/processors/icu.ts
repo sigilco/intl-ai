@@ -3,7 +3,8 @@ import type {
   MessageFormatElement,
   PluralOrSelectOption,
 } from "@formatjs/icu-messageformat-parser";
-import type { IntlAiProcessor, ValidationResult } from "../types";
+import type { IntlAiProcessor } from "../../ports/processor";
+import type { ValidationResult } from "../../core/types";
 
 export const icuProcessor: IntlAiProcessor = {
   name: "icu",

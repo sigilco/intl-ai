@@ -1,9 +1,6 @@
 /**
- * SHA-1 hash function using Web Crypto API.
- * Runtime-agnostic: works in Node.js 22+, Bun, browsers, Deno.
- *
- * NOTE: We use SHA-1 only for non-cryptographic content fingerprinting
- * (detecting whether a source string changed). It is NOT used for security.
+ * SHA-1 hash for non-cryptographic content fingerprinting (staleness detection).
+ * Runtime-agnostic: Node.js 22+, Bun, browsers, Deno.
  */
 export async function hashSha1(text: string): Promise<string> {
   const data = new TextEncoder().encode(text);

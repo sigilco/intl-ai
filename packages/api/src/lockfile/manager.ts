@@ -1,5 +1,5 @@
-import { join, readText, writeText, pathExists, getNestedValue } from "../utils/fs";
-import { hashSha1 } from "../utils/hash";
+import { join, readText, writeText, pathExists, getNestedValue } from "../infrastructure/fs";
+import { hashSha1 } from "../core/hash";
 import { LOCKFILE_NAME, type Lockfile, type LockfileEntry, type StaleEntry } from "./types";
 
 const EMPTY_LOCKFILE: Lockfile = { version: 1, entries: {} };

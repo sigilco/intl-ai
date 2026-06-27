@@ -6,11 +6,12 @@ import {
   ensureDir,
   setNestedValue,
   getNestedValue,
-} from "../utils/fs";
-import { LockfileManager } from "../lockfile/manager";
-import { findMissingTranslations, lockfileEntryToMap } from "./diff";
+} from "../../infrastructure/fs";
+import { LockfileManager } from "../../lockfile/manager";
+import { findMissingTranslations, lockfileEntryToMap } from "../../core/diff";
 import { translateBatch } from "./translator";
-import type { IntlAiConfig } from "../types";
+import type { AIProvider } from "../../ports/provider";
+import type { IntlAiConfig } from "../../types";
 
 export interface RunFillOptions {
   locale?: string;
@@ -30,7 +31,19 @@ export async function runFill(
   options?: RunFillOptions,
 ): Promise<RunFillResult> {
   const { force = false, dryRun = false } = options ?? {};
-  const { defaultLocale, locales, localeDir, model, glossary, maxRetries, processor } = config;
+  const {
+    defaultLocale,
+    locales,
+    localeDir,
+    model: provider,
+    baseURL,
+    apiKey,
+    glossary,
+    maxRetries,
+    processor,
+    hook,
+    modelParams,
+  } = config;
 
   const targetLocales = options?.locale
     ? locales.filter((l) => l === options.locale)
@@ -84,13 +97,17 @@ export async function runFill(
       ];
 
       const results = await translateBatch({
-        model,
+        provider,
         entries: entriesToTranslate.map((e) => ({ key: e.key, source: e.source })),
         targetLocale,
         sourceLocale: defaultLocale,
         glossary,
         maxRetries,
         processor,
+        baseURL,
+        apiKey,
+        hook,
+        modelParams,
       });
 
       for (const result of results) {
@@ -105,7 +122,7 @@ export async function runFill(
             sourceHash,
             translated: result.translated,
             origin: "ai",
-            model: modelToString(model),
+            model: modelToString(provider),
             timestamp: new Date().toISOString(),
           });
           translated++;
@@ -119,7 +136,7 @@ export async function runFill(
         await writeText(targetLocalePath, JSON.stringify(targetLocaleData, null, 2));
         await lockfileManager.save();
       }
-    } catch (error) {
+    } catch {
       errors++;
     }
   }
@@ -127,12 +144,9 @@ export async function runFill(
   return { locales: targetLocales, translated, skipped, errors };
 }
 
-function modelToString(model: unknown): string {
-  if (model && typeof model === "object") {
-    const m = model as { modelId?: string; provider?: string };
-    if (m.modelId) return m.provider ? `${m.provider}/${m.modelId}` : m.modelId;
-  }
-  return "unknown";
+function modelToString(model: AIProvider | string): string {
+  if (typeof model === "string") return model;
+  return model.id;
 }
 
 function flattenKeys(obj: Record<string, unknown>): Record<string, string> {

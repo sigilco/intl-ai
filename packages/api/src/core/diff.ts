@@ -1,31 +1,13 @@
-import { hashSha1 } from "../utils/hash";
+import { hashSha1 } from "./hash";
 import type { LockfileEntry, StaleEntry } from "../lockfile/types";
+import type {
+  MissingTranslationEntry,
+  FindMissingTranslationsOptions,
+  FindMissingTranslationsResult,
+} from "./types";
 
-export interface MissingTranslationEntry {
-  key: string;
-  source: string;
-}
+export type { MissingTranslationEntry, FindMissingTranslationsOptions, FindMissingTranslationsResult };
 
-export interface FindMissingTranslationsOptions {
-  sourceLocale: Record<string, unknown>;
-  targetLocale: Record<string, unknown>;
-  locale: string;
-  lockfileEntries: Map<string, { sourceHash: string }>;
-}
-
-export interface FindMissingTranslationsResult {
-  locale: string;
-  missing: MissingTranslationEntry[];
-  stale: StaleEntry[];
-  extra: string[];
-}
-
-/**
- * Walk both locale objects, detect keys present in source but missing in target
- * (or empty in target), and keys present in target but not in source.
- *
- * @param force  if true, ignore lockfile staleness and treat every key as missing
- */
 export async function findMissingTranslations(
   options: FindMissingTranslationsOptions,
   force = false,
@@ -62,10 +44,6 @@ export async function findMissingTranslations(
   return { locale, missing, stale, extra };
 }
 
-/**
- * Flatten a nested object to dot-notation keys.
- * Arrays are NOT flattened — they preserve as JSON arrays in their parent.
- */
 export function flattenObject(obj: unknown, prefix = ""): Record<string, string> {
   const result: Record<string, string> = {};
   if (obj === null || obj === undefined) return result;
