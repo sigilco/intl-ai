@@ -1,65 +1,45 @@
 import { z } from "zod";
+import type { AIProvider } from "./ports/provider";
+import type { IntlAiProcessor } from "./ports/processor";
+import type { TranslationHook } from "./ports/hook";
+import type { ApiKeyValue } from "./core/types";
 
-/**
- * IntlAiProcessor — optional token extractor / validator for a syntax family
- * (e.g. ICU MessageFormat, i18next `{{var}}`, Vue I18n, plain).
- */
-export interface IntlAiProcessor {
-  name: string;
-  extractTokens(message: string): string[];
-  validate(source: string, translated: string): ValidationResult;
-  getSyntaxHint(): string;
-}
+export type { ApiKeyValue };
 
-export interface ValidationResult {
-  valid: boolean;
-  errors?: string[];
-}
-
-export interface TranslationEntry {
-  key: string;
-  source: string;
-}
-
-export interface TranslationResult {
-  key: string;
-  translated?: string;
-  success: boolean;
-  error?: string;
-}
-
-export interface TranslationStaleEntry {
-  key: string;
-  source: string;
-  previous: string;
-  sourceHash: string;
-}
-
-/**
- * IntlAiConfig — runtime-agnostic configuration.
- *
- * The `model` field is intentionally typed as `unknown` in this package:
- * - CLI passes a simple duck-typed object `{ modelId, config: { baseURL, apiKey } }`
- * - SDK users can pass a Vercel AI SDK `LanguageModel` (typed as `unknown`
- *   here; cast to the proper type in `@intl-ai/core` if needed)
- * - The translator uses duck-typing to read `modelId`, `config.baseURL`,
- *   `config.apiKey` from the model object.
- */
 export interface IntlAiConfig {
   defaultLocale: string;
   locales: string[];
   localeDir: string;
-  model: unknown;
-  processor?: IntlAiProcessor;
+  model: AIProvider | string;
+  apiKey: ApiKeyValue;
+  baseURL: string;
   glossary?: Record<string, string>;
   maxRetries?: number;
+  processor?: IntlAiProcessor;
+  modelParams?: Record<string, unknown>;
+  hook?: TranslationHook;
 }
 
 export const IntlAiConfigSchema = z.object({
   defaultLocale: z.string().min(1),
   locales: z.array(z.string().min(1)).min(1),
   localeDir: z.string().min(1),
-  model: z.unknown(),
+  model: z.union([
+    z.custom<AIProvider>(
+      (v): v is AIProvider =>
+        v !== null &&
+        typeof v === "object" &&
+        "id" in v &&
+        typeof (v as AIProvider).id === "string" &&
+        "buildRequest" in v &&
+        typeof (v as AIProvider).buildRequest === "function" &&
+        "parseResponse" in v &&
+        typeof (v as AIProvider).parseResponse === "function",
+    ),
+    z.string(),
+  ]),
+  apiKey: z.string().min(1),
+  baseURL: z.string().min(1),
   processor: z
     .object({
       name: z.string(),
@@ -76,41 +56,6 @@ export const IntlAiConfigSchema = z.object({
     .optional(),
   glossary: z.record(z.string(), z.string()).optional(),
   maxRetries: z.number().int().min(0).max(10).default(3),
+  modelParams: z.record(z.string(), z.unknown()).optional(),
+  hook: z.custom<TranslationHook>().optional(),
 }) satisfies z.ZodType<IntlAiConfig>;
-
-export const ValidationResultSchema = z.object({
-  valid: z.boolean(),
-  errors: z.array(z.string()).optional(),
-});
-
-export const TranslationEntrySchema = z.object({
-  key: z.string(),
-  source: z.string(),
-});
-
-export const TranslationResultSchema = z.object({
-  key: z.string(),
-  translated: z.string().optional(),
-  success: z.boolean(),
-  error: z.string().optional(),
-});
-
-/**
- * Extract `baseURL` and `apiKey` from a duck-typed `model` value.
- * Works for both plain JSON-shape config objects and Vercel AI SDK `LanguageModel` instances.
- */
-export function extractModelConfig(model: unknown): {
-  baseURL: string;
-  apiKey: string;
-  modelId?: string;
-} {
-  const m = model as {
-    modelId?: string;
-    config?: { baseURL?: string; apiKey?: string };
-  } | null;
-  return {
-    baseURL: m?.config?.baseURL ?? "https://api.openai.com/v1",
-    apiKey: m?.config?.apiKey ?? "lm-studio",
-    modelId: m?.modelId,
-  };
-}

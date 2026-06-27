@@ -2,8 +2,8 @@ export { IntlAiJsonConfigSchema } from "./json-config";
 
 import schemaJson from "./intl-ai.schema.json" with { type: "json" };
 import type { IntlAiConfig } from "../types";
-import { icuProcessor } from "../processor/icu";
-import { passthroughProcessor } from "../processor";
+import { icuProcessor } from "../adapters/processors/icu";
+import { passthroughProcessor } from "../adapters/processors/index";
 
 export const INTL_AI_SCHEMA_URL = "https://www.schemastore.org/intl-ai.json";
 
@@ -15,12 +15,13 @@ export interface IntlAiJsonConfig {
   defaultLocale: string;
   locales: string[];
   localeDir: string;
-  model: string;
+  provider: string;
   apiKey: string;
   baseURL?: string;
   glossary?: Record<string, string>;
   maxRetries?: number;
   processor?: "passthrough" | "icu";
+  modelParams?: Record<string, unknown>;
 }
 
 /**
@@ -32,15 +33,12 @@ export function jsonConfigToIntlAiConfig(json: IntlAiJsonConfig): IntlAiConfig {
     defaultLocale: json.defaultLocale,
     locales: json.locales,
     localeDir: json.localeDir,
-    model: {
-      modelId: json.model,
-      config: {
-        baseURL: json.baseURL ?? "https://api.openai.com/v1",
-        apiKey: json.apiKey,
-      },
-    },
+    model: json.provider,
+    apiKey: json.apiKey,
+    baseURL: json.baseURL ?? "https://api.openai.com/v1",
     glossary: json.glossary,
     maxRetries: json.maxRetries ?? 3,
     processor: json.processor === "icu" ? icuProcessor : passthroughProcessor,
+    modelParams: json.modelParams,
   };
 }
