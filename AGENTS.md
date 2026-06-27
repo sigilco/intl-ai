@@ -1,6 +1,6 @@
 # intl-ai — Agent Context
 
-AI-powered build-time i18n translation plugin. Hooks into any bundler via unplugin, translates JSON/YAML locale files at build time using any AI model (Vercel AI SDK). Zero runtime overhead, zero vendor lock-in. See `docs/prd.md` for product context and roadmap.
+AI-powered build-time i18n translation plugin. Hooks into any bundler via unplugin, translates JSON/YAML locale files at build time using any AI model (Vercel AI SDK). Zero runtime overhead, zero vendor lock-in. See `.agents/docs/prd.md` for product context and roadmap.
 
 ---
 
@@ -72,7 +72,7 @@ Users place `intl-ai.config.ts` or `intl-ai.config.json` at project root. TypeSc
 
 URL: https://github.com/users/sigilco/projects/10
 Full policy (task fields, refinement checklist, `ghx` usage): `.agents/backlog-policy.md`
-Product context and roadmap: `docs/prd.md`
+Product context and roadmap: `.agents/docs/prd.md`
 
 ---
 
