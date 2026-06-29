@@ -19,14 +19,9 @@
       "minLength": 1
     },
     "provider": {
-      "type": "string",
-      "minLength": 1,
       "default": "openai",
-      "description": "Provider ID (e.g. 'openai', 'anthropic') or custom provider ID"
-    },
-    "model": {
       "type": "string",
-      "description": "Model name passed to the provider (e.g. gpt-4o-mini)"
+      "minLength": 1
     },
     "apiKey": {
       "type": "string",
@@ -52,14 +47,42 @@
     },
     "processor": {
       "type": "string",
-      "enum": ["passthrough", "icu"]
+      "enum": [
+        "passthrough",
+        "icu"
+      ]
     },
     "modelParams": {
       "type": "object",
-      "description": "Additional parameters passed to the provider (e.g. max_tokens, extra_body)"
+      "propertyNames": {
+        "type": "string"
+      },
+      "additionalProperties": {}
+    },
+    "quality": {
+      "type": "object",
+      "properties": {
+        "threshold": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "maxRetries": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 5
+        }
+      },
+      "additionalProperties": false
     }
   },
-  "required": ["defaultLocale", "locales", "localeDir", "provider", "apiKey"],
+  "required": [
+    "defaultLocale",
+    "locales",
+    "localeDir",
+    "provider",
+    "apiKey"
+  ],
   "additionalProperties": false,
   "$id": "https://www.schemastore.org/intl-ai.json",
   "title": "intl-ai config",
