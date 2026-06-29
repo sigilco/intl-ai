@@ -41,4 +41,16 @@ describe("schema", () => {
     });
     expect(cfg.processor?.name).toBe("icu");
   });
+
+  it("quality: { threshold, maxRetries } propagates to runtime config", () => {
+    const cfg = jsonConfigToIntlAiConfig({
+      defaultLocale: "en",
+      locales: ["en", "es"],
+      localeDir: "./locales",
+      provider: "gpt-4o-mini",
+      apiKey: "k",
+      quality: { threshold: 0.7, maxRetries: 3 },
+    });
+    expect(cfg.quality).toEqual({ threshold: 0.7, maxRetries: 3 });
+  });
 });

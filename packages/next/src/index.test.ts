@@ -91,7 +91,7 @@ describe("withIntlAi", () => {
 
     // Verify the unplugin factory was called with the correct options
     const intlAiUnplugin = (await import("@intl-ai/unplugin/webpack")).default;
-    expect(intlAiUnplugin).toHaveBeenCalledWith({ debug: true });
+    expect(intlAiUnplugin).toHaveBeenCalledWith({ debug: true, quality: false });
   });
 
   test("preserves all NextConfig properties", async () => {
