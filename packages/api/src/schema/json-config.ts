@@ -22,4 +22,15 @@ export const IntlAiJsonConfigSchema = z.object({
   maxRetries: z.number().int().min(0).max(10).optional(),
   processor: z.enum(["passthrough", "icu"]).optional(),
   modelParams: z.record(z.string(), z.unknown()).optional(),
+  /**
+   * Quality-aware fill loop settings. `failOnLowQuality` and `assessor`
+   * are intentionally absent here: they are runtime-only and are not
+   * representable in JSON.
+   */
+  quality: z
+    .object({
+      threshold: z.number().min(0).max(1).optional(),
+      maxRetries: z.number().int().min(0).max(5).optional(),
+    })
+    .optional(),
 });

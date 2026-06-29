@@ -4,6 +4,7 @@ import schemaJson from "./intl-ai.schema.json" with { type: "json" };
 import type { IntlAiConfig } from "../types";
 import { icuProcessor } from "../adapters/processors/icu";
 import { passthroughProcessor } from "../adapters/processors/index";
+import type { QualityOptions } from "../core/types";
 
 export const INTL_AI_SCHEMA_URL = "https://www.schemastore.org/intl-ai.json";
 
@@ -22,6 +23,7 @@ export interface IntlAiJsonConfig {
   maxRetries?: number;
   processor?: "passthrough" | "icu";
   modelParams?: Record<string, unknown>;
+  quality?: Pick<QualityOptions, "threshold" | "maxRetries">;
 }
 
 /**
@@ -40,5 +42,11 @@ export function jsonConfigToIntlAiConfig(json: IntlAiJsonConfig): IntlAiConfig {
     maxRetries: json.maxRetries ?? 3,
     processor: json.processor === "icu" ? icuProcessor : passthroughProcessor,
     modelParams: json.modelParams,
+    quality: json.quality
+      ? {
+          threshold: json.quality.threshold,
+          maxRetries: json.quality.maxRetries,
+        }
+      : undefined,
   };
 }
