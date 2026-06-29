@@ -20,6 +20,11 @@ export interface TranslateBatchOptions {
   apiKey: ApiKeyValue;
   hook?: TranslationHook;
   modelParams?: Record<string, unknown>;
+  /**
+   * Per-key reviewer notes to inject into the prompt when refilling a
+   * rejected entry. Used by the quality loop, ignored on the first pass.
+   */
+  feedback?: Record<string, string>;
 }
 
 const TranslationResponseSchema = z.object({
@@ -55,6 +60,7 @@ export async function translateBatch(options: TranslateBatchOptions): Promise<Tr
     apiKey: apiKeyInput,
     hook,
     modelParams,
+    feedback,
   } = options;
 
   if (entries.length === 0) return [];
@@ -71,6 +77,7 @@ export async function translateBatch(options: TranslateBatchOptions): Promise<Tr
     sourceLocale,
     glossary,
     processor,
+    feedback,
   });
 
   const req = provider.buildRequest({
@@ -179,6 +186,7 @@ function buildTranslationPrompt(opts: {
   sourceLocale: string;
   glossary?: Record<string, string>;
   processor?: IntlAiProcessor;
+  feedback?: Record<string, string>;
 }): string {
   const syntaxHint = opts.processor?.getSyntaxHint() ?? DEFAULT_PROMPT_HINT;
   const glossaryText = opts.glossary
@@ -187,12 +195,22 @@ function buildTranslationPrompt(opts: {
         .join("\n")}`
     : "";
 
+  const feedbackEntries = opts.feedback
+    ? Object.entries(opts.feedback).filter(([, v]) => v?.trim())
+    : [];
+
+  const feedbackBlock = feedbackEntries.length
+    ? `\n\nThe following entries were rejected by a quality reviewer. Address each note in your new translation.\n${feedbackEntries
+        .map(([key, note]) => `- ${key}: ${note}`)
+        .join("\n")}`
+    : "";
+
   const entriesText = opts.entries
     .map((e, i) => `${i + 1}. "${e.source}" (key: ${e.key})`)
     .join("\n");
 
   return `Translate the following ${opts.sourceLocale} strings to ${opts.targetLocale}.
-${syntaxHint}${glossaryText}
+${syntaxHint}${glossaryText}${feedbackBlock}
 
 Input strings:
 ${entriesText}
