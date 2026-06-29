@@ -3,7 +3,7 @@ layout: home
 
 hero:
   name: "intl-ai"
-  tagline: "AI-powered i18n translation. Zero runtime dependencies."
+  tagline: "AI i18n translation at build time. Zero runtime, any bundler, any model."
   actions:
     - theme: brand
       text: Get Started
@@ -13,15 +13,17 @@ hero:
       link: https://github.com/sigilco/intl-ai
 
 features:
-  - title: Bundler Plugins
-    details: Universal unplugin for Vite, Webpack, Rollup, esbuild, Rspack, and Next.js.
-  - title: Cross-Platform
-    details: Native Expo, .NET and Flutter example integrations ship translations into mobile builds.
-  - title: Standalone Binary
-    details: Zero-dependency compiled binaries for CI, servers, and any platform.
+  - title: Any Bundler
+    details: Vite, Webpack, Rollup, esbuild, Rspack, Rolldown, Farm, and Next.js. One plugin, every build tool.
+  - title: Any Model
+    details: OpenAI, Anthropic, Ollama, or any OpenAI-compatible API. Configure once, translate everywhere.
   - title: Zero Runtime
-    details: Translations happen at build time, with no AI SDK overhead in production.
+    details: All translation happens at build time. No AI SDK in production, no latency, no vendor lock-in.
+  - title: Cross-Platform
+    details: Native Expo, Flutter, SwiftUI, and .NET integrations. Ship translations into any mobile or desktop build.
 ---
+
+<SponsorsHero />
 
 ## Quick Install
 

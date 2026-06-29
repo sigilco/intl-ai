@@ -1,5 +1,6 @@
 ---
 title: Getting Started
+description: Set up intl-ai in minutes. Install the plugin, configure your AI model, and translate.
 ---
 
 # Getting Started
@@ -149,6 +150,54 @@ Create the directory specified in your config (default: `./locales`), then add y
   "description": "This is a sample translation"
 }
 ```
+
+### 4. Run Translation
+
+Run the CLI to fill in translations for your target locales:
+
+```bash
+intl-ai fill
+```
+
+Or use `runFill` programmatically from `@intl-ai/api`:
+
+```typescript
+import { runFill } from "@intl-ai/api";
+import type { IntlAiConfig } from "@intl-ai/api";
+
+const config: IntlAiConfig = {
+  defaultLocale: "en",
+  locales: ["en", "de", "es", "fr"],
+  localeDir: "./locales",
+  model: "openai",
+  apiKey: "${OPENAI_API_KEY}",
+  baseURL: "https://api.openai.com/v1",
+};
+
+const result = await runFill(config);
+// { locales: ["de", "es", "fr"], translated: 12, skipped: 0, errors: 0 }
+```
+
+This produces `locales/de.json`, `locales/es.json`, and `locales/fr.json` with AI-generated translations, plus a `locales/intl-ai.lock.json` lockfile that tracks which keys were translated and their source hashes.
+
+### 5. Optional: Check Translation Quality
+
+After filling, run `check` to detect missing keys, stale translations (keys whose source changed), and extra keys with no source:
+
+```bash
+intl-ai check
+```
+
+Or use `runCheck` programmatically from `@intl-ai/api`:
+
+```typescript
+import { runCheck } from "@intl-ai/api";
+
+const result = await runCheck(config, { locale: "es" });
+// { results: [{ locale: "es", missing: [...], stale: [...], extra: [...] }], hasIssues: true }
+```
+
+`runCheck` is read-only. It writes nothing to disk and does not call hooks (hooks fire only during `runFill`). Use it in CI to enforce translation completeness before deploying.
 
 ## Supported Bundlers
 

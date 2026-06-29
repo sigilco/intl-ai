@@ -1,5 +1,6 @@
 ---
 title: Providers
+description: AI provider reference for intl-ai. Use OpenAI, Anthropic, Ollama, or implement your own provider.
 ---
 
 # Providers

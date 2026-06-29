@@ -1,5 +1,6 @@
 ---
 title: Contributing
+description: Contribute to intl-ai documentation. Edit any doc page on GitHub and open a pull request.
 ---
 
 # Contributing to the documentation

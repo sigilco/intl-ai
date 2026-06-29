@@ -1,3 +1,8 @@
+---
+title: SwiftUI
+description: Build-time AI translation for SwiftUI i18n via Xcode build phases. Zero runtime overhead.
+---
+
 # SwiftUI
 
 You can integrate `intl-ai` into a SwiftUI project by running the CLI as an Xcode build script phase. All translations happen at build time, so there is zero runtime overhead.

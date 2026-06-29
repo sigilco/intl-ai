@@ -1,5 +1,6 @@
 ---
 title: Installation
+description: Install intl-ai via curl, npm, npx, or brew. Works on macOS, Linux, and any Node.js 22+ environment.
 ---
 
 # Installation

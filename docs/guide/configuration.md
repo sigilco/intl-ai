@@ -1,5 +1,6 @@
 ---
 title: Configuration
+description: intl-ai config file reference. Single JSON or TypeScript file, validated against a published schema.
 ---
 
 # Configuration

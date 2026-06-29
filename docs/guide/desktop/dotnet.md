@@ -1,3 +1,8 @@
+---
+title: .NET / C#
+description: Build-time AI translation for .NET i18n via MSBuild. Translations at build time, zero runtime.
+---
+
 # .NET / C#
 
 You can integrate `intl-ai` into a .NET project by adding an MSBuild target that runs the CLI before the build. All translations happen at build time, so there is zero runtime overhead.

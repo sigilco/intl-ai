@@ -1,3 +1,8 @@
+---
+title: Expo
+description: Build-time AI translation for Expo i18n. Translations happen during prebuild, zero runtime.
+---
+
 # Expo
 
 The Expo integration is provided as a self-contained config plugin in [`examples/expo/plugin`](https://github.com/sigilco/intl-ai/tree/main/examples/expo/plugin). It runs `intl-ai fill` during `expo prebuild` and has zero runtime overhead because all translations are written to disk before Metro bundles your app.

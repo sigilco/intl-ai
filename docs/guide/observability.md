@@ -1,5 +1,6 @@
 ---
 title: Observability with hooks
+description: Monitor the intl-ai translation pipeline with hooks. Track batch progress, retries, and failures.
 ---
 
 # Observability with hooks
@@ -71,7 +72,8 @@ Note that `onError` fires only after all retries are exhausted. Individual retry
 Pass the `hook` property on your config object:
 
 ```typescript
-import type { IntlAiConfig, TranslationResult } from "@intl-ai/api";
+import type { IntlAiConfig } from "@intl-ai/api";
+import type { TranslationResult } from "@intl-ai/api/internal";
 
 const hook = {
   onRequest(info) {

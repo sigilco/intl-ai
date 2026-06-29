@@ -1,5 +1,6 @@
 ---
 title: i18n libraries
+description: intl-ai generates locale files at build time. Use with vue-i18n, i18next, or any i18n library.
 ---
 
 # i18n libraries

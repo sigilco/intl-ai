@@ -1,5 +1,6 @@
 ---
 title: esbuild
+description: AI-translate esbuild i18n locale files at build time. Zero runtime, any AI model.
 ---
 
 # esbuild

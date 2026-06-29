@@ -1,5 +1,6 @@
 ---
 title: Rspack
+description: AI-translate Rspack i18n locale files at build time. Zero runtime, any AI model.
 ---
 
 # Rspack

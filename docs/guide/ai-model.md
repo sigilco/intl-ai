@@ -1,5 +1,6 @@
 ---
 title: AI model setup
+description: Configure any AI model for intl-ai. OpenAI, Anthropic, Ollama, or bring your own compatible API.
 ---
 
 # AI model setup

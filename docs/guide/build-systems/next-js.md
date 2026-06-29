@@ -1,5 +1,6 @@
 ---
 title: Next.js
+description: Build-time AI translation for Next.js i18n. Zero runtime overhead, any AI model.
 ---
 
 # Next.js
