@@ -161,4 +161,26 @@ describe("translateBatch (api)", () => {
     expect(call[0]).toBe("https://override.example/v1/chat/completions");
     expect(call[1].headers.Authorization).toBe("Bearer override-key");
   });
+
+  it("renders feedback block in the prompt when provided", async () => {
+    mockFetch.mockResolvedValueOnce(
+      mockOkResponse([{ key: "greeting", translated: "Bonjour" }]),
+    );
+
+    await translateBatch({
+      provider: createTestProvider(),
+      entries: [{ key: "greeting", source: "Hello" }],
+      targetLocale: "fr",
+      sourceLocale: "en",
+      baseURL: "https://api.test/v1",
+      apiKey: "test-key",
+      feedback: { greeting: "previous attempt was too formal" },
+    });
+
+    const call = mockFetch.mock.calls[0];
+    const body = JSON.parse(call[1].body);
+    const prompt = body.messages[1].content;
+    expect(prompt).toContain("rejected by a quality reviewer");
+    expect(prompt).toContain("previous attempt was too formal");
+  });
 });
