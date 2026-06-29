@@ -1,5 +1,6 @@
 ---
 title: esbuild
+description: AI-translate esbuild i18n locale files at build time. Zero runtime, any AI model.
 ---
 
 # esbuild
@@ -39,4 +40,4 @@ build({
 });
 ```
 
-Pair with an i18n library from [i18n libraries](/guide/i18n-libraries).
+Pair with an i18n library from [i18n libraries](/guide/i18n-libraries/).

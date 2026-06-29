@@ -1,5 +1,6 @@
 ---
 title: Next.js
+description: Build-time AI translation for Next.js i18n. Zero runtime overhead, any AI model.
 ---
 
 # Next.js
@@ -58,4 +59,4 @@ export default {
 };
 ```
 
-Pair with an i18n library from [i18n libraries](/guide/i18n-libraries).
+Pair with an i18n library from [i18n libraries](/guide/i18n-libraries/).

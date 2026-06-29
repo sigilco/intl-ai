@@ -1,13 +1,13 @@
 /** @see https://www.schemastore.org/intl-ai.json */
-import { createOpenAICompatible } from "@ai-sdk/openai-compatible";
+import { resolveProvider } from "@intl-ai/api/internal";
 
-const lmstudio = createOpenAICompatible({
-  name: "lmstudio",
-  baseURL: "http://127.0.0.1:1234/v1",
-});
+const lmstudio = resolveProvider("openai");
 
 export default {
-  model: lmstudio("qwen3.5-4b-instruct"),
+  provider: lmstudio,
+  model: "qwen3.5-4b-instruct",
+  apiKey: "${LMSTUDIO_API_KEY}",
+  baseURL: "http://127.0.0.1:1234/v1",
   defaultLocale: "en",
   locales: ["en", "de", "es", "fr"],
   localeDir: "./locales",

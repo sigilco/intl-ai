@@ -1,5 +1,6 @@
 ---
 title: Vite
+description: AI-translate Vite i18n locale files at build time. Zero runtime, any AI model.
 ---
 
 # Vite
@@ -39,4 +40,4 @@ export default defineConfig({
 });
 ```
 
-Works with any Vite-based framework (Vue, React, Svelte, Solid). Pair with an i18n library from [i18n libraries](/guide/i18n-libraries).
+Works with any Vite-based framework (Vue, React, Svelte, Solid). Pair with an i18n library from [i18n libraries](/guide/i18n-libraries/).

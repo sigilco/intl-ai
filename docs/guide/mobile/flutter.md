@@ -1,3 +1,8 @@
+---
+title: Flutter
+description: Build-time AI translation for Flutter i18n. Translations happen during build, zero runtime.
+---
+
 # Flutter
 
 The Flutter integration is provided as a self-contained [`build_runner`](https://pub.dev/packages/build_runner) builder in [`examples/flutter/plugin`](https://github.com/sigilco/intl-ai/tree/main/examples/flutter/plugin). It runs `intl-ai fill` during `flutter pub run build_runner build` and has zero runtime overhead because all translations are written to disk before the Flutter app is bundled.

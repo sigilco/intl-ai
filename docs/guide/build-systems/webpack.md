@@ -1,5 +1,6 @@
 ---
 title: Webpack
+description: AI-translate Webpack i18n locale files at build time. Zero runtime, any AI model.
 ---
 
 # Webpack
@@ -38,4 +39,4 @@ module.exports = {
 };
 ```
 
-For Next.js, see [Next.js](/guide/build-systems/next-js). Pair with an i18n library from [i18n libraries](/guide/i18n-libraries).
+For Next.js, see [Next.js](/guide/build-systems/next-js). Pair with an i18n library from [i18n libraries](/guide/i18n-libraries/).

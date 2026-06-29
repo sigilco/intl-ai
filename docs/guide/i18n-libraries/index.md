@@ -1,5 +1,6 @@
 ---
 title: i18n libraries
+description: intl-ai generates locale files at build time. Use with vue-i18n, i18next, or any i18n library.
 ---
 
 # i18n libraries
@@ -8,7 +9,9 @@ intl-ai generates translation files at build time. You choose the runtime i18n l
 
 ## ICU MessageFormat
 
-Most modern i18n libraries speak ICU MessageFormat. The main exceptions are i18next (uses `&#123;&#123;var&#125;&#125;` and plural suffixes) and vue-i18n (uses its own syntax by default). Pick a library that fits your app's needs.
+Most modern i18n libraries speak ICU MessageFormat. Set `processor: "icu"` in your config to use it.
+
+The main exception is i18next, which uses `{{var}}` interpolation and plural suffixes instead of ICU syntax.
 
 ## Library compatibility
 
@@ -28,23 +31,25 @@ Most modern i18n libraries speak ICU MessageFormat. The main exceptions are i18n
 
 ## Configuration
 
-Set `processor: "icu"` in your `intl-ai.config.ts` if your target library uses ICU MessageFormat. Without it, intl-ai uses the default processor which preserves literal `&#123;&#123;var&#125;&#125;` placeholders for i18next.
+Set `processor: "icu"` in your `intl-ai.config.ts` when your target library uses ICU MessageFormat. Most modern libraries do.
+
+If you use i18next, omit the processor setting or set `processor: "passthrough"` to preserve its `{{var}}` style.
 
 ```ts
 // intl-ai.config.ts
 export default {
-  // ... your model setup
+  // ... your provider setup
   defaultLocale: "en",
   locales: ["en", "es", "fr"],
   localeDir: "./locales",
-  processor: "icu", // omit for i18next's {{var}} style
+  processor: "icu", // recommended for most libraries
 };
 ```
 
 ## Per-library guides
 
-- [Vue (vue-i18n)](/guide/vue-i18n)
-- [i18next](/guide/i18next)
+- [Vue (vue-i18n)](/guide/i18n-libraries/vue-i18n)
+- [i18next](/guide/i18n-libraries/i18next)
 
 ## Choosing a library
 

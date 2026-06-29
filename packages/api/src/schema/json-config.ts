@@ -6,17 +6,31 @@ import { z } from "zod";
  * This is the source of truth for the published JSON Schema. The runtime
  * `IntlAiConfigSchema` (in `types.ts`) has a different shape (model is `unknown`,
  * processor is an object) because SDK consumers pass live Vercel AI SDK instances.
- * The JSON config uses simple strings and is mapped to the runtime config by
+ * The JSON config references a provider by string ID and optionally passes extra
+ * model parameters via `modelParams`. It uses simple strings and is mapped to the
+ * runtime config by
  * `jsonConfigToIntlAiConfig`.
  */
 export const IntlAiJsonConfigSchema = z.object({
   defaultLocale: z.string().min(1),
   locales: z.array(z.string().min(1)).min(1),
   localeDir: z.string().min(1),
-  model: z.string().min(1),
+  provider: z.string().min(1).default("openai"),
   apiKey: z.string().min(1),
   baseURL: z.string().url().optional(),
   glossary: z.record(z.string(), z.string()).optional(),
   maxRetries: z.number().int().min(0).max(10).optional(),
   processor: z.enum(["passthrough", "icu"]).optional(),
+  modelParams: z.record(z.string(), z.unknown()).optional(),
+  /**
+   * Quality-aware fill loop settings. `failOnLowQuality` and `assessor`
+   * are intentionally absent here: they are runtime-only and are not
+   * representable in JSON.
+   */
+  quality: z
+    .object({
+      threshold: z.number().min(0).max(1).optional(),
+      maxRetries: z.number().int().min(0).max(5).optional(),
+    })
+    .optional(),
 });

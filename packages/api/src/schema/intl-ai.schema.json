@@ -18,7 +18,8 @@
       "type": "string",
       "minLength": 1
     },
-    "model": {
+    "provider": {
+      "default": "openai",
       "type": "string",
       "minLength": 1
     },
@@ -46,10 +47,42 @@
     },
     "processor": {
       "type": "string",
-      "enum": ["passthrough", "icu"]
+      "enum": [
+        "passthrough",
+        "icu"
+      ]
+    },
+    "modelParams": {
+      "type": "object",
+      "propertyNames": {
+        "type": "string"
+      },
+      "additionalProperties": {}
+    },
+    "quality": {
+      "type": "object",
+      "properties": {
+        "threshold": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "maxRetries": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 5
+        }
+      },
+      "additionalProperties": false
     }
   },
-  "required": ["defaultLocale", "locales", "localeDir", "model", "apiKey"],
+  "required": [
+    "defaultLocale",
+    "locales",
+    "localeDir",
+    "provider",
+    "apiKey"
+  ],
   "additionalProperties": false,
   "$id": "https://www.schemastore.org/intl-ai.json",
   "title": "intl-ai config",

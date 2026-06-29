@@ -1,5 +1,6 @@
 ---
 title: Vue (vue-i18n)
+description: AI-translate vue-i18n locale files at build time. Works with any AI model, zero runtime cost.
 ---
 
 # Vue (vue-i18n)
@@ -38,19 +39,16 @@ You only need `@intl-ai/unplugin`. The translation engine lives in `@intl-ai/api
 
 ## Configuration
 
-Create an `intl-ai.config.ts` (or `.json`) at your project root. See [Configuration](/guide/configuration) for the full schema. For a live Vercel AI SDK model instance:
+Create an `intl-ai.config.ts` (or `.json`) at your project root. See [Configuration](/guide/configuration) for the full schema. For a custom AIProvider instance:
 
 ```typescript
-import { createOpenAICompatible } from "@ai-sdk/openai-compatible";
-
-const openai = createOpenAICompatible({
-  name: "openai",
-  baseURL: "https://api.openai.com/v1",
-  apiKey: process.env.OPENAI_API_KEY,
-});
+import { resolveProvider } from "@intl-ai/api/internal";
 
 export default {
-  model: openai("your-model-name"),
+  provider: resolveProvider("openai"),
+  model: "gpt-4o-mini",
+  apiKey: "${OPENAI_API_KEY}",
+  baseURL: "https://api.openai.com/v1",
   defaultLocale: "en",
   locales: ["en", "es", "fr"],
   localeDir: "./locales",

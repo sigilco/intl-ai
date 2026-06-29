@@ -1,4 +1,7 @@
-import type { IntlAiProcessor, ValidationResult } from "../types";
+import type { IntlAiProcessor } from "../../ports/processor";
+import type { ValidationResult } from "../../core/types";
+
+export { icuProcessor } from "./icu";
 
 export const passthroughProcessor: IntlAiProcessor = {
   name: "passthrough",

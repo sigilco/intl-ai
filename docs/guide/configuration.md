@@ -1,5 +1,6 @@
 ---
 title: Configuration
+description: intl-ai config file reference. Single JSON or TypeScript file, validated against a published schema.
 ---
 
 # Configuration
@@ -11,7 +12,7 @@ intl-ai reads a single config file. The JSON format is validated against a publi
 The CLI and bundler plugins look for one of these files in your project root:
 
 - `intl-ai.config.json` (recommended for runtime-agnostic setups and non-Node consumers)
-- `intl-ai.config.ts` (when you need a live Vercel AI SDK model instance)
+- `intl-ai.config.ts` (when you need a custom AIProvider instance)
 
 ## JSON config
 
@@ -21,7 +22,8 @@ The CLI and bundler plugins look for one of these files in your project root:
   "defaultLocale": "en",
   "locales": ["en", "es", "fr"],
   "localeDir": "./locales",
-  "model": "your-provider/your-model",
+  "provider": "openai",
+  "model": "gpt-4o-mini",
   "apiKey": "${OPENAI_API_KEY}",
   "baseURL": "https://api.openai.com/v1",
   "maxRetries": 3
@@ -54,12 +56,27 @@ Directory containing locale JSON files.
 "localeDir": "./locales"
 ```
 
-### `model`
+### `provider`
 
-Model identifier for your provider. Use the full `provider/name` form if your provider supports it.
+Provider ID. Built-in providers: `openai`, `anthropic`. Custom providers can pass an `AIProvider` instance directly.
 
 ```json
-"model": "your-provider/your-model"
+"provider": "openai"
+```
+
+For a custom provider, use `resolveProvider` from `@intl-ai/api/internal`:
+
+```typescript
+import { resolveProvider } from "@intl-ai/api/internal";
+
+export default {
+  provider: resolveProvider("openai"),
+  model: "gpt-4o-mini",
+  apiKey: "${OPENAI_API_KEY}",
+  defaultLocale: "en",
+  locales: ["en", "es"],
+  localeDir: "./locales",
+};
 ```
 
 ### `apiKey`
@@ -68,6 +85,14 @@ API key for your provider. We recommend reading it from an environment variable.
 
 ```json
 "apiKey": "${OPENAI_API_KEY}"
+```
+
+### `model`
+
+Model name passed to the provider. The model name format depends on your provider.
+
+```json
+"model": "gpt-4o-mini"
 ```
 
 ## Optional options
@@ -125,22 +150,20 @@ check-jsonschema --schemafile https://www.schemastore.org/intl-ai.json intl-ai.c
 
 ## TypeScript config
 
-When you need to pass a live Vercel AI SDK model instance, use a TypeScript config:
+When you need to pass a custom AIProvider instance, use a TypeScript config:
 
 ```typescript
-import { createOpenAICompatible } from "@ai-sdk/openai-compatible";
-
-const lmstudio = createOpenAICompatible({
-  name: "lmstudio",
-  baseURL: "http://127.0.0.1:1234/v1",
-});
+import { resolveProvider } from "@intl-ai/api/internal";
 
 export default {
-  model: lmstudio("your-model-name"),
+  provider: resolveProvider("openai"),
+  model: "gpt-4o-mini",
+  apiKey: "${OPENAI_API_KEY}",
+  baseURL: "https://api.openai.com/v1",
   defaultLocale: "en",
   locales: ["en", "es"],
   localeDir: "./locales",
 };
 ```
 
-See [AI model setup](/guide/ai-model) for provider details.
+See [Providers](/guide/providers) for how the provider system works, and [AI model setup](/guide/ai-model) for provider options.

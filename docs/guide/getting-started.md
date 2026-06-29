@@ -1,5 +1,6 @@
 ---
 title: Getting Started
+description: Set up intl-ai in minutes. Install the plugin, configure your AI model, and translate.
 ---
 
 # Getting Started
@@ -70,15 +71,13 @@ If you do not have a local model or cloud API key, you can use OpenRouter's free
 ### Local model (LM Studio)
 
 ```typescript
-import { createOpenAICompatible } from "@ai-sdk/openai-compatible";
-
-const lmstudio = createOpenAICompatible({
-  name: "lmstudio",
-  baseURL: "http://127.0.0.1:1234/v1",
-});
+import { resolveProvider } from "@intl-ai/api/internal";
 
 export default {
-  model: lmstudio("your-model-name"),
+  provider: resolveProvider("openai"),
+  model: "qwen3.5-4b-instruct",
+  apiKey: "lm-studio",
+  baseURL: "http://127.0.0.1:1234/v1",
   defaultLocale: "en",
   locales: ["en", "de", "es", "fr"],
   localeDir: "./locales",
@@ -88,15 +87,15 @@ export default {
 ### Cloud model (OpenRouter free tier)
 
 ```typescript
-import { createOpenAICompatible } from "@ai-sdk/openai-compatible";
+import { resolveProvider } from "@intl-ai/api/internal";
 
-const openrouter = createOpenAICompatible({
-  name: "openrouter",
-  baseURL: "https://openrouter.ai/api/v1",
-});
+const openrouter = resolveProvider("openai");
 
 export default {
-  model: openrouter("google/gemini-2.0-flash-exp:free"),
+  provider: openrouter,
+  model: "google/gemini-2.0-flash-exp:free",
+  apiKey: "${OPENROUTER_API_KEY}",
+  baseURL: "https://openrouter.ai/api/v1",
   defaultLocale: "en",
   locales: ["en", "de", "es", "fr"],
   localeDir: "./locales",
@@ -107,10 +106,11 @@ See [AI model setup](/guide/ai-model) for all provider options.
 
 **Key Configuration:**
 
-- `model`: Your AI model instance (see [AI model setup](/guide/ai-model) for other providers)
+- `provider`: Provider ID or AIProvider instance (e.g. `"openai"`, `"anthropic"`, or a custom provider)
+- `model`: Model name passed to the provider
+- `apiKey`: Your API key (use `${ENV_VAR}` for environment variables)
+- `baseURL`: Provider endpoint URL
 - `defaultLocale`: The primary language for your application
-- `locales`: Array of supported language codes
-- `localeDir`: Directory where translation files will be stored
 
 ### 2. Set Up Your Bundler
 
@@ -150,6 +150,54 @@ Create the directory specified in your config (default: `./locales`), then add y
   "description": "This is a sample translation"
 }
 ```
+
+### 4. Run Translation
+
+Run the CLI to fill in translations for your target locales:
+
+```bash
+intl-ai fill
+```
+
+Or use `runFill` programmatically from `@intl-ai/api`:
+
+```typescript
+import { runFill } from "@intl-ai/api";
+import type { IntlAiConfig } from "@intl-ai/api";
+
+const config: IntlAiConfig = {
+  defaultLocale: "en",
+  locales: ["en", "de", "es", "fr"],
+  localeDir: "./locales",
+  model: "openai",
+  apiKey: "${OPENAI_API_KEY}",
+  baseURL: "https://api.openai.com/v1",
+};
+
+const result = await runFill(config);
+// { locales: ["de", "es", "fr"], translated: 12, skipped: 0, errors: 0 }
+```
+
+This produces `locales/de.json`, `locales/es.json`, and `locales/fr.json` with AI-generated translations, plus a `locales/intl-ai.lock.json` lockfile that tracks which keys were translated and their source hashes.
+
+### 5. Optional: Check Translation Quality
+
+After filling, run `check` to detect missing keys, stale translations (keys whose source changed), and extra keys with no source:
+
+```bash
+intl-ai check
+```
+
+Or use `runCheck` programmatically from `@intl-ai/api`:
+
+```typescript
+import { runCheck } from "@intl-ai/api";
+
+const result = await runCheck(config, { locale: "es" });
+// { results: [{ locale: "es", missing: [...], stale: [...], extra: [...] }], hasIssues: true }
+```
+
+`runCheck` is read-only. It writes nothing to disk and does not call hooks (hooks fire only during `runFill`). Use it in CI to enforce translation completeness before deploying.
 
 ## Supported Bundlers
 

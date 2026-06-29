@@ -4,8 +4,16 @@ import intlAiUnplugin from "@intl-ai/unplugin/webpack";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "url";
 
-export interface IntlAiNextOptions extends Partial<IntlAiConfig> {
+export interface IntlAiNextOptions extends Omit<Partial<IntlAiConfig>, "quality"> {
   debug?: boolean;
+  /**
+   * Forwarded to the underlying unplugin. When `true`, the quality-aware
+   * fill loop runs during `next build` and a build that contains keys
+   * still below the quality threshold fails the build. Threshold and
+   * `maxRetries` come from `intl-ai.config.json`; this option only
+   * enables or disables the loop.
+   */
+  quality?: boolean;
 }
 
 export function withIntlAi(options?: IntlAiNextOptions) {
@@ -32,6 +40,9 @@ function addIntlAiToConfig(
     }
   })();
 
+  const debug = options?.debug ?? false;
+  const quality = options?.quality === true;
+
   return {
     ...nextConfig,
     turbopack: {
@@ -41,7 +52,7 @@ function addIntlAiToConfig(
           loaders: [
             {
               loader: loaderPath,
-              options: { debug: options?.debug ?? false },
+              options: { debug },
             },
           ],
           as: "*.js",
@@ -58,7 +69,7 @@ function addIntlAiToConfig(
       // does loadConfig() + runFill() once per build. Replaces the local
       // IntlAiWebpackPlugin and the eager runStartup() both of which were
       // calling runFill() a second time.
-      config.plugins.push(intlAiUnplugin({ debug: options?.debug ?? false }));
+      config.plugins.push(intlAiUnplugin({ debug, quality }));
       return config;
     },
   };

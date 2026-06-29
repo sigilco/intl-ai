@@ -1,5 +1,6 @@
 ---
 title: Farm
+description: AI-translate Farm i18n locale files at build time. Zero runtime, any AI model.
 ---
 
 # Farm
@@ -38,4 +39,4 @@ export default {
 };
 ```
 
-Pair with an i18n library from [i18n libraries](/guide/i18n-libraries).
+Pair with an i18n library from [i18n libraries](/guide/i18n-libraries/).

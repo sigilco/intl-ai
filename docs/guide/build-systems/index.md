@@ -1,5 +1,6 @@
 ---
 title: Build systems
+description: intl-ai supports Vite, Webpack, Rollup, esbuild, Rspack, Rolldown, and Farm via unplugin. Pick your bundler.
 ---
 
 # Build systems
@@ -15,4 +16,4 @@ intl-ai runs at build time via `@intl-ai/unplugin`. It supports every major bund
 - [Farm](/guide/build-systems/farm) - Rust-based web build tool
 - [Next.js](/guide/build-systems/next-js) - React framework with Turbopack bridge
 
-If you use a framework, wire up the bundler here and pair it with an i18n library from [i18n libraries](/guide/i18n-libraries).
+If you use a framework, wire up the bundler here and pair it with an i18n library from [i18n libraries](/guide/i18n-libraries/).
