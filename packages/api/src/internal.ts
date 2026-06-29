@@ -10,6 +10,18 @@ export type {
   MissingTranslationEntry,
   FindMissingTranslationsOptions,
   FindMissingTranslationsResult,
+  QualityError,
+  QualityErrorType,
+  QualitySeverity,
+  QualityResult,
+  TranslationContext,
+  QualityAssessorInstance,
+  QualityOptions,
+} from "./core/types";
+export {
+  QUALITY_ERROR_TYPES,
+  QUALITY_SEVERITIES,
+  isQualityAssessorInstance,
 } from "./core/types";
 
 // Ports
@@ -57,8 +69,14 @@ export { loadConfig, loadConfigFromPath } from "./infrastructure/config/loader";
 
 // Lockfile
 export { LockfileManager } from "./lockfile/manager";
-export type { LockfileEntry, Lockfile, StaleEntry } from "./lockfile/types";
+export type { LockfileEntry, Lockfile, LockfileQuality, QualityRecord, StaleEntry } from "./lockfile/types";
 export { LOCKFILE_NAME } from "./lockfile/types";
+
+// Quality-aware fill loop (issue #14)
+export { judgeBatch, createDefaultAssessor, ADVERSARIAL_SYSTEM_PROMPT } from "./services/fill/judge";
+export type { JudgeBatchOptions } from "./services/fill/judge";
+export { runQualityLoop } from "./services/fill/loop";
+export type { QualityLoopOptions, QualityLoopResult } from "./services/fill/loop";
 
 // Schema
 export { IntlAiJsonConfigSchema, jsonConfigToIntlAiConfig, getIntlAiSchema, INTL_AI_SCHEMA_URL } from "./schema/index";
