@@ -1,5 +1,6 @@
 ---
 title: Vue (vue-i18n)
+description: AI-translate vue-i18n locale files at build time. Works with any AI model, zero runtime cost.
 ---
 
 # Vue (vue-i18n)

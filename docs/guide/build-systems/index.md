@@ -1,5 +1,6 @@
 ---
 title: Build systems
+description: intl-ai supports Vite, Webpack, Rollup, esbuild, Rspack, Rolldown, and Farm via unplugin. Pick your bundler.
 ---
 
 # Build systems

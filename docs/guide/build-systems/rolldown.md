@@ -1,5 +1,6 @@
 ---
 title: Rolldown
+description: AI-translate Rolldown i18n locale files at build time. Zero runtime, any AI model.
 ---
 
 # Rolldown

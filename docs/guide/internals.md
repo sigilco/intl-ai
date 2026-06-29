@@ -1,5 +1,6 @@
 ---
 title: Internals
+description: intl-ai internals for contributors. Hexagonal architecture, package layout, and design decisions.
 ---
 
 # Internals

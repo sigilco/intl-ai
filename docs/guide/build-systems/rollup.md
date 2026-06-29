@@ -1,5 +1,6 @@
 ---
 title: Rollup
+description: AI-translate Rollup i18n locale files at build time. Zero runtime, any AI model.
 ---
 
 # Rollup

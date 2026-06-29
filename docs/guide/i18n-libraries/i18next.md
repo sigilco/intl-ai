@@ -1,5 +1,6 @@
 ---
 title: i18next
+description: AI-translate i18next locale files at build time. Works with any AI model, zero runtime cost.
 ---
 
 # i18next

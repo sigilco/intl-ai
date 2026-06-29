@@ -1,5 +1,6 @@
 ---
 title: Vite
+description: AI-translate Vite i18n locale files at build time. Zero runtime, any AI model.
 ---
 
 # Vite

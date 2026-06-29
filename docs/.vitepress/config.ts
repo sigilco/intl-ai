@@ -1,10 +1,56 @@
 import { defineConfig } from "vitepress";
 import { groupIconMdPlugin, groupIconVitePlugin } from "vitepress-plugin-group-icons";
 import llmstxt from "vitepress-plugin-llms";
+import { SITE_URL } from "./urls";
 
 export default defineConfig({
   title: "intl-ai",
   description: "AI-powered i18n translation. Zero runtime dependencies.",
+  cleanUrls: true,
+  sitemap: {
+    hostname: SITE_URL,
+  },
+  head: [
+    ["link", { rel: "icon", type: "image/svg+xml", href: "/logo.svg" }],
+    ["link", { rel: "canonical", href: SITE_URL }],
+    ["meta", { property: "og:type", content: "website" }],
+    ["meta", { property: "og:site_name", content: "intl-ai" }],
+    ["meta", { property: "og:title", content: "intl-ai" }],
+    ["meta", { property: "og:description", content: "AI-powered i18n translation. Zero runtime dependencies." }],
+    ["meta", { property: "og:image", content: `${SITE_URL}/logo-512x512.png` }],
+    ["meta", { name: "twitter:card", content: "summary_large_image" }],
+    ["meta", { name: "twitter:title", content: "intl-ai" }],
+    ["meta", { name: "twitter:description", content: "AI-powered i18n translation. Zero runtime dependencies." }],
+    ["meta", { name: "twitter:image", content: `${SITE_URL}/logo-512x512.png` }],
+    [
+      "script",
+      {
+        type: "application/ld+json",
+        innerHTML: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "SoftwareApplication",
+          name: "intl-ai",
+          url: SITE_URL,
+          description: "AI-powered i18n translation plugin for any bundler. Zero runtime dependencies.",
+          applicationCategory: "DeveloperApplication",
+          offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+        }),
+      },
+    ],
+    [
+      "script",
+      {
+        type: "application/ld+json",
+        innerHTML: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "TechArticle",
+          url: SITE_URL,
+          headline: "intl-ai documentation",
+          description: "AI-powered i18n translation. Zero runtime dependencies.",
+        }),
+      },
+    ],
+  ],
   base: "/",
   markdown: {
     config(md) {
@@ -87,6 +133,10 @@ export default defineConfig({
     },
     editLink: {
       pattern: "https://github.com/sigilco/intl-ai/edit/main/docs/:path",
+    },
+
+    search: {
+      provider: "local",
     },
   },
 });

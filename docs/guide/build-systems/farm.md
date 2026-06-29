@@ -1,5 +1,6 @@
 ---
 title: Farm
+description: AI-translate Farm i18n locale files at build time. Zero runtime, any AI model.
 ---
 
 # Farm

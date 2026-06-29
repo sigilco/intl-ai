@@ -1,5 +1,6 @@
 ---
 title: Webpack
+description: AI-translate Webpack i18n locale files at build time. Zero runtime, any AI model.
 ---
 
 # Webpack
