@@ -22,8 +22,7 @@ export const anthropicProvider: AIProvider = {
   },
   parseResponse(data: unknown) {
     return {
-      content:
-        (data as { content?: Array<{ text?: string }> }).content?.[0]?.text ?? "",
+      content: (data as { content?: Array<{ text?: string }> }).content?.[0]?.text ?? "",
     };
   },
 };

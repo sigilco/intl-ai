@@ -1,15 +1,19 @@
 import { readFile } from "node:fs/promises";
-import { existsSync } from "node:fs";
-import { resolve as resolvePath } from "pathe";
+import { existsSync } from "fs";
+import { resolve as resolvePath, dirname } from "pathe";
 import { createJiti } from "jiti";
 import {
   IntlAiJsonConfigSchema,
   jsonConfigToIntlAiConfig,
   type IntlAiJsonConfig,
 } from "../../schema/index";
+import { resolveFormat } from "../../adapters/formats/registry";
 import type { IntlAiConfig } from "../../types";
+import type { LocaleFormat } from "../../ports/format";
 
 export type { IntlAiConfig };
+
+export type ResolvedIntlAiConfig = IntlAiConfig & { format: LocaleFormat };
 
 const CONFIG_FILE_NAMES = ["intl-ai.config.ts", "intl-ai.config.json"] as const;
 
@@ -56,34 +60,53 @@ function parseAndConvert(raw: unknown, sourcePath: string): IntlAiConfig {
 }
 
 /**
+ * Resolve a relative `localeDir` against the config file's directory so configs
+ * are relocatable (standard behavior, like tsconfig/eslint paths). Absolute
+ * paths pass through unchanged. Also resolves `config.format` from a string
+ * identifier to a concrete LocaleFormat adapter.
+ */
+function resolveConfig(config: IntlAiConfig, configPath: string): ResolvedIntlAiConfig {
+  const localeDir = resolvePath(dirname(configPath), config.localeDir);
+  // ponytail: resolve format here so services receive a LocaleFormat object and
+  // never need to import the registry (hexagonal boundary compliance).
+  const format = resolveFormat(config.format);
+  return { ...config, localeDir, format };
+}
+
+/**
  * Load config from an explicit file path (`.ts` or `.json`).
  * Skips schema validation when `validate` is false (useful in tests).
+ * A relative `localeDir` is resolved against the config file's directory.
  */
 export async function loadConfigFromPath(
   path: string,
   options: { validate?: boolean } = {},
-): Promise<IntlAiConfig> {
+): Promise<ResolvedIntlAiConfig> {
   if (!existsSync(path)) {
     throw new Error(`Config file not found: ${path}`);
   }
   const raw = path.endsWith(".ts") ? await loadTsRaw(path) : await loadJsonRaw(path);
-  if (options.validate === false) {
-    return jsonConfigToIntlAiConfig(raw as IntlAiJsonConfig);
-  }
-  return parseAndConvert(raw, path);
+  const config =
+    options.validate === false
+      ? jsonConfigToIntlAiConfig(raw as IntlAiJsonConfig)
+      : parseAndConvert(raw, path);
+  return resolveConfig(config, path);
 }
 
 /**
  * Search `cwd` for `intl-ai.config.ts` or `intl-ai.config.json` and load it.
- * Throws if no config is found.
+ * Throws if no config is found. A relative `localeDir` is resolved against the
+ * config file's directory.
  */
-export async function loadConfig(cwd: string = process.cwd()): Promise<IntlAiConfig> {
+export async function loadConfig(cwd: string = process.cwd()): Promise<ResolvedIntlAiConfig> {
   const configPath = await findConfigFile(cwd);
   if (!configPath) {
     throw new Error(
       `No intl-ai config found in ${cwd}. Expected one of: ${CONFIG_FILE_NAMES.join(", ")}`,
     );
   }
-  const raw = configPath.endsWith(".ts") ? await loadTsRaw(configPath) : await loadJsonRaw(configPath);
-  return parseAndConvert(raw, configPath);
+  const raw = configPath.endsWith(".ts")
+    ? await loadTsRaw(configPath)
+    : await loadJsonRaw(configPath);
+  return resolveConfig(parseAndConvert(raw, configPath), configPath);
 }

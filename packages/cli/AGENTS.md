@@ -6,12 +6,12 @@ Command-line interface for intl-ai. Two commands: `intl-ai fill` (translate miss
 
 ## Architecture
 
-| File/Dir                | Purpose                                                                              |
-| ----------------------- | ------------------------------------------------------------------------------------ |
-| `src/index.ts`          | CLI entry — sets up `cleye` with name, version, and both commands                    |
-| `src/logger.ts`         | `configureLogger(silent)` bootstrap + shared `logger` instance (logtape)             |
-| `src/commands/fill.ts`  | `fillCommand` (cleye) + exported `runFillCommand` for testing                        |
-| `src/commands/check.ts` | `checkCommand` (cleye) + exported `runCheckCommand` for testing                      |
+| File/Dir                | Purpose                                                                             |
+| ----------------------- | ----------------------------------------------------------------------------------- |
+| `src/index.ts`          | CLI entry — sets up `cleye` with name, version, and both commands                   |
+| `src/logger.ts`         | `configureLogger(silent)` bootstrap + shared `logger` instance (logtape)            |
+| `src/commands/fill.ts`  | `fillCommand` (cleye) + exported `runFillCommand` for testing                       |
+| `src/commands/check.ts` | `checkCommand` (cleye) + exported `runCheckCommand` for testing                     |
 | `src/config/loader.ts`  | `loadConfig()` — loads `intl-ai.config.ts` (via `jiti`) or `.json` (via `readFile`) |
 
 ---

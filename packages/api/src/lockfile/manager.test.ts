@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { LockfileManager } from "./manager";
-import { mkdtemp, rm, readFile } from "node:fs/promises";
+import { mkdtemp, rm, readFile, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "pathe";
 
@@ -14,7 +14,7 @@ describe("LockfileManager (api)", () => {
     try {
       const mgr = new LockfileManager(dir);
       const lockfile = await mgr.load();
-      expect(lockfile).toEqual({ version: 1, entries: {} });
+      expect(lockfile).toEqual({ version: 2, entries: {} });
     } finally {
       await rm(dir, { recursive: true, force: true });
     }
@@ -37,8 +37,36 @@ describe("LockfileManager (api)", () => {
 
       const raw = await readFile(join(dir, "intl-ai.lock.json"), "utf-8");
       const parsed = JSON.parse(raw);
-      expect(parsed.version).toBe(1);
-      expect(parsed.entries["es:greeting"].translated).toBe("Hola");
+      expect(parsed.version).toBe(2);
+      expect(parsed.entries["es||greeting"].translated).toBe("Hola");
+    } finally {
+      await rm(dir, { recursive: true, force: true });
+    }
+  });
+
+  it("migrates v1 lockfiles with ':' separator to v2 '||' separator", async () => {
+    const dir = await createTempDir();
+    try {
+      const v1 = {
+        version: 1,
+        entries: {
+          "es:greeting": {
+            key: "greeting",
+            locale: "es",
+            sourceHash: "abc",
+            translated: "Hola",
+            origin: "ai",
+            timestamp: "2024-01-01T00:00:00.000Z",
+          },
+        },
+      };
+      await writeFile(join(dir, "intl-ai.lock.json"), JSON.stringify(v1), "utf-8");
+
+      const mgr = new LockfileManager(dir);
+      const lockfile = await mgr.load();
+      expect(lockfile.version).toBe(2);
+      expect(lockfile.entries["es||greeting"].translated).toBe("Hola");
+      expect(lockfile.migratedAt).toBeDefined();
     } finally {
       await rm(dir, { recursive: true, force: true });
     }
@@ -77,23 +105,41 @@ describe("LockfileManager (api)", () => {
     }
   });
 
-  it("getStaleEntries detects changed sources", async () => {
+  it("skips malformed v1 entries (missing locale or key) during migration", async () => {
     const dir = await createTempDir();
     try {
+      const v1 = {
+        version: 1,
+        entries: {
+          "es:greeting": {
+            key: "greeting",
+            locale: "es",
+            sourceHash: "abc",
+            translated: "Hola",
+            origin: "ai",
+            timestamp: "2024-01-01T00:00:00.000Z",
+          },
+          // malformed: no locale
+          "es:broken": {
+            key: undefined,
+            locale: undefined,
+            sourceHash: "abc",
+            translated: "Hola",
+            origin: "ai",
+            timestamp: "2024-01-01T00:00:00.000Z",
+          },
+        },
+      };
+      await writeFile(join(dir, "intl-ai.lock.json"), JSON.stringify(v1), "utf-8");
+
       const mgr = new LockfileManager(dir);
-      await mgr.load();
-      const oldHash = await mgr.hashSource("Hello v1");
-      mgr.setEntry("greeting", "es", {
-        key: "greeting",
-        locale: "es",
-        sourceHash: oldHash,
-        translated: "Hola",
-        origin: "ai",
-        timestamp: new Date().toISOString(),
-      });
-      const stale = await mgr.getStaleEntries("es", { greeting: "Hello v2" });
-      expect(stale).toHaveLength(1);
-      expect(stale[0].key).toBe("greeting");
+      const lockfile = await mgr.load();
+      // Valid entry migrated.
+      expect(lockfile.entries["es||greeting"]).toBeDefined();
+      // Malformed entry skipped (no crash, no ghost key).
+      const allKeys = Object.keys(lockfile.entries);
+      expect(allKeys).toHaveLength(1);
+      expect(allKeys[0]).toBe("es||greeting");
     } finally {
       await rm(dir, { recursive: true, force: true });
     }

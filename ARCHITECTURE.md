@@ -10,13 +10,13 @@ For product context and roadmap see `.agents/docs/prd.md`. For the api-internal 
 
 Four packages are published to npm. One shared config package is internal only.
 
-| Package | npm name | Purpose |
-| --- | --- | --- |
-| `packages/api` | `@intl-ai/api` | Runtime-agnostic core: `runFill`, `runCheck`, `IntlAiConfig`, `IntlAiConfigSchema` |
-| `packages/unplugin` | `@intl-ai/unplugin` | Universal bundler plugin via unplugin 3 (Vite, Rollup, Webpack, esbuild, Rspack, Rolldown, Farm; Bun and Nuxt adapters) |
-| `packages/next` | `@intl-ai/next` | Next.js `withIntlAi()` wrapper: webpack plugin and Turbopack loader |
-| `packages/cli` | `@intl-ai/cli` | `intl-ai fill` and `intl-ai check` commands |
-| `packages/typescript-config` | `@repo/typescript-config` | Shared tsconfig, internal only |
+| Package                      | npm name                  | Purpose                                                                                                                 |
+| ---------------------------- | ------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| `packages/api`               | `@intl-ai/api`            | Runtime-agnostic core: `runFill`, `runCheck`, `IntlAiConfig`, `IntlAiConfigSchema`                                      |
+| `packages/unplugin`          | `@intl-ai/unplugin`       | Universal bundler plugin via unplugin 3 (Vite, Rollup, Webpack, esbuild, Rspack, Rolldown, Farm; Bun and Nuxt adapters) |
+| `packages/next`              | `@intl-ai/next`           | Next.js `withIntlAi()` wrapper: webpack plugin and Turbopack loader                                                     |
+| `packages/cli`               | `@intl-ai/cli`            | `intl-ai fill` and `intl-ai check` commands                                                                             |
+| `packages/typescript-config` | `@repo/typescript-config` | Shared tsconfig, internal only                                                                                          |
 
 **Dependency graph:**
 
@@ -58,27 +58,31 @@ The api package follows a strict Hexagonal (Ports and Adapters) layout. Dependen
 
 ### Ring map
 
-| Directory | Ring | Purpose |
-| --- | --- | --- |
-| `core/` | Core | `findMissingTranslations`, `flattenObject`, `hashSha1` (SHA-1 via Web Crypto), domain types. Zero IO. |
-| `lockfile/` | Core-adjacent | `LockfileManager` plus types. Domain-adjacent, not pure. |
-| `ports/` | Ports | Four interfaces that define the hexagon edges (see below). |
-| `services/fill/` | Services | `runFill` plus `translateBatch`. Imports only `core` and `ports`. |
-| `services/check/` | Services | `runCheck`. Imports only `core` and `ports`. Sibling slices never import each other. |
-| `adapters/providers/` | Adapters | `openai.ts`, `anthropic.ts`, `registry.ts`. |
-| `adapters/processors/` | Adapters | `icu.ts`, `passthrough`, `createProcessor`. |
-| `adapters/formats/` | Adapters | `json.ts`, `yaml.ts` (each implements `LocaleFormat`). |
-| `infrastructure/` | Infrastructure | `fs.ts` (Node.js file system wrappers), `config/loader.ts` (jiti + JSON + Zod). The only Node-coupled code. |
-| `schema/` | Schema | Zod schema, JSON Schema file, `jsonConfigToIntlAiConfig`. |
+| Directory              | Ring           | Purpose                                                                                                     |
+| ---------------------- | -------------- | ----------------------------------------------------------------------------------------------------------- |
+| `core/`                | Core           | `findMissingTranslations`, `flattenObject`, `hashSha1` (SHA-1 via Web Crypto), domain types. Zero IO.       |
+| `lockfile/`            | Core-adjacent  | `LockfileManager` plus types. Domain-adjacent, not pure.                                                    |
+| `ports/`               | Ports          | Four interfaces that define the hexagon edges (see below).                                                  |
+| `services/fill/`       | Services       | `runFill` plus `translateBatch`. Imports only `core` and `ports`.                                           |
+| `services/check/`      | Services       | `runCheck`. Imports only `core` and `ports`. Sibling slices never import each other.                        |
+| `adapters/providers/`  | Adapters       | `openai.ts`, `anthropic.ts`, `registry.ts`.                                                                 |
+| `adapters/processors/` | Adapters       | `icu.ts`, `passthrough`, `createProcessor`.                                                                 |
+| `adapters/formats/`    | Adapters       | `json.ts`, `yaml.ts` (each implements `LocaleFormat`).                                                      |
+| `infrastructure/`      | Infrastructure | `fs.ts` (Node.js file system wrappers), `config/loader.ts` (jiti + JSON + Zod). The only Node-coupled code. |
+| `schema/`              | Schema         | Zod schema, JSON Schema file, `jsonConfigToIntlAiConfig`.                                                   |
 
 ### The four port interfaces
 
 ```ts
 interface AIProvider {
   readonly id: string;
-  buildRequest(opts: { model: string; systemPrompt: string; userPrompt: string;
-    temperature: number; modelParams?: Record<string, unknown> }):
-    { url: string; headers: Record<string, string>; body: Record<string, unknown> };
+  buildRequest(opts: {
+    model: string;
+    systemPrompt: string;
+    userPrompt: string;
+    temperature: number;
+    modelParams?: Record<string, unknown>;
+  }): { url: string; headers: Record<string, string>; body: Record<string, unknown> };
   parseResponse(data: unknown): { content: string };
 }
 
@@ -96,11 +100,26 @@ interface LocaleFormat {
 }
 
 interface TranslationHook {
-  onRequest?: (info: { provider: string; model: string; locale: string; entryCount: number }) => void;
-  onSuccess?: (info: { provider: string; model: string; locale: string;
-    results: TranslationResult[]; durationMs: number }) => void;
-  onError?: (info: { provider: string; model: string; locale: string;
-    error: string; attempt: number }) => void;
+  onRequest?: (info: {
+    provider: string;
+    model: string;
+    locale: string;
+    entryCount: number;
+  }) => void;
+  onSuccess?: (info: {
+    provider: string;
+    model: string;
+    locale: string;
+    results: TranslationResult[];
+    durationMs: number;
+  }) => void;
+  onError?: (info: {
+    provider: string;
+    model: string;
+    locale: string;
+    error: string;
+    attempt: number;
+  }) => void;
 }
 ```
 

@@ -48,10 +48,11 @@ export const openaiProvider: AIProvider = {
     };
   },
   parseResponse(data: unknown) {
-    return {
-      content:
-        (data as { choices?: Array<{ message?: { content?: string } }> }).choices?.[0]?.message
-          ?.content ?? "",
-    };
+    let content =
+      (data as { choices?: Array<{ message?: { content?: string } }> }).choices?.[0]?.message
+        ?.content ?? "";
+    // Strip markdown code fences — providers that ignore response_format emit ```json fences
+    content = content.replace(/^[`]{3,}.*$/gm, "").trim();
+    return { content };
   },
 };

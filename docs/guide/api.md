@@ -54,25 +54,25 @@ Reads locale files and the lockfile, then reports missing keys, stale translatio
 
 ### Options
 
-| Option   | Type     | Description                      |
-| -------- | -------- | -------------------------------- |
-| `locale` | `string` | Check only this locale.          |
+| Option   | Type     | Description             |
+| -------- | -------- | ----------------------- |
+| `locale` | `string` | Check only this locale. |
 
 ### Result
 
-| Field       | Type                | Description                                          |
-| ----------- | ------------------- | ---------------------------------------------------- |
-| `hasIssues` | `boolean`           | True if any locale has missing or stale entries.     |
-| `results`   | `CheckLocaleResult` | Per-locale breakdown of missing, stale, and extra.   |
+| Field       | Type                | Description                                        |
+| ----------- | ------------------- | -------------------------------------------------- |
+| `hasIssues` | `boolean`           | True if any locale has missing or stale entries.   |
+| `results`   | `CheckLocaleResult` | Per-locale breakdown of missing, stale, and extra. |
 
 Each `CheckLocaleResult`:
 
-| Field    | Type       | Description                                         |
-| -------- | ---------- | --------------------------------------------------- |
-| `locale` | `string`   | Locale code.                                        |
-| `missing` | `MissingTranslationEntry[]` | Keys in source but absent or empty in target. |
-| `stale`  | `StaleEntry[]` | Keys whose source content changed since last translate. |
-| `extra`  | `string[]` | Keys in target with no corresponding source entry. |
+| Field     | Type                        | Description                                             |
+| --------- | --------------------------- | ------------------------------------------------------- |
+| `locale`  | `string`                    | Locale code.                                            |
+| `missing` | `MissingTranslationEntry[]` | Keys in source but absent or empty in target.           |
+| `stale`   | `StaleEntry[]`              | Keys whose source content changed since last translate. |
+| `extra`   | `string[]`                  | Keys in target with no corresponding source entry.      |
 
 ### CLI exit codes
 
@@ -89,7 +89,7 @@ interface IntlAiConfig {
   locales: string[];
   localeDir: string;
   model: AIProvider | string; // provider ID string or AIProvider instance
-  apiKey: ApiKeyValue;        // supports $VAR and ${VAR} env interpolation
+  apiKey: ApiKeyValue; // supports $VAR and ${VAR} env interpolation
   baseURL: string;
   modelParams?: Record<string, unknown>; // passthrough to provider
   hook?: TranslationHook;
@@ -100,6 +100,22 @@ interface IntlAiConfig {
 ```
 
 For JSON config files, use `IntlAiJsonConfigSchema` and `jsonConfigToIntlAiConfig` from `@intl-ai/api/internal`.
+
+## Advanced: batched fill (internal)
+
+`batchedFill` is available via `@intl-ai/api/internal` for consumers who need parallel locale processing and the failure report artifact.
+
+```typescript
+import { batchedFill } from "@intl-ai/api/internal";
+import type { BatchedFillOptions, BatchedFillResult } from "@intl-ai/api/internal";
+
+const result = await batchedFill(config, {
+  concurrency: 4, // max parallel locales, default 4
+  // ...runFill options (locale, force, dryRun, onProgress, hook)
+});
+```
+
+This is the API used by the CLI. The failure report is written to `${localeDir}/.intl-ai/report-<timestamp>.json` when any translation fails and `dryRun` is false.
 
 ## JSON Schema
 

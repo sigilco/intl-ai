@@ -1,13 +1,12 @@
-import { existsSync } from "node:fs";
 import {
   loadConfigFromPath,
   IntlAiJsonConfigSchema,
   jsonConfigToIntlAiConfig,
   type IntlAiJsonConfig,
+  type ResolvedIntlAiConfig,
 } from "@intl-ai/api/internal";
-import type { IntlAiConfig } from "@intl-ai/api";
 
-export type { IntlAiConfig };
+export type { ResolvedIntlAiConfig };
 
 export interface LoadConfigOptions {
   validate?: boolean;
@@ -16,7 +15,7 @@ export interface LoadConfigOptions {
 export async function loadConfig(
   path: string,
   options: LoadConfigOptions = {},
-): Promise<IntlAiConfig> {
+): Promise<ResolvedIntlAiConfig> {
   return loadConfigFromPath(path, options);
 }
 

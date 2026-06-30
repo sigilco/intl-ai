@@ -9,7 +9,10 @@ hero:
       text: Get Started
       link: /guide/getting-started
     - theme: alt
-      text: View on GitHub
+      text: Sponsor
+      link: https://buy.polar.sh/polar_cl_Mv1gdlG7bw3I70EC9IHtfeSHJj4PEKvA7JAUz23CFhj
+    - theme: alt
+      text: GitHub
       link: https://github.com/sigilco/intl-ai
 
 features:
@@ -22,22 +25,3 @@ features:
   - title: Cross-Platform
     details: Native Expo, Flutter, SwiftUI, and .NET integrations. Ship translations into any mobile or desktop build.
 ---
-
-<SponsorsHero />
-
-## Quick Install
-
-Install the standalone CLI with a single command on macOS or Linux:
-
-```bash
-curl -fsSL https://intl-ai.pages.dev/install.sh | bash
-```
-
-Or use it without installing via npm or Bun:
-
-```bash
-npx @intl-ai/cli fill
-bunx @intl-ai/cli fill
-```
-
-Homebrew and mise support are also available; see the [installation guide](/guide/installation) for details.

@@ -75,7 +75,7 @@ fun loadLocale(context: Context, locale: String): LocaleMessages {
 
 ## Requirements
 
-- `intl-ai` installed on your `PATH` (see [Installation](/guide/installation)).
+- `intl-ai` installed on your `PATH` (see [Installation](/guide/getting-started#installation)).
 - `intl-ai.config.json` in `app/`. Adjust `localeDir` to point to `src/main/assets/locales`.
 
 ## Example

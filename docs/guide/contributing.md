@@ -61,7 +61,6 @@ docs/
     config.ts
   guide/
     getting-started.md
-    installation.md
     ai-model.md
     configuration.md
     api.md

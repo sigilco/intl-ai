@@ -1,5 +1,6 @@
-import { readText, writeText, pathExists, dirname } from "../../infrastructure/fs";
+import { readText, writeText, pathExists, dirname, join } from "../../infrastructure/fs";
 import { parse, stringify } from "yaml";
+import { flattenObject, unflattenObject } from "../../core/diff";
 import type { LocaleFormat } from "../../ports/format";
 
 export { dirname };
@@ -16,7 +17,15 @@ export async function writeYamlFile(path: string, data: Record<string, unknown>)
 }
 
 export const yamlFormat: LocaleFormat = {
-  extension: ".yaml",
-  read: (path) => readYamlFile(path),
-  write: writeYamlFile,
+  name: "yaml",
+  async readLocale(localeDir, locale) {
+    const path = join(localeDir, `${locale}.yaml`);
+    if (!(await pathExists(path))) return {};
+    const raw = parse(await readText(path)) as Record<string, unknown>;
+    return flattenObject(raw);
+  },
+  async writeLocale(localeDir, locale, data) {
+    const path = join(localeDir, `${locale}.yaml`);
+    await writeText(path, stringify(unflattenObject(data)));
+  },
 };

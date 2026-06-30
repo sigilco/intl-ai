@@ -1,26 +1,26 @@
-import {
-  join,
-  readText,
-  writeText,
-  pathExists,
-  ensureDir,
-  setNestedValue,
-  getNestedValue,
-} from "../../infrastructure/fs";
 import { LockfileManager } from "../../lockfile/manager";
 import { findMissingTranslations, lockfileEntryToMap } from "../../core/diff";
 import { translateBatch } from "./translator";
 import { runQualityLoop, type RefillRequest } from "./loop";
 import { judgeBatch } from "./judge";
 import type { AIProvider } from "../../ports/provider";
-import type { IntlAiConfig } from "../../types";
+import type { ResolvedIntlAiConfig } from "../../infrastructure/config/loader";
 import type {
+  ErrorType,
   QualityAssessorInstance,
   QualityOptions,
   QualityResult,
   TranslationContext,
+  TranslationResult,
 } from "../../core/types";
 import type { LockfileQuality } from "../../lockfile/types";
+import type { TranslationHook } from "../../ports/hook";
+
+export interface RunFillProgressInfo {
+  locale: string;
+  completed: number; // keys completed so far in this locale
+  total: number; // total keys for this locale
+}
 
 export interface RunFillOptions {
   locale?: string;
@@ -33,6 +33,18 @@ export interface RunFillOptions {
    * with the judge's feedback, and `lockfile` entries get a `quality` record.
    */
   quality?: QualityOptions;
+  /** Fires after each batch completes. Allows callers to implement progress UI. */
+  onProgress?: (info: RunFillProgressInfo) => void;
+  /** Translation hook for request/success/error events. */
+  hook?: TranslationHook;
+}
+
+export interface FillFailure {
+  locale: string;
+  key: string;
+  source: string;
+  error: string;
+  errorType?: ErrorType;
 }
 
 export interface RunFillResult {
@@ -41,6 +53,7 @@ export interface RunFillResult {
   skipped: number;
   errors: number;
   needsReview: number;
+  failures: FillFailure[];
 }
 
 export class IntlAiQualityError extends Error {
@@ -71,7 +84,7 @@ const DEFAULT_THRESHOLD = 0.8;
 const DEFAULT_MAX_RETRIES = 2;
 
 export async function runFill(
-  config: IntlAiConfig,
+  config: ResolvedIntlAiConfig,
   options?: RunFillOptions,
 ): Promise<RunFillResult> {
   const { force = false, dryRun = false } = options ?? {};
@@ -87,8 +100,13 @@ export async function runFill(
     processor,
     hook,
     modelParams,
+    batchSize,
     quality: configQuality,
+    format: fmt,
   } = config;
+  const effectiveHook = options?.hook ?? hook;
+  // Loader resolves the format string to a LocaleFormat object before runFill is called.
+  const format = fmt;
 
   const qualityOptions: QualityOptions | undefined = options?.quality ?? configQuality;
   const qualityEnabled = qualityOptions !== undefined;
@@ -103,37 +121,33 @@ export async function runFill(
     : locales.filter((l) => l !== defaultLocale);
 
   if (targetLocales.length === 0) {
-    return { locales: [], translated: 0, skipped: 0, errors: 0, needsReview: 0 };
+    return { locales: [], translated: 0, skipped: 0, errors: 0, needsReview: 0, failures: [] };
   }
 
   const lockfileManager = new LockfileManager(localeDir);
   await lockfileManager.load();
 
-  const sourceLocalePath = join(localeDir, `${defaultLocale}.json`);
-  if (!(await pathExists(sourceLocalePath))) {
-    return { locales: [], translated: 0, skipped: 0, errors: 0, needsReview: 0 };
+  const sourceFlat = await format.readLocale(localeDir, defaultLocale);
+  if (Object.keys(sourceFlat).length === 0) {
+    return { locales: [], translated: 0, skipped: 0, errors: 0, needsReview: 0, failures: [] };
   }
-  const sourceLocaleData = JSON.parse(await readText(sourceLocalePath)) as Record<string, unknown>;
 
   let translated = 0;
   let skipped = 0;
   let errors = 0;
   let needsReview = 0;
+  const failures: FillFailure[] = [];
 
   for (const targetLocale of targetLocales) {
     try {
-      const targetLocalePath = join(localeDir, `${targetLocale}.json`);
-      let targetLocaleData: Record<string, unknown> = {};
-      if (await pathExists(targetLocalePath)) {
-        targetLocaleData = JSON.parse(await readText(targetLocalePath));
-      }
+      let targetFlat = await format.readLocale(localeDir, targetLocale);
 
       const lockfileEntries = lockfileEntryToMap(lockfileManager.getAllEntries(), targetLocale);
 
       const diff = await findMissingTranslations(
         {
-          sourceLocale: sourceLocaleData,
-          targetLocale: targetLocaleData,
+          sourceLocale: sourceFlat,
+          targetLocale: targetFlat,
           locale: targetLocale,
           lockfileEntries,
         },
@@ -141,7 +155,7 @@ export async function runFill(
       );
 
       if (diff.missing.length === 0 && diff.stale.length === 0) {
-        skipped += Object.keys(flattenKeys(targetLocaleData)).length;
+        skipped += Object.keys(targetFlat).length;
         continue;
       }
 
@@ -160,23 +174,29 @@ export async function runFill(
         processor,
         baseURL,
         apiKey,
-        hook,
+        hook: effectiveHook,
         modelParams,
       });
 
-      const successResults = results.filter(
-        (r) => r.success && r.translated !== undefined,
-      );
-      const failedResults = results.filter(
-        (r) => !r.success || r.translated === undefined,
-      );
+      const successResults = results.filter((r) => r.success && r.translated !== undefined);
+      const failedResults = results.filter((r) => !r.success || r.translated === undefined);
       errors += failedResults.length;
+
+      for (const r of failedResults) {
+        failures.push({
+          locale: targetLocale,
+          key: r.key,
+          source: sourceFlat[r.key] ?? "",
+          error: r.error ?? "Unknown error",
+          errorType: r.errorType,
+        });
+      }
 
       // No quality loop: original behavior.
       if (!qualityEnabled || successResults.length === 0) {
         for (const result of successResults) {
-          setNestedValue(targetLocaleData, result.key, result.translated!);
-          const source = getNestedValue(sourceLocaleData, result.key);
+          targetFlat[result.key] = result.translated!;
+          const source = sourceFlat[result.key] ?? "";
           const sourceHash = await lockfileManager.hashSource(source);
           lockfileManager.setEntry(result.key, targetLocale, {
             key: result.key,
@@ -190,9 +210,14 @@ export async function runFill(
           translated++;
         }
 
+        options?.onProgress?.({
+          locale: targetLocale,
+          completed: translated,
+          total: entriesToTranslate.length,
+        });
+
         if (!dryRun) {
-          await ensureDir(localeDir);
-          await writeText(targetLocalePath, JSON.stringify(targetLocaleData, null, 2));
+          await format.writeLocale(localeDir, targetLocale, targetFlat);
           await lockfileManager.save();
         }
         continue;
@@ -201,7 +226,7 @@ export async function runFill(
       // Quality-aware path.
       const sourceHashByKey = new Map<string, string>();
       for (const r of successResults) {
-        const source = getNestedValue(sourceLocaleData, r.key);
+        const source = sourceFlat[r.key] ?? "";
         sourceHashByKey.set(r.key, await lockfileManager.hashSource(source));
       }
 
@@ -212,7 +237,7 @@ export async function runFill(
               provider,
               baseURL,
               apiKey,
-              hook,
+              hook: effectiveHook,
               modelParams,
               contexts: ctxs,
             });
@@ -220,7 +245,7 @@ export async function runFill(
       const loopResult = await runQualityLoop({
         initialTranslations: successResults.map((r) => ({
           key: r.key,
-          source: getNestedValue(sourceLocaleData, r.key),
+          source: sourceFlat[r.key] ?? "",
           translated: r.translated!,
         })),
         sourceHashByKey,
@@ -230,38 +255,39 @@ export async function runFill(
         judge,
         assessor: customAssessor,
         refill: async (reqs: RefillRequest[]) => {
-          const refillResults = await translateBatch({
-            provider,
-            entries: reqs.map((e) => ({ key: e.key, source: e.source })),
-            targetLocale,
-            sourceLocale: defaultLocale,
-            glossary,
-            maxRetries,
-            processor,
-            baseURL,
-            apiKey,
-            hook,
-            modelParams,
-            feedback: Object.fromEntries(
-              reqs.map((r) => [r.key, summarizeRefillPrompt(r)]),
-            ),
-          });
-          return refillResults;
+          const refillBatches = chunk(reqs, batchSize ?? Infinity);
+          const result: TranslationResult[] = [];
+          for (const batch of refillBatches) {
+            const batchResult = await translateBatch({
+              provider,
+              entries: batch.map((e) => ({ key: e.key, source: e.source })),
+              targetLocale,
+              sourceLocale: defaultLocale,
+              glossary,
+              maxRetries,
+              processor,
+              baseURL,
+              apiKey,
+              hook: effectiveHook,
+              modelParams,
+              feedback: Object.fromEntries(batch.map((r) => [r.key, summarizeRefillPrompt(r)])),
+            });
+            result.push(...batchResult);
+          }
+          return result;
         },
         options: { threshold, maxRetries: maxQualityRetries },
       });
 
-      for (const r of loopResult.belowThreshold) {
-        needsReview++;
-      }
+      needsReview += loopResult.belowThreshold.length;
 
       if (failOnLowQuality && loopResult.belowThreshold.length > 0) {
         throw new IntlAiQualityError(targetLocale, loopResult.belowThreshold);
       }
 
       for (const [key, text] of loopResult.finalByKey) {
-        setNestedValue(targetLocaleData, key, text);
-        const source = getNestedValue(sourceLocaleData, key);
+        targetFlat[key] = text;
+        const source = sourceFlat[key] ?? "";
         const sourceHash = await lockfileManager.hashSource(source);
         const quality = loopResult.qualityByKey.get(key);
         const record: LockfileQuality | undefined = quality
@@ -289,8 +315,7 @@ export async function runFill(
       }
 
       if (!dryRun) {
-        await ensureDir(localeDir);
-        await writeText(targetLocalePath, JSON.stringify(targetLocaleData, null, 2));
+        await format.writeLocale(localeDir, targetLocale, targetFlat);
         await lockfileManager.save();
       }
     } catch (err) {
@@ -301,7 +326,7 @@ export async function runFill(
     }
   }
 
-  return { locales: targetLocales, translated, skipped, errors, needsReview };
+  return { locales: targetLocales, translated, skipped, errors, needsReview, failures };
 }
 
 function summarizeRefillPrompt(req: RefillRequest): string {
@@ -316,24 +341,10 @@ function modelToString(model: AIProvider | string): string {
   return model.id;
 }
 
-function flattenKeys(obj: Record<string, unknown>): Record<string, string> {
-  const out: Record<string, string> = {};
-  function walk(o: unknown, prefix: string) {
-    if (o === null || o === undefined) return;
-    if (typeof o !== "object") {
-      if (prefix) out[prefix] = String(o);
-      return;
-    }
-    if (Array.isArray(o)) {
-      if (prefix) out[prefix] = JSON.stringify(o);
-      return;
-    }
-    for (const [k, v] of Object.entries(o as Record<string, unknown>)) {
-      const key = prefix ? `${prefix}.${k}` : k;
-      if (v !== null && typeof v === "object" && !Array.isArray(v)) walk(v, key);
-      else out[key] = Array.isArray(v) ? JSON.stringify(v) : String(v);
-    }
-  }
-  walk(obj, "");
+function chunk<T>(arr: T[], size: number): T[][] {
+  // ponytail: Infinity (the default) collapses to a single all-in-one batch.
+  if (!Number.isFinite(size)) return [arr];
+  const out: T[][] = [];
+  for (let i = 0; i < arr.length; i += size) out.push(arr.slice(i, i + size));
   return out;
 }

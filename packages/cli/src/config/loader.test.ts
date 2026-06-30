@@ -39,7 +39,7 @@ describe("config loader", () => {
 
     expect(config.defaultLocale).toBe("en");
     expect(config.locales).toEqual(["en", "fr"]);
-    expect(config.localeDir).toBe("./locales");
+    expect(config.localeDir).toBe(join(tempDir, "locales"));
     expect(config.maxRetries).toBe(2);
     expect(config.processor?.name).toBe("icu");
 
@@ -65,7 +65,7 @@ describe("config loader", () => {
 
     expect(config.defaultLocale).toBe("en");
     expect(config.locales).toEqual(["en", "fr"]);
-    expect(config.localeDir).toBe("./locales");
+    expect(config.localeDir).toBe(join(tempDir, "locales"));
   });
 
   test("throws on missing file", async () => {

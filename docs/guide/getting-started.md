@@ -9,57 +9,65 @@ This guide will help you set up `@intl-ai/unplugin` in your project.
 
 ## Installation
 
-### Prerequisites
+Pick the channel that matches your workflow. The bundler plugin and the CLI binary are independent: use either or both.
 
-- Node.js 22+
-- A package manager: npm, pnpm, or yarn
-- An AI model provider (see [AI Model Setup](/guide/ai-model) for options)
+### Bundler plugin
 
-### Install the Package
+Install into your project. Works with Vite, Webpack, Rollup, esbuild, Rspack, Rolldown, and Farm.
 
 ::: code-group
 
 ```sh [npm]
-npm install @intl-ai/unplugin
+npm install -D @intl-ai/unplugin
 ```
 
 ```sh [pnpm]
-pnpm add @intl-ai/unplugin
+pnpm add -D @intl-ai/unplugin
 ```
 
 ```sh [yarn]
-yarn add @intl-ai/unplugin
+yarn add -D @intl-ai/unplugin
 ```
 
 ```sh [bun]
-bun add @intl-ai/unplugin
+bun add -D @intl-ai/unplugin
 ```
 
 :::
 
-### For Next.js Projects
+For Next.js, swap to `@intl-ai/next` and follow the [Next.js setup](/guide/build-systems/next-js).
 
-Install the `@intl-ai/next` package in your Next.js project:
+### CLI binary
+
+Install the `intl-ai` command globally.
 
 ::: code-group
 
-```sh [npm]
-npm install @intl-ai/next
+```sh [Homebrew]
+brew install sigilco/tap-intl-ai/intl-ai
 ```
 
-```sh [pnpm]
-pnpm add @intl-ai/next
+```sh [mise]
+mise use npm:intl-ai@latest
 ```
 
-```sh [yarn]
-yarn add @intl-ai/next
-```
-
-```sh [bun]
-bun add @intl-ai/next
+```sh [install.sh]
+curl -fsSL https://intl-ai.pages.dev/install.sh | bash
 ```
 
 :::
+
+Override the install path with `INTL_AI_INSTALL_DIR` and pin a version with `INTL_AI_VERSION` before running `install.sh`.
+
+### No install
+
+Run the CLI through `npx` if you don't want to install globally.
+
+```bash
+npx @intl-ai/cli fill
+```
+
+Requires Node.js 22+ and an [AI model provider](/guide/ai-model). Verify with `intl-ai --help`.
 
 ## Quick Start
 

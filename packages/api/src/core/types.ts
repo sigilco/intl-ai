@@ -3,6 +3,16 @@ export interface ValidationResult {
   errors?: string[];
 }
 
+export type ErrorType =
+  | "http"
+  | "timeout"
+  | "parse_error"
+  | "rate_limit"
+  | "validation"
+  | "empty"
+  | "output_truncated"
+  | "unknown";
+
 export interface TranslationEntry {
   key: string;
   source: string;
@@ -13,6 +23,11 @@ export interface TranslationResult {
   translated?: string;
   success: boolean;
   error?: string;
+  errorType?: ErrorType;
+  /** Number of attempts the batch went through before producing this result. */
+  attempts?: number;
+  /** Truncated preview of the last raw model response (failed results only). */
+  rawResponsePreview?: string;
 }
 
 export interface TranslationStaleEntry {
@@ -119,9 +134,7 @@ export interface QualityOptions {
   failOnLowQuality?: boolean;
 }
 
-export function isQualityAssessorInstance(
-  value: unknown,
-): value is QualityAssessorInstance {
+export function isQualityAssessorInstance(value: unknown): value is QualityAssessorInstance {
   return (
     typeof value === "object" &&
     value !== null &&

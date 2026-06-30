@@ -40,6 +40,4 @@ export const IntlAiJsonConfigSchema = z.object({
     })
     .optional(),
   format: z.string().optional(),
-  skipPaths: z.array(z.string()).optional(),
-  concurrency: z.number().int().min(1).max(16).optional(),
 });

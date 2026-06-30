@@ -6,11 +6,11 @@ Next.js integration layer. Provides `withIntlAi()` wrapper that delegates webpac
 
 ## Architecture
 
-| File/Dir                            | Purpose                                                                |
-| ----------------------------------- | ---------------------------------------------------------------------- |
+| File/Dir                            | Purpose                                                                                                      |
+| ----------------------------------- | ------------------------------------------------------------------------------------------------------------ |
 | `src/index.ts`                      | `withIntlAi()` HOF — registers Turbopack loader + delegates webpack integration to @intl-ai/unplugin/webpack |
-| `src/next-loader.ts`               | Turbopack loader — path resolution, compiled-JS/TS fallback strategy              |
-| `src/__mocks__/mock-next-config.ts` | Mock Next.js config for tests                                          |
+| `src/next-loader.ts`                | Turbopack loader — path resolution, compiled-JS/TS fallback strategy                                         |
+| `src/__mocks__/mock-next-config.ts` | Mock Next.js config for tests                                                                                |
 
 ---
 

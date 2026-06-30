@@ -1,10 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
 import { runQualityLoop } from "./loop";
-import type {
-  QualityAssessorInstance,
-  QualityResult,
-  TranslationContext,
-} from "../../core/types";
+import type { QualityAssessorInstance, QualityResult, TranslationContext } from "../../core/types";
 
 const baseContext = (overrides: Partial<TranslationContext>): TranslationContext => ({
   key: "k",
@@ -35,7 +31,10 @@ describe("runQualityLoop (api)", () => {
         { key: "a", source: "Hello", translated: "Hola" },
         { key: "b", source: "World", translated: "Mundo" },
       ],
-      sourceHashByKey: new Map([["a", "h1"], ["b", "h2"]]),
+      sourceHashByKey: new Map([
+        ["a", "h1"],
+        ["b", "h2"],
+      ]),
       targetLocale: "es",
       provider: "openai",
       model: "gpt-4o-mini",

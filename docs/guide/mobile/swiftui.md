@@ -87,7 +87,7 @@ let en = Bundle.main.decode("en.json", as: Localizations.self)
 
 ## Requirements
 
-- `intl-ai` installed on your `PATH` (see [Installation](/guide/installation)).
+- `intl-ai` installed on your `PATH` (see [Installation](/guide/getting-started#installation)).
 - `intl-ai.config.json` at project root.
 
 ## Example

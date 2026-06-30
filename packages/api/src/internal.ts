@@ -1,5 +1,11 @@
 // Core domain
-export { findMissingTranslations, flattenObject, lockfileEntryToMap, hashSource } from "./core/diff";
+export {
+  findMissingTranslations,
+  flattenObject,
+  unflattenObject,
+  lockfileEntryToMap,
+  hashSource,
+} from "./core/diff";
 export { hashSha1 } from "./core/hash";
 export type {
   ValidationResult,
@@ -18,11 +24,7 @@ export type {
   QualityAssessorInstance,
   QualityOptions,
 } from "./core/types";
-export {
-  QUALITY_ERROR_TYPES,
-  QUALITY_SEVERITIES,
-  isQualityAssessorInstance,
-} from "./core/types";
+export { QUALITY_ERROR_TYPES, QUALITY_SEVERITIES, isQualityAssessorInstance } from "./core/types";
 
 // Ports
 export type { AIProvider } from "./ports/provider";
@@ -33,6 +35,8 @@ export type { LocaleFormat } from "./ports/format";
 // Services
 export { runFill } from "./services/fill/fill";
 export type { RunFillOptions, RunFillResult } from "./services/fill/fill";
+export { batchedFill } from "./services/batch/index";
+export type { BatchedFillOptions, BatchedFillResult } from "./services/batch/index";
 export { translateBatch } from "./services/fill/translator";
 export type { TranslateBatchOptions } from "./services/fill/translator";
 export { runCheck } from "./services/check/check";
@@ -48,6 +52,8 @@ export { passthroughProcessor, createProcessor } from "./adapters/processors/ind
 // Adapters: formats
 export { readJsonFile, writeJsonFile, jsonFormat } from "./adapters/formats/json";
 export { readYamlFile, writeYamlFile, yamlFormat, dirname } from "./adapters/formats/yaml";
+export { builtInFormats, resolveFormat } from "./adapters/formats/registry";
+export type { BuiltInFormat } from "./adapters/formats/registry";
 
 // Infrastructure
 export {
@@ -58,26 +64,40 @@ export {
   removeDir,
   listFiles,
   fileSize,
-  getNestedValue,
-  setNestedValue,
   join,
   isAbsolute,
   relative,
   resolve,
 } from "./infrastructure/fs";
 export { loadConfig, loadConfigFromPath } from "./infrastructure/config/loader";
+export type { ResolvedIntlAiConfig } from "./infrastructure/config/loader";
 
 // Lockfile
 export { LockfileManager } from "./lockfile/manager";
-export type { LockfileEntry, Lockfile, LockfileQuality, QualityRecord, StaleEntry } from "./lockfile/types";
+export type {
+  LockfileEntry,
+  Lockfile,
+  LockfileQuality,
+  QualityRecord,
+  StaleEntry,
+} from "./lockfile/types";
 export { LOCKFILE_NAME } from "./lockfile/types";
 
 // Quality-aware fill loop (issue #14)
-export { judgeBatch, createDefaultAssessor, ADVERSARIAL_SYSTEM_PROMPT } from "./services/fill/judge";
+export {
+  judgeBatch,
+  createDefaultAssessor,
+  ADVERSARIAL_SYSTEM_PROMPT,
+} from "./services/fill/judge";
 export type { JudgeBatchOptions } from "./services/fill/judge";
 export { runQualityLoop } from "./services/fill/loop";
 export type { QualityLoopOptions, QualityLoopResult } from "./services/fill/loop";
 
 // Schema
-export { IntlAiJsonConfigSchema, jsonConfigToIntlAiConfig, getIntlAiSchema, INTL_AI_SCHEMA_URL } from "./schema/index";
+export {
+  IntlAiJsonConfigSchema,
+  jsonConfigToIntlAiConfig,
+  getIntlAiSchema,
+  INTL_AI_SCHEMA_URL,
+} from "./schema/index";
 export type { IntlAiJsonConfig } from "./schema/index";

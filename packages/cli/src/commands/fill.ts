@@ -1,5 +1,5 @@
 import { command } from "cleye";
-import { runFill } from "@intl-ai/api";
+import { batchedFill } from "@intl-ai/api/internal";
 import { loadConfig } from "../config/loader";
 import { configureLogger, logger } from "../logger";
 import { join as pathJoin } from "pathe";
@@ -10,8 +10,9 @@ export async function runFillCommand(opts: {
   force: boolean;
   silent: boolean;
   dryRun: boolean;
+  concurrency?: number;
 }): Promise<void> {
-  const { config: configPath, locale, force, silent, dryRun } = opts;
+  const { config: configPath, locale, force, silent, dryRun, concurrency = 4 } = opts;
   await configureLogger(silent);
   const config = await loadConfig(configPath);
 
@@ -20,10 +21,11 @@ export async function runFillCommand(opts: {
   const failureCounts = new Map<string, number>();
 
   try {
-    const result = await runFill(config, {
+    const result = await batchedFill(config, {
       locale,
       force,
       dryRun,
+      concurrency,
       onProgress: ({ locale: loc, completed, total }) => {
         if (!silent) {
           process.stdout.write(`\r[${loc}] ${completed}/${total} keys`);
@@ -126,15 +128,25 @@ export const fillCommand = command(
         default: false,
         description: "Preview changes without modifying files",
       },
+      concurrency: {
+        type: Number,
+        default: 4,
+        description: "Max parallel locale processing",
+      },
     },
   },
   (argv) => {
-    const { config, locale, force, silent, dryRun } = argv.flags;
-    runFillCommand({ config: config ?? "intl-ai.config.json", locale, force: force ?? false, silent: silent ?? false, dryRun: dryRun ?? false }).catch(
-      (e: unknown) => {
-        process.stderr.write(`[intl-ai] Fatal: ${e instanceof Error ? e.message : String(e)}\n`);
-        process.exit(1);
-      },
-    );
+    const { config, locale, force, silent, dryRun, concurrency } = argv.flags;
+    runFillCommand({
+      config: config ?? "intl-ai.config.json",
+      locale,
+      force: force ?? false,
+      silent: silent ?? false,
+      dryRun: dryRun ?? false,
+      concurrency: concurrency ?? 4,
+    }).catch((e: unknown) => {
+      process.stderr.write(`[intl-ai] Fatal: ${e instanceof Error ? e.message : String(e)}\n`);
+      process.exit(1);
+    });
   },
 );

@@ -1,4 +1,5 @@
-import { readText, writeText, pathExists } from "../../infrastructure/fs";
+import { readText, writeText, pathExists, join } from "../../infrastructure/fs";
+import { flattenObject, unflattenObject } from "../../core/diff";
 import type { LocaleFormat } from "../../ports/format";
 
 export async function readJsonFile<T = Record<string, unknown>>(path: string): Promise<T> {
@@ -19,7 +20,15 @@ export async function writeJsonFile<T = Record<string, unknown>>(
 }
 
 export const jsonFormat: LocaleFormat = {
-  extension: ".json",
-  read: (path) => readJsonFile(path),
-  write: (path, data) => writeJsonFile(path, data),
+  name: "json",
+  async readLocale(localeDir, locale) {
+    const path = join(localeDir, `${locale}.json`);
+    if (!(await pathExists(path))) return {};
+    const raw = JSON.parse(await readText(path)) as Record<string, unknown>;
+    return flattenObject(raw);
+  },
+  async writeLocale(localeDir, locale, data) {
+    const path = join(localeDir, `${locale}.json`);
+    await writeText(path, `${JSON.stringify(unflattenObject(data), null, 2)}\n`);
+  },
 };

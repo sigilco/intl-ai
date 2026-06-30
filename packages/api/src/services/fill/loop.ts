@@ -5,6 +5,9 @@ import type {
   TranslationContext,
   TranslationResult,
 } from "../../core/types";
+import { getLogger } from "@logtape/logtape";
+
+const logger = getLogger(["intl-ai", "fill", "quality"]);
 
 export interface RefillRequest {
   key: string;
@@ -28,6 +31,8 @@ export interface QualityLoopOptions {
   assessor?: QualityAssessorInstance;
   /** Refill callback for below-threshold entries. */
   refill: (entries: RefillRequest[]) => Promise<TranslationResult[]>;
+  /** Optional logger for judge phase events. */
+  logger?: ReturnType<typeof getLogger>;
   options: Pick<QualityOptions, "threshold" | "maxRetries"> & {
     threshold: number;
     maxRetries: number;
@@ -58,8 +63,8 @@ function summarizeFeedback(result: QualityResult): string {
   if (result.reason) parts.push(result.reason);
   if (result.errorTypes?.length) {
     parts.push(
-      ...result.errorTypes.map(
-        (e) => `${e.type}${e.severity ? ` (${e.severity})` : ""}: ${e.description ?? ""}`.trim(),
+      ...result.errorTypes.map((e) =>
+        `${e.type}${e.severity ? ` (${e.severity})` : ""}: ${e.description ?? ""}`.trim(),
       ),
     );
   }
@@ -141,6 +146,10 @@ export async function runQualityLoop(opts: QualityLoopOptions): Promise<QualityL
       }
     }
 
+    logger?.info(
+      `[${opts.targetLocale}] Quality round ${attempts}: judged ${current.length} keys, ${passing.length} passed, ${rejected.length} below threshold`,
+    );
+
     if (rejected.length === 0) break;
     if (attempts >= maxRetries) {
       for (const item of rejected) {
@@ -161,6 +170,10 @@ export async function runQualityLoop(opts: QualityLoopOptions): Promise<QualityL
       feedback: summarizeFeedback(qualityByKey.get(r.key) as QualityResult),
     }));
 
+    logger?.info(
+      `[${opts.targetLocale}] Refill round ${attempts}: ${rejected.length} keys below threshold`,
+    );
+
     const refilled = await opts.refill(refillReqs);
     const byKey = new Map(refilled.map((r) => [r.key, r]));
     const nextCurrent: typeof current = [];
@@ -180,6 +193,7 @@ export async function runQualityLoop(opts: QualityLoopOptions): Promise<QualityL
       nextCurrent.push({ key: r.key, source: r.source, translated: result.translated });
     }
     current = nextCurrent;
+    logger?.debug(`[${opts.targetLocale}] Refill complete, re-judging ${nextCurrent.length} keys`);
     attempts++;
   }
 

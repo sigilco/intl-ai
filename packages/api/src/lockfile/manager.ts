@@ -1,11 +1,12 @@
-import { join, readText, writeText, pathExists, getNestedValue } from "../infrastructure/fs";
+import { rename } from "node:fs/promises";
+import { join, readText, writeText, pathExists } from "../infrastructure/fs";
 import { hashSha1 } from "../core/hash";
-import { LOCKFILE_NAME, type Lockfile, type LockfileEntry, type StaleEntry } from "./types";
+import { LOCKFILE_NAME, type Lockfile, type LockfileEntry } from "./types";
 
-const EMPTY_LOCKFILE: Lockfile = { version: 1, entries: {} };
+const EMPTY_LOCKFILE: Lockfile = { version: 2, entries: {} };
 
-function lockfileKey(locale: string, key: string): string {
-  return `${locale}:${key}`;
+function compositeKey(locale: string, key: string): string {
+  return `${locale}||${key}`;
 }
 
 export class LockfileManager {
@@ -23,11 +24,37 @@ export class LockfileManager {
       try {
         const raw = await readText(path);
         const parsed = JSON.parse(raw) as Lockfile;
-        if (parsed && typeof parsed === "object" && parsed.version === 1) {
-          this.data = { version: 1, entries: parsed.entries ?? {} };
+
+        if (typeof parsed !== "object" || parsed === null) {
+          throw new Error("lockfile must be an object");
         }
-      } catch {
-        this.data = { ...EMPTY_LOCKFILE };
+
+        if (parsed.version === 1) {
+          const migrated: Record<string, LockfileEntry> = {};
+          for (const [, entry] of Object.entries(parsed.entries ?? {})) {
+            // ponytail: skip malformed entries (hand-edited lockfiles)
+            if (!entry.locale || !entry.key) continue;
+            migrated[compositeKey(entry.locale, entry.key)] = entry;
+          }
+          this.data = {
+            version: 2,
+            entries: migrated,
+            migratedAt: new Date().toISOString(),
+          };
+          // B4: persist migration immediately
+          await this.#atomicSave();
+        } else if (parsed.version === 2) {
+          this.data = { version: 2, entries: parsed.entries ?? {} };
+        } else {
+          throw new Error(`Unknown lockfile version: ${parsed.version}`);
+        }
+      } catch (err) {
+        // B2: do not silently wipe on parse/migration error — fail safe.
+        // Leave this.data at EMPTY and loaded=false so save() is a no-op.
+        // Re-throw so caller knows the lockfile is corrupt.
+        throw new Error(
+          `Failed to load lockfile (${path}): ${err instanceof Error ? err.message : String(err)}`,
+        );
       }
     } else {
       this.data = { ...EMPTY_LOCKFILE };
@@ -37,8 +64,16 @@ export class LockfileManager {
   }
 
   async save(): Promise<void> {
+    if (!this.loaded) return;
+    await this.#atomicSave();
+  }
+
+  /** Atomic write: write to temp file then rename (POSIX atomic, Windows near-atomic). */
+  async #atomicSave(): Promise<void> {
     const path = join(this.localeDir, LOCKFILE_NAME);
-    await writeText(path, JSON.stringify(this.data, null, 2));
+    const tmp = path + ".tmp";
+    await writeText(tmp, JSON.stringify(this.data, null, 2));
+    await rename(tmp, path);
   }
 
   private ensureLoaded(): void {
@@ -49,12 +84,12 @@ export class LockfileManager {
 
   getEntry(key: string, locale: string): LockfileEntry | undefined {
     this.ensureLoaded();
-    return this.data.entries[lockfileKey(locale, key)];
+    return this.data.entries[compositeKey(locale, key)];
   }
 
   setEntry(key: string, locale: string, entry: LockfileEntry): void {
     this.ensureLoaded();
-    this.data.entries[lockfileKey(locale, key)] = entry;
+    this.data.entries[compositeKey(locale, key)] = entry;
   }
 
   isHumanEdited(key: string, locale: string): boolean {
@@ -73,29 +108,5 @@ export class LockfileManager {
   getAllEntries(): Record<string, LockfileEntry> {
     this.ensureLoaded();
     return this.data.entries;
-  }
-
-  async getStaleEntries(
-    targetLocale: string,
-    sourceLocaleData: Record<string, unknown>,
-  ): Promise<StaleEntry[]> {
-    this.ensureLoaded();
-    const stale: StaleEntry[] = [];
-    for (const [compositeKey, entry] of Object.entries(this.data.entries)) {
-      const [entryLocale, entryKey] = compositeKey.split(":");
-      if (entryLocale !== targetLocale) continue;
-
-      const source = getNestedValue(sourceLocaleData, entryKey);
-      const currentHash = await hashSha1(source);
-      if (currentHash !== entry.sourceHash) {
-        stale.push({
-          key: entryKey,
-          source,
-          previous: entry.translated,
-          sourceHash: entry.sourceHash,
-        });
-      }
-    }
-    return stale;
   }
 }

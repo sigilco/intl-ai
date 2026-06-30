@@ -1,6 +1,7 @@
 import { z } from "zod";
 import type { AIProvider } from "./ports/provider";
 import type { IntlAiProcessor } from "./ports/processor";
+import type { LocaleFormat } from "./ports/format";
 import type { TranslationHook } from "./ports/hook";
 import type { ApiKeyValue, QualityAssessorInstance, QualityOptions } from "./core/types";
 
@@ -17,9 +18,17 @@ export interface IntlAiConfig {
   maxRetries?: number;
   processor?: IntlAiProcessor;
   modelParams?: Record<string, unknown>;
+  /**
+   * Max source entries per translation request. Defaults to all-in-one
+   * (backward compatible). For formats that batch multiple keys per request,
+   * set to 1 when each key holds a large value such as a full document body.
+   */
+  batchSize?: number;
   hook?: TranslationHook;
   /** Quality-aware fill loop settings + optional custom assessor. */
   quality?: QualityOptions & { assessor?: QualityAssessorInstance };
+  /** Locale format adapter. String selects a built-in; object is a custom impl. */
+  format?: LocaleFormat | string;
 }
 
 export const IntlAiConfigSchema = z.object({
@@ -59,6 +68,7 @@ export const IntlAiConfigSchema = z.object({
   glossary: z.record(z.string(), z.string()).optional(),
   maxRetries: z.number().int().min(0).max(10).default(3),
   modelParams: z.record(z.string(), z.unknown()).optional(),
+  batchSize: z.number().int().min(1).optional(),
   hook: z.custom<TranslationHook>().optional(),
   quality: z
     .object({
@@ -68,4 +78,5 @@ export const IntlAiConfigSchema = z.object({
       assessor: z.custom<QualityAssessorInstance>().optional(),
     })
     .optional(),
+  format: z.union([z.custom<LocaleFormat>(), z.string()]).optional(),
 }) satisfies z.ZodType<IntlAiConfig>;

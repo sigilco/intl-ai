@@ -50,7 +50,10 @@ All supported locale codes.
 
 ### `localeDir`
 
-Directory containing locale JSON files.
+Directory containing locale files. The structure depends on the chosen `format`:
+
+- JSON (default): `${localeDir}/${locale}.json`
+- YAML: `${localeDir}/${locale}.yaml`
 
 ```json
 "localeDir": "./locales"
@@ -134,6 +137,62 @@ Syntax processor. Use `icu` for ICU MessageFormat or omit for passthrough.
 
 Built-in processors: `passthrough`, `icu`.
 
+## Locale formats
+
+intl-ai supports JSON and YAML locale files out of the box.
+
+### JSON (default)
+
+JSON is the default format. No configuration needed:
+
+```json
+{
+  "greeting": "Hello",
+  "farewell": "Goodbye"
+}
+```
+
+### YAML
+
+YAML supports nested keys and is useful for larger projects:
+
+```yaml
+greeting: Hello
+farewell: Goodbye
+nested:
+  welcome: Welcome back
+```
+
+To use YAML, set `format` in your config:
+
+```json
+{
+  "format": "yaml"
+}
+```
+
+### Other formats
+
+For custom locale formats (CSV, TOML, or custom file formats), intl-ai does not include a built-in adapter. Use one of these approaches:
+
+**Interactive translation (recommended for most cases):** Use the `intl-ai-translate-fill` skill in an opencode agent session. The skill is format-agnostic and works with any file format.
+
+**Batch CI translation:** Build a custom `LocaleFormat` adapter using the `@intl-ai/api` package. See `intl-ai-format-strategy` for guidance on when to build an adapter vs. use a skill.
+
+**Rule of thumb:** Start with the skill. Build an adapter only when you need batch CI on a format the CLI does not support natively.
+
+### Batch size
+
+`batchSize` controls how many keys are sent in a single translation request. Default is unlimited (all keys in one batch). Reduce for models with lower context windows or to get more granular per-key quality control.
+
+```json
+{
+  "batchSize": 50
+}
+```
+
+For most JSON and YAML files, the default (unlimited batch) works well.
+
 ## Editor intellisense
 
 Add `"$schema": "https://www.schemastore.org/intl-ai.json"` to your JSON config for autocomplete and validation in VS Code, JetBrains, and other editors.
@@ -167,3 +226,13 @@ export default {
 ```
 
 See [Providers](/guide/providers) for how the provider system works, and [AI model setup](/guide/ai-model) for provider options.
+
+### Parallel locale processing (CLI)
+
+When using the CLI (`intl-ai fill`), `--concurrency` controls how many locales are processed in parallel. Default is 4.
+
+```bash
+intl-ai fill --concurrency 8
+```
+
+Range: 1 to 16.

@@ -108,8 +108,13 @@ export async function judgeBatch(opts: JudgeBatchOptions): Promise<QualityResult
       provider: provider.id,
       model: modelId,
       locale: opts.contexts[0].locale,
+      errorType: "http",
       error: msg,
       attempt: 1,
+      maxRetries: 1,
+      statusCode: res.status,
+      durationMs: 0,
+      attempts: [{ attempt: 1, errorType: "http", durationMs: 0, statusCode: res.status }],
     });
     throw new Error(msg);
   }
@@ -122,8 +127,12 @@ export async function judgeBatch(opts: JudgeBatchOptions): Promise<QualityResult
       provider: provider.id,
       model: modelId,
       locale: opts.contexts[0].locale,
+      errorType: "empty",
       error: msg,
       attempt: 1,
+      maxRetries: 1,
+      durationMs: 0,
+      attempts: [{ attempt: 1, errorType: "empty", durationMs: 0 }],
     });
     throw new Error(msg);
   }
@@ -137,8 +146,12 @@ export async function judgeBatch(opts: JudgeBatchOptions): Promise<QualityResult
       provider: provider.id,
       model: modelId,
       locale: opts.contexts[0].locale,
+      errorType: "parse_error",
       error: msg,
       attempt: 1,
+      maxRetries: 1,
+      durationMs: 0,
+      attempts: [{ attempt: 1, errorType: "parse_error", durationMs: 0 }],
     });
     throw new Error(msg);
   }

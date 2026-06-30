@@ -43,7 +43,6 @@
   "dependencies": {
     "@formatjs/icu-messageformat-parser": "3.5.12",
     "@logtape/logtape": "catalog:",
-    "gray-matter": "4.0.3",
     "jiti": "catalog:",
     "pathe": "catalog:",
     "yaml": "2.9.0",

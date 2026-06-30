@@ -27,7 +27,7 @@ describe("findMissingTranslations (api)", () => {
     expect(r.missing.map((m) => m.key)).toEqual(["farewell"]);
   });
 
-  it("detects empty string in target as missing", async () => {
+  it("treats empty string in target as present", async () => {
     const source = { greeting: "Hello" };
     const target = { greeting: "" };
     const r = await findMissingTranslations({
@@ -36,7 +36,7 @@ describe("findMissingTranslations (api)", () => {
       locale: "es",
       lockfileEntries: new Map(),
     });
-    expect(r.missing).toHaveLength(1);
+    expect(r.missing).toHaveLength(0);
   });
 
   it("detects stale entries when source hash differs from lockfile", async () => {

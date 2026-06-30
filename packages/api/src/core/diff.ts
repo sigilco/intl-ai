@@ -6,13 +6,18 @@ import type {
   FindMissingTranslationsResult,
 } from "./types";
 
-export type { MissingTranslationEntry, FindMissingTranslationsOptions, FindMissingTranslationsResult };
+export type {
+  MissingTranslationEntry,
+  FindMissingTranslationsOptions,
+  FindMissingTranslationsResult,
+};
 
 export async function findMissingTranslations(
   options: FindMissingTranslationsOptions,
   force = false,
 ): Promise<FindMissingTranslationsResult> {
   const { sourceLocale, targetLocale, locale, lockfileEntries } = options;
+  // ponytail: safe — flattenObject is idempotent on already-flat string-value records.
   const sourceFlat = flattenObject(sourceLocale);
   const targetFlat = flattenObject(targetLocale);
 
@@ -23,7 +28,8 @@ export async function findMissingTranslations(
     const target = targetFlat[key];
     const sourceHash = await hashSha1(source);
 
-    if (target === undefined || target === "") {
+    // An empty string is a valid translation; only undefined means missing.
+    if (target === undefined) {
       missing.push({ key, source });
       continue;
     }
@@ -66,6 +72,28 @@ export function flattenObject(obj: unknown, prefix = ""): Record<string, string>
   return result;
 }
 
+export function unflattenObject(flat: Record<string, string>): Record<string, unknown> {
+  const out = Object.create(null) as Record<string, unknown>;
+  for (const [key, value] of Object.entries(flat)) {
+    const parts = key.split(".");
+    let cur = out;
+    for (let i = 0; i < parts.length - 1; i++) {
+      const p = parts[i]!;
+      // ponytail: guard against prototype pollution via malicious flat keys.
+      if (p === "__proto__" || p === "constructor" || p === "prototype") break;
+      if (cur[p] === undefined || typeof cur[p] !== "object") {
+        cur[p] = {};
+      }
+      cur = cur[p] as Record<string, unknown>;
+    }
+    const lastPart = parts[parts.length - 1]!;
+    if (lastPart !== "__proto__" && lastPart !== "constructor" && lastPart !== "prototype") {
+      cur[lastPart] = value;
+    }
+  }
+  return out;
+}
+
 export async function hashSource(text: string): Promise<string> {
   return hashSha1(text);
 }
@@ -76,8 +104,12 @@ export function lockfileEntryToMap(
 ): Map<string, { sourceHash: string }> {
   const m = new Map<string, { sourceHash: string }>();
   for (const [compositeKey, entry] of Object.entries(entries)) {
-    const [entryLocale, key] = compositeKey.split(":");
+    // locale never contains '||' by construction; split on first occurrence.
+    const idx = compositeKey.indexOf("||");
+    if (idx === -1) continue;
+    const entryLocale = compositeKey.slice(0, idx);
     if (entryLocale === locale) {
+      const key = compositeKey.slice(idx + 2);
       m.set(key, { sourceHash: entry.sourceHash });
     }
   }

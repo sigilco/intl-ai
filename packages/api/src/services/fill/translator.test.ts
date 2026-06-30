@@ -144,9 +144,7 @@ describe("translateBatch (api)", () => {
   });
 
   it("uses provider.buildRequest and baseURL for fetch", async () => {
-    mockFetch.mockResolvedValueOnce(
-      mockOkResponse([{ key: "greeting", translated: "Bonjour" }]),
-    );
+    mockFetch.mockResolvedValueOnce(mockOkResponse([{ key: "greeting", translated: "Bonjour" }]));
 
     await translateBatch({
       provider: createTestProvider(),
@@ -163,9 +161,7 @@ describe("translateBatch (api)", () => {
   });
 
   it("renders feedback block in the prompt when provided", async () => {
-    mockFetch.mockResolvedValueOnce(
-      mockOkResponse([{ key: "greeting", translated: "Bonjour" }]),
-    );
+    mockFetch.mockResolvedValueOnce(mockOkResponse([{ key: "greeting", translated: "Bonjour" }]));
 
     await translateBatch({
       provider: createTestProvider(),

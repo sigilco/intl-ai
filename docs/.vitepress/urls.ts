@@ -19,7 +19,9 @@ export const URLs = {
   schema: "https://intl-ai.pages.dev/schema/v1.json",
   installScript: "https://intl-ai.pages.dev/install.sh",
   homebrew: "brew install sigilco/tap-intl-ai/intl-ai",
-  mise: 'mise use npm:intl-ai@latest',
+  mise: "mise use npm:intl-ai@latest",
+  // Keep in sync with the Sponsor button link in docs/index.md.
+  sponsor: "https://buy.polar.sh/polar_cl_Mv1gdlG7bw3I70EC9IHtfeSHJj4PEKvA7JAUz23CFhj",
 } as const;
 
 export type UrlKey = keyof typeof URLs;

@@ -1,8 +1,6 @@
-import { join } from "../../infrastructure/fs";
 import { LockfileManager } from "../../lockfile/manager";
 import { findMissingTranslations, lockfileEntryToMap } from "../../core/diff";
-import { readJsonFile } from "../../adapters/formats/json";
-import type { IntlAiConfig } from "../../types";
+import type { ResolvedIntlAiConfig } from "../../infrastructure/config/loader";
 import type { MissingTranslationEntry } from "../../core/types";
 import type { StaleEntry } from "../../lockfile/types";
 
@@ -23,10 +21,11 @@ export interface RunCheckResult {
 }
 
 export async function runCheck(
-  config: IntlAiConfig,
+  config: ResolvedIntlAiConfig,
   options?: RunCheckOptions,
 ): Promise<RunCheckResult> {
-  const { defaultLocale, locales, localeDir } = config;
+  const { defaultLocale, locales, localeDir, format } = config;
+  // Loader resolves the format string to a LocaleFormat object before runCheck is called.
 
   const localesToCheck = options?.locale
     ? [options.locale]
@@ -35,20 +34,12 @@ export async function runCheck(
   const lockfileManager = new LockfileManager(localeDir);
   await lockfileManager.load();
 
-  const sourceLocalePath = join(localeDir, `${defaultLocale}.json`);
-  const sourceLocale = await readJsonFile(sourceLocalePath);
+  const sourceLocale = await format.readLocale(localeDir, defaultLocale);
 
   const results: CheckLocaleResult[] = [];
 
   for (const locale of localesToCheck) {
-    const targetLocalePath = join(localeDir, `${locale}.json`);
-    let targetLocale: Record<string, unknown> = {};
-
-    try {
-      targetLocale = await readJsonFile(targetLocalePath);
-    } catch {
-      // Missing target file = all keys missing
-    }
+    const targetLocale = await format.readLocale(localeDir, locale);
 
     const lockfileEntries = lockfileEntryToMap(lockfileManager.getAllEntries(), locale);
 

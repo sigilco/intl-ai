@@ -29,7 +29,9 @@ const createTestProvider = (): AIProvider => ({
   },
 });
 
-const mockOkResponse = (judgements: Array<{ key: string; score: number; reason?: string; errors?: string[] }>) => ({
+const mockOkResponse = (
+  judgements: Array<{ key: string; score: number; reason?: string; errors?: string[] }>,
+) => ({
   ok: true as const,
   json: async () => ({
     choices: [{ message: { content: JSON.stringify({ judgements }) } }],
@@ -78,7 +80,12 @@ describe("judgeBatch (api)", () => {
 
     expect(results).toHaveLength(2);
     expect(results[0]).toMatchObject({ score: 0.9, riskTier: "low", needsReview: false });
-    expect(results[1]).toMatchObject({ score: 0.4, riskTier: "high", needsReview: true, reason: "missing negation" });
+    expect(results[1]).toMatchObject({
+      score: 0.4,
+      riskTier: "high",
+      needsReview: true,
+      reason: "missing negation",
+    });
   });
 
   it("uses the adversarial system prompt", async () => {
@@ -97,9 +104,7 @@ describe("judgeBatch (api)", () => {
   });
 
   it("flags missing keys as high risk needs-review", async () => {
-    mockFetch.mockResolvedValueOnce(
-      mockOkResponse([{ key: "a", score: 0.9 }]),
-    );
+    mockFetch.mockResolvedValueOnce(mockOkResponse([{ key: "a", score: 0.9 }]));
 
     const results = await judgeBatch({
       provider: createTestProvider(),
@@ -132,9 +137,7 @@ describe("judgeBatch (api)", () => {
   });
 
   it("createDefaultAssessor wraps judgeBatch and returns a single result", async () => {
-    mockFetch.mockResolvedValueOnce(
-      mockOkResponse([{ key: "greeting", score: 0.95 }]),
-    );
+    mockFetch.mockResolvedValueOnce(mockOkResponse([{ key: "greeting", score: 0.95 }]));
 
     const assessor = createDefaultAssessor({
       provider: createTestProvider(),

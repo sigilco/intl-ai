@@ -23,7 +23,9 @@ export interface IntlAiJsonConfig {
   maxRetries?: number;
   processor?: "passthrough" | "icu";
   modelParams?: Record<string, unknown>;
+  batchSize?: number;
   quality?: Pick<QualityOptions, "threshold" | "maxRetries">;
+  format?: string;
 }
 
 /**
@@ -42,11 +44,13 @@ export function jsonConfigToIntlAiConfig(json: IntlAiJsonConfig): IntlAiConfig {
     maxRetries: json.maxRetries ?? 3,
     processor: json.processor === "icu" ? icuProcessor : passthroughProcessor,
     modelParams: json.modelParams,
+    batchSize: json.batchSize,
     quality: json.quality
       ? {
           threshold: json.quality.threshold,
           maxRetries: json.quality.maxRetries,
         }
       : undefined,
+    format: json.format,
   };
 }

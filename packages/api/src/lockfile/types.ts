@@ -31,8 +31,9 @@ export interface LockfileEntry {
 export type LockfileQualityRecord = LockfileQuality;
 
 export interface Lockfile {
-  version: 1;
+  version: 1 | 2;
   entries: Record<string, LockfileEntry>;
+  migratedAt?: string;
 }
 
 export interface StaleEntry {

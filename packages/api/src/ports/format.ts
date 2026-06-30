@@ -1,5 +1,5 @@
 export interface LocaleFormat {
-  extension: string;
-  read(path: string): Promise<Record<string, unknown>>;
-  write(path: string, data: Record<string, unknown>): Promise<void>;
+  readonly name: string;
+  readLocale(localeDir: string, locale: string): Promise<Record<string, string>>;
+  writeLocale(localeDir: string, locale: string, data: Record<string, string>): Promise<void>;
 }

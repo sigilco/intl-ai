@@ -69,7 +69,7 @@ public static class Translations
 
 ## Requirements
 
-- `intl-ai` installed on your `PATH` (see [Installation](/guide/installation)).
+- `intl-ai` installed on your `PATH` (see [Installation](/guide/getting-started#installation)).
 - `intl-ai.config.json` next to your `.csproj` file. Adjust `localeDir` to point to `Resources`.
 
 ## Example

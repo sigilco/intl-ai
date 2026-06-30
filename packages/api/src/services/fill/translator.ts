@@ -1,11 +1,39 @@
 import { z } from "zod";
+import { getLogger } from "@logtape/logtape";
+
+const logger = getLogger(["intl-ai", "fill", "translator"]);
+
 import type { AIProvider } from "../../ports/provider";
 import type { IntlAiProcessor } from "../../ports/processor";
-import type { TranslationHook } from "../../ports/hook";
+import type { ErrorType, TranslationHook } from "../../ports/hook";
 import type { TranslationEntry, TranslationResult, ApiKeyValue } from "../../core/types";
 import { resolveProvider } from "../../adapters/providers/registry";
 
 export type { TranslationEntry, TranslationResult };
+
+function classifyError(err: Error, res?: Response): { errorType: ErrorType; statusCode?: number } {
+  if (res) {
+    if (res.status === 429) return { errorType: "rate_limit", statusCode: 429 };
+    if (res.status === 401 || res.status === 403)
+      return { errorType: "http", statusCode: res.status };
+    if (res.status >= 500) return { errorType: "http", statusCode: res.status };
+    if (res.status >= 400) return { errorType: "http", statusCode: res.status };
+  }
+  if (
+    err.name === "TimeoutError" ||
+    err.message.includes("aborted") ||
+    err.message.includes("timeout")
+  )
+    return { errorType: "timeout" };
+  if (
+    err.message.includes("JSON") ||
+    err.message.includes("Unexpected token") ||
+    err.message.includes("parse")
+  )
+    return { errorType: "parse_error" };
+  if (err.message === "Empty response from model") return { errorType: "empty" };
+  return { errorType: "unknown" };
+}
 
 export interface TranslateBatchOptions {
   provider: AIProvider | string;
@@ -89,7 +117,18 @@ export async function translateBatch(options: TranslateBatchOptions): Promise<Tr
   });
 
   let lastError: string | undefined;
+  let lastErrorType: ErrorType = "unknown";
+  let lastStatusCode: number | undefined;
+  let rawResponse: string | undefined;
+  const attemptHistory: Array<{
+    attempt: number;
+    errorType: ErrorType;
+    durationMs: number;
+    statusCode?: number;
+  }> = [];
+
   for (let attempt = 0; attempt < maxRetries; attempt++) {
+    const startTime = performance.now();
     try {
       hook?.onRequest?.({
         provider: provider.id,
@@ -98,8 +137,7 @@ export async function translateBatch(options: TranslateBatchOptions): Promise<Tr
         entryCount: entries.length,
       });
 
-      const startTime = performance.now();
-
+      // ponytail: 3min cap per request; local models stall on large pages without it
       const res = await fetch(`${baseURL}${req.url}`, {
         method: "POST",
         headers: {
@@ -107,23 +145,114 @@ export async function translateBatch(options: TranslateBatchOptions): Promise<Tr
           Authorization: `Bearer ${apiKey}`,
         },
         body: JSON.stringify(req.body),
+        signal: AbortSignal.timeout(300_000),
       });
 
       if (!res.ok) {
-        lastError = `HTTP ${res.status}: ${await res.text()}`;
+        const errMsg = `HTTP ${res.status}: ${await res.text()}`;
+        const { errorType, statusCode } = classifyError(new Error(errMsg), res);
+        lastError = errMsg;
+        lastErrorType = errorType;
+        lastStatusCode = statusCode;
+        const durationMs = performance.now() - startTime;
+        attemptHistory.push({ attempt: attempt + 1, errorType, durationMs, statusCode });
+        logger.debug(
+          `[${targetLocale}] Attempt ${attempt + 1}/${maxRetries} failed (${errorType}, HTTP ${res.status}): ${errMsg}`,
+        );
+        hook?.onAttemptFailure?.({
+          provider: provider.id,
+          model: modelId,
+          locale: targetLocale,
+          errorType,
+          error: errMsg,
+          attempt: attempt + 1,
+          maxRetries,
+          statusCode,
+          durationMs,
+        });
         continue;
       }
 
       const data = await res.json();
       const { content } = provider.parseResponse(data);
       if (!content) {
-        lastError = "Empty response from model";
+        const errMsg = "Empty response from model";
+        const { errorType, statusCode } = classifyError(new Error(errMsg));
+        lastError = errMsg;
+        lastErrorType = errorType;
+        lastStatusCode = statusCode;
+        const durationMs = performance.now() - startTime;
+        attemptHistory.push({ attempt: attempt + 1, errorType, durationMs, statusCode });
+        logger.debug(
+          `[${targetLocale}] Attempt ${attempt + 1}/${maxRetries} failed (${errorType}): ${errMsg}`,
+        );
+        hook?.onAttemptFailure?.({
+          provider: provider.id,
+          model: modelId,
+          locale: targetLocale,
+          errorType,
+          error: errMsg,
+          attempt: attempt + 1,
+          maxRetries,
+          statusCode,
+          durationMs,
+        });
         continue;
       }
 
-      const parsed = TranslationResponseSchema.safeParse(JSON.parse(content));
+      let parsedData: unknown;
+      try {
+        parsedData = JSON.parse(content);
+      } catch (parseErr) {
+        const errMsg = parseErr instanceof Error ? parseErr.message : String(parseErr);
+        const { errorType, statusCode } = classifyError(new Error(errMsg));
+        rawResponse = content.length > 500 ? content.slice(0, 500) + "..." : content;
+        lastError = errMsg;
+        lastErrorType = errorType;
+        lastStatusCode = statusCode;
+        const durationMs = performance.now() - startTime;
+        attemptHistory.push({ attempt: attempt + 1, errorType, durationMs, statusCode });
+        logger.debug(
+          `[${targetLocale}] Attempt ${attempt + 1}/${maxRetries} failed (${errorType}): ${errMsg} — raw response captured for diagnosis`,
+        );
+        hook?.onAttemptFailure?.({
+          provider: provider.id,
+          model: modelId,
+          locale: targetLocale,
+          errorType,
+          error: errMsg,
+          attempt: attempt + 1,
+          maxRetries,
+          statusCode,
+          durationMs,
+        });
+        continue;
+      }
+
+      const parsed = TranslationResponseSchema.safeParse(parsedData);
       if (!parsed.success) {
-        lastError = `Invalid response schema: ${parsed.error.message}`;
+        const errMsg = `Invalid response schema: ${parsed.error.message}`;
+        const { errorType, statusCode } = classifyError(new Error(errMsg));
+        rawResponse = content.length > 500 ? content.slice(0, 500) + "..." : content;
+        lastError = errMsg;
+        lastErrorType = errorType;
+        lastStatusCode = statusCode;
+        const durationMs = performance.now() - startTime;
+        attemptHistory.push({ attempt: attempt + 1, errorType, durationMs, statusCode });
+        logger.debug(
+          `[${targetLocale}] Attempt ${attempt + 1}/${maxRetries} failed (${errorType}): ${errMsg} — raw response captured for diagnosis`,
+        );
+        hook?.onAttemptFailure?.({
+          provider: provider.id,
+          model: modelId,
+          locale: targetLocale,
+          errorType,
+          error: errMsg,
+          attempt: attempt + 1,
+          maxRetries,
+          statusCode,
+          durationMs,
+        });
         continue;
       }
 
@@ -133,18 +262,28 @@ export async function translateBatch(options: TranslateBatchOptions): Promise<Tr
       const results: TranslationResult[] = entries.map((entry) => {
         const translated = map.get(entry.key);
         if (translated === undefined) {
-          return { key: entry.key, success: false, error: "No translation returned for key" };
+          // max_tokens truncation: model output was cut before this key appeared
+          logger.debug(
+            `Key '${entry.key}' not in model response (output likely truncated at max_tokens)`,
+          );
+          return {
+            key: entry.key,
+            success: false,
+            error: "No translation returned for key",
+            errorType: "output_truncated",
+          };
         }
         if (processor) {
           const validation = processor.validate(entry.source, translated);
           if (!validation.valid) {
-            console.warn(
+            logger.warn(
               `Translation validation failed for key '${entry.key}': ${(validation.errors ?? []).join("; ")}`,
             );
             return {
               key: entry.key,
               success: false,
               error: `Validation failed: ${(validation.errors ?? []).join("; ")}`,
+              errorType: "validation",
             };
           }
         }
@@ -161,22 +300,62 @@ export async function translateBatch(options: TranslateBatchOptions): Promise<Tr
 
       return results;
     } catch (err) {
-      lastError = err instanceof Error ? err.message : String(err);
+      const errMsg = err instanceof Error ? err.message : String(err);
+      const { errorType, statusCode } = classifyError(
+        err instanceof Error ? err : new Error(errMsg),
+      );
+      lastError = errMsg;
+      lastErrorType = errorType;
+      lastStatusCode = statusCode;
+      const durationMs = performance.now() - startTime;
+      attemptHistory.push({ attempt: attempt + 1, errorType, durationMs, statusCode });
+
+      // Log attempt failure: debug for known types (retry noise), warn for unknown (actionable)
+      if (errorType === "unknown") {
+        logger.warn(
+          `[${targetLocale}] Attempt ${attempt + 1}/${maxRetries} failed (${errorType}): ${errMsg} — raw error, classifyError may need updating`,
+        );
+      } else {
+        logger.debug(
+          `[${targetLocale}] Attempt ${attempt + 1}/${maxRetries} failed (${errorType}${statusCode ? `, HTTP ${statusCode}` : ""}): ${errMsg}`,
+        );
+      }
+
+      hook?.onAttemptFailure?.({
+        provider: provider.id,
+        model: modelId,
+        locale: targetLocale,
+        errorType,
+        error: errMsg,
+        attempt: attempt + 1,
+        maxRetries,
+        statusCode,
+        durationMs,
+      });
     }
   }
+
+  const totalDurationMs = attemptHistory.reduce((sum, a) => sum + a.durationMs, 0);
 
   hook?.onError?.({
     provider: provider.id,
     model: modelId,
     locale: targetLocale,
+    errorType: lastErrorType,
     error: lastError ?? "Unknown error",
     attempt: maxRetries,
+    maxRetries,
+    statusCode: lastStatusCode,
+    durationMs: totalDurationMs,
+    attempts: attemptHistory,
+    rawResponse,
   });
 
   return entries.map((entry) => ({
     key: entry.key,
     success: false,
     error: lastError ?? "Unknown error",
+    errorType: lastErrorType,
   }));
 }
 

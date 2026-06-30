@@ -44,12 +44,12 @@ onSuccess?: (info: {
 
 Each `TranslationResult` has:
 
-| Field        | Type      | Description                                     |
-| ------------ | --------- | ----------------------------------------------- |
-| `key`        | `string`  | The locale key being translated.                |
-| `translated` | `string?` | The translated text, if translation succeeded.  |
-| `success`    | `boolean` | Whether this individual key was translated.     |
-| `error`      | `string?` | Error message if this key failed validation.    |
+| Field        | Type      | Description                                    |
+| ------------ | --------- | ---------------------------------------------- |
+| `key`        | `string`  | The locale key being translated.               |
+| `translated` | `string?` | The translated text, if translation succeeded. |
+| `success`    | `boolean` | Whether this individual key was translated.    |
+| `error`      | `string?` | Error message if this key failed validation.   |
 
 ### `onError`
 
@@ -90,9 +90,7 @@ const hook = {
   },
 
   onError(info) {
-    console.error(
-      `[${info.locale}] failed after ${info.attempt} attempts: ${info.error}`,
-    );
+    console.error(`[${info.locale}] failed after ${info.attempt} attempts: ${info.error}`);
   },
 };
 
