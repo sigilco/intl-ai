@@ -6,13 +6,13 @@ Command-line interface for intl-ai. Two commands: `intl-ai fill` (translate miss
 
 ## Architecture
 
-| File/Dir                | Purpose                                                                             |
-| ----------------------- | ----------------------------------------------------------------------------------- |
-| `src/index.ts`          | CLI entry, argument parsing, command routing                                        |
-| `src/commands/fill.ts`  | `fill` command — loads config, runs translation, outputs progress                   |
-| `src/commands/check.ts` | `check` command — validates lockfile, exits 1 if issues found                       |
+| File/Dir                | Purpose                                                                              |
+| ----------------------- | ------------------------------------------------------------------------------------ |
+| `src/index.ts`          | CLI entry — sets up `cleye` with name, version, and both commands                    |
+| `src/logger.ts`         | `configureLogger(silent)` bootstrap + shared `logger` instance (logtape)             |
+| `src/commands/fill.ts`  | `fillCommand` (cleye) + exported `runFillCommand` for testing                        |
+| `src/commands/check.ts` | `checkCommand` (cleye) + exported `runCheckCommand` for testing                      |
 | `src/config/loader.ts`  | `loadConfig()` — loads `intl-ai.config.ts` (via `jiti`) or `.json` (via `readFile`) |
-| `src/utils/progress.ts` | `createProgressReporter()` — terminal output, respects `--silent`                   |
 
 ---
 
@@ -22,12 +22,12 @@ Command-line interface for intl-ai. Two commands: `intl-ai fill` (translate miss
 
 Translates missing keys.
 
-**Flags:**
+**Flags (camelCase, cleye convention):**
 
 - `--locale <lang>` — only fill specified language (default: all)
-- `--force` — re-translate human-edited entries (default: skip)
-- `--dry-run` — preview changes without writing lockfile
-- `--silent` — suppress progress output
+- `--force` — re-translate human-edited entries (default: false)
+- `--dry-run` → `dryRun` — preview changes without writing lockfile (default: false)
+- `--silent` — suppress progress output (default: false)
 
 **Exit codes:**
 
@@ -41,53 +41,35 @@ Validates translation state.
 **Exit codes:**
 
 - `0` — all translations present and valid
-- `1` — stale entries, missing translations, or config error
+- `10` — stale entries or missing translations
+- `1` — config error
 
 ---
 
-## Progress Reporting
+## Logging
 
-`createProgressReporter()` outputs to stderr (so stdout stays clean for piping):
-
-```typescript
-const reporter = createProgressReporter({ silent: args["--silent"] });
-
-reporter.start("Translating...");
-reporter.progress(50);
-reporter.success("Done");
-// or
-reporter.error("Something failed");
-```
-
-Respects `--silent` flag — no output if set.
+All user-facing output goes through the logtape logger (`["intl-ai", "cli"]`).
+`configureLogger(silent)` in `src/logger.ts` sets up the console sink with ANSI color formatting.
+Raw progress lines (`\r`, per-locale counts) are still written directly to `process.stdout`/`stderr`
+because they are deliberate inline terminal writes, not structured log events.
 
 ---
 
 ## Test Patterns
 
-Mock the config loader and `@intl-ai/api` — don't import real implementations:
+Call the exported standalone functions directly — do not invoke the cleye command object:
 
 ```typescript
-vi.mock("../config/loader", () => ({
-  loadConfig: vi.fn(async () => mockConfig),
-}));
+import { runCheckCommand } from "../commands/check";
+import { runFillCommand } from "../commands/fill";
 
-vi.mock("@intl-ai/api", () => ({
-  runFill: vi.fn(async () => mockResult),
-}));
+await runCheckCommand({ config: "intl-ai.config.json" });
+await runFillCommand({ config: "x", silent: true, force: false, dryRun: false });
 ```
 
-Never run real translations in unit tests. Use mock provider.
-
----
-
-## Example: Testing `fill` Command
+Check command shape via `command.options.flags`, not `command.args`:
 
 ```typescript
-import { fillCommand } from "../commands/fill";
-
-it("translates missing keys", async () => {
-  await fillCommand.run({ args: { config: "x", silent: true, force: false, "dry-run": false } });
-  expect(runFill).toHaveBeenCalled();
-});
+expect(fillCommand.options.name).toBe("fill");
+expect(fillCommand.options.flags?.dryRun?.type).toBe(Boolean);
 ```

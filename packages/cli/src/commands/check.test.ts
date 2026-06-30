@@ -1,5 +1,5 @@
 import { describe, test, expect, beforeEach, afterEach } from "vitest";
-import { checkCommand } from "./check";
+import { checkCommand, runCheckCommand } from "./check";
 import { mkdirSync, writeFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "pathe";
@@ -53,8 +53,7 @@ describe("check command", () => {
 
   test("module exports check command", async () => {
     expect(checkCommand).toBeDefined();
-    const meta = await Promise.resolve(checkCommand.meta as any);
-    expect(meta?.name).toBe("check");
+    expect(checkCommand.options.name).toBe("check");
   });
 
   test("should report missing translations", async () => {
@@ -72,7 +71,7 @@ describe("check command", () => {
         exitCode = code;
       }) as never;
 
-      await checkCommand.run?.({ args: { config: "intl-ai.config.json" } } as any);
+      await runCheckCommand({ config: "intl-ai.config.json" });
 
       process.exit = originalExit;
       expect(exitCode).toBe(10);
@@ -96,7 +95,7 @@ describe("check command", () => {
         exitCode = code;
       }) as never;
 
-      await checkCommand.run?.({ args: { config: "intl-ai.config.json" } } as any);
+      await runCheckCommand({ config: "intl-ai.config.json" });
 
       process.exit = originalExit;
       expect(exitCode).toBe(0);
@@ -122,7 +121,7 @@ describe("check command", () => {
         exitCode = code;
       }) as never;
 
-      await checkCommand.run?.({ args: { config: "intl-ai.config.json", locale: "fr" } } as any);
+      await runCheckCommand({ config: "intl-ai.config.json", locale: "fr" });
 
       process.exit = originalExit;
       expect(exitCode).toBe(10);
