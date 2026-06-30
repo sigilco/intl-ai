@@ -1,17 +1,13 @@
 #!/usr/bin/env node
-import { defineCommand, runMain } from "citty";
+import { cli } from "cleye";
+import { createRequire } from "node:module";
+import { fillCommand } from "./commands/fill";
+import { checkCommand } from "./commands/check";
 
-const main = defineCommand({
-  meta: {
-    name: "intl-ai",
-    version: "0.2.0",
-    description:
-      "AI-powered i18n translation. Config schema: https://www.schemastore.org/intl-ai.json",
-  },
-  subCommands: {
-    fill: () => import("./commands/fill").then((m) => m.fillCommand),
-    check: () => import("./commands/check").then((m) => m.checkCommand),
-  },
+const { version } = createRequire(import.meta.url)("../package.json") as { version: string };
+
+cli({
+  name: "intl-ai",
+  version,
+  commands: [fillCommand, checkCommand],
 });
-
-runMain(main);

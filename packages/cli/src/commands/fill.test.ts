@@ -5,23 +5,20 @@ describe("fill command", () => {
     const { fillCommand } = await import("./fill");
 
     expect(fillCommand).toBeDefined();
-
-    const meta = await Promise.resolve(fillCommand.meta as any);
-    expect(meta?.name).toBe("fill");
-    expect(meta?.description).toBe("Fill missing translations using AI");
+    expect(fillCommand.options.name).toBe("fill");
   });
 
-  test("command args are configured correctly", async () => {
+  test("command flags are configured correctly", async () => {
     const { fillCommand } = await import("./fill");
-    const args = await Promise.resolve(fillCommand.args as any);
+    const { flags } = fillCommand.options;
 
-    expect(args).toBeDefined();
-    expect(args?.config?.type).toBe("string");
-    expect(args?.config?.default).toBe("intl-ai.config.json");
-    expect(args?.locale?.type).toBe("string");
-    expect(args?.force?.type).toBe("boolean");
-    expect(args?.force?.default).toBe(false);
-    expect(args?.silent?.type).toBe("boolean");
-    expect(args?.["dry-run"]?.type).toBe("boolean");
+    expect(flags).toBeDefined();
+    expect(flags?.config?.type).toBe(String);
+    expect(flags?.config?.default).toBe("intl-ai.config.json");
+    expect(flags?.locale?.type).toBe(String);
+    expect(flags?.force?.type).toBe(Boolean);
+    expect(flags?.force?.default).toBe(false);
+    expect(flags?.silent?.type).toBe(Boolean);
+    expect(flags?.dryRun?.type).toBe(Boolean);
   });
 });
