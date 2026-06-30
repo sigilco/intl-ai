@@ -37,26 +37,28 @@
   },
   "scripts": {
     "build": "tsdown",
-    "dev": "tsup --watch",
+    "dev": "tsdown --watch",
     "typecheck": "tsc --noEmit",
     "test": "vitest run"
   },
   "dependencies": {
     "@intl-ai/api": "workspace:*",
     "@intl-ai/unplugin": "workspace:*",
-    "jiti": "2.7.0",
-    "pathe": "2.0.3"
+    "pathe": "catalog:"
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
-    "@types/node": "^22.0.0",
-    "next": "15.5.18",
-    "react": "18.3.1",
-    "react-dom": "18.3.1",
-    "tsdown": "0.21.10",
-    "typescript": "6.0.3"
+    "@types/node": "catalog:",
+    "next": "catalog:react18",
+    "react": "catalog:react18",
+    "react-dom": "catalog:react18",
+    "tsdown": "catalog:",
+    "typescript": "catalog:"
   },
   "peerDependencies": {
     "next": ">=14.0.0"
+  },
+  "engines": {
+    "node": "^22.18.0 || >=24"
   }
 }
