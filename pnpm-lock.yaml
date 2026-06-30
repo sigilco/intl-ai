@@ -278,9 +278,6 @@ importers:
       '@logtape/logtape':
         specifier: 'catalog:'
         version: 2.2.1
-      gray-matter:
-        specifier: 4.0.3
-        version: 4.0.3
       jiti:
         specifier: 'catalog:'
         version: 2.7.0
@@ -9132,7 +9129,7 @@ snapshots:
     dependencies:
       '@babel/core': 7.29.7
       '@babel/helper-plugin-utils': 7.29.7
-      '@babel/types': 7.29.0
+      '@babel/types': 7.29.7
       esutils: 2.0.3
 
   '@babel/preset-react@7.29.7(@babel/core@7.29.7)':
