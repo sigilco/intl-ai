@@ -36,7 +36,7 @@ jobs:
           mkdir -p dist/binaries
           bun build packages/cli/src/index.ts --compile --target ${{ matrix.target }} --outfile dist/binaries/intl-ai-${{ matrix.target }}
       - name: Upload binary artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: intl-ai-${{ matrix.target }}
           path: ./dist/binaries/intl-ai-${{ matrix.target }}
