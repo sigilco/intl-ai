@@ -32,8 +32,7 @@ const createTestProvider = (): AIProvider => ({
       return { content: JSON.stringify({ error: d.error }) };
     }
     return {
-      content:
-        d.choices?.[0]?.message?.content ?? "",
+      content: d.choices?.[0]?.message?.content ?? "",
     };
   },
 });
