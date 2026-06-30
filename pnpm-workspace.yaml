@@ -1,9 +1,14 @@
 packages:
   - "packages/*"
+  - "examples/*"
 
 autoInstallPeers: true
 saveExact: true
 strictPeerDependencies: true
+peerDependencyRules:
+  allowedVersions:
+    "@ai-sdk/openai-compatible>zod": "*"
+    "@ai-sdk/provider-utils>zod": "*"
 allowBuilds:
   "@parcel/watcher": true
   "@swc/core": true
@@ -11,3 +16,34 @@ allowBuilds:
   sharp: true
   tsdown: true
   unrs-resolver: true
+
+catalog:
+  # Build tooling
+  typescript: 6.0.3
+  tsdown: 0.22.3
+  vitest: 4.1.9
+  "@vitest/coverage-v8": 4.1.9
+  "@types/node": ^22.20.0
+
+  # Runtime deps
+  zod: 4.4.3
+  jiti: 2.7.0
+  "@logtape/logtape": 2.2.1
+  pathe: 2.0.3
+  unplugin: 3.3.0
+  cleye: 2.6.0
+
+  # React 19 (default)
+  react: 19.2.6
+  react-dom: 19.2.6
+  "@types/react": 19.2.14
+  "@types/react-dom": 19.2.3
+  next: 16.2.6
+
+catalogs:
+  react18:
+    react: 18.3.1
+    react-dom: 18.3.1
+    "@types/react": 18.3.28
+    "@types/react-dom": 18.3.7
+    next: 15.5.19

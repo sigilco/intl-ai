@@ -43,24 +43,24 @@
   },
   "scripts": {
     "build": "tsdown",
-    "dev": "tsup --watch",
+    "dev": "tsdown --watch",
     "typecheck": "tsc --noEmit",
     "test": "vitest run"
   },
   "dependencies": {
     "@intl-ai/api": "workspace:*",
-    "citty": "0.1.6",
-    "consola": "3.4.2",
-    "jiti": "2.7.0",
-    "pathe": "1.1.2"
+    "@logtape/logtape": "catalog:",
+    "cleye": "catalog:",
+    "pathe": "catalog:"
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
-    "@types/node": "^22.0.0",
-    "tsdown": "0.22.0",
-    "typescript": "6.0.3"
+    "@types/node": "catalog:",
+    "tsdown": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
   },
   "engines": {
-    "node": ">=22.0.0"
+    "node": "^22.18.0 || >=24"
   }
 }

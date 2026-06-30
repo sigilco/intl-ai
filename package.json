@@ -3,18 +3,21 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "turbo run build",
+    "build": "turbo run build --filter='./packages/*'",
     "build:cli": "bun build packages/cli/src/index.ts --compile --outfile dist/binaries/intl-ai",
-    "dev": "turbo run dev",
+    "dev": "turbo run dev --filter='./packages/*'",
     "lint": "oxlint .",
     "lint:fix": "oxlint . --fix",
     "format": "oxfmt .",
     "format:check": "oxfmt . --check",
-    "test": "turbo run test",
-    "typecheck": "turbo run typecheck",
+    "test": "turbo run test --filter='./packages/*'",
+    "typecheck": "turbo run typecheck --filter='./packages/*'",
     "docs:dev": "vitepress dev docs",
     "sync:schema": "cp packages/api/src/schema/intl-ai.schema.json docs/public/schema/v1.json",
-    "predocs:build": "pnpm sync:schema",
+    "docs:i18n:sync": "bun docs/i18n/i18n.mts sync",
+    "docs:i18n:fill": "pnpm docs:i18n:sync && bun docs/i18n/i18n.mts fill",
+    "docs:i18n:build": "bun docs/i18n/i18n.mts build",
+    "predocs:build": "pnpm sync:schema && pnpm docs:i18n:build",
     "docs:build": "vitepress build docs",
     "docs:preview": "vitepress preview docs",
     "publish:local": "turbo run build --filter='./packages/*' && pnpm -r --filter='./packages/*' publish --no-git-checks --registry http://localhost:4873",
@@ -27,18 +30,19 @@
   },
   "devDependencies": {
     "@changesets/cli": "2.31.0",
-    "@vitest/coverage-v8": "4.1.6",
-    "oxfmt": "0.49.0",
-    "oxlint": "1.64.0",
+    "@vitest/coverage-v8": "catalog:",
+    "oxfmt": "0.57.0",
+    "oxlint": "1.72.0",
     "tasuku": "2.3.0",
-    "turbo": "2.9.12",
+    "turbo": "2.10.1",
+    "typescript": "catalog:",
     "vitepress": "1.6.4",
     "vitepress-plugin-group-icons": "1.7.5",
     "vitepress-plugin-llms": "^1.13.0",
-    "vitest": "4.1.6"
+    "vitest": "catalog:"
   },
   "engines": {
-    "node": ">=22.0.0"
+    "node": "^22.18.0 || >=24"
   },
   "packageManager": "pnpm@11.5.0"
 }

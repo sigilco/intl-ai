@@ -12,19 +12,19 @@
   "dependencies": {
     "@ai-sdk/openai-compatible": "0.0.1",
     "@intl-ai/next": "workspace:*",
-    "next": "16.2.6",
+    "next": "catalog:",
     "next-intl": "4.11.2",
-    "react": "19.2.6",
-    "react-dom": "19.2.6"
+    "react": "catalog:",
+    "react-dom": "catalog:"
   },
   "devDependencies": {
     "@eslint/eslintrc": "3.3.5",
-    "@types/react": "19.2.14",
-    "@types/react-dom": "19.2.3",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
     "eslint": "9.39.4",
     "eslint-config-next": "16.2.6",
     "prettier": "3.8.3",
-    "typescript": "5.5.4"
+    "typescript": "catalog:"
   },
   "prettier": {
     "bracketSpacing": false,
@@ -32,6 +32,6 @@
     "trailingComma": "none"
   },
   "engines": {
-    "node": ">=22.0.0"
+    "node": "^22.18.0 || >=24"
   }
 }
