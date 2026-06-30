@@ -2,10 +2,27 @@
   "name": "@intl-ai/api",
   "version": "0.3.0",
   "description": "Runtime-agnostic translation core for intl-ai (zero Node.js-only deps)",
+  "keywords": [
+    "ai",
+    "i18n",
+    "internationalization",
+    "intl",
+    "translation"
+  ],
+  "homepage": "https://intl-ai.pages.dev",
+  "bugs": "https://github.com/sigilco/intl-ai/issues",
   "license": "MIT",
+  "author": "Joaquin Terrasa",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sigilco/intl-ai.git",
+    "directory": "packages/api"
+  },
   "files": [
     "dist",
-    "src/schema"
+    "src/schema",
+    "README.md",
+    "LICENSE"
   ],
   "type": "module",
   "sideEffects": false,
@@ -32,6 +49,9 @@
       "default": "./dist/schema/index.mjs"
     },
     "./schema.json": "./src/schema/intl-ai.schema.json"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "scripts": {
     "build": "tsdown",
