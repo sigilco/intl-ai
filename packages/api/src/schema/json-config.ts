@@ -17,11 +17,17 @@ export const IntlAiJsonConfigSchema = z.object({
   localeDir: z.string().min(1),
   provider: z.string().min(1).default("openai"),
   apiKey: z.string().min(1),
-  baseURL: z.string().url().optional(),
+  baseURL: z.url().optional(),
   glossary: z.record(z.string(), z.string()).optional(),
   maxRetries: z.number().int().min(0).max(10).optional(),
   processor: z.enum(["passthrough", "icu"]).optional(),
   modelParams: z.record(z.string(), z.unknown()).optional(),
+  /**
+   * Max source entries per translation request. Omit to send all entries in
+   * one request (default, efficient for many short UI strings). Set to 1 when
+   * each key holds a large value, e.g. whole documents in a page-as-key setup.
+   */
+  batchSize: z.number().int().min(1).optional(),
   /**
    * Quality-aware fill loop settings. `failOnLowQuality` and `assessor`
    * are intentionally absent here: they are runtime-only and are not
@@ -33,4 +39,7 @@ export const IntlAiJsonConfigSchema = z.object({
       maxRetries: z.number().int().min(0).max(5).optional(),
     })
     .optional(),
+  format: z.string().optional(),
+  skipPaths: z.array(z.string()).optional(),
+  concurrency: z.number().int().min(1).max(16).optional(),
 });
