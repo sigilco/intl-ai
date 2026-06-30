@@ -1,7 +1,10 @@
 import { createUnplugin } from "unplugin";
 import type { UnpluginFactory } from "unplugin";
+import { getLogger } from "@logtape/logtape";
 import { loadConfig } from "./config";
 import type { QualityOptions } from "@intl-ai/api";
+
+const logger = getLogger(["intl-ai", "unplugin"]);
 
 export interface UnpluginIntlAiOptions {
   debug?: boolean;
@@ -27,7 +30,7 @@ const unpluginFactory: UnpluginFactory<UnpluginIntlAiOptions | undefined> = (opt
           : undefined;
         await runFill(config, quality ? { quality } : undefined);
       } catch (error) {
-        console.warn(`[intl-ai] Skipping translation fill due to error: ${error}`);
+        logger.warn`Skipping translation fill due to error: ${error}`;
       }
     },
   };
