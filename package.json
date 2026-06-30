@@ -17,7 +17,7 @@
     "docs:i18n:sync": "bun docs/i18n/i18n.mts sync",
     "docs:i18n:fill": "pnpm docs:i18n:sync && bun docs/i18n/i18n.mts fill",
     "docs:i18n:build": "bun docs/i18n/i18n.mts build",
-    "predocs:build": "pnpm sync:schema && pnpm docs:i18n:build",
+    "predocs:build": "pnpm sync:schema",
     "docs:build": "vitepress build docs",
     "docs:preview": "vitepress preview docs",
     "publish:local": "turbo run build --filter='./packages/*' && pnpm -r --filter='./packages/*' publish --no-git-checks --registry http://localhost:4873",
