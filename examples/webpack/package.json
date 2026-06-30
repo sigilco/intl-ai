@@ -11,11 +11,14 @@
     "@intl-ai/unplugin": "workspace:*"
   },
   "devDependencies": {
-    "@types/node": "^22.0.0",
+    "@types/node": "catalog:",
     "ts-loader": "9.5.7",
     "ts-node": "10.9.2",
-    "typescript": "5.5.4",
+    "typescript": "catalog:",
     "webpack": "5.106.2",
     "webpack-cli": "7.0.2"
+  },
+  "engines": {
+    "node": "^22.18.0 || >=24"
   }
 }

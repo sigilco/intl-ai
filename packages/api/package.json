@@ -36,26 +36,27 @@
   "scripts": {
     "build": "tsdown",
     "dev": "tsdown --watch",
-    "schema:build": "tsx scripts/build-schema.ts",
+    "schema:build": "jiti scripts/build-schema.ts",
     "test": "vitest run",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@formatjs/icu-messageformat-parser": "3.5.7",
-    "jiti": "2.7.0",
-    "pathe": "2.0.3",
+    "@formatjs/icu-messageformat-parser": "3.5.12",
+    "@logtape/logtape": "catalog:",
+    "gray-matter": "4.0.3",
+    "jiti": "catalog:",
+    "pathe": "catalog:",
     "yaml": "2.9.0",
-    "zod": "4.4.3"
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
-    "@types/node": "^22.0.0",
-    "tsdown": "0.22.0",
-    "tsx": "^4.19.0",
-    "typescript": "6.0.3",
-    "vitest": "4.1.6"
+    "@types/node": "catalog:",
+    "tsdown": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
   },
   "engines": {
-    "node": ">=22.0.0"
+    "node": "^22.18.0 || >=24"
   }
 }

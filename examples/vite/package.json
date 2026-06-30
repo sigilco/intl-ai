@@ -12,7 +12,10 @@
     "@intl-ai/unplugin": "workspace:*"
   },
   "devDependencies": {
-    "typescript": "5.5.4",
+    "typescript": "catalog:",
     "vite": "8.0.12"
+  },
+  "engines": {
+    "node": "^22.18.0 || >=24"
   }
 }
