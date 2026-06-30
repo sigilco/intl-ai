@@ -13,6 +13,7 @@
   "homepage": "https://intl-ai.pages.dev",
   "bugs": "https://github.com/sigilco/intl-ai/issues",
   "license": "MIT",
+  "author": "Joaquin Terrasa",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/sigilco/intl-ai.git"
