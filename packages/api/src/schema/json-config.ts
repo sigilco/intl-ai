@@ -16,6 +16,7 @@ export const IntlAiJsonConfigSchema = z.object({
   locales: z.array(z.string().min(1)).min(1),
   localeDir: z.string().min(1),
   provider: z.string().min(1).default("openai"),
+  model: z.string().min(1),
   apiKey: z.string().min(1),
   baseURL: z.url().optional(),
   glossary: z.record(z.string(), z.string()).optional(),
@@ -40,4 +41,4 @@ export const IntlAiJsonConfigSchema = z.object({
     })
     .optional(),
   format: z.string().optional(),
-});
+}).strict();

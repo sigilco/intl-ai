@@ -17,6 +17,7 @@ export interface IntlAiJsonConfig {
   locales: string[];
   localeDir: string;
   provider: string;
+  model: string;
   apiKey: string;
   baseURL?: string;
   glossary?: Record<string, string>;
@@ -37,7 +38,8 @@ export function jsonConfigToIntlAiConfig(json: IntlAiJsonConfig): IntlAiConfig {
     defaultLocale: json.defaultLocale,
     locales: json.locales,
     localeDir: json.localeDir,
-    model: json.provider,
+    provider: json.provider,
+    model: json.model,
     apiKey: json.apiKey,
     baseURL: json.baseURL ?? "https://api.openai.com/v1",
     glossary: json.glossary,

@@ -1,5 +1,13 @@
 # @intl-ai/cli
 
+## 0.3.1
+
+### Patch Changes
+
+- Updated dependencies
+- Updated dependencies [49d7109]
+  - @intl-ai/api@0.4.0
+
 ## 0.3.0
 
 ### Minor Changes

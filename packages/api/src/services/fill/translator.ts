@@ -37,7 +37,7 @@ function classifyError(err: Error, res?: Response): { errorType: ErrorType; stat
 
 export interface TranslateBatchOptions {
   provider: AIProvider | string;
-  modelId?: string;
+  modelId: string;
   entries: TranslationEntry[];
   targetLocale: string;
   sourceLocale: string;
@@ -95,7 +95,10 @@ export async function translateBatch(options: TranslateBatchOptions): Promise<Tr
 
   const provider = resolveProvider(providerInput);
   const apiKey = await resolveApiKey(apiKeyInput);
-  const modelId = modelIdInput ?? "gpt-4o-mini";
+  const modelId = modelIdInput;
+  if (!modelId) {
+    throw new Error("translateBatch: modelId is required (config.model was not set)");
+  }
 
   const systemPrompt =
     "You are a professional translation engine. You respond only with valid JSON matching the requested schema.";

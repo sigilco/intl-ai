@@ -1,2 +1,4 @@
 [tools]
 node = "22"
+"aqua:charmbracelet/gum" = "0.17.0"
+vhs = "0.11.0"

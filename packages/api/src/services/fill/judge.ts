@@ -13,7 +13,7 @@ export { ADVERSARIAL_SYSTEM_PROMPT } from "./prompts";
 
 export interface JudgeBatchOptions {
   provider: AIProvider | string;
-  modelId?: string;
+  modelId: string;
   baseURL: string;
   apiKey: ApiKeyValue;
   contexts: TranslationContext[];
@@ -70,7 +70,10 @@ export async function judgeBatch(opts: JudgeBatchOptions): Promise<QualityResult
 
   const provider = resolveProvider(opts.provider);
   const apiKey = resolveApiKey(opts.apiKey);
-  const modelId = opts.modelId ?? "gpt-4o-mini";
+  const modelId = opts.modelId;
+  if (!modelId) {
+    throw new Error("judgeBatch: modelId is required (config.model was not set)");
+  }
   const threshold = DEFAULT_THRESHOLD;
 
   const { ADVERSARIAL_SYSTEM_PROMPT } = await import("./prompts");

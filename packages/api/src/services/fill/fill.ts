@@ -92,7 +92,8 @@ export async function runFill(
     defaultLocale,
     locales,
     localeDir,
-    model: provider,
+    provider,
+    model,
     baseURL,
     apiKey,
     glossary,
@@ -166,6 +167,7 @@ export async function runFill(
 
       const results = await translateBatch({
         provider,
+        modelId: model,
         entries: entriesToTranslate.map((e) => ({ key: e.key, source: e.source })),
         targetLocale,
         sourceLocale: defaultLocale,
@@ -204,7 +206,7 @@ export async function runFill(
             sourceHash,
             translated: result.translated!,
             origin: "ai",
-            model: modelToString(provider),
+            model: model,
             timestamp: new Date().toISOString(),
           });
           translated++;
@@ -235,6 +237,7 @@ export async function runFill(
         : (ctxs: TranslationContext[]) =>
             judgeBatch({
               provider,
+              modelId: model,
               baseURL,
               apiKey,
               hook: effectiveHook,
@@ -251,7 +254,7 @@ export async function runFill(
         sourceHashByKey,
         targetLocale,
         provider: modelToString(provider),
-        model: modelToString(provider),
+        model: model,
         judge,
         assessor: customAssessor,
         refill: async (reqs: RefillRequest[]) => {
@@ -260,6 +263,7 @@ export async function runFill(
           for (const batch of refillBatches) {
             const batchResult = await translateBatch({
               provider,
+              modelId: model,
               entries: batch.map((e) => ({ key: e.key, source: e.source })),
               targetLocale,
               sourceLocale: defaultLocale,
@@ -307,7 +311,7 @@ export async function runFill(
           sourceHash,
           translated: text,
           origin: "ai",
-          model: modelToString(provider),
+          model: model,
           timestamp: new Date().toISOString(),
           quality: record,
         });

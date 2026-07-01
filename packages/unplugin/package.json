@@ -1,6 +1,6 @@
 {
   "name": "@intl-ai/unplugin",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "AI-powered i18n translation plugin for all bundlers",
   "keywords": [
     "ai",

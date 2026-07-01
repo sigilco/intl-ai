@@ -9,11 +9,25 @@ describe("schema", () => {
     expect((schema as Record<string, unknown>).type).toBe("object");
   });
 
-  it("requires defaultLocale, locales, localeDir, provider, apiKey", () => {
+  it("requires defaultLocale, locales, localeDir, provider, apiKey, model", () => {
     const schema = getIntlAiSchema() as { required: string[] };
     expect(schema.required).toEqual(
-      expect.arrayContaining(["defaultLocale", "locales", "localeDir", "provider", "apiKey"]),
+      expect.arrayContaining(["defaultLocale", "locales", "localeDir", "provider", "apiKey", "model"]),
     );
+  });
+
+  it("parity: JSON Schema required fields match Zod schema", () => {
+    const jsonSchema = getIntlAiSchema() as {
+      required?: string[];
+      properties?: Record<string, unknown>;
+    };
+
+    // The known required fields in the Zod schema
+    const expectedRequired = ["defaultLocale", "locales", "localeDir", "provider", "model", "apiKey"];
+
+    expect(jsonSchema.required).toEqual(expect.arrayContaining(expectedRequired));
+    expect(jsonSchema.properties).toHaveProperty("model");
+    expect(jsonSchema.properties).toHaveProperty("provider");
   });
 
   it("jsonConfigToIntlAiConfig produces a valid runtime config", () => {
@@ -21,12 +35,14 @@ describe("schema", () => {
       defaultLocale: "en",
       locales: ["en", "es"],
       localeDir: "./locales",
-      provider: "gpt-4o-mini",
+      provider: "openai",
+      model: "gpt-4o-mini",
       apiKey: "test-key",
     });
     expect(cfg.defaultLocale).toBe("en");
     expect(cfg.locales).toEqual(["en", "es"]);
     expect(cfg.maxRetries).toBe(3);
+    expect(cfg.provider).toBe("openai");
     expect(cfg.model).toBe("gpt-4o-mini");
   });
 
@@ -35,7 +51,8 @@ describe("schema", () => {
       defaultLocale: "en",
       locales: ["en", "es"],
       localeDir: "./locales",
-      provider: "gpt-4o-mini",
+      provider: "openai",
+      model: "gpt-4o-mini",
       apiKey: "k",
       processor: "icu",
     });
@@ -47,7 +64,8 @@ describe("schema", () => {
       defaultLocale: "en",
       locales: ["en", "es"],
       localeDir: "./locales",
-      provider: "gpt-4o-mini",
+      provider: "openai",
+      model: "gpt-4o-mini",
       apiKey: "k",
       quality: { threshold: 0.7, maxRetries: 3 },
     });
