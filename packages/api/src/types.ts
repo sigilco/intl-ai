@@ -11,7 +11,8 @@ export interface IntlAiConfig {
   defaultLocale: string;
   locales: string[];
   localeDir: string;
-  model: AIProvider | string;
+  provider: AIProvider | string;
+  model: string;
   apiKey: ApiKeyValue;
   baseURL: string;
   glossary?: Record<string, string>;
@@ -35,7 +36,7 @@ export const IntlAiConfigSchema = z.object({
   defaultLocale: z.string().min(1),
   locales: z.array(z.string().min(1)).min(1),
   localeDir: z.string().min(1),
-  model: z.union([
+  provider: z.union([
     z.custom<AIProvider>(
       (v): v is AIProvider =>
         v !== null &&
@@ -49,6 +50,7 @@ export const IntlAiConfigSchema = z.object({
     ),
     z.string(),
   ]),
+  model: z.string().min(1),
   apiKey: z.string().min(1),
   baseURL: z.string().min(1),
   processor: z
@@ -80,3 +82,12 @@ export const IntlAiConfigSchema = z.object({
     .optional(),
   format: z.union([z.custom<LocaleFormat>(), z.string()]).optional(),
 }) satisfies z.ZodType<IntlAiConfig>;
+
+/**
+ * TypeScript helper for intl-ai.config.ts files.
+ * Provides LSP autocomplete and validation for the config object.
+ * This is purely compile-time; the function returns the input unchanged.
+ */
+export function defineConfig(config: IntlAiConfig): IntlAiConfig {
+  return config;
+}

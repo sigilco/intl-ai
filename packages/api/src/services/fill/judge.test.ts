@@ -73,6 +73,7 @@ describe("judgeBatch (api)", () => {
 
     const results = await judgeBatch({
       provider: createTestProvider(),
+      modelId: "test-model",
       baseURL: "https://api.test/v1",
       apiKey: "test-key",
       contexts: [ctx({ key: "a" }), ctx({ key: "b" })],
@@ -93,6 +94,7 @@ describe("judgeBatch (api)", () => {
 
     await judgeBatch({
       provider: createTestProvider(),
+      modelId: "test-model",
       baseURL: "https://api.test/v1",
       apiKey: "test-key",
       contexts: [ctx({ key: "a" })],
@@ -108,6 +110,7 @@ describe("judgeBatch (api)", () => {
 
     const results = await judgeBatch({
       provider: createTestProvider(),
+      modelId: "test-model",
       baseURL: "https://api.test/v1",
       apiKey: "test-key",
       contexts: [ctx({ key: "a" }), ctx({ key: "missing" })],
@@ -129,6 +132,7 @@ describe("judgeBatch (api)", () => {
     await expect(
       judgeBatch({
         provider: createTestProvider(),
+        modelId: "test-model",
         baseURL: "https://api.test/v1",
         apiKey: "test-key",
         contexts: [ctx({ key: "a" })],
@@ -141,6 +145,7 @@ describe("judgeBatch (api)", () => {
 
     const assessor = createDefaultAssessor({
       provider: createTestProvider(),
+      modelId: "test-model",
       baseURL: "https://api.test/v1",
       apiKey: "test-key",
     });

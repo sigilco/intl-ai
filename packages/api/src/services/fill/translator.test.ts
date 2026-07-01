@@ -64,6 +64,7 @@ describe("translateBatch (api)", () => {
 
     await translateBatch({
       provider: createTestProvider(),
+      modelId: "test-model",
       entries: [{ key: "greeting", source: "Hello {name}" }],
       targetLocale: "es",
       sourceLocale: "en",
@@ -85,6 +86,7 @@ describe("translateBatch (api)", () => {
 
     await translateBatch({
       provider: createTestProvider(),
+      modelId: "test-model",
       entries: [{ key: "greeting", source: "Hello {name}" }],
       targetLocale: "es",
       sourceLocale: "en",
@@ -105,6 +107,7 @@ describe("translateBatch (api)", () => {
 
     const result = await translateBatch({
       provider: createTestProvider(),
+      modelId: "test-model",
       entries: [{ key: "greeting", source: "Hello {name}" }],
       targetLocale: "es",
       sourceLocale: "en",
@@ -130,6 +133,7 @@ describe("translateBatch (api)", () => {
 
     const result = await translateBatch({
       provider: createTestProvider(),
+      modelId: "test-model",
       entries: [{ key: "greeting", source: "Hello {name}" }],
       targetLocale: "es",
       sourceLocale: "en",
@@ -148,6 +152,7 @@ describe("translateBatch (api)", () => {
 
     await translateBatch({
       provider: createTestProvider(),
+      modelId: "test-model",
       entries: [{ key: "greeting", source: "Hello" }],
       targetLocale: "fr",
       sourceLocale: "en",
@@ -165,6 +170,7 @@ describe("translateBatch (api)", () => {
 
     await translateBatch({
       provider: createTestProvider(),
+      modelId: "test-model",
       entries: [{ key: "greeting", source: "Hello" }],
       targetLocale: "fr",
       sourceLocale: "en",

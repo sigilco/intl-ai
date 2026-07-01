@@ -101,3 +101,6 @@ export {
   INTL_AI_SCHEMA_URL,
 } from "./schema/index";
 export type { IntlAiJsonConfig } from "./schema/index";
+
+// NEW:
+export { defineConfig } from "./types";

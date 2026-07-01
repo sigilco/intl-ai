@@ -28,6 +28,7 @@ describe("config loader", () => {
         locales: ["en", "fr"],
         localeDir: "./locales",
         provider: "gpt-4o-mini",
+        model: "gpt-4o-mini",
         apiKey: "sk-test",
         baseURL: "https://api.example.com/v1",
         maxRetries: 2,

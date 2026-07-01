@@ -23,6 +23,10 @@
       "type": "string",
       "minLength": 1
     },
+    "model": {
+      "type": "string",
+      "minLength": 1
+    },
     "apiKey": {
       "type": "string",
       "minLength": 1
@@ -81,7 +85,7 @@
       "type": "string"
     }
   },
-  "required": ["defaultLocale", "locales", "localeDir", "provider", "apiKey"],
+  "required": ["defaultLocale", "locales", "localeDir", "provider", "model", "apiKey"],
   "additionalProperties": false,
   "$id": "https://www.schemastore.org/intl-ai.json",
   "title": "intl-ai config",

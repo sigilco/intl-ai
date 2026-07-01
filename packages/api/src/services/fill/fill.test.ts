@@ -65,6 +65,48 @@ describe("runFill (api) — quality loop", () => {
     global.fetch = originalFetch;
   });
 
+  it("model field from config reaches HTTP request body", async () => {
+    const dir = await mkdtemp(join(tmpdir(), "intl-ai-roundtrip-"));
+    try {
+      await setupLocaleDir(dir, { "en.json": { greeting: "Hello" } });
+
+      const requestedModels: string[] = [];
+      const capturingProvider: AIProvider = {
+        id: "capture-test",
+        buildRequest({ model, systemPrompt, userPrompt }) {
+          requestedModels.push(model);
+          return {
+            url: "/chat/completions",
+            headers: { "Content-Type": "application/json" },
+            body: { model, messages: [{ role: "system", content: systemPrompt }, { role: "user", content: userPrompt }] },
+          };
+        },
+        parseResponse(data: unknown) {
+          return { content: JSON.stringify({ translations: [{ key: "greeting", translated: "Hola" }] }) };
+        },
+      };
+
+      mockFetch.mockResolvedValueOnce(
+        mockJsonResponse({ translations: [{ key: "greeting", translated: "Hola" }] }),
+      );
+
+      await runFill({
+        defaultLocale: "en",
+        locales: ["en", "es"],
+        localeDir: dir,
+        provider: capturingProvider,
+        model: "my-custom-model-v9",
+        apiKey: "TEST_API_KEY",
+        baseURL: "https://api.test/v1",
+        format: jsonFormat,
+      });
+
+      expect(requestedModels).toEqual(["my-custom-model-v9"]);
+    } finally {
+      await rm(dir, { recursive: true, force: true });
+    }
+  });
+
   it("writes quality records to lockfile when assessor accepts all keys", async () => {
     const dir = await mkdtemp(join(tmpdir(), "intl-ai-fill-quality-"));
     try {
@@ -84,7 +126,8 @@ describe("runFill (api) — quality loop", () => {
           defaultLocale: "en",
           locales: ["en", "es"],
           localeDir: dir,
-          model: createTestProvider(),
+          provider: createTestProvider(),
+          model: "test-model",
           apiKey: "TEST_API_KEY",
           baseURL: "https://api.test/v1",
           format: jsonFormat,
@@ -136,7 +179,8 @@ describe("runFill (api) — quality loop", () => {
           defaultLocale: "en",
           locales: ["en", "es"],
           localeDir: dir,
-          model: createTestProvider(),
+          provider: createTestProvider(),
+          model: "test-model",
           apiKey: "TEST_API_KEY",
           baseURL: "https://api.test/v1",
           format: jsonFormat,
@@ -190,7 +234,8 @@ describe("runFill (api) — quality loop", () => {
             defaultLocale: "en",
             locales: ["en", "es"],
             localeDir: dir,
-            model: createTestProvider(),
+            provider: createTestProvider(),
+            model: "test-model",
             apiKey: "TEST_API_KEY",
             baseURL: "https://api.test/v1",
             format: jsonFormat,
@@ -230,7 +275,8 @@ describe("runFill (api) — quality loop", () => {
           defaultLocale: "en",
           locales: ["en", "es"],
           localeDir: dir,
-          model: createTestProvider(),
+          provider: createTestProvider(),
+          model: "test-model",
           apiKey: "TEST_API_KEY",
           baseURL: "https://api.test/v1",
           format: jsonFormat,
@@ -273,7 +319,8 @@ describe("runFill (api) — quality loop", () => {
           defaultLocale: "en",
           locales: ["en", "es"],
           localeDir: dir,
-          model: createTestProvider(),
+          provider: createTestProvider(),
+          model: "test-model",
           apiKey: "TEST_API_KEY",
           baseURL: "https://api.test/v1",
           format: jsonFormat,
@@ -324,7 +371,8 @@ describe("runFill (api) — batching", () => {
         defaultLocale: "en",
         locales: ["en", "es"],
         localeDir: dir,
-        model: createTestProvider(),
+        provider: createTestProvider(),
+        model: "test-model",
         apiKey: "TEST_API_KEY",
         baseURL: "https://api.test/v1",
         format: jsonFormat,
@@ -360,7 +408,8 @@ describe("runFill (api) — batching", () => {
         defaultLocale: "en",
         locales: ["en", "es"],
         localeDir: dir,
-        model: createTestProvider(),
+        provider: createTestProvider(),
+        model: "test-model",
         apiKey: "TEST_API_KEY",
         baseURL: "https://api.test/v1",
         format: jsonFormat,

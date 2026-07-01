@@ -8,7 +8,7 @@ import {
   type IntlAiJsonConfig,
 } from "../../schema/index";
 import { resolveFormat } from "../../adapters/formats/registry";
-import type { IntlAiConfig } from "../../types";
+import { IntlAiConfigSchema, type IntlAiConfig } from "../../types";
 import type { LocaleFormat } from "../../ports/format";
 
 export type { IntlAiConfig };
@@ -45,8 +45,13 @@ async function loadTsRaw(path: string): Promise<unknown> {
   return mod;
 }
 
-function parseAndConvert(raw: unknown, sourcePath: string): IntlAiConfig {
-  const parsed = IntlAiJsonConfigSchema.safeParse(raw);
+function parseAndConvert(
+  raw: unknown,
+  sourcePath: string,
+  schema: "json" | "runtime",
+): IntlAiConfig {
+  const zodSchema = schema === "json" ? IntlAiJsonConfigSchema : IntlAiConfigSchema;
+  const parsed = zodSchema.safeParse(raw);
   if (!parsed.success) {
     const errors = parsed.error.issues
       .map((issue) => {
@@ -56,7 +61,10 @@ function parseAndConvert(raw: unknown, sourcePath: string): IntlAiConfig {
       .join("\n  ");
     throw new Error(`Config validation failed (${sourcePath}):\n  ${errors}`);
   }
-  return jsonConfigToIntlAiConfig(parsed.data as IntlAiJsonConfig);
+  if (schema === "json") {
+    return jsonConfigToIntlAiConfig(parsed.data as IntlAiJsonConfig);
+  }
+  return parsed.data as IntlAiConfig;
 }
 
 /**
@@ -85,11 +93,13 @@ export async function loadConfigFromPath(
   if (!existsSync(path)) {
     throw new Error(`Config file not found: ${path}`);
   }
-  const raw = path.endsWith(".ts") ? await loadTsRaw(path) : await loadJsonRaw(path);
-  const config =
-    options.validate === false
-      ? jsonConfigToIntlAiConfig(raw as IntlAiJsonConfig)
-      : parseAndConvert(raw, path);
+  const isTs = path.endsWith(".ts");
+  const raw = isTs ? await loadTsRaw(path) : await loadJsonRaw(path);
+  const config = isTs
+    ? options.validate === false
+      ? (raw as IntlAiConfig)
+      : parseAndConvert(raw, path, "runtime")
+    : parseAndConvert(raw, path, "json");
   return resolveConfig(config, path);
 }
 
@@ -108,5 +118,11 @@ export async function loadConfig(cwd: string = process.cwd()): Promise<ResolvedI
   const raw = configPath.endsWith(".ts")
     ? await loadTsRaw(configPath)
     : await loadJsonRaw(configPath);
-  return resolveConfig(parseAndConvert(raw, configPath), configPath);
+  const isTs = configPath.endsWith(".ts");
+  return resolveConfig(
+    isTs
+      ? parseAndConvert(raw, configPath, "runtime")
+      : parseAndConvert(raw, configPath, "json"),
+    configPath,
+  );
 }

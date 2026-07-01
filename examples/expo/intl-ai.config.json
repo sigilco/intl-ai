@@ -3,7 +3,8 @@
   "defaultLocale": "en",
   "locales": ["en", "es"],
   "localeDir": "locales",
-  "model": "openai/gpt-4o-mini",
+  "provider": "openai",
+  "model": "gpt-4o-mini",
   "apiKey": "${OPENAI_API_KEY}",
   "baseURL": "https://api.openai.com/v1",
   "maxRetries": 3

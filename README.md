@@ -11,6 +11,8 @@
 
 Automatically translate your app with AI. intl-ai hooks into your build pipeline to generate and update translations on every build, with no changes to your runtime code.
 
+![intl-ai demo](docs/public/demo.gif)
+
 ## Why intl-ai
 
 Most i18n translation workflows are manual (copy JSON, open a translation tool, paste back) or runtime-heavy (call an AI API on every page load). intl-ai runs at build time so translations are baked in before your app ships.

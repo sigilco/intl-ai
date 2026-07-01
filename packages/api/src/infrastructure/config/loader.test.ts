@@ -9,6 +9,7 @@ const baseConfig = {
   locales: ["en", "es"],
   localeDir: "locales",
   provider: "openai",
+  model: "gpt-4o-mini",
   apiKey: "k",
 };
 
