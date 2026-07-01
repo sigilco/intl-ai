@@ -10,6 +10,11 @@ export async function configureLogger(silent: boolean): Promise<void> {
         lowestLevel: silent ? "error" : "info",
         sinks: ["console"],
       },
+      {
+        category: ["logtape", "meta"],
+        lowestLevel: "warning",
+        sinks: ["console"],
+      },
     ],
   });
 }
