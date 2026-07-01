@@ -1,5 +1,12 @@
 # @examples/webpack
 
+## 0.0.4
+
+### Patch Changes
+
+- Updated dependencies
+  - @intl-ai/unplugin@0.4.1
+
 ## 0.0.3
 
 ### Patch Changes
