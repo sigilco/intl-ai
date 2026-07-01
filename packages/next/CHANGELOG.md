@@ -1,5 +1,14 @@
 # @intl-ai/next
 
+## 0.4.1
+
+### Patch Changes
+
+- fix(config): thread JSON config `model` field to `translateBatch`/`judgeBatch`, and accept the `$schema` JSON Schema meta-key. The `model` field in `intl-ai.config.json` was being ignored in favour of a hardcoded fallback. `model` is now required in the JSON schema, threaded all the way through to batch translators, and recorded in the lockfile. The Zod schema also accepts `$schema` (the standard JSON Schema meta-key editors read for autocomplete) while keeping `.strict()` for everything else.
+- Updated dependencies
+  - @intl-ai/api@0.4.1
+  - @intl-ai/unplugin@0.4.1
+
 ## 0.4.0
 
 ### Minor Changes
