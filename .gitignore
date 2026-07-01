@@ -20,4 +20,3 @@ node_modules/
 .turbo/.osgrep
 .npmrc
 .osgrep
-demo/dist/

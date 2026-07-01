@@ -14,6 +14,7 @@
     "typecheck": "turbo run typecheck --filter='./packages/*'",
     "docs:dev": "vitepress dev docs",
     "sync:schema": "cp packages/api/src/schema/intl-ai.schema.json docs/public/schema/v1.json",
+    "demo:render": "vhs docs/public/intl-ai-demo.tape",
     "docs:i18n:sync": "bun docs/i18n/i18n.mts sync",
     "docs:i18n:fill": "pnpm docs:i18n:sync && bun docs/i18n/i18n.mts fill",
     "docs:i18n:build": "bun docs/i18n/i18n.mts build",
