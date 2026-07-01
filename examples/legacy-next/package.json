@@ -13,7 +13,7 @@
     "@ai-sdk/openai-compatible": "0.0.1",
     "@intl-ai/next": "workspace:*",
     "next": "catalog:react18",
-    "next-intl": "4.11.2",
+    "next-intl": "4.13.1",
     "react": "catalog:react18",
     "react-dom": "catalog:react18"
   },
@@ -23,7 +23,7 @@
     "@types/react-dom": "catalog:react18",
     "eslint": "9.39.4",
     "eslint-config-next": "15.5.18",
-    "prettier": "3.8.3",
+    "prettier": "3.9.4",
     "typescript": "catalog:"
   },
   "prettier": {
