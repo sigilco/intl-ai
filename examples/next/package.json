@@ -10,7 +10,7 @@
     "test": "echo 'No tests yet'"
   },
   "dependencies": {
-    "@ai-sdk/openai-compatible": "0.0.1",
+    "@ai-sdk/openai-compatible": "3.0.2",
     "@intl-ai/next": "workspace:*",
     "next": "catalog:",
     "next-intl": "4.11.2",
