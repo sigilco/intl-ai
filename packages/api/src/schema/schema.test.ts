@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { getIntlAiSchema, jsonConfigToIntlAiConfig, INTL_AI_SCHEMA_URL } from "../internal";
+import { IntlAiJsonConfigSchema } from "./json-config";
 
 describe("schema", () => {
   it("exposes a valid JSON Schema object", () => {
@@ -70,5 +71,58 @@ describe("schema", () => {
       quality: { threshold: 0.7, maxRetries: 3 },
     });
     expect(cfg.quality).toEqual({ threshold: 0.7, maxRetries: 3 });
+  });
+
+  describe("JSON config parsing", () => {
+    it("preserves the JSON Schema meta-key $schema verbatim", () => {
+      const r = IntlAiJsonConfigSchema.safeParse({
+        defaultLocale: "en",
+        locales: ["en", "es"],
+        localeDir: "./locales",
+        provider: "openai",
+        model: "gpt-4o-mini",
+        apiKey: "k",
+        $schema: "https://www.schemastore.org/intl-ai.json",
+      });
+      expect(r.success).toBe(true);
+      if (r.success) {
+        expect(r.data.$schema).toBe("https://www.schemastore.org/intl-ai.json");
+      }
+    });
+
+    it("accepts the actual examples/expo config (which uses $schema)", () => {
+      // Regression: .strict() used to reject $schema. Reproduces the user-reported
+      // failure mode against the on-disk examples/ config.
+      const cfg = {
+        $schema: "https://www.schemastore.org/intl-ai.json",
+        defaultLocale: "en",
+        locales: ["en", "es"],
+        localeDir: "locales",
+        provider: "openai",
+        model: "gpt-4o-mini",
+        apiKey: "${OPENAI_API_KEY}",
+        baseURL: "https://api.openai.com/v1",
+        maxRetries: 3,
+      };
+      const r = IntlAiJsonConfigSchema.safeParse(cfg);
+      expect(r.success).toBe(true);
+      if (r.success) {
+        expect(r.data.model).toBe("gpt-4o-mini");
+        expect(r.data.$schema).toBe("https://www.schemastore.org/intl-ai.json");
+      }
+    });
+
+    it("still rejects unrelated unknown keys (strict)", () => {
+      const r = IntlAiJsonConfigSchema.safeParse({
+        defaultLocale: "en",
+        locales: ["en", "es"],
+        localeDir: "./locales",
+        provider: "openai",
+        model: "gpt-4o-mini",
+        apiKey: "k",
+        bogusKey: 1,
+      });
+      expect(r.success).toBe(false);
+    });
   });
 });

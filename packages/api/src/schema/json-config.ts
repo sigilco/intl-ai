@@ -41,4 +41,9 @@ export const IntlAiJsonConfigSchema = z.object({
     })
     .optional(),
   format: z.string().optional(),
+  // JSON Schema meta-key. Editors read it for autocomplete. Stripped from
+  // runtime config (see jsonConfigToIntlAiConfig). Other JSON Schema meta-
+  // keys (e.g. $id, $defs, $ref) are not allowed because `.strict()` is
+  // kept; add them inline only if a real consumer needs them.
+  $schema: z.string().min(1).optional(),
 }).strict();
