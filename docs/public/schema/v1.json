@@ -51,7 +51,10 @@
     },
     "processor": {
       "type": "string",
-      "enum": ["passthrough", "icu"]
+      "enum": [
+        "passthrough",
+        "icu"
+      ]
     },
     "modelParams": {
       "type": "object",
@@ -84,14 +87,19 @@
     "format": {
       "type": "string"
     },
-    "skipPaths": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      }
+    "$schema": {
+      "type": "string",
+      "minLength": 1
     }
   },
-  "required": ["defaultLocale", "locales", "localeDir", "provider", "model", "apiKey"],
+  "required": [
+    "defaultLocale",
+    "locales",
+    "localeDir",
+    "provider",
+    "model",
+    "apiKey"
+  ],
   "additionalProperties": false,
   "$id": "https://www.schemastore.org/intl-ai.json",
   "title": "intl-ai config",
