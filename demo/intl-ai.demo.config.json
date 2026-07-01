@@ -1,0 +1,10 @@
+{
+  "$schema": "https://www.schemastore.org/intl-ai.json",
+  "defaultLocale": "en",
+  "locales": ["es", "fr", "de"],
+  "localeDir": "./locales",
+  "provider": "openai",
+  "model": "qwen3.5-4b-mlx",
+  "apiKey": "lm-studio",
+  "baseURL": "http://127.0.0.1:1234/v1"
+}
