@@ -13,17 +13,17 @@
     "@ai-sdk/openai-compatible": "0.0.1",
     "@intl-ai/next": "workspace:*",
     "next": "catalog:",
-    "next-intl": "4.11.2",
+    "next-intl": "4.13.4",
     "react": "catalog:",
     "react-dom": "catalog:"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "3.3.5",
+    "@eslint/eslintrc": "3.3.6",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "eslint": "9.39.4",
     "eslint-config-next": "16.2.6",
-    "prettier": "3.8.3",
+    "prettier": "3.9.6",
     "typescript": "catalog:"
   },
   "prettier": {
