@@ -57,3 +57,5 @@ Enforced by `oxlintrc.json` (no-restricted-imports overrides).
 
 The `core/` and `ports/` boundary is designed to become the Rust/TS language boundary in v1 (see root AGENTS.md and `.agents/plans/2026-06-27-hexagonal-architecture-api.md`).
 Keep ports serializable (no closures crossing the seam) and keep `core/` free of JS-only runtime deps.
+
+**Exception: `AITransport` (ports/provider.ts).** It's the first port whose method returns a `Promise` from a subprocess, not a serializable HTTP request/response pair like `AIProvider`. It cannot cross an FFI seam (a subprocess is host-only), so it stays on the TS side even after a Rust split — it does not migrate alongside `AIProvider`.
