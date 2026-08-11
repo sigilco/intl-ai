@@ -12,9 +12,12 @@ export async function runFillCommand(opts: {
   dryRun: boolean;
   concurrency?: number;
 }): Promise<void> {
-  const { config: configPath, locale, force, silent, dryRun, concurrency = 4 } = opts;
+  const { config: configPath, locale, force, silent, dryRun, concurrency } = opts;
   await configureLogger(silent);
   const config = await loadConfig(configPath);
+  // Four concurrent HTTP requests is reasonable; four concurrent coding-agent
+  // subprocesses is not, so an unset flag defaults lower for kind: "agent".
+  const effectiveConcurrency = concurrency ?? (config.kind === "agent" ? 1 : 4);
 
   logger.info`Translating missing keys...`;
 
@@ -25,7 +28,7 @@ export async function runFillCommand(opts: {
       locale,
       force,
       dryRun,
-      concurrency,
+      concurrency: effectiveConcurrency,
       onProgress: ({ locale: loc, completed, total }) => {
         if (!silent) {
           process.stdout.write(`\r[${loc}] ${completed}/${total} keys`);
@@ -130,8 +133,7 @@ export const fillCommand = command(
       },
       concurrency: {
         type: Number,
-        default: 4,
-        description: "Max parallel locale processing",
+        description: 'Max parallel locale processing (default: 4, or 1 for kind: "agent")',
       },
     },
   },
@@ -143,7 +145,7 @@ export const fillCommand = command(
       force: force ?? false,
       silent: silent ?? false,
       dryRun: dryRun ?? false,
-      concurrency: concurrency ?? 4,
+      concurrency,
     }).catch((e: unknown) => {
       process.stderr.write(`[intl-ai] Fatal: ${e instanceof Error ? e.message : String(e)}\n`);
       process.exit(1);
