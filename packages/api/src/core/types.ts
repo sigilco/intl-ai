@@ -11,6 +11,8 @@ export type ErrorType =
   | "validation"
   | "empty"
   | "output_truncated"
+  | "spawn_failure"
+  | "process_exit"
   | "unknown";
 
 export interface TranslationEntry {
