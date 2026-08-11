@@ -3,7 +3,7 @@ import { getLogger } from "@logtape/logtape";
 
 const logger = getLogger(["intl-ai", "fill", "translator"]);
 
-import type { AIProvider } from "../../ports/provider";
+import type { AIProvider, AITransport } from "../../ports/provider";
 import type { IntlAiProcessor } from "../../ports/processor";
 import type { ErrorType, TranslationHook } from "../../ports/hook";
 import type { TranslationEntry, TranslationResult, ApiKeyValue } from "../../core/types";
@@ -11,20 +11,36 @@ import { resolveProvider } from "../../adapters/providers/registry";
 
 export type { TranslationEntry, TranslationResult };
 
-function classifyError(err: Error, res?: Response): { errorType: ErrorType; statusCode?: number } {
-  if (res) {
-    if (res.status === 429) return { errorType: "rate_limit", statusCode: 429 };
-    if (res.status === 401 || res.status === 403)
-      return { errorType: "http", statusCode: res.status };
-    if (res.status >= 500) return { errorType: "http", statusCode: res.status };
-    if (res.status >= 400) return { errorType: "http", statusCode: res.status };
+/** Thrown by runOnce so classifyError can inspect the failed HTTP response. */
+class HttpResponseError extends Error {
+  constructor(
+    message: string,
+    readonly response: Response,
+  ) {
+    super(message);
+    this.name = "HttpResponseError";
   }
+}
+
+function classifyError(err: Error, res?: Response): { errorType: ErrorType; statusCode?: number } {
+  const response = res ?? (err instanceof HttpResponseError ? err.response : undefined);
+  if (response) {
+    if (response.status === 429) return { errorType: "rate_limit", statusCode: 429 };
+    if (response.status === 401 || response.status === 403)
+      return { errorType: "http", statusCode: response.status };
+    if (response.status >= 500) return { errorType: "http", statusCode: response.status };
+    if (response.status >= 400) return { errorType: "http", statusCode: response.status };
+  }
+  if (err.message.includes("ENOENT")) return { errorType: "spawn_failure" };
   if (
     err.name === "TimeoutError" ||
     err.message.includes("aborted") ||
-    err.message.includes("timeout")
+    err.message.includes("timeout") ||
+    err.message.includes("SIGTERM") ||
+    err.message.includes("SIGKILL")
   )
     return { errorType: "timeout" };
+  if (err.message.includes("exited with code")) return { errorType: "process_exit" };
   if (
     err.message.includes("JSON") ||
     err.message.includes("Unexpected token") ||
@@ -36,18 +52,27 @@ function classifyError(err: Error, res?: Response): { errorType: ErrorType; stat
 }
 
 export interface TranslateBatchOptions {
-  provider: AIProvider | string;
-  modelId: string;
+  /** Required unless `transport` is set. */
+  provider?: AIProvider | string;
+  /** Required unless `transport` is set. */
+  modelId?: string;
   entries: TranslationEntry[];
   targetLocale: string;
   sourceLocale: string;
   glossary?: Record<string, string>;
   maxRetries?: number;
   processor?: IntlAiProcessor;
-  baseURL: string;
-  apiKey: ApiKeyValue;
+  /** Required unless `transport` is set. */
+  baseURL?: string;
+  /** Required unless `transport` is set. */
+  apiKey?: ApiKeyValue;
   hook?: TranslationHook;
   modelParams?: Record<string, unknown>;
+  /**
+   * Drive a local headless coding agent instead of the HTTP path. When set,
+   * `provider`, `baseURL`, `apiKey`, and `modelId` are not used.
+   */
+  transport?: AITransport;
   /**
    * Per-key reviewer notes to inject into the prompt when refilling a
    * rejected entry. Used by the quality loop, ignored on the first pass.
@@ -102,16 +127,23 @@ export async function translateBatch(options: TranslateBatchOptions): Promise<Tr
     modelParams,
     feedback,
     localeInstruction,
+    transport,
   } = options;
 
   if (entries.length === 0) return [];
 
-  const provider = resolveProvider(providerInput);
-  const apiKey = await resolveApiKey(apiKeyInput);
-  const modelId = modelIdInput;
-  if (!modelId) {
-    throw new Error("translateBatch: modelId is required (config.model was not set)");
+  if (!transport && (!providerInput || !modelIdInput || !baseURL || !apiKeyInput)) {
+    throw new Error(
+      "translateBatch: provider, modelId, baseURL, and apiKey are required when no transport is set",
+    );
   }
+
+  const provider = transport ? undefined : resolveProvider(providerInput!);
+  const apiKey = transport ? undefined : await resolveApiKey(apiKeyInput!);
+  const modelId = modelIdInput;
+  const dispatcherId = transport?.id ?? provider!.id;
+  // Hooks require a model name; a transport has none, so fall back to its id.
+  const hookModel = modelId ?? dispatcherId;
 
   const systemPrompt = buildSystemPrompt(localeInstruction);
   const userPrompt = buildTranslationPrompt({
@@ -123,13 +155,41 @@ export async function translateBatch(options: TranslateBatchOptions): Promise<Tr
     feedback,
   });
 
-  const req = provider.buildRequest({
-    model: modelId,
+  const req = provider?.buildRequest({
+    model: modelId!,
     systemPrompt,
     userPrompt,
     temperature: 0.3,
     modelParams,
   });
+
+  // ponytail: 3min cap; local models and headless agents both stall without it
+  async function runOnce(): Promise<{ content: string }> {
+    if (transport) {
+      return transport.complete({
+        systemPrompt,
+        userPrompt,
+        signal: AbortSignal.timeout(300_000),
+      });
+    }
+
+    const res = await fetch(`${baseURL}${req!.url}`, {
+      method: "POST",
+      headers: {
+        ...req!.headers,
+        Authorization: `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify(req!.body),
+      signal: AbortSignal.timeout(300_000),
+    });
+
+    if (!res.ok) {
+      throw new HttpResponseError(`HTTP ${res.status}: ${await res.text()}`, res);
+    }
+
+    const data = await res.json();
+    return provider!.parseResponse(data);
+  }
 
   let lastError: string | undefined;
   let lastErrorType: ErrorType = "unknown";
@@ -146,50 +206,13 @@ export async function translateBatch(options: TranslateBatchOptions): Promise<Tr
     const startTime = performance.now();
     try {
       hook?.onRequest?.({
-        provider: provider.id,
-        model: modelId,
+        provider: dispatcherId,
+        model: hookModel,
         locale: targetLocale,
         entryCount: entries.length,
       });
 
-      // ponytail: 3min cap per request; local models stall on large pages without it
-      const res = await fetch(`${baseURL}${req.url}`, {
-        method: "POST",
-        headers: {
-          ...req.headers,
-          Authorization: `Bearer ${apiKey}`,
-        },
-        body: JSON.stringify(req.body),
-        signal: AbortSignal.timeout(300_000),
-      });
-
-      if (!res.ok) {
-        const errMsg = `HTTP ${res.status}: ${await res.text()}`;
-        const { errorType, statusCode } = classifyError(new Error(errMsg), res);
-        lastError = errMsg;
-        lastErrorType = errorType;
-        lastStatusCode = statusCode;
-        const durationMs = performance.now() - startTime;
-        attemptHistory.push({ attempt: attempt + 1, errorType, durationMs, statusCode });
-        logger.debug(
-          `[${targetLocale}] Attempt ${attempt + 1}/${maxRetries} failed (${errorType}, HTTP ${res.status}): ${errMsg}`,
-        );
-        hook?.onAttemptFailure?.({
-          provider: provider.id,
-          model: modelId,
-          locale: targetLocale,
-          errorType,
-          error: errMsg,
-          attempt: attempt + 1,
-          maxRetries,
-          statusCode,
-          durationMs,
-        });
-        continue;
-      }
-
-      const data = await res.json();
-      const { content } = provider.parseResponse(data);
+      const { content } = await runOnce();
       if (!content) {
         const errMsg = "Empty response from model";
         const { errorType, statusCode } = classifyError(new Error(errMsg));
@@ -202,8 +225,8 @@ export async function translateBatch(options: TranslateBatchOptions): Promise<Tr
           `[${targetLocale}] Attempt ${attempt + 1}/${maxRetries} failed (${errorType}): ${errMsg}`,
         );
         hook?.onAttemptFailure?.({
-          provider: provider.id,
-          model: modelId,
+          provider: dispatcherId,
+          model: hookModel,
           locale: targetLocale,
           errorType,
           error: errMsg,
@@ -231,8 +254,8 @@ export async function translateBatch(options: TranslateBatchOptions): Promise<Tr
           `[${targetLocale}] Attempt ${attempt + 1}/${maxRetries} failed (${errorType}): ${errMsg} — raw response captured for diagnosis`,
         );
         hook?.onAttemptFailure?.({
-          provider: provider.id,
-          model: modelId,
+          provider: dispatcherId,
+          model: hookModel,
           locale: targetLocale,
           errorType,
           error: errMsg,
@@ -258,8 +281,8 @@ export async function translateBatch(options: TranslateBatchOptions): Promise<Tr
           `[${targetLocale}] Attempt ${attempt + 1}/${maxRetries} failed (${errorType}): ${errMsg} — raw response captured for diagnosis`,
         );
         hook?.onAttemptFailure?.({
-          provider: provider.id,
-          model: modelId,
+          provider: dispatcherId,
+          model: hookModel,
           locale: targetLocale,
           errorType,
           error: errMsg,
@@ -306,8 +329,8 @@ export async function translateBatch(options: TranslateBatchOptions): Promise<Tr
       });
 
       hook?.onSuccess?.({
-        provider: provider.id,
-        model: modelId,
+        provider: dispatcherId,
+        model: hookModel,
         locale: targetLocale,
         results,
         durationMs,
@@ -337,8 +360,8 @@ export async function translateBatch(options: TranslateBatchOptions): Promise<Tr
       }
 
       hook?.onAttemptFailure?.({
-        provider: provider.id,
-        model: modelId,
+        provider: dispatcherId,
+        model: hookModel,
         locale: targetLocale,
         errorType,
         error: errMsg,
@@ -353,8 +376,8 @@ export async function translateBatch(options: TranslateBatchOptions): Promise<Tr
   const totalDurationMs = attemptHistory.reduce((sum, a) => sum + a.durationMs, 0);
 
   hook?.onError?.({
-    provider: provider.id,
-    model: modelId,
+    provider: dispatcherId,
+    model: hookModel,
     locale: targetLocale,
     errorType: lastErrorType,
     error: lastError ?? "Unknown error",
