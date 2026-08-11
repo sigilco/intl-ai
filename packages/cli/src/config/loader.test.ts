@@ -44,6 +44,7 @@ describe("config loader", () => {
     expect(config.maxRetries).toBe(2);
     expect(config.processor?.name).toBe("icu");
 
+    if (config.kind === "agent") throw new Error("expected an http config");
     expect(config.model).toBe("gpt-4o-mini");
     expect(config.apiKey).toBe("sk-test");
     expect(config.baseURL).toBe("https://api.example.com/v1");

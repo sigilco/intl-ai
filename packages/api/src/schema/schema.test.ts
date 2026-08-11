@@ -1,18 +1,35 @@
 import { describe, it, expect } from "vitest";
 import { getIntlAiSchema, jsonConfigToIntlAiConfig, INTL_AI_SCHEMA_URL } from "../internal";
 import { IntlAiJsonConfigSchema } from "./json-config";
+import { IntlAiConfigSchema, defineConfig } from "../types";
+
+interface JsonSchemaObjectArm {
+  type: "object";
+  required?: string[];
+  properties?: Record<string, unknown>;
+  additionalProperties?: boolean;
+}
+
+function armFor(schema: unknown, kind: "http" | "agent"): JsonSchemaObjectArm {
+  const oneOf = (schema as { oneOf: JsonSchemaObjectArm[] }).oneOf;
+  const arm = oneOf.find(
+    (a) => (a.properties?.kind as { const?: string } | undefined)?.const === kind,
+  );
+  if (!arm) throw new Error(`no ${kind} arm in generated schema`);
+  return arm;
+}
 
 describe("schema", () => {
   it("exposes a valid JSON Schema object", () => {
     const schema = getIntlAiSchema();
     expect(schema).toBeTypeOf("object");
     expect((schema as Record<string, unknown>).$id).toBe(INTL_AI_SCHEMA_URL);
-    expect((schema as Record<string, unknown>).type).toBe("object");
+    expect((schema as Record<string, unknown>).oneOf).toBeInstanceOf(Array);
   });
 
-  it("requires defaultLocale, locales, localeDir, provider, apiKey, model", () => {
-    const schema = getIntlAiSchema() as { required: string[] };
-    expect(schema.required).toEqual(
+  it("http arm requires defaultLocale, locales, localeDir, provider, apiKey, model", () => {
+    const arm = armFor(getIntlAiSchema(), "http");
+    expect(arm.required).toEqual(
       expect.arrayContaining([
         "defaultLocale",
         "locales",
@@ -24,11 +41,24 @@ describe("schema", () => {
     );
   });
 
+  it("agent arm requires defaultLocale, locales, localeDir, agent and rejects apiKey/model", () => {
+    const arm = armFor(getIntlAiSchema(), "agent");
+    expect(arm.required).toEqual(
+      expect.arrayContaining(["defaultLocale", "locales", "localeDir", "agent"]),
+    );
+    expect(arm.properties).not.toHaveProperty("apiKey");
+    expect(arm.properties).not.toHaveProperty("model");
+    expect(arm.properties).not.toHaveProperty("command");
+  });
+
+  it("both arms preserve additionalProperties: false (union does not leak fields across kinds)", () => {
+    const schema = getIntlAiSchema();
+    expect(armFor(schema, "http").additionalProperties).toBe(false);
+    expect(armFor(schema, "agent").additionalProperties).toBe(false);
+  });
+
   it("parity: JSON Schema required fields match Zod schema", () => {
-    const jsonSchema = getIntlAiSchema() as {
-      required?: string[];
-      properties?: Record<string, unknown>;
-    };
+    const arm = armFor(getIntlAiSchema(), "http");
 
     // The known required fields in the Zod schema
     const expectedRequired = [
@@ -40,9 +70,9 @@ describe("schema", () => {
       "apiKey",
     ];
 
-    expect(jsonSchema.required).toEqual(expect.arrayContaining(expectedRequired));
-    expect(jsonSchema.properties).toHaveProperty("model");
-    expect(jsonSchema.properties).toHaveProperty("provider");
+    expect(arm.required).toEqual(expect.arrayContaining(expectedRequired));
+    expect(arm.properties).toHaveProperty("model");
+    expect(arm.properties).toHaveProperty("provider");
   });
 
   it("jsonConfigToIntlAiConfig produces a valid runtime config", () => {
@@ -152,6 +182,71 @@ describe("schema", () => {
         bogusKey: 1,
       });
       expect(r.success).toBe(false);
+    });
+  });
+
+  describe("kind union", () => {
+    it("an existing http config with no kind still validates", () => {
+      const r = IntlAiJsonConfigSchema.safeParse({
+        defaultLocale: "en",
+        locales: ["en", "es"],
+        localeDir: "./locales",
+        provider: "openai",
+        model: "gpt-4o-mini",
+        apiKey: "k",
+      });
+      expect(r.success).toBe(true);
+      if (r.success) {
+        expect((r.data as { kind: string }).kind).toBe("http");
+      }
+    });
+
+    it("an agent config with apiKey is rejected", () => {
+      const r = IntlAiJsonConfigSchema.safeParse({
+        kind: "agent",
+        defaultLocale: "en",
+        locales: ["en", "es"],
+        localeDir: "./locales",
+        agent: "claude-code",
+        apiKey: "k",
+      });
+      expect(r.success).toBe(false);
+    });
+
+    it("an agent config with command is rejected from JSON (preset name only)", () => {
+      const r = IntlAiJsonConfigSchema.safeParse({
+        kind: "agent",
+        defaultLocale: "en",
+        locales: ["en", "es"],
+        localeDir: "./locales",
+        agent: "claude-code",
+        command: "claude",
+      });
+      expect(r.success).toBe(false);
+    });
+
+    it("a valid agent config with a preset name only validates", () => {
+      const r = IntlAiJsonConfigSchema.safeParse({
+        kind: "agent",
+        defaultLocale: "en",
+        locales: ["en", "es"],
+        localeDir: "./locales",
+        agent: "claude-code",
+      });
+      expect(r.success).toBe(true);
+    });
+
+    it("command/args are accepted from the TS runtime config (not JSON)", () => {
+      const cfg = defineConfig({
+        kind: "agent",
+        defaultLocale: "en",
+        locales: ["en", "es"],
+        localeDir: "./locales",
+        command: "my-agent",
+        args: ["--quiet"],
+      });
+      const r = IntlAiConfigSchema.safeParse(cfg);
+      expect(r.success).toBe(true);
     });
   });
 });

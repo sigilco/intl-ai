@@ -8,12 +8,22 @@ import {
   type IntlAiJsonConfig,
 } from "../../schema/index";
 import { resolveFormat } from "../../adapters/formats/registry";
-import { IntlAiConfigSchema, type IntlAiConfig } from "../../types";
+import {
+  IntlAiConfigSchema,
+  type IntlAiConfig,
+  type HttpIntlAiConfig,
+  type AgentIntlAiConfig,
+} from "../../types";
 import type { LocaleFormat } from "../../ports/format";
+import type { AITransport } from "../../ports/provider";
+import { createCommandTransport } from "../transports/command";
+import { resolveAgentPreset } from "../transports/presets";
 
 export type { IntlAiConfig };
 
-export type ResolvedIntlAiConfig = IntlAiConfig & { format: LocaleFormat };
+export type ResolvedIntlAiConfig =
+  | (HttpIntlAiConfig & { format: LocaleFormat })
+  | (AgentIntlAiConfig & { format: LocaleFormat; transport: AITransport });
 
 const CONFIG_FILE_NAMES = ["intl-ai.config.ts", "intl-ai.config.json"] as const;
 
@@ -67,17 +77,40 @@ function parseAndConvert(
   return parsed.data as IntlAiConfig;
 }
 
+function resolveTransport(config: AgentIntlAiConfig, configPath: string): AITransport {
+  const cwd = config.cwd ? resolvePath(dirname(configPath), config.cwd) : dirname(configPath);
+  if (config.command) {
+    return createCommandTransport({
+      id: config.command,
+      command: config.command,
+      args: config.args ?? [],
+      cwd,
+    });
+  }
+  if (config.agent) {
+    return resolveAgentPreset(config.agent, cwd);
+  }
+  throw new Error(
+    `Agent config requires either "agent" (a preset name) or "command" (a custom binary), in ${configPath}`,
+  );
+}
+
 /**
  * Resolve a relative `localeDir` against the config file's directory so configs
  * are relocatable (standard behavior, like tsconfig/eslint paths). Absolute
  * paths pass through unchanged. Also resolves `config.format` from a string
- * identifier to a concrete LocaleFormat adapter.
+ * identifier to a concrete LocaleFormat adapter, and (for `kind: "agent"`)
+ * the preset name or command/args escape hatch to a concrete `AITransport`.
  */
 function resolveConfig(config: IntlAiConfig, configPath: string): ResolvedIntlAiConfig {
   const localeDir = resolvePath(dirname(configPath), config.localeDir);
   // ponytail: resolve format here so services receive a LocaleFormat object and
   // never need to import the registry (hexagonal boundary compliance).
   const format = resolveFormat(config.format);
+  if (config.kind === "agent") {
+    const transport = resolveTransport(config, configPath);
+    return { ...config, localeDir, format, transport };
+  }
   return { ...config, localeDir, format };
 }
 
@@ -120,9 +153,7 @@ export async function loadConfig(cwd: string = process.cwd()): Promise<ResolvedI
     : await loadJsonRaw(configPath);
   const isTs = configPath.endsWith(".ts");
   return resolveConfig(
-    isTs
-      ? parseAndConvert(raw, configPath, "runtime")
-      : parseAndConvert(raw, configPath, "json"),
+    isTs ? parseAndConvert(raw, configPath, "runtime") : parseAndConvert(raw, configPath, "json"),
     configPath,
   );
 }

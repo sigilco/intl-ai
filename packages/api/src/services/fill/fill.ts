@@ -99,20 +99,22 @@ export async function runFill(
     defaultLocale,
     locales,
     localeDir,
-    provider,
-    model,
-    baseURL,
-    apiKey,
     glossary,
     localeInstructions,
     maxRetries,
     processor,
     hook,
-    modelParams,
     batchSize,
     quality: configQuality,
     format: fmt,
   } = config;
+  const isAgent = config.kind === "agent";
+  const transport = isAgent ? config.transport : undefined;
+  const provider = isAgent ? undefined : config.provider;
+  const model = isAgent ? undefined : config.model;
+  const baseURL = isAgent ? undefined : config.baseURL;
+  const apiKey = isAgent ? undefined : config.apiKey;
+  const modelParams = isAgent ? undefined : config.modelParams;
   const effectiveHook = options?.hook ?? hook;
   // Loader resolves the format string to a LocaleFormat object before runFill is called.
   const format = fmt;
@@ -124,6 +126,14 @@ export async function runFill(
   const failOnLowQuality = qualityOptions?.failOnLowQuality === true;
 
   const customAssessor: QualityAssessorInstance | undefined = configQuality?.assessor;
+
+  if (isAgent && qualityEnabled && !customAssessor) {
+    throw new Error(
+      'quality-aware fill loop requires a custom assessor when kind is "agent": there is no apiKey to run the default HTTP judge',
+    );
+  }
+
+  const modelLabel = isAgent ? (transport?.id ?? "agent") : model!;
 
   const targetLocales = options?.locale
     ? locales.filter((l) => l === options.locale)
@@ -184,6 +194,7 @@ export async function runFill(
       const results = await translateBatch({
         provider,
         modelId: model,
+        transport,
         entries: entriesToTranslate.map((e) => ({ key: e.key, source: e.source })),
         targetLocale,
         sourceLocale: defaultLocale,
@@ -223,7 +234,7 @@ export async function runFill(
             sourceHash,
             translated: result.translated!,
             origin: "ai",
-            model: model,
+            model: modelLabel,
             timestamp: new Date().toISOString(),
           });
           translated++;
@@ -249,14 +260,16 @@ export async function runFill(
         sourceHashByKey.set(r.key, await lockfileManager.hashSource(source));
       }
 
+      // Reachable without a custom assessor only on the http path: the top-of-function
+      // guard throws for kind: "agent" with quality enabled and no custom assessor.
       const judge = customAssessor
         ? undefined
         : (ctxs: TranslationContext[]) =>
             judgeBatch({
-              provider,
-              modelId: model,
-              baseURL,
-              apiKey,
+              provider: provider!,
+              modelId: model!,
+              baseURL: baseURL!,
+              apiKey: apiKey!,
               hook: effectiveHook,
               modelParams,
               contexts: ctxs,
@@ -271,8 +284,8 @@ export async function runFill(
         })),
         sourceHashByKey,
         targetLocale,
-        provider: modelToString(provider),
-        model: model,
+        provider: isAgent ? modelLabel : modelToString(provider!),
+        model: modelLabel,
         judge,
         assessor: customAssessor,
         refill: async (reqs: RefillRequest[]) => {
@@ -282,6 +295,7 @@ export async function runFill(
             const batchResult = await translateBatch({
               provider,
               modelId: model,
+              transport,
               entries: batch.map((e) => ({ key: e.key, source: e.source })),
               targetLocale,
               sourceLocale: defaultLocale,
