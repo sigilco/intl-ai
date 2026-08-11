@@ -140,6 +140,23 @@ describe("judgeBatch (api)", () => {
     ).rejects.toThrow(/HTTP 500/);
   });
 
+  it("includes the locale instruction in the judge prompt when supplied", async () => {
+    mockFetch.mockResolvedValueOnce(mockOkResponse([{ key: "greeting", score: 0.9 }]));
+
+    await judgeBatch({
+      provider: createTestProvider(),
+      modelId: "test-model",
+      baseURL: "https://api.test/v1",
+      apiKey: "test-key",
+      contexts: [ctx({ key: "greeting" })],
+      localeInstruction: "Use British spelling.",
+    });
+
+    const call = mockFetch.mock.calls[0];
+    const body = JSON.parse(call[1].body);
+    expect(body.messages[1].content).toContain("Use British spelling.");
+  });
+
   it("createDefaultAssessor wraps judgeBatch and returns a single result", async () => {
     mockFetch.mockResolvedValueOnce(mockOkResponse([{ key: "greeting", score: 0.95 }]));
 

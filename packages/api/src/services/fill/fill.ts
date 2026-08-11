@@ -1,5 +1,10 @@
+import { getLogger } from "@logtape/logtape";
 import { LockfileManager } from "../../lockfile/manager";
 import { findMissingTranslations, lockfileEntryToMap } from "../../core/diff";
+import {
+  findUnmatchedInstructionKeys,
+  resolveLocaleInstruction,
+} from "../../core/locale-instructions";
 import { translateBatch } from "./translator";
 import { runQualityLoop, type RefillRequest } from "./loop";
 import { judgeBatch } from "./judge";
@@ -15,6 +20,8 @@ import type {
 } from "../../core/types";
 import type { LockfileQuality } from "../../lockfile/types";
 import type { TranslationHook } from "../../ports/hook";
+
+const logger = getLogger(["intl-ai", "fill", "locale-instructions"]);
 
 export interface RunFillProgressInfo {
   locale: string;
@@ -97,6 +104,7 @@ export async function runFill(
     baseURL,
     apiKey,
     glossary,
+    localeInstructions,
     maxRetries,
     processor,
     hook,
@@ -125,6 +133,13 @@ export async function runFill(
     return { locales: [], translated: 0, skipped: 0, errors: 0, needsReview: 0, failures: [] };
   }
 
+  const unmatchedInstructionKeys = findUnmatchedInstructionKeys(localeInstructions, locales);
+  if (unmatchedInstructionKeys.length > 0) {
+    logger.warn(
+      `localeInstructions has key(s) that match no configured locale: ${unmatchedInstructionKeys.join(", ")}`,
+    );
+  }
+
   const lockfileManager = new LockfileManager(localeDir);
   await lockfileManager.load();
 
@@ -141,6 +156,7 @@ export async function runFill(
 
   for (const targetLocale of targetLocales) {
     try {
+      const localeInstruction = resolveLocaleInstruction(localeInstructions, targetLocale);
       let targetFlat = await format.readLocale(localeDir, targetLocale);
 
       const lockfileEntries = lockfileEntryToMap(lockfileManager.getAllEntries(), targetLocale);
@@ -178,6 +194,7 @@ export async function runFill(
         apiKey,
         hook: effectiveHook,
         modelParams,
+        localeInstruction,
       });
 
       const successResults = results.filter((r) => r.success && r.translated !== undefined);
@@ -243,6 +260,7 @@ export async function runFill(
               hook: effectiveHook,
               modelParams,
               contexts: ctxs,
+              localeInstruction,
             });
 
       const loopResult = await runQualityLoop({
@@ -275,6 +293,7 @@ export async function runFill(
               hook: effectiveHook,
               modelParams,
               feedback: Object.fromEntries(batch.map((r) => [r.key, summarizeRefillPrompt(r)])),
+              localeInstruction,
             });
             result.push(...batchResult);
           }

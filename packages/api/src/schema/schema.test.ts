@@ -13,7 +13,14 @@ describe("schema", () => {
   it("requires defaultLocale, locales, localeDir, provider, apiKey, model", () => {
     const schema = getIntlAiSchema() as { required: string[] };
     expect(schema.required).toEqual(
-      expect.arrayContaining(["defaultLocale", "locales", "localeDir", "provider", "apiKey", "model"]),
+      expect.arrayContaining([
+        "defaultLocale",
+        "locales",
+        "localeDir",
+        "provider",
+        "apiKey",
+        "model",
+      ]),
     );
   });
 
@@ -24,7 +31,14 @@ describe("schema", () => {
     };
 
     // The known required fields in the Zod schema
-    const expectedRequired = ["defaultLocale", "locales", "localeDir", "provider", "model", "apiKey"];
+    const expectedRequired = [
+      "defaultLocale",
+      "locales",
+      "localeDir",
+      "provider",
+      "model",
+      "apiKey",
+    ];
 
     expect(jsonSchema.required).toEqual(expect.arrayContaining(expectedRequired));
     expect(jsonSchema.properties).toHaveProperty("model");
@@ -45,6 +59,21 @@ describe("schema", () => {
     expect(cfg.maxRetries).toBe(3);
     expect(cfg.provider).toBe("openai");
     expect(cfg.model).toBe("gpt-4o-mini");
+  });
+
+  it("localeInstructions propagates to runtime config", () => {
+    const cfg = jsonConfigToIntlAiConfig({
+      defaultLocale: "en",
+      locales: ["en-GB", "en-US"],
+      localeDir: "./locales",
+      provider: "openai",
+      model: "gpt-4o-mini",
+      apiKey: "k",
+      localeInstructions: { en: "Use British spelling for en-GB, American for en-US." },
+    });
+    expect(cfg.localeInstructions).toEqual({
+      en: "Use British spelling for en-GB, American for en-US.",
+    });
   });
 
   it("processor: 'icu' attaches the ICU processor", () => {

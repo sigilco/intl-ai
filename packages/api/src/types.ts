@@ -16,6 +16,11 @@ export interface IntlAiConfig {
   apiKey: ApiKeyValue;
   baseURL: string;
   glossary?: Record<string, string>;
+  /**
+   * Freeform style/dialect instruction per locale (e.g. "en-GB": "Use British spelling.").
+   * Keys resolve exact locale, then language subtag, then "*" as a catch-all.
+   */
+  localeInstructions?: Record<string, string>;
   maxRetries?: number;
   processor?: IntlAiProcessor;
   modelParams?: Record<string, unknown>;
@@ -68,6 +73,7 @@ export const IntlAiConfigSchema = z.object({
     })
     .optional(),
   glossary: z.record(z.string(), z.string()).optional(),
+  localeInstructions: z.record(z.string(), z.string()).optional(),
   maxRetries: z.number().int().min(0).max(10).default(3),
   modelParams: z.record(z.string(), z.unknown()).optional(),
   batchSize: z.number().int().min(1).optional(),

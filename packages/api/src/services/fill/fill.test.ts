@@ -78,11 +78,19 @@ describe("runFill (api) — quality loop", () => {
           return {
             url: "/chat/completions",
             headers: { "Content-Type": "application/json" },
-            body: { model, messages: [{ role: "system", content: systemPrompt }, { role: "user", content: userPrompt }] },
+            body: {
+              model,
+              messages: [
+                { role: "system", content: systemPrompt },
+                { role: "user", content: userPrompt },
+              ],
+            },
           };
         },
         parseResponse(data: unknown) {
-          return { content: JSON.stringify({ translations: [{ key: "greeting", translated: "Hola" }] }) };
+          return {
+            content: JSON.stringify({ translations: [{ key: "greeting", translated: "Hola" }] }),
+          };
         },
       };
 
@@ -417,6 +425,85 @@ describe("runFill (api) — batching", () => {
 
       expect(result.translated).toBe(2);
       expect(mockFetch).toHaveBeenCalledTimes(1);
+    } finally {
+      await rm(dir, { recursive: true, force: true });
+    }
+  });
+
+  it("bare subtag localeInstructions key applies to both en-GB and en-US, and --force isolates locales", async () => {
+    const dir = await mkdtemp(join(tmpdir(), "intl-ai-fill-locale-instructions-"));
+    try {
+      await setupLocaleDir(dir, {
+        "en.json": { greeting: "Hello" },
+        "en-GB.json": { greeting: "Hello" },
+        "en-US.json": { greeting: "Hello" },
+      });
+
+      const seenPrompts: string[] = [];
+      const capturingProvider: AIProvider = {
+        id: "capture-instructions",
+        buildRequest({ model, systemPrompt, userPrompt, temperature, modelParams }) {
+          seenPrompts.push(systemPrompt);
+          return {
+            url: "/chat/completions",
+            headers: { "Content-Type": "application/json" },
+            body: {
+              model,
+              messages: [
+                { role: "system", content: systemPrompt },
+                { role: "user", content: userPrompt },
+              ],
+              temperature,
+              ...modelParams,
+            },
+          };
+        },
+        parseResponse: createTestProvider().parseResponse,
+      };
+
+      mockFetch.mockResolvedValue(
+        mockJsonResponse({ translations: [{ key: "greeting", translated: "'Ello" }] }),
+      );
+
+      const baseConfig = {
+        defaultLocale: "en",
+        locales: ["en", "en-GB", "en-US"],
+        localeDir: dir,
+        provider: capturingProvider,
+        model: "test-model",
+        apiKey: "TEST_API_KEY",
+        baseURL: "https://api.test/v1",
+        format: jsonFormat,
+        localeInstructions: { en: "Use informal register." },
+      };
+
+      // en-GB.json and en-US.json already have all keys, so a first pass with
+      // no --force should not retranslate either — force is needed to exercise
+      // both locales through the instruction-bearing path.
+      await runFill(baseConfig, { force: true });
+
+      expect(seenPrompts).toHaveLength(2);
+      expect(seenPrompts.every((p) => p.includes("Use informal register."))).toBe(true);
+
+      // Now confirm --force with an explicit locale only touches that locale.
+      mockFetch.mockClear();
+      seenPrompts.length = 0;
+      await writeFile(
+        join(dir, "en-GB.json"),
+        JSON.stringify({ greeting: "Hello" }, null, 2),
+        "utf-8",
+      );
+      await writeFile(
+        join(dir, "en-US.json"),
+        JSON.stringify({ greeting: "Untouched" }, null, 2),
+        "utf-8",
+      );
+
+      await runFill(baseConfig, { force: true, locale: "en-GB" });
+
+      expect(mockFetch).toHaveBeenCalledTimes(1);
+      const enUs = await readJson(join(dir, "en-US.json"));
+      expect(enUs.greeting).toBe("Untouched");
     } finally {
       await rm(dir, { recursive: true, force: true });
     }

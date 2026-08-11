@@ -119,6 +119,24 @@ Terms to preserve during translation.
 }
 ```
 
+### `localeInstructions`
+
+Freeform style or dialect instruction per locale, sent to the model and to the quality judge.
+Keys resolve in order: exact locale (`en-GB`), then language subtag (`en`), then `*` as a catch-all.
+A key that never matches any configured locale is logged as a warning.
+
+```json
+"localeInstructions": {
+  "en-GB": "Use British spelling (colour, organise).",
+  "en-US": "Use American spelling (color, organize).",
+  "*": "Keep a formal tone."
+}
+```
+
+Changing this instruction does not retranslate existing entries.
+Retranslate a single locale with `intl-ai fill --locale en-GB --force`.
+Note that `--force` overwrites every entry in that locale, including any you edited by hand.
+
 ### `maxRetries`
 
 Maximum retry attempts for failed translations. Default is `3`.
