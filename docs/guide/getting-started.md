@@ -207,6 +207,8 @@ const result = await runCheck(config, { locale: "es" });
 
 `runCheck` is read-only. It writes nothing to disk and does not call hooks (hooks fire only during `runFill`). Use it in CI to enforce translation completeness before deploying.
 
+Add `--dialect <locale>` to scan an existing catalog for British/American spelling mismatches, e.g. `intl-ai check --dialect en-US` flags British spellings in your `en-US` catalog. This is detection only: it reports mismatches, it does not rewrite anything.
+
 ## Supported Bundlers
 
 `@intl-ai/unplugin` works with all major bundlers. See [Build systems](/guide/build-systems/) for dedicated setup guides:
