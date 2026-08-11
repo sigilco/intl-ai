@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { translateBatch } from "./translator";
 import { icuProcessor } from "../../adapters/processors/icu";
-import type { AIProvider } from "../../ports/provider";
+import type { AIProvider, AITransport } from "../../ports/provider";
 
 const createTestProvider = (): AIProvider => ({
   id: "test",
@@ -229,5 +229,46 @@ describe("translateBatch (api)", () => {
     expect(systemPrompt).toBe(
       "You are a professional translation engine. You respond only with valid JSON matching the requested schema.",
     );
+  });
+
+  it("dispatches through transport.complete when a transport is supplied, bypassing fetch", async () => {
+    const transport: AITransport = {
+      id: "fake-agent",
+      complete: vi.fn().mockResolvedValue({
+        content: JSON.stringify({ translations: [{ key: "greeting", translated: "Hola" }] }),
+      }),
+    };
+
+    const result = await translateBatch({
+      entries: [{ key: "greeting", source: "Hello" }],
+      targetLocale: "es",
+      sourceLocale: "en",
+      transport,
+    });
+
+    expect(mockFetch).not.toHaveBeenCalled();
+    expect(transport.complete).toHaveBeenCalledTimes(1);
+    expect(result).toEqual([{ key: "greeting", translated: "Hola", success: true }]);
+  });
+
+  it("recovers via the existing retry loop when a transport returns malformed JSON once", async () => {
+    const complete = vi
+      .fn()
+      .mockResolvedValueOnce({ content: "not json at all" })
+      .mockResolvedValueOnce({
+        content: JSON.stringify({ translations: [{ key: "greeting", translated: "Hola" }] }),
+      });
+    const transport: AITransport = { id: "fake-agent", complete };
+
+    const result = await translateBatch({
+      entries: [{ key: "greeting", source: "Hello" }],
+      targetLocale: "es",
+      sourceLocale: "en",
+      transport,
+      maxRetries: 3,
+    });
+
+    expect(complete).toHaveBeenCalledTimes(2);
+    expect(result).toEqual([{ key: "greeting", translated: "Hola", success: true }]);
   });
 });
