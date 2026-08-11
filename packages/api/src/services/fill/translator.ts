@@ -53,6 +53,11 @@ export interface TranslateBatchOptions {
    * rejected entry. Used by the quality loop, ignored on the first pass.
    */
   feedback?: Record<string, string>;
+  /**
+   * Freeform style/dialect rule for the target locale, already resolved by
+   * the caller (see core/locale-instructions.ts). Applies to the whole batch.
+   */
+  localeInstruction?: string;
 }
 
 const TranslationResponseSchema = z.object({
@@ -65,6 +70,13 @@ const TranslationResponseSchema = z.object({
 });
 
 const DEFAULT_PROMPT_HINT = "Preserve any placeholders like {variable} exactly as they appear.";
+
+function buildSystemPrompt(localeInstruction?: string): string {
+  const base =
+    "You are a professional translation engine. You respond only with valid JSON matching the requested schema.";
+  if (!localeInstruction) return base;
+  return `${base}\n\nLocale style instruction: ${localeInstruction}`;
+}
 
 async function resolveApiKey(value: ApiKeyValue): Promise<string> {
   return value.replace(/\$\{?(\w+)\}?/g, (_, name) => {
@@ -89,6 +101,7 @@ export async function translateBatch(options: TranslateBatchOptions): Promise<Tr
     hook,
     modelParams,
     feedback,
+    localeInstruction,
   } = options;
 
   if (entries.length === 0) return [];
@@ -100,8 +113,7 @@ export async function translateBatch(options: TranslateBatchOptions): Promise<Tr
     throw new Error("translateBatch: modelId is required (config.model was not set)");
   }
 
-  const systemPrompt =
-    "You are a professional translation engine. You respond only with valid JSON matching the requested schema.";
+  const systemPrompt = buildSystemPrompt(localeInstruction);
   const userPrompt = buildTranslationPrompt({
     entries,
     targetLocale,

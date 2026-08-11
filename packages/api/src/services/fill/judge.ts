@@ -19,6 +19,8 @@ export interface JudgeBatchOptions {
   contexts: TranslationContext[];
   hook?: TranslationHook;
   modelParams?: Record<string, unknown>;
+  /** Freeform style/dialect rule for the target locale, already resolved by the caller. */
+  localeInstruction?: string;
 }
 
 const JudgeResponseSchema = z.object({
@@ -49,7 +51,10 @@ function resolveApiKey(value: ApiKeyValue): string {
   });
 }
 
-function buildJudgePrompt(opts: { contexts: TranslationContext[] }): string {
+function buildJudgePrompt(opts: {
+  contexts: TranslationContext[];
+  localeInstruction?: string;
+}): string {
   const entriesText = opts.contexts
     .map(
       (c, i) =>
@@ -57,7 +62,11 @@ function buildJudgePrompt(opts: { contexts: TranslationContext[] }): string {
     )
     .join("\n\n");
 
-  return `Evaluate each translation for accuracy, fluency, terminology, style, and locale convention. Be a strict adversarial reviewer: assume any translation has issues until you have evidence otherwise.\n\n${entriesText}\n\nRespond with JSON: { "judgements": [{ "key": "...", "score": 0..1, "reason": "...", "errors": ["..."] }] }`;
+  const instructionBlock = opts.localeInstruction
+    ? `\n\nLocale style instruction: ${opts.localeInstruction}`
+    : "";
+
+  return `Evaluate each translation for accuracy, fluency, terminology, style, and locale convention. Be a strict adversarial reviewer: assume any translation has issues until you have evidence otherwise.\n\n${entriesText}${instructionBlock}\n\nRespond with JSON: { "judgements": [{ "key": "...", "score": 0..1, "reason": "...", "errors": ["..."] }] }`;
 }
 
 /**
@@ -77,7 +86,10 @@ export async function judgeBatch(opts: JudgeBatchOptions): Promise<QualityResult
   const threshold = DEFAULT_THRESHOLD;
 
   const { ADVERSARIAL_SYSTEM_PROMPT } = await import("./prompts");
-  const userPrompt = buildJudgePrompt({ contexts: opts.contexts });
+  const userPrompt = buildJudgePrompt({
+    contexts: opts.contexts,
+    localeInstruction: opts.localeInstruction,
+  });
 
   const req = provider.buildRequest({
     model: modelId,

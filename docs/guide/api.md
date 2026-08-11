@@ -95,6 +95,7 @@ interface IntlAiConfig {
   hook?: TranslationHook;
   processor?: IntlAiProcessor;
   glossary?: Record<string, string>;
+  localeInstructions?: Record<string, string>;
   maxRetries?: number;
 }
 ```

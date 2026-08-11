@@ -185,4 +185,49 @@ describe("translateBatch (api)", () => {
     expect(prompt).toContain("rejected by a quality reviewer");
     expect(prompt).toContain("previous attempt was too formal");
   });
+
+  it("appends the locale instruction to the system prompt", async () => {
+    mockFetch.mockResolvedValueOnce(
+      mockOkResponse([{ key: "greeting", translated: "Hiya {name}" }]),
+    );
+
+    await translateBatch({
+      provider: createTestProvider(),
+      modelId: "test-model",
+      entries: [{ key: "greeting", source: "Hello {name}" }],
+      targetLocale: "en-GB",
+      sourceLocale: "en",
+      baseURL: "https://api.test/v1",
+      apiKey: "test-key",
+      localeInstruction: "Use British spelling.",
+    });
+
+    const call = mockFetch.mock.calls[0];
+    const body = JSON.parse(call[1].body);
+    const systemPrompt = body.messages[0].content;
+    expect(systemPrompt).toContain("Use British spelling.");
+  });
+
+  it("leaves the system prompt unchanged when no locale instruction is given", async () => {
+    mockFetch.mockResolvedValueOnce(
+      mockOkResponse([{ key: "greeting", translated: "Hello {name}" }]),
+    );
+
+    await translateBatch({
+      provider: createTestProvider(),
+      modelId: "test-model",
+      entries: [{ key: "greeting", source: "Hello {name}" }],
+      targetLocale: "en",
+      sourceLocale: "en",
+      baseURL: "https://api.test/v1",
+      apiKey: "test-key",
+    });
+
+    const call = mockFetch.mock.calls[0];
+    const body = JSON.parse(call[1].body);
+    const systemPrompt = body.messages[0].content;
+    expect(systemPrompt).toBe(
+      "You are a professional translation engine. You respond only with valid JSON matching the requested schema.",
+    );
+  });
 });

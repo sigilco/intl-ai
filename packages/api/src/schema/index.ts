@@ -21,6 +21,7 @@ export interface IntlAiJsonConfig {
   apiKey: string;
   baseURL?: string;
   glossary?: Record<string, string>;
+  localeInstructions?: Record<string, string>;
   maxRetries?: number;
   processor?: "passthrough" | "icu";
   modelParams?: Record<string, unknown>;
@@ -43,6 +44,7 @@ export function jsonConfigToIntlAiConfig(json: IntlAiJsonConfig): IntlAiConfig {
     apiKey: json.apiKey,
     baseURL: json.baseURL ?? "https://api.openai.com/v1",
     glossary: json.glossary,
+    localeInstructions: json.localeInstructions,
     maxRetries: json.maxRetries ?? 3,
     processor: json.processor === "icu" ? icuProcessor : passthroughProcessor,
     modelParams: json.modelParams,
