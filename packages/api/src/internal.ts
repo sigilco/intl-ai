@@ -27,7 +27,7 @@ export type {
 export { QUALITY_ERROR_TYPES, QUALITY_SEVERITIES, isQualityAssessorInstance } from "./core/types";
 
 // Ports
-export type { AIProvider } from "./ports/provider";
+export type { AIProvider, AITransport } from "./ports/provider";
 export type { IntlAiProcessor } from "./ports/processor";
 export type { TranslationHook } from "./ports/hook";
 export type { LocaleFormat } from "./ports/format";
@@ -100,7 +100,14 @@ export {
   getIntlAiSchema,
   INTL_AI_SCHEMA_URL,
 } from "./schema/index";
-export type { IntlAiJsonConfig } from "./schema/index";
+export type { IntlAiJsonConfig, IntlAiHttpJsonConfig, IntlAiAgentJsonConfig } from "./schema/index";
+
+// Command transport: local headless coding agents as translation backends
+export { createCommandTransport } from "./infrastructure/transports/command";
+export type { CommandTransportOptions } from "./infrastructure/transports/command";
+export { resolveAgentPreset, agentPresetIds } from "./infrastructure/transports/presets";
+export type { AgentPreset } from "./infrastructure/transports/presets";
 
 // NEW:
 export { defineConfig } from "./types";
+export type { IntlAiConfig, HttpIntlAiConfig, AgentIntlAiConfig } from "./types";
