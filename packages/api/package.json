@@ -58,6 +58,7 @@
     "dev": "tsdown --watch",
     "schema:build": "jiti scripts/build-schema.ts",
     "test": "vitest run",
+    "test:integration": "vitest run -c vitest.integration.config.ts",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
@@ -71,6 +72,7 @@
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
     "@types/node": "catalog:",
+    "dotenv": "16.4.7",
     "tsdown": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"

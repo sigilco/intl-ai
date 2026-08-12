@@ -11,6 +11,7 @@
     "format": "oxfmt .",
     "format:check": "oxfmt . --check",
     "test": "turbo run test --filter='./packages/*'",
+    "test:integration": "pnpm --filter @intl-ai/api test:integration",
     "typecheck": "turbo run typecheck --filter='./packages/*'",
     "docs:dev": "vitepress dev docs",
     "sync:schema": "cp packages/api/src/schema/intl-ai.schema.json docs/public/schema/v1.json",
