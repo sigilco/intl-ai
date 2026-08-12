@@ -84,6 +84,17 @@ describe("createCommandTransport", () => {
     const transport = runOpts(`process.stdout.write("x".repeat(1000))`, { maxStdoutBytes: 10 });
     await expect(complete(transport)).rejects.toThrow(/exceeded 10 bytes/);
   });
+
+  it("sends the prompt via argv instead of stdin when promptVia is 'argv'", async () => {
+    const transport = runOpts(
+      `process.stdout.write(JSON.stringify({translations:[{key:"argv-check",translated:process.argv[1] ?? ""}]}))`,
+      { promptVia: "argv" },
+    );
+    const { content } = await complete(transport);
+    const parsed = JSON.parse(content);
+    expect(parsed.translations[0].translated).toContain("sys");
+    expect(parsed.translations[0].translated).toContain("user");
+  });
 });
 
 describe("extractJsonPayload", () => {

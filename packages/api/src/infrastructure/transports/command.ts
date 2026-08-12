@@ -11,6 +11,13 @@ export interface CommandTransportOptions {
   timeoutMs?: number;
   /** Buffered stdout cap; the process is killed and an error thrown past this. Default 10MB. */
   maxStdoutBytes?: number;
+  /**
+   * Where the prompt travels. Default "stdin". "argv" appends it as the last
+   * arg instead (needed for CLIs whose non-interactive reader ignores stdin,
+   * e.g. crush) but is capped by the OS ARG_MAX (~128KB+ depending on
+   * platform), a real ceiling stdin doesn't have — opt in only where required.
+   */
+  promptVia?: "stdin" | "argv";
 }
 
 const DEFAULT_TIMEOUT_MS = 300_000;
@@ -20,7 +27,8 @@ const KILL_GRACE_MS = 5_000;
 /**
  * Wraps a local headless coding agent (subprocess) as an AITransport.
  * Never uses `shell: true`: command and args are passed as an array so
- * nothing is shell-expanded, and the prompt goes in on stdin, not argv.
+ * nothing is shell-expanded. The prompt goes in on stdin by default; set
+ * `promptVia: "argv"` for agents whose non-interactive reader ignores stdin.
  */
 export function createCommandTransport(opts: CommandTransportOptions): AITransport {
   const {
@@ -30,6 +38,7 @@ export function createCommandTransport(opts: CommandTransportOptions): AITranspo
     cwd,
     timeoutMs = DEFAULT_TIMEOUT_MS,
     maxStdoutBytes = DEFAULT_MAX_STDOUT_BYTES,
+    promptVia = "stdin",
   } = opts;
 
   return {
@@ -38,9 +47,9 @@ export function createCommandTransport(opts: CommandTransportOptions): AITranspo
       const input = `${systemPrompt}\n\n---\n\n${userPrompt}`;
       const raw = await runCommand({
         command,
-        args,
+        args: promptVia === "argv" ? [...args, input] : args,
         cwd,
-        input,
+        input: promptVia === "argv" ? undefined : input,
         timeoutMs,
         maxStdoutBytes,
         signal,
@@ -55,7 +64,8 @@ interface RunCommandOptions {
   command: string;
   args: string[];
   cwd?: string;
-  input: string;
+  /** Written to stdin when set; when undefined stdin is closed with no data (argv-only prompt). */
+  input?: string;
   timeoutMs: number;
   maxStdoutBytes: number;
   signal: AbortSignal;
@@ -144,7 +154,7 @@ function runCommand(opts: RunCommandOptions): Promise<string> {
       });
     });
 
-    child.stdin?.end(input);
+    child.stdin?.end(input ?? "");
   });
 }
 
