@@ -115,6 +115,71 @@ describe("runFill (api) — quality loop", () => {
     }
   });
 
+  it("locks correct sourceHash for flat dot-notation keys (regression: v0.3.0 hashed empty string)", async () => {
+    const dir = await mkdtemp(join(tmpdir(), "intl-ai-fill-flatkeys-"));
+    try {
+      // Flat dot-notation keys: "nav.home" is a literal top-level key, not a nested path.
+      await setupLocaleDir(dir, {
+        "en.json": { "nav.home": "Home", "stash.title": "Stash title" },
+      });
+
+      mockFetch.mockResolvedValueOnce(
+        mockJsonResponse({
+          translations: [
+            { key: "nav.home", translated: "Inicio" },
+            { key: "stash.title", translated: "Titulo del stash" },
+          ],
+        }),
+      );
+
+      const result = await runFill({
+        defaultLocale: "en",
+        locales: ["en", "es"],
+        localeDir: dir,
+        provider: createTestProvider(),
+        model: "test-model",
+        apiKey: "TEST_API_KEY",
+        baseURL: "https://api.test/v1",
+        format: jsonFormat,
+      });
+
+      expect(result.translated).toBe(2);
+
+      const lockfile = await readJson(join(dir, "intl-ai.lock.json"));
+      const EMPTY_SHA1 = "da39a3ee5e6b4b0d3255bfef95601890afd80709";
+      for (const key of ["nav.home", "stash.title"]) {
+        const entry = lockfile.entries[`es||${key}`] as Record<string, unknown>;
+        expect(entry, `missing lockfile entry for ${key}`).toBeDefined();
+        expect(entry.sourceHash, `${key} hashed the empty string (v0.3.0 bug)`).not.toBe(EMPTY_SHA1);
+      }
+
+      // Hashes must match SHA-1 of the actual source values.
+      const { createHash } = await import("node:crypto");
+      expect(lockfile.entries["es||nav.home"].sourceHash).toBe(
+        createHash("sha1").update("Home").digest("hex"),
+      );
+      expect(lockfile.entries["es||stash.title"].sourceHash).toBe(
+        createHash("sha1").update("Stash title").digest("hex"),
+      );
+
+      // And the follow-up fill must be a no-op (nothing stale), proving staleness detection works.
+      const again = await runFill({
+        defaultLocale: "en",
+        locales: ["en", "es"],
+        localeDir: dir,
+        provider: createTestProvider(),
+        model: "test-model",
+        apiKey: "TEST_API_KEY",
+        baseURL: "https://api.test/v1",
+        format: jsonFormat,
+      });
+      expect(again.translated).toBe(0);
+      expect(again.skipped).toBe(2);
+    } finally {
+      await rm(dir, { recursive: true, force: true });
+    }
+  });
+
   it("writes quality records to lockfile when assessor accepts all keys", async () => {
     const dir = await mkdtemp(join(tmpdir(), "intl-ai-fill-quality-"));
     try {
