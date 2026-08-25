@@ -61,7 +61,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@formatjs/icu-messageformat-parser": "3.5.12",
+    "@formatjs/icu-messageformat-parser": "3.5.17",
     "@logtape/logtape": "catalog:",
     "jiti": "catalog:",
     "pathe": "catalog:",
