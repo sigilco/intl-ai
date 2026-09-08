@@ -20,15 +20,15 @@ allowBuilds:
 catalog:
   # Build tooling
   typescript: 6.0.3
-  tsdown: 0.22.3
+  tsdown: 0.23.0
   vitest: 4.1.9
   "@vitest/coverage-v8": 4.1.9
   "@types/node": ^22.20.0
 
   # Runtime deps
-  zod: 4.4.3
+  zod: 4.5.4
   jiti: 2.7.0
-  "@logtape/logtape": 2.2.1
+  "@logtape/logtape": 2.3.3
   pathe: 2.0.3
   unplugin: 3.3.0
   cleye: 2.6.0
