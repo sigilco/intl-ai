@@ -44,7 +44,8 @@
           "missing",
           "stale",
           "invalid"
-        ]
+        ],
+        "cache": true
       }
     },
     "glossary": {
@@ -309,6 +310,11 @@
             "stale",
             "invalid"
           ]
+        },
+        "cache": {
+          "description": "Incremental findings cache (`.intl-ai/check-cache.json`); set\nfalse to always re-run every check on every key (part B).",
+          "type": "boolean",
+          "default": true
         }
       },
       "additionalProperties": false

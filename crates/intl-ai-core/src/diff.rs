@@ -7,13 +7,21 @@ use std::collections::{BTreeMap, HashSet};
 /// parity, dialect, spec rule, exec check, judge). Distinct from the
 /// structural `FindingKind` buckets: an `invalid` finding always carries the
 /// check that produced it.
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct CheckFinding {
     pub key: String,
     /// Check id that reported the violation (`icu`, `dialect:en-US`, spec
     /// id, exec check name).
     pub check: String,
     pub message: String,
+    /// Replayed from the incremental check cache, not re-run this time
+    /// (part B): the finding is identical because the inputs were.
+    #[serde(default, skip_serializing_if = "is_false")]
+    pub cached: bool,
+}
+
+fn is_false(b: &bool) -> bool {
+    !*b
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize, schemars::JsonSchema)]

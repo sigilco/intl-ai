@@ -27,6 +27,7 @@ use intl_ai_core::check::{Check, CheckCtx, CheckItem};
 use intl_ai_core::diff::CheckFinding;
 use intl_ai_core::error::{Error, Result};
 use regex::Regex;
+use std::collections::BTreeMap;
 use std::path::Path;
 
 #[derive(Debug, serde::Deserialize)]
@@ -87,6 +88,9 @@ pub struct SpecCheck {
     /// Rules with their compiled matchers, in file order.
     rules: Vec<CompiledRule>,
     self_test: Option<SelfTest>,
+    /// sha1 of the spec source — cache ctx so an edited spec file
+    /// invalidates every key its results cover.
+    spec_hash: String,
 }
 
 struct CompiledRule {
@@ -104,15 +108,20 @@ impl SpecCheck {
             .map_err(|e| Error::Config(format!("check spec {}: {e}", path.display())))?;
         let spec: CheckSpec = serde_yaml_ng::from_str(&text)
             .map_err(|e| Error::Config(format!("check spec {}: {e}", path.display())))?;
-        Self::compile(spec)
-            .map_err(|e| Error::Config(format!("check spec {}: {e}", path.display())))
+        let mut out = Self::compile(spec)
+            .map_err(|e| Error::Config(format!("check spec {}: {e}", path.display())))?;
+        out.spec_hash = intl_ai_core::hash::source_hash(&text);
+        Ok(out)
     }
 
     /// Parse a spec from a string (tests, `config validate --spec`).
     pub fn from_str(text: &str, origin: &str) -> Result<Self> {
         let spec: CheckSpec = serde_yaml_ng::from_str(text)
             .map_err(|e| Error::Config(format!("check spec {origin}: {e}")))?;
-        Self::compile(spec)
+        let mut out =
+            Self::compile(spec).map_err(|e| Error::Config(format!("check spec {origin}: {e}")))?;
+        out.spec_hash = intl_ai_core::hash::source_hash(text);
+        Ok(out)
     }
 
     fn compile(spec: CheckSpec) -> Result<Self> {
@@ -179,6 +188,8 @@ impl SpecCheck {
             id: spec.id,
             rules,
             self_test: spec.self_test,
+            // Filled in by load()/from_str() — compile has no source text.
+            spec_hash: String::new(),
         })
     }
 
@@ -232,6 +243,10 @@ impl Check for SpecCheck {
         &self.id
     }
 
+    fn cache_ctx(&self) -> BTreeMap<String, String> {
+        BTreeMap::from([("spec".into(), self.spec_hash.clone())])
+    }
+
     fn run(&self, _ctx: &CheckCtx, items: &[CheckItem]) -> Result<Vec<CheckFinding>> {
         let mut out = Vec::new();
         for item in items {
@@ -246,6 +261,7 @@ impl Check for SpecCheck {
                                 .message
                                 .clone()
                                 .unwrap_or_else(|| format!("matches /{}/", re.as_str())),
+                            ..Default::default()
                         });
                     }
                 }
@@ -258,6 +274,7 @@ impl Check for SpecCheck {
                                 .message
                                 .clone()
                                 .unwrap_or_else(|| format!("forbidden term '{term}'")),
+                            ..Default::default()
                         });
                     }
                 }
@@ -273,6 +290,7 @@ impl Check for SpecCheck {
                                 rule.required.join(", ")
                             )
                         }),
+                        ..Default::default()
                     });
                 }
                 if let Some(r) = &rule.ratio {
@@ -296,6 +314,7 @@ impl Check for SpecCheck {
                                             }
                                         )
                                     }),
+                                    ..Default::default()
                                 });
                             }
                         }

@@ -7,6 +7,20 @@ pub fn source_hash(value: &str) -> String {
     digest.iter().map(|b| format!("{b:02x}")).collect()
 }
 
+/// SHA-1 over length-prefixed inputs — the incremental check cache's
+/// fingerprint of "(locale, key, check) consumed X". Length prefixes keep
+/// concatenation ambiguity out ("ab","c" vs "a","bc").
+pub fn fingerprint(parts: &[&str]) -> String {
+    let mut buf = String::new();
+    for p in parts {
+        buf.push_str(&p.len().to_string());
+        buf.push(':');
+        buf.push_str(p);
+        buf.push('\u{1f}');
+    }
+    source_hash(&buf)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
