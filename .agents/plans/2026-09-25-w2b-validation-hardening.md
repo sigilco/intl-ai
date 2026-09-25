@@ -108,7 +108,7 @@ Synthesis of designer + skeptic; mechanism from the designer, constraints from t
 1. Land the prerequisite check fixes + part A hardening on `feature/v1-w2-checks` (or a stacked branch if #61 should stay clean for merge).
 2. Part B incremental cache.
 3. Part C fill gate.
-Suggested PR granularity: one `fix` PR for 3.1+3.2 (correctness/security), one for 3.3+3.4 (contract/robustness), one per B and C.
+   Suggested PR granularity: one `fix` PR for 3.1+3.2 (correctness/security), one for 3.3+3.4 (contract/robustness), one per B and C.
 
 ## 7. Decisions (resolved 2026-09-25)
 
