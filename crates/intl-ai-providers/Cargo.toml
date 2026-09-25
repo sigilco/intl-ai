@@ -1,0 +1,11 @@
+[package]
+name = "intl-ai-providers"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+intl-ai-core = { path = "../intl-ai-core" }
+serde_json.workspace = true
+thiserror.workspace = true
