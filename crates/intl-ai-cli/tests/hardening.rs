@@ -237,7 +237,10 @@ fn human_edit_marks_entry_unreviewed_again() {
         .clone();
     let report: Value = serde_json::from_slice(&out.stdout).unwrap();
     assert!(
-        report["locales"]["fr"]["unreviewed"].as_u64().unwrap() >= 1,
+        !report["locales"]["fr"]["unreviewed"]
+            .as_array()
+            .unwrap()
+            .is_empty(),
         "{report}"
     );
 }

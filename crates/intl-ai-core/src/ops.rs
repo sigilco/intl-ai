@@ -43,6 +43,12 @@ pub fn mark(
     for key in keys {
         match shard.entries.get_mut(&key) {
             Some(entry) => {
+                let mut changed = false;
+                // Explicit re-mark re-arms a tombstoned key.
+                if entry.absent {
+                    entry.absent = false;
+                    changed = true;
+                }
                 if entry.origin != origin {
                     entry.origin = origin;
                     // Rebaseline the snapshot to the current file text: for
@@ -54,6 +60,9 @@ pub fn mark(
                         entry.value = v.clone();
                     }
                     entry.updated_at = Some(now_s.clone());
+                    changed = true;
+                }
+                if changed {
                     res.affected += 1;
                 }
             }
@@ -80,6 +89,57 @@ pub fn mark(
                     res.skipped_no_entry += 1;
                 }
             }
+        }
+    }
+    save_shard(&locale_dir, locale, &shard)?;
+    Ok(res)
+}
+
+/// `intl-ai mark --absent` / `--present`: the missing-vs-deleted tombstone
+/// (plan 5.6 M-item). A source key marked absent stays untranslated by
+/// choice — `fill` never refills it, `check` doesn't flag it missing.
+/// Tombstones attach to source keys (a key with no source needs none).
+pub fn mark_absent(
+    cfg: &ResolvedConfig,
+    locale: &str,
+    selector: &KeySelector,
+    absent: bool,
+) -> Result<OpResult> {
+    let locale_dir = cfg.locale_dir();
+    let (source, _target, src_hashes) = load_flats(cfg, locale)?;
+    let _lock = ShardLock::acquire(&cfg.config_dir, locale)?;
+    let mut shard = load_shard(&locale_dir, locale)?;
+    let mut res = OpResult::default();
+    let now_s = now();
+
+    for key in source.keys().filter(|k| selector.matches(k)) {
+        match shard.entries.get_mut(key) {
+            Some(entry) => {
+                if entry.absent != absent {
+                    entry.absent = absent;
+                    entry.updated_at = Some(now_s.clone());
+                    res.affected += 1;
+                }
+            }
+            None if absent => {
+                shard.entries.insert(
+                    key.clone(),
+                    Entry {
+                        // A tombstone a human set: deliberately untranslated,
+                        // reviewed by definition (it IS the human's call).
+                        value: String::new(),
+                        source_hash: src_hashes.get(key).cloned().unwrap_or_default(),
+                        origin: Origin::Human,
+                        reviewed: true,
+                        model: None,
+                        updated_at: Some(now_s.clone()),
+                        absent: true,
+                        ..Default::default()
+                    },
+                );
+                res.affected += 1;
+            }
+            None => res.skipped_no_entry += 1,
         }
     }
     save_shard(&locale_dir, locale, &shard)?;

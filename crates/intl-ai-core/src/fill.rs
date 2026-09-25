@@ -22,6 +22,8 @@ pub struct FillOptions {
     pub regenerate: bool,
     pub include_human: bool,
     pub dry_run: bool,
+    /// Skip the stat-cache read/write for this run.
+    pub no_cache: bool,
 }
 
 #[derive(Debug, Serialize)]
@@ -36,10 +38,22 @@ pub struct FillReport {
 #[derive(Debug, Default, Serialize)]
 pub struct LocaleFillResult {
     pub requested: usize,
+    /// Provider answered for an in-chunk key (M4: honest count; `written`
+    /// counts keys adopted into file+shard — they coincide until the
+    /// validation gate can reject an answer).
     pub translated: usize,
     pub written: usize,
+    /// Values regenerated that were human-owned (--include-human tier).
+    #[serde(default, skip_serializing_if = "is_zero")]
+    pub regenerated_human: usize,
+    /// Shard entries pruned: keys gone from both source and target.
+    #[serde(default, skip_serializing_if = "is_zero")]
+    pub pruned: usize,
     pub adopted_human: usize,
     pub reconciled_human: usize,
+    /// Scoped keys with an existing value fill left alone, AI-owned.
+    pub skipped_existing: usize,
+    /// Same set, human-owned subset (M4 split).
     pub skipped_human: usize,
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub omitted: Vec<String>,
@@ -48,6 +62,10 @@ pub struct LocaleFillResult {
     /// were human content the diff reported only as `extra`.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub clobbered: Vec<String>,
+}
+
+fn is_zero(n: &usize) -> bool {
+    *n == 0
 }
 
 #[derive(Debug, Serialize)]
@@ -75,14 +93,31 @@ pub fn fill(
 ) -> Result<FillReport> {
     let locale_dir = cfg.locale_dir();
     let source_path = cfg.locale_path(&cfg.config.source);
-    let source_value = read(&source_path)?.ok_or_else(|| {
-        Error::Message(format!(
-            "source locale file {} not found",
-            source_path.display()
-        ))
-    })?;
+    // A missing source file is an empty corpus, not an error — a fresh
+    // `init` scaffold has no strings yet (M6). A corrupt file still fails.
+    let source_value = match read(&source_path)? {
+        Some(v) => v,
+        None => {
+            eprintln!(
+                "intl-ai: source locale file {} not found; treating as empty",
+                source_path.display()
+            );
+            serde_json::Value::Object(serde_json::Map::new())
+        }
+    };
     let source = flatten(&source_value);
-    let mut cache = StatCache::load(&cfg.cache_path());
+    let dropped = crate::flatten::dropped_leaf_count(&source_value);
+    if dropped > 0 {
+        eprintln!(
+            "intl-ai: {dropped} source leaf(s) dropped by flattening \
+             (empty objects or colliding dotted keys)"
+        );
+    }
+    let mut cache = if opts.no_cache {
+        StatCache::default()
+    } else {
+        StatCache::load(&cfg.cache_path())
+    };
     let src_hashes = cache.source_hashes(&source_path, &source);
 
     let locales: Vec<String> = match &opts.locales {
@@ -97,6 +132,18 @@ pub fn fill(
     };
 
     for locale in locales {
+        let shadowed = cfg.shadowed_locale_files(&locale);
+        if shadowed.len() > 1 {
+            eprintln!(
+                "intl-ai: {locale}: multiple locale files on disk ({}); using {}",
+                shadowed
+                    .iter()
+                    .map(|p| p.display().to_string())
+                    .collect::<Vec<_>>()
+                    .join(", "),
+                shadowed[0].display()
+            );
+        }
         match fill_locale(
             cfg,
             &locale_dir,
@@ -129,7 +176,7 @@ pub fn fill(
             }
         }
     }
-    if !opts.dry_run {
+    if !opts.dry_run && !opts.no_cache {
         cache.save(&cfg.cache_path());
     }
     Ok(report)
@@ -196,6 +243,14 @@ fn fill_locale(
         }
     }
 
+    // GC: entries for keys gone from both source and target are dead
+    // weight (tombstones for deleted source keys included).
+    let before = shard.entries.len();
+    shard
+        .entries
+        .retain(|k, _| source.contains_key(k) || target.contains_key(k));
+    res.pruned = before - shard.entries.len();
+
     let wanted: Vec<String> = source
         .keys()
         .filter(|k| opts.selector.matches(k))
@@ -203,14 +258,21 @@ fn fill_locale(
         .cloned()
         .collect();
     res.requested = wanted.len();
-    // skipped_human: scoped keys with an existing value that fill left
-    // alone (human-owned or AI-owned under the additive default).
-    let scoped_with_value = source
+    // skipped_*: scoped keys with an existing value fill left alone,
+    // split by effective (post-reconciliation) origin (M4).
+    let wanted_set: HashSet<&str> = wanted.iter().map(String::as_str).collect();
+    for k in source
         .keys()
         .filter(|k| opts.selector.matches(k) && target.contains_key(*k))
-        .count();
-    let translated_existing = wanted.iter().filter(|k| target.contains_key(*k)).count();
-    res.skipped_human = scoped_with_value.saturating_sub(translated_existing);
+    {
+        if wanted_set.contains(k.as_str()) {
+            continue;
+        }
+        match shard.entries.get(k).map(|e| e.origin) {
+            Some(Origin::Ai) => res.skipped_existing += 1,
+            _ => res.skipped_human += 1,
+        }
+    }
 
     let mut failures = Vec::new();
     if !wanted.is_empty() {
@@ -277,6 +339,14 @@ fn fill_locale(
                 if !chunk_keys.contains(t.key.as_str()) {
                     continue;
                 }
+                res.translated += 1;
+                if shard
+                    .entries
+                    .get(&t.key)
+                    .is_some_and(|e| e.origin == Origin::Human)
+                {
+                    res.regenerated_human += 1;
+                }
                 if !opts.dry_run {
                     if let Some(path) =
                         set_nested(&mut target_value, &t.key, Value::String(t.value.clone()))
@@ -300,7 +370,6 @@ fn fill_locale(
                 res.written += 1;
             }
         }
-        res.translated = res.written;
     }
 
     if !opts.dry_run {
@@ -322,6 +391,11 @@ fn needs_translation(
     opts: &FillOptions,
 ) -> bool {
     if !source.contains_key(key) {
+        return false;
+    }
+    // Absent tombstones are deliberately untranslated: no mode refills
+    // them; `mark` re-arms a key explicitly.
+    if shard.entries.get(key).is_some_and(|e| e.absent) {
         return false;
     }
     if opts.stale_only {

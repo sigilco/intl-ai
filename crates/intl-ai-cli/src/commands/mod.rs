@@ -5,6 +5,7 @@ pub mod init;
 pub mod lockfile;
 pub mod migrate;
 pub mod spec;
+pub mod status;
 
 use ::config::FileFormat;
 use anyhow::{Result, anyhow};
