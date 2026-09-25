@@ -27,6 +27,8 @@ pub struct FillOptions {
 #[derive(Debug, Serialize)]
 pub struct FillReport {
     pub locales: BTreeMap<String, LocaleFillResult>,
+    /// Per-key/per-locale failures; a failed batch marks every key in it
+    /// (plan 5.1.5: per-key failures are terminal, never retried).
     pub failures: Vec<FillFailure>,
     pub dry_run: bool,
 }
@@ -89,8 +91,9 @@ pub fn fill(
 
     for locale in locales {
         match fill_locale(cfg, &locale_dir, &source, &locale, transport, opts) {
-            Ok(res) => {
+            Ok((res, failures)) => {
                 report.locales.insert(locale, res);
+                report.failures.extend(failures);
             }
             Err(e) => {
                 report.failures.push(FillFailure {
@@ -115,7 +118,7 @@ fn fill_locale(
     locale: &str,
     transport: &dyn Transport,
     opts: &FillOptions,
-) -> Result<LocaleFillResult> {
+) -> Result<(LocaleFillResult, Vec<FillFailure>)> {
     let mut res = LocaleFillResult::empty();
     let target_path = locale_dir.join(format!("{locale}.json"));
     let mut target_value = read(&target_path)?.unwrap_or_else(|| Value::Object(Map::new()));
@@ -171,43 +174,79 @@ fn fill_locale(
     let translated_existing = wanted.iter().filter(|k| target.contains_key(*k)).count();
     res.skipped_human = scoped_with_value.saturating_sub(translated_existing);
 
+    let mut failures = Vec::new();
     if !wanted.is_empty() {
-        let req = TranslateRequest {
-            source_locale: cfg.config.source.clone(),
-            target_locale: locale.to_string(),
-            entries: wanted
-                .iter()
-                .map(|k| TranslationEntry {
-                    key: k.clone(),
-                    source: source[k].clone(),
-                })
-                .collect(),
-        };
-        let resp = transport.translate(&req)?;
-        let answered: HashSet<&str> = resp.translations.iter().map(|t| t.key.as_str()).collect();
-        for key in &wanted {
-            if !answered.contains(key.as_str()) {
-                // Omitted key is terminal per plan 5.1.5, not retried.
-                res.omitted.push(key.clone());
+        let instruction = cfg.instruction_for(locale);
+        let hint = cfg.syntax_hint().to_string();
+        // batchSize applies to the initial pass too (plan 5.3.3).
+        let batch_size = cfg.config.batch_size.unwrap_or(usize::MAX).max(1);
+        for chunk in wanted.chunks(batch_size) {
+            let req = TranslateRequest {
+                source_locale: cfg.config.source.clone(),
+                target_locale: locale.to_string(),
+                entries: chunk
+                    .iter()
+                    .map(|k| TranslationEntry {
+                        key: k.clone(),
+                        source: source[k].clone(),
+                    })
+                    .collect(),
+                glossary: cfg.config.glossary.clone(),
+                locale_instruction: instruction.clone(),
+                feedback: Default::default(),
+                syntax_hint: Some(hint.clone()),
+            };
+            let resp = match transport.translate(&req) {
+                Ok(r) => r,
+                Err(e) => {
+                    // Batch failure: every key in the chunk is terminal-failed
+                    // but other batches and locales still run.
+                    let kind = match &e {
+                        Error::Transport { kind, .. } => *kind,
+                        _ => ErrorType::Unknown,
+                    };
+                    for key in chunk {
+                        failures.push(FillFailure {
+                            locale: locale.to_string(),
+                            key: Some(key.clone()),
+                            kind,
+                            message: e.to_string(),
+                        });
+                    }
+                    continue;
+                }
+            };
+            let answered: HashSet<&str> =
+                resp.translations.iter().map(|t| t.key.as_str()).collect();
+            for key in chunk {
+                if !answered.contains(key.as_str()) {
+                    // Omitted key is terminal per plan 5.1.5, not retried.
+                    res.omitted.push(key.clone());
+                }
             }
-        }
-        for t in resp.translations {
-            if !opts.dry_run {
-                set_nested(&mut target_value, &t.key, Value::String(t.value.clone()));
+            for t in resp.translations {
+                // Only write keys we asked for: an over-eager provider must
+                // not overwrite values for keys outside this chunk.
+                if !chunk.iter().any(|k| k == &t.key) {
+                    continue;
+                }
+                if !opts.dry_run {
+                    set_nested(&mut target_value, &t.key, Value::String(t.value.clone()));
+                }
+                shard.entries.insert(
+                    t.key.clone(),
+                    Entry {
+                        value: t.value,
+                        source_hash: source_hash(&source[&t.key]),
+                        origin: Origin::Ai,
+                        reviewed: false,
+                        model: Some(resp.model.clone()),
+                        updated_at: Some(now()),
+                        ..Default::default()
+                    },
+                );
+                res.written += 1;
             }
-            shard.entries.insert(
-                t.key.clone(),
-                Entry {
-                    value: t.value,
-                    source_hash: source_hash(&source[&t.key]),
-                    origin: Origin::Ai,
-                    reviewed: false,
-                    model: Some(resp.model.clone()),
-                    updated_at: Some(now()),
-                    ..Default::default()
-                },
-            );
-            res.written += 1;
         }
         res.translated = res.written;
     }
@@ -216,7 +255,7 @@ fn fill_locale(
         write(&target_path, &target_value)?;
         save_shard(locale_dir, locale, &shard)?;
     }
-    Ok(res)
+    Ok((res, failures))
 }
 
 fn needs_translation(

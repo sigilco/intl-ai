@@ -29,6 +29,45 @@ pub struct IntlAiConfig {
     pub provider: ProviderConfig,
     #[serde(default)]
     pub check: CheckConfig,
+    /// Fixed term -> translation pairs injected into every translate prompt.
+    #[serde(default)]
+    pub glossary: std::collections::BTreeMap<String, String>,
+    /// Freeform style/dialect instruction per locale. Resolution: exact
+    /// locale, then language subtag, then `*` as catch-all.
+    #[serde(default)]
+    pub locale_instructions: std::collections::BTreeMap<String, String>,
+    /// Max source entries per translate request (plan 5.3 bugfix: honored
+    /// on the initial pass too, not only refills). None = one request.
+    #[serde(default)]
+    pub batch_size: Option<usize>,
+    /// Transport attempts per request before the batch fails (default 3,
+    /// capped at 10).
+    #[serde(default)]
+    pub max_retries: Option<u32>,
+    /// Placeholder contract hint sent to the model. `icu` selects the ICU
+    /// MessageFormat hint; the ICU validator itself lands with W2 checks.
+    #[serde(default)]
+    pub processor: Option<ProcessorKind>,
+}
+
+#[derive(Debug, Clone, Copy, Deserialize, serde::Serialize)]
+#[serde(rename_all = "snake_case")]
+pub enum ProcessorKind {
+    Passthrough,
+    Icu,
+}
+
+impl ProcessorKind {
+    pub fn syntax_hint(&self) -> &'static str {
+        match self {
+            Self::Passthrough => {
+                "Preserve any placeholders like {variable} exactly as they appear."
+            }
+            Self::Icu => {
+                "ICU MessageFormat: Use {variable} for placeholders, e.g., \"Hello {name}\". Supports plural/select syntax."
+            }
+        }
+    }
 }
 
 fn default_version() -> u32 {
@@ -55,14 +94,99 @@ impl StringOrList {
 #[serde(tag = "kind", rename_all = "snake_case")]
 pub enum ProviderConfig {
     Replay(ReplayProvider),
+    Http(HttpProvider),
+    Command(CommandProvider),
 }
 
-#[derive(Debug, Clone, Deserialize, serde::Serialize)]
+#[derive(Debug, Clone, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct ReplayProvider {
     /// Cassette JSON: `{ "<locale>": { "<source value>": "<translation>" } }`.
     /// Resolved against the config file's directory.
     pub file: PathBuf,
+}
+
+impl serde::Serialize for ReplayProvider {
+    fn serialize<S: serde::Serializer>(&self, s: S) -> std::result::Result<S::Ok, S::Error> {
+        s.collect_map([("file", &self.file)])
+    }
+}
+
+/// OpenAI-compatible chat-completions surface (plan 5.1.9): every surveyed
+/// tool converges on api-url + api-key + model. `provider` selects the wire
+/// shape; only "openai" is wired in W1.
+#[derive(Debug, Clone, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct HttpProvider {
+    #[serde(default = "default_http_provider")]
+    pub provider: String,
+    pub model: String,
+    /// Resolved at load via `${env:VAR}`/`${file:PATH}` interpolation.
+    /// Serialized masked so `config validate` never leaks it.
+    pub api_key: String,
+    /// Optional override; defaults to the provider's canonical URL.
+    pub base_url: Option<String>,
+    /// Extra request-body params, spread LAST so user params win (plan 5.1.9).
+    #[serde(default)]
+    pub model_params: Option<serde_json::Map<String, serde_json::Value>>,
+}
+
+fn default_http_provider() -> String {
+    "openai".into()
+}
+
+impl serde::Serialize for HttpProvider {
+    fn serialize<S: serde::Serializer>(&self, s: S) -> std::result::Result<S::Ok, S::Error> {
+        s.collect_map([
+            ("provider", serde_json::json!(self.provider)),
+            ("model", serde_json::json!(self.model)),
+            ("api_key", serde_json::json!("********")),
+            ("base_url", serde_json::json!(self.base_url)),
+            ("model_params", serde_json::json!(self.model_params)),
+        ])
+    }
+}
+
+/// Headless coding-agent CLI as a transport (the v1 differentiator: keyless
+/// dev). Either `agent` (a preset) or `command`+optional `args`; `command`
+/// wins when both are set (plan 5.1.6).
+#[derive(Debug, Clone, Deserialize, serde::Serialize)]
+#[serde(deny_unknown_fields)]
+pub struct CommandProvider {
+    /// Preset name from the agent table (kebab-case, see providers/presets).
+    pub agent: Option<AgentPreset>,
+    /// Free-form command. Allowed only in the root config file, never via
+    /// `extends` (plan 5.1.6: data files from a dependency must not spawn
+    /// arbitrary programs).
+    pub command: Option<String>,
+    pub args: Option<Vec<String>>,
+    /// Where the prompt travels. Default stdin; `argv` appends it as the
+    /// last arg (crush-style CLIs whose reader ignores stdin).
+    pub prompt_via: Option<PromptVia>,
+    /// Working directory for the spawned agent, resolved against the
+    /// config file's directory.
+    pub cwd: Option<PathBuf>,
+    /// Wall-clock budget before SIGTERM -> 5s -> SIGKILL (default 300_000).
+    pub timeout_ms: Option<u64>,
+    /// Buffered stdout cap before the process is killed (default 10 MiB).
+    pub max_stdout_bytes: Option<u64>,
+}
+
+#[derive(Debug, Clone, Copy, Deserialize, serde::Serialize)]
+#[serde(rename_all = "kebab-case")]
+pub enum AgentPreset {
+    ClaudeCode,
+    Opencode,
+    Codex,
+    Crush,
+    Gemini,
+}
+
+#[derive(Debug, Clone, Copy, Deserialize, serde::Serialize)]
+#[serde(rename_all = "snake_case")]
+pub enum PromptVia {
+    Stdin,
+    Argv,
 }
 
 #[derive(Debug, Clone, Deserialize, serde::Serialize)]
@@ -100,7 +224,38 @@ impl ResolvedConfig {
     pub fn replay_file(&self) -> Option<PathBuf> {
         match &self.config.provider {
             ProviderConfig::Replay(r) => Some(resolve(&self.config_dir, &r.file)),
+            _ => None,
         }
+    }
+
+    /// Agent `cwd`, resolved against the config file's dir (plan 5.1.6).
+    pub fn command_cwd(&self) -> Option<PathBuf> {
+        match &self.config.provider {
+            ProviderConfig::Command(c) => c.cwd.as_ref().map(|p| resolve(&self.config_dir, p)),
+            _ => None,
+        }
+    }
+
+    /// Style/dialect instruction for a target locale: exact, then language
+    /// subtag ("fr-CA" -> "fr"), then "*" catch-all (plan 5.4).
+    pub fn instruction_for(&self, locale: &str) -> Option<String> {
+        let m = &self.config.locale_instructions;
+        m.get(locale)
+            .or_else(|| locale.split('-').next().and_then(|lang| m.get(lang)))
+            .or_else(|| m.get("*"))
+            .cloned()
+    }
+
+    pub fn syntax_hint(&self) -> &'static str {
+        self.config
+            .processor
+            .as_ref()
+            .map(|p| p.syntax_hint())
+            .unwrap_or_else(|| ProcessorKind::Passthrough.syntax_hint())
+    }
+
+    pub fn max_retries(&self) -> u32 {
+        self.config.max_retries.unwrap_or(3)
     }
 }
 
@@ -194,6 +349,19 @@ fn walk_extends(
         .add_source(File::from(path.to_path_buf()))
         .build()
         .map_err(|e| Error::Config(format!("{}: {e}", path.display())))?;
+    // Free-form commands must not arrive via a base file: a config dropped
+    // into `extends` by a dependency could otherwise spawn an arbitrary
+    // program (plan 5.1.6 boundary). Presets stay allowed everywhere.
+    if depth > 0 {
+        if let Ok(provider) = cfg.get::<Value>("provider") {
+            if provider.get("command").is_some_and(|c| !c.is_null()) {
+                return Err(Error::Config(format!(
+                    "{}: provider.command is only allowed in the root config file, not via extends",
+                    path.display()
+                )));
+            }
+        }
+    }
     // config-rs errors on absent keys even for Option<T>; treat absent as None.
     let extends: Option<StringOrList> = cfg.get::<Option<StringOrList>>("extends").ok().flatten();
     let parent_dir = path
@@ -234,11 +402,52 @@ fn finish(
     interpolate(&mut raw, &config_dir)?;
     let config: IntlAiConfig =
         serde_json::from_value(raw).map_err(|e| Error::Config(format!("schema: {e}")))?;
+    validate(&config)?;
     Ok(ResolvedConfig {
         config,
         config_dir,
         config_path,
     })
+}
+
+/// Cross-field rules the type shape can't express.
+fn validate(config: &IntlAiConfig) -> Result<()> {
+    match &config.provider {
+        ProviderConfig::Replay(_) => {}
+        ProviderConfig::Http(h) => {
+            if h.provider != "openai" {
+                return Err(Error::Config(format!(
+                    "provider '{}': only \"openai\" is wired in W1 (anthropic follows)",
+                    h.provider
+                )));
+            }
+            if h.api_key.is_empty() {
+                return Err(Error::Config("provider.api_key must not be empty".into()));
+            }
+        }
+        ProviderConfig::Command(c) => {
+            if c.agent.is_none() && c.command.is_none() {
+                return Err(Error::Config(
+                    "provider kind=command needs `agent` (preset) or `command`".into(),
+                ));
+            }
+            if c.agent.is_some() && c.command.is_some() {
+                // `command` beats `agent` preset per plan 5.1.6 — allow but
+                // surface the override in `config validate` output later.
+            }
+        }
+    }
+    if let Some(r) = config.max_retries {
+        if r > 10 {
+            return Err(Error::Config("max_retries is capped at 10".into()));
+        }
+    }
+    if let Some(b) = config.batch_size {
+        if b == 0 {
+            return Err(Error::Config("batch_size must be >= 1".into()));
+        }
+    }
+    Ok(())
 }
 
 /// `${env:VAR}` / `${env:VAR:-default}` / `${env:VAR:?}` / `${file:PATH}` /
