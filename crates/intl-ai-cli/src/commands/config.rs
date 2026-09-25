@@ -27,5 +27,12 @@ pub fn run(cli: &Cli, args: &ConfigArgs) -> Result<u8> {
             }
             Ok(0)
         }
+        ConfigCommand::Schema => {
+            // Generated from the typed contract, so it can never drift
+            // from `config validate` (plan 7: one schema, all formats).
+            let schema = intl_ai_core::config::json_schema();
+            println!("{}", serde_json::to_string_pretty(&schema)?);
+            Ok(0)
+        }
     }
 }

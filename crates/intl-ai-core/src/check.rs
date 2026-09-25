@@ -3,7 +3,8 @@ use crate::diff::{FindingKind, LocaleDiff, diff, effective_origin};
 use crate::error::{Error, Result};
 use crate::flatten::flatten;
 use crate::lockfile::{Origin, load_shard};
-use intl_ai_formats::json::read;
+use crate::stat_cache::StatCache;
+use intl_ai_formats::read;
 use serde::Serialize;
 use std::collections::{BTreeMap, HashSet};
 
@@ -28,7 +29,7 @@ pub struct CheckReport {
 /// precedent). Same gates apply to human and AI values.
 pub fn check(cfg: &ResolvedConfig, opts: &CheckOptions) -> Result<CheckReport> {
     let locale_dir = cfg.locale_dir();
-    let source_path = locale_dir.join(format!("{}.json", cfg.config.source));
+    let source_path = cfg.locale_path(&cfg.config.source);
     let source_value = read(&source_path)?.ok_or_else(|| {
         Error::Message(format!(
             "source locale file {} not found",
@@ -36,6 +37,8 @@ pub fn check(cfg: &ResolvedConfig, opts: &CheckOptions) -> Result<CheckReport> {
         ))
     })?;
     let source = flatten(&source_value);
+    let mut cache = StatCache::load(&cfg.cache_path());
+    let src_hashes = cache.source_hashes(&source_path, &source);
 
     let locales: Vec<String> = match &opts.locales {
         Some(l) if !l.is_empty() => l.clone(),
@@ -49,10 +52,10 @@ pub fn check(cfg: &ResolvedConfig, opts: &CheckOptions) -> Result<CheckReport> {
     };
 
     for locale in locales {
-        let target_path = locale_dir.join(format!("{locale}.json"));
+        let target_path = cfg.locale_path(&locale);
         let target = read(&target_path)?.map(|v| flatten(&v)).unwrap_or_default();
         let shard = load_shard(&locale_dir, &locale)?;
-        let mut d = diff(&source, &target, &shard, &HashSet::new());
+        let mut d = diff(&source, &src_hashes, &target, &shard, &HashSet::new());
 
         if let Some(origin) = opts.origin_filter {
             let keep = |key: &String| {
@@ -103,5 +106,6 @@ pub fn check(cfg: &ResolvedConfig, opts: &CheckOptions) -> Result<CheckReport> {
         }
         report.locales.insert(locale, d);
     }
+    cache.save(&cfg.cache_path());
     Ok(report)
 }

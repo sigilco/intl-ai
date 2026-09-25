@@ -126,6 +126,110 @@ pub fn save_shard(locale_dir: &Path, locale: &str, shard: &Shard) -> Result<bool
     Ok(true)
 }
 
+/// Outcome of `merge_shard_file` for one conflicted shard.
+#[derive(Debug)]
+pub struct ShardMerge {
+    pub entries: usize,
+    /// Keys present on both sides (same key, possibly divergent fields).
+    pub overlaps: usize,
+}
+
+/// Splits a git-conflicted shard file at `<<<<<<<`/`=======`/`>>>>>>>`
+/// markers into (ours, theirs) full texts. `None` when the file is clean.
+pub fn split_conflicts(text: &str) -> Option<(String, String)> {
+    let mut ours = String::new();
+    let mut theirs = String::new();
+    let mut side = 0u8; // 0 = common, 1 = ours, 2 = theirs
+    let mut saw_marker = false;
+    for line in text.lines() {
+        if line.starts_with("<<<<<<<") {
+            saw_marker = true;
+            side = 1;
+            continue;
+        }
+        if line.starts_with("=======") && side == 1 {
+            side = 2;
+            continue;
+        }
+        if line.starts_with(">>>>>>>") && side == 2 {
+            side = 0;
+            continue;
+        }
+        match side {
+            1 => {
+                ours.push_str(line);
+                ours.push('\n');
+            }
+            2 => {
+                theirs.push_str(line);
+                theirs.push('\n');
+            }
+            _ => {
+                ours.push_str(line);
+                ours.push('\n');
+                theirs.push_str(line);
+                theirs.push('\n');
+            }
+        }
+    }
+    saw_marker.then_some((ours, theirs))
+}
+
+/// Union merge (git `union` driver + a smarter same-key rule): keys
+/// present on either side survive; for a key on both, prefer the
+/// Human-owned entry, then the newer `updated_at`, else ours.
+pub fn merge_shards(ours: &Shard, theirs: &Shard) -> (Shard, usize) {
+    let mut merged = ours.clone();
+    let mut overlaps = 0usize;
+    for (key, their_entry) in &theirs.entries {
+        match merged.entries.get(key) {
+            None => {
+                merged.entries.insert(key.clone(), their_entry.clone());
+            }
+            Some(our_entry) => {
+                overlaps += 1;
+                let prefer_theirs = (their_entry.origin == Origin::Human
+                    && our_entry.origin != Origin::Human)
+                    || (their_entry.origin == our_entry.origin
+                        && their_entry.updated_at.as_deref().unwrap_or("")
+                            > our_entry.updated_at.as_deref().unwrap_or(""));
+                if prefer_theirs {
+                    merged.entries.insert(key.clone(), their_entry.clone());
+                }
+            }
+        }
+    }
+    (merged, overlaps)
+}
+
+/// Parses, merges, and canonically rewrites one conflicted shard file.
+/// `Ok(None)` = file had no conflict markers. Parse failures on either
+/// side are hard errors; the file is left untouched.
+pub fn merge_shard_file(locale_dir: &Path, locale: &str) -> Result<Option<ShardMerge>> {
+    let path = shard_path(locale_dir, locale);
+    let text = fs::read_to_string(&path).map_err(|source| Error::Io {
+        path: path.clone(),
+        source,
+    })?;
+    let Some((ours_text, theirs_text)) = split_conflicts(&text) else {
+        return Ok(None);
+    };
+    let parse = |label: &str, text: &str| -> Result<Shard> {
+        toml::from_str(text).map_err(|e| {
+            Error::Lockfile(format!(
+                "{}: {label} side of conflict does not parse: {e}",
+                path.display()
+            ))
+        })
+    };
+    let ours = parse("ours", &ours_text)?;
+    let theirs = parse("theirs", &theirs_text)?;
+    let (merged, overlaps) = merge_shards(&ours, &theirs);
+    let entries = merged.entries.len();
+    save_shard(locale_dir, locale, &merged)?;
+    Ok(Some(ShardMerge { entries, overlaps }))
+}
+
 /// Validates every `*.toml` in `intl-ai.lock.d`. Returns per-file entry
 /// counts; parse/version failures surface as hard lockfile errors.
 pub fn check_shards(locale_dir: &Path) -> Result<Vec<(String, usize)>> {

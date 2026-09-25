@@ -1,20 +1,9 @@
 use serde_json::Value;
 use std::fs;
 use std::io;
-use std::path::{Path, PathBuf};
+use std::path::Path;
 
-#[derive(Debug, thiserror::Error)]
-pub enum FormatError {
-    #[error("failed to read {path}: {source}")]
-    Read { path: PathBuf, source: io::Error },
-    #[error("failed to parse {path}: {source}")]
-    Parse {
-        path: PathBuf,
-        source: serde_json::Error,
-    },
-    #[error("failed to write {path}: {source}")]
-    Write { path: PathBuf, source: io::Error },
-}
+pub use crate::FormatError;
 
 /// Reads a locale JSON file. `Ok(None)` means the file does not exist;
 /// a corrupt file is an error, never silently treated as empty.

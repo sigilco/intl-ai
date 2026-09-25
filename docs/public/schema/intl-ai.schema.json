@@ -1,0 +1,332 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "IntlAiConfig",
+  "description": "One typed contract with `deny_unknown_fields` regardless of the file\nformat the user picked (plan section 7).",
+  "type": "object",
+  "properties": {
+    "version": {
+      "type": "integer",
+      "format": "uint32",
+      "minimum": 0,
+      "default": 1
+    },
+    "extends": {
+      "description": "Consumed by the loader; kept in the struct so `config validate`\ncan display it.",
+      "anyOf": [
+        {
+          "$ref": "#/$defs/StringOrList"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "locale_dir": {
+      "type": "string"
+    },
+    "source": {
+      "type": "string"
+    },
+    "targets": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "provider": {
+      "$ref": "#/$defs/ProviderConfig"
+    },
+    "check": {
+      "$ref": "#/$defs/CheckConfig",
+      "default": {
+        "fail_on": [
+          "stale",
+          "invalid"
+        ]
+      }
+    },
+    "glossary": {
+      "description": "Fixed term -> translation pairs injected into every translate prompt.",
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      },
+      "default": {}
+    },
+    "locale_instructions": {
+      "description": "Freeform style/dialect instruction per locale. Resolution: exact\nlocale, then language subtag, then `*` as catch-all.",
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      },
+      "default": {}
+    },
+    "batch_size": {
+      "description": "Max source entries per translate request (plan 5.3 bugfix: honored\non the initial pass too, not only refills). None = one request.",
+      "type": [
+        "integer",
+        "null"
+      ],
+      "format": "uint",
+      "minimum": 0,
+      "default": null
+    },
+    "max_retries": {
+      "description": "Transport attempts per request before the batch fails (default 3,\ncapped at 10).",
+      "type": [
+        "integer",
+        "null"
+      ],
+      "format": "uint32",
+      "minimum": 0,
+      "default": null
+    },
+    "processor": {
+      "description": "Placeholder contract hint sent to the model. `icu` selects the ICU\nMessageFormat hint; the ICU validator itself lands with W2 checks.",
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ProcessorKind"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "format": {
+      "description": "Locale file format minted for new files (plan 5.5: an existing\nfile's own extension always wins over this preference).",
+      "anyOf": [
+        {
+          "$ref": "#/$defs/FileFormat"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    }
+  },
+  "additionalProperties": false,
+  "required": [
+    "locale_dir",
+    "source",
+    "targets",
+    "provider"
+  ],
+  "$defs": {
+    "StringOrList": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    "ProviderConfig": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "file": {
+              "description": "Cassette JSON: `{ \"<locale>\": { \"<source value>\": \"<translation>\" } }`.\nResolved against the config file's directory.",
+              "type": "string"
+            },
+            "kind": {
+              "type": "string",
+              "const": "replay"
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "file"
+          ]
+        },
+        {
+          "description": "OpenAI-compatible chat-completions surface (plan 5.1.9): every surveyed\ntool converges on api-url + api-key + model. `provider` selects the wire\nshape; only \"openai\" is wired in W1.",
+          "type": "object",
+          "properties": {
+            "provider": {
+              "type": "string",
+              "default": "openai"
+            },
+            "model": {
+              "type": "string"
+            },
+            "api_key": {
+              "description": "Resolved at load via `${env:VAR}`/`${file:PATH}` interpolation.\nSerialized masked so `config validate` never leaks it.",
+              "type": "string"
+            },
+            "base_url": {
+              "description": "Optional override; defaults to the provider's canonical URL.",
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "model_params": {
+              "description": "Extra request-body params, spread LAST so user params win (plan 5.1.9).",
+              "type": [
+                "object",
+                "null"
+              ],
+              "additionalProperties": true,
+              "default": null
+            },
+            "kind": {
+              "type": "string",
+              "const": "http"
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "model",
+            "api_key"
+          ]
+        },
+        {
+          "description": "Headless coding-agent CLI as a transport (the v1 differentiator: keyless\ndev). Either `agent` (a preset) or `command`+optional `args`; `command`\nwins when both are set (plan 5.1.6).",
+          "type": "object",
+          "properties": {
+            "agent": {
+              "description": "Preset name from the agent table (kebab-case, see providers/presets).",
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/AgentPreset"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "command": {
+              "description": "Free-form command. Allowed only in the root config file, never via\n`extends` (plan 5.1.6: data files from a dependency must not spawn\narbitrary programs).",
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "args": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "string"
+              }
+            },
+            "prompt_via": {
+              "description": "Where the prompt travels. Default stdin; `argv` appends it as the\nlast arg (crush-style CLIs whose reader ignores stdin).",
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/PromptVia"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "cwd": {
+              "description": "Working directory for the spawned agent, resolved against the\nconfig file's directory.",
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "timeout_ms": {
+              "description": "Wall-clock budget before SIGTERM -> 5s -> SIGKILL (default 300_000).",
+              "type": [
+                "integer",
+                "null"
+              ],
+              "format": "uint64",
+              "minimum": 0
+            },
+            "max_stdout_bytes": {
+              "description": "Buffered stdout cap before the process is killed (default 10 MiB).",
+              "type": [
+                "integer",
+                "null"
+              ],
+              "format": "uint64",
+              "minimum": 0
+            },
+            "kind": {
+              "type": "string",
+              "const": "command"
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "kind"
+          ]
+        }
+      ]
+    },
+    "AgentPreset": {
+      "type": "string",
+      "enum": [
+        "claude-code",
+        "opencode",
+        "codex",
+        "crush",
+        "gemini"
+      ]
+    },
+    "PromptVia": {
+      "type": "string",
+      "enum": [
+        "stdin",
+        "argv"
+      ]
+    },
+    "CheckConfig": {
+      "type": "object",
+      "properties": {
+        "fail_on": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/FindingKind"
+          },
+          "default": [
+            "stale",
+            "invalid"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "FindingKind": {
+      "type": "string",
+      "enum": [
+        "missing",
+        "stale",
+        "invalid",
+        "modified",
+        "extra",
+        "unreviewed"
+      ]
+    },
+    "ProcessorKind": {
+      "type": "string",
+      "enum": [
+        "passthrough",
+        "icu"
+      ]
+    },
+    "FileFormat": {
+      "type": "string",
+      "enum": [
+        "json",
+        "yaml"
+      ]
+    }
+  }
+}
