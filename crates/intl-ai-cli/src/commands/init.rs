@@ -53,7 +53,7 @@ kind = "replay"
 file = "cassette.json"
 
 [check]
-fail_on = ["stale", "invalid"]
+fail_on = ["missing", "stale", "invalid"]
 
 # Checks run per target value. Builtins: icu | placeholder-parity |
 # dialect:<locale> | judge. Or point `spec` at a YAML rules file, or
@@ -101,15 +101,20 @@ fn detect_locale_dir() -> Option<std::path::PathBuf> {
         if !path.is_dir() {
             continue;
         }
-        let json_count = fs::read_dir(&path)
+        let locale_count = fs::read_dir(&path)
             .ok()
             .map(|rd| {
                 rd.flatten()
-                    .filter(|e| e.path().extension().and_then(|x| x.to_str()) == Some("json"))
+                    .filter(|e| {
+                        matches!(
+                            e.path().extension().and_then(|x| x.to_str()),
+                            Some("json" | "yaml" | "yml")
+                        )
+                    })
                     .count()
             })
             .unwrap_or(0);
-        if json_count >= 2 {
+        if locale_count >= 2 {
             return path.file_name().and_then(|n| n.to_str()).map(|s| s.into());
         }
     }

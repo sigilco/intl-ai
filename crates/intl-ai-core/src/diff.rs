@@ -121,7 +121,12 @@ pub fn diff(
         {
             d.modified.push(key.clone());
         }
-        if target.contains_key(key) && !entry.reviewed {
+        // Human-owned entries carry `value` as the last-approved snapshot:
+        // a live value that drifted from it is unverified again, even if
+        // `reviewed` was never flipped back in the file.
+        let drifted_human =
+            entry.origin == Origin::Human && target.get(key).is_some_and(|v| v != &entry.value);
+        if target.contains_key(key) && (!entry.reviewed || drifted_human) {
             d.unreviewed += 1;
         }
     }

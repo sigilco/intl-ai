@@ -135,8 +135,10 @@ pub struct ShardMerge {
 }
 
 /// Splits a git-conflicted shard file at `<<<<<<<`/`=======`/`>>>>>>>`
-/// markers into (ours, theirs) full texts. `None` when the file is clean.
-pub fn split_conflicts(text: &str) -> Option<(String, String)> {
+/// markers into (ours, theirs) full texts. `Ok(None)` when the file is
+/// clean; `Err` on unbalanced markers (an unterminated conflict resolves
+/// to an empty theirs, silently dropping that side).
+pub fn split_conflicts(text: &str) -> Result<Option<(String, String)>> {
     let mut ours = String::new();
     let mut theirs = String::new();
     let mut side = 0u8; // 0 = common, 1 = ours, 2 = theirs
@@ -172,7 +174,15 @@ pub fn split_conflicts(text: &str) -> Option<(String, String)> {
             }
         }
     }
-    saw_marker.then_some((ours, theirs))
+    if !saw_marker {
+        return Ok(None);
+    }
+    if side != 0 {
+        return Err(Error::Lockfile(
+            "unterminated git conflict markers (missing ======= or >>>>>>>)".into(),
+        ));
+    }
+    Ok(Some((ours, theirs)))
 }
 
 /// Union merge (git `union` driver + a smarter same-key rule): keys
@@ -211,7 +221,7 @@ pub fn merge_shard_file(locale_dir: &Path, locale: &str) -> Result<Option<ShardM
         path: path.clone(),
         source,
     })?;
-    let Some((ours_text, theirs_text)) = split_conflicts(&text) else {
+    let Some((ours_text, theirs_text)) = split_conflicts(&text)? else {
         return Ok(None);
     };
     let parse = |label: &str, text: &str| -> Result<Shard> {
@@ -228,6 +238,57 @@ pub fn merge_shard_file(locale_dir: &Path, locale: &str) -> Result<Option<ShardM
     let entries = merged.entries.len();
     save_shard(locale_dir, locale, &merged)?;
     Ok(Some(ShardMerge { entries, overlaps }))
+}
+
+/// Advisory inter-process lock for one locale's load-modify-write cycle.
+/// `create_new` is atomic on every platform; a leftover lock (crashed
+/// holder) is reported as an error so the operator can delete it rather
+/// than silently serializing behind a dead process.
+pub struct ShardLock {
+    path: PathBuf,
+}
+
+impl ShardLock {
+    /// Locks `<config_dir>/.intl-ai/locks/<locale>.lock` (inside the
+    /// gitignored `.intl-ai/` dir). Fails closed while another process
+    /// holds it: concurrent writers on one locale lose updates, and a
+    /// clear error beats a coin-flip merge.
+    pub fn acquire(config_dir: &Path, locale: &str) -> Result<Self> {
+        let path = config_dir
+            .join(".intl-ai")
+            .join("locks")
+            .join(format!("{locale}.lock"));
+        if let Some(parent) = path.parent() {
+            fs::create_dir_all(parent).map_err(|source| Error::Io {
+                path: parent.to_path_buf(),
+                source,
+            })?;
+        }
+        match fs::OpenOptions::new()
+            .write(true)
+            .create_new(true)
+            .open(&path)
+        {
+            Ok(mut f) => {
+                use std::io::Write;
+                let _ = writeln!(f, "pid {}", std::process::id());
+                Ok(Self { path })
+            }
+            Err(e) if e.kind() == std::io::ErrorKind::AlreadyExists => {
+                Err(Error::Lockfile(format!(
+                    "another intl-ai process holds {}; remove it if it is stale",
+                    path.display()
+                )))
+            }
+            Err(source) => Err(Error::Io { path, source }),
+        }
+    }
+}
+
+impl Drop for ShardLock {
+    fn drop(&mut self) {
+        let _ = fs::remove_file(&self.path);
+    }
 }
 
 /// Validates every `*.toml` in `intl-ai.lock.d`. Returns per-file entry
@@ -345,5 +406,30 @@ future_field = { nested = 1 }
     fn newer_version_refused() {
         let text = "version = 2\n";
         assert!(toml::from_str::<Shard>(text).is_err());
+    }
+
+    #[test]
+    fn unterminated_conflict_markers_error() {
+        let text = "version = 1\n<<<<<<< ours\nversion = 1\n";
+        assert!(split_conflicts(text).is_err());
+        let balanced =
+            "version = 1\n<<<<<<< ours\nversion = 1\n=======\nversion = 2\n>>>>>>> theirs\n";
+        let (ours, theirs) = split_conflicts(balanced).unwrap().unwrap();
+        assert!(ours.contains("version = 1"));
+        assert!(theirs.contains("version = 2"));
+        assert!(split_conflicts("version = 1\n").unwrap().is_none());
+    }
+
+    #[test]
+    fn shard_lock_excludes_second_holder() {
+        let dir = tempdir().unwrap();
+        let first = ShardLock::acquire(dir.path(), "fr").unwrap();
+        assert!(matches!(
+            ShardLock::acquire(dir.path(), "fr"),
+            Err(Error::Lockfile(_))
+        ));
+        drop(first);
+        assert!(ShardLock::acquire(dir.path(), "fr").is_ok());
+        assert!(ShardLock::acquire(dir.path(), "de").is_ok());
     }
 }
