@@ -10,27 +10,30 @@ import { icuProcessor } from "../../adapters/processors/icu";
  */
 const hasCredentials = Boolean(process.env.OPENROUTER_API_KEY && process.env.OPENROUTER_MODEL_ID);
 
-describe.skipIf(!hasCredentials || Boolean(process.env.CI))("translateBatch (OpenRouter, live)", () => {
-  it("translates a batch through the real HTTP provider", async () => {
-    const result = await translateBatch({
-      provider: openaiProvider,
-      modelId: process.env.OPENROUTER_MODEL_ID,
-      baseURL: "https://openrouter.ai/api/v1",
-      apiKey: "${OPENROUTER_API_KEY}",
-      processor: icuProcessor,
-      entries: [
-        { key: "greeting", source: "Hello {name}, welcome back." },
-        { key: "farewell", source: "See you soon." },
-      ],
-      targetLocale: "es",
-      sourceLocale: "en",
-    });
+describe.skipIf(!hasCredentials || Boolean(process.env.CI))(
+  "translateBatch (OpenRouter, live)",
+  () => {
+    it("translates a batch through the real HTTP provider", async () => {
+      const result = await translateBatch({
+        provider: openaiProvider,
+        modelId: process.env.OPENROUTER_MODEL_ID,
+        baseURL: "https://openrouter.ai/api/v1",
+        apiKey: "${OPENROUTER_API_KEY}",
+        processor: icuProcessor,
+        entries: [
+          { key: "greeting", source: "Hello {name}, welcome back." },
+          { key: "farewell", source: "See you soon." },
+        ],
+        targetLocale: "es",
+        sourceLocale: "en",
+      });
 
-    expect(result).toHaveLength(2);
-    for (const entry of result) {
-      expect(entry.success).toBe(true);
-      expect(entry.translated).toBeTruthy();
-    }
-    expect(result.find((r) => r.key === "greeting")?.translated).toContain("{name}");
-  }, 60_000);
-});
+      expect(result).toHaveLength(2);
+      for (const entry of result) {
+        expect(entry.success).toBe(true);
+        expect(entry.translated).toBeTruthy();
+      }
+      expect(result.find((r) => r.key === "greeting")?.translated).toContain("{name}");
+    }, 60_000);
+  },
+);
