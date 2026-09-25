@@ -2,7 +2,7 @@ use crate::clock::now;
 use crate::config::ResolvedConfig;
 use crate::error::Result;
 use crate::flatten::flatten;
-use crate::lockfile::{Entry, Origin, load_shard, save_shard};
+use crate::lockfile::{Entry, Origin, ShardLock, load_shard, save_shard};
 use crate::selector::KeySelector;
 use crate::stat_cache::StatCache;
 use intl_ai_formats::read;
@@ -29,6 +29,7 @@ pub fn mark(
 ) -> Result<OpResult> {
     let locale_dir = cfg.locale_dir();
     let (source, target, src_hashes) = load_flats(cfg, locale)?;
+    let _lock = ShardLock::acquire(&cfg.config_dir, locale)?;
     let mut shard = load_shard(&locale_dir, locale)?;
     let mut res = OpResult::default();
     let now_s = now();
@@ -44,6 +45,14 @@ pub fn mark(
             Some(entry) => {
                 if entry.origin != origin {
                     entry.origin = origin;
+                    // Rebaseline the snapshot to the current file text: for
+                    // `--origin ai` the tool adopts whatever is on disk as
+                    // the AI baseline (otherwise the positional rule flips
+                    // it straight back); for `--origin human` the snapshot
+                    // records exactly what the human approved.
+                    if let Some(v) = target.get(&key) {
+                        entry.value = v.clone();
+                    }
                     entry.updated_at = Some(now_s.clone());
                     res.affected += 1;
                 }
@@ -87,6 +96,7 @@ pub fn set_reviewed(
 ) -> Result<OpResult> {
     let locale_dir = cfg.locale_dir();
     let (source, target, _src_hashes) = load_flats(cfg, locale)?;
+    let _lock = ShardLock::acquire(&cfg.config_dir, locale)?;
     let mut shard = load_shard(&locale_dir, locale)?;
     let mut res = OpResult::default();
     let now_s = now();
@@ -97,6 +107,11 @@ pub fn set_reviewed(
         }
         if entry.reviewed != reviewed {
             entry.reviewed = reviewed;
+            // Approving snapshots the text being approved; a later file
+            // edit diverging from it makes the key unverified again.
+            if reviewed && let Some(v) = target.get(key) {
+                entry.value = v.clone();
+            }
             entry.updated_at = Some(now_s.clone());
             res.affected += 1;
         }

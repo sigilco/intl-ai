@@ -34,6 +34,9 @@ pub fn run(cli: &Cli, args: &FillArgs) -> Result<u8> {
             if !res.omitted.is_empty() {
                 eprintln!("{locale}: {} keys omitted by provider", res.omitted.len());
             }
+            for path in &res.clobbered {
+                eprintln!("{locale}: clobbered existing value at '{path}'");
+            }
         }
         for f in &report.failures {
             eprintln!("{}: {:?}: {}", f.locale, f.kind, f.message);
