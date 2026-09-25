@@ -1,3 +1,4 @@
 # Generated files — byte-compared by the schema-drift CI job; formatting them breaks it.
 docs/public/schema/v1.json
+docs/public/schema/intl-ai.schema.json
 packages/api/src/schema/intl-ai.schema.json

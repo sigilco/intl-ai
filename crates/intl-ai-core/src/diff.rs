@@ -1,10 +1,9 @@
 use crate::flatten::FlatMap;
-use crate::hash::source_hash;
 use crate::lockfile::{Origin, Shard};
 use serde::{Deserialize, Serialize};
-use std::collections::HashSet;
+use std::collections::{BTreeMap, HashSet};
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize, schemars::JsonSchema)]
 #[serde(rename_all = "snake_case")]
 pub enum FindingKind {
     Missing,
@@ -75,9 +74,11 @@ pub fn effective_origin(
 }
 
 /// Shared diff for `fill` and `check`. Pure function of committed shard +
-/// current source/target flat maps.
+/// current source/target flat maps. `src_hashes` is the per-key
+/// `source_hash` map for `source` (stat-cache supplied by callers).
 pub fn diff(
     source: &FlatMap,
+    src_hashes: &BTreeMap<String, String>,
     target: &FlatMap,
     shard: &Shard,
     written_this_run: &HashSet<String>,
@@ -94,10 +95,10 @@ pub fn diff(
         }
     }
     for (key, entry) in &shard.entries {
-        let Some(src) = source.get(key) else {
+        let Some(src_hash) = source.get(key).and_then(|_| src_hashes.get(key)) else {
             continue;
         };
-        if entry.source_hash != source_hash(src) {
+        if entry.source_hash != *src_hash {
             d.stale.push(key.clone());
         }
         if effective_origin(entry, target.get(key), written_this_run, key) == Origin::Human
