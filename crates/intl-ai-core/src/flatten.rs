@@ -48,14 +48,32 @@ fn walk(value: &Value, prefix: &str, out: &mut FlatMap) {
 /// Sets `root[a][b][c] = value` for flat key `a.b.c`, creating intermediate
 /// objects. An existing non-object node on the path is replaced; no TS-style
 /// prototype guard is needed since JSON maps have no prototype semantics.
-pub fn set_nested(root: &mut Value, flat_key: &str, value: Value) {
+/// Returns the flat path of an existing value the write destroyed (a scalar
+/// or array at an intermediate segment, or an object/array at the leaf), so
+/// callers can surface it instead of silently clobbering human text.
+/// Existing `null` nodes count as absent, not content.
+pub fn set_nested(root: &mut Value, flat_key: &str, value: Value) -> Option<String> {
+    let mut clobbered: Option<String> = None;
     let mut segments: Vec<&str> = flat_key.split('.').collect();
-    let Some(last) = segments.pop() else { return };
+    let last = segments.pop()?;
     let mut node = root;
-    for seg in segments {
+    // `prefix` is the flat path of `node` ("" at the root).
+    let mut prefix = String::new();
+    for seg in &segments {
         if !node.is_object() {
+            if !node.is_null() && clobbered.is_none() {
+                clobbered = Some(if prefix.is_empty() {
+                    flat_key.to_string()
+                } else {
+                    prefix.clone()
+                });
+            }
             *node = Value::Object(Map::new());
         }
+        if !prefix.is_empty() {
+            prefix.push('.');
+        }
+        prefix.push_str(seg);
         node = node
             .as_object_mut()
             .expect("just ensured object")
@@ -63,11 +81,17 @@ pub fn set_nested(root: &mut Value, flat_key: &str, value: Value) {
             .or_insert(Value::Null);
     }
     if !node.is_object() {
+        if !node.is_null() && clobbered.is_none() {
+            clobbered = Some(prefix);
+        }
         *node = Value::Object(Map::new());
     }
-    node.as_object_mut()
-        .expect("just ensured object")
-        .insert(last.to_string(), value);
+    let obj = node.as_object_mut().expect("just ensured object");
+    if clobbered.is_none() && obj.get(last).is_some_and(|v| v.is_object() || v.is_array()) {
+        clobbered = Some(flat_key.to_string());
+    }
+    obj.insert(last.to_string(), value);
+    clobbered
 }
 
 #[cfg(test)]
@@ -96,10 +120,41 @@ mod tests {
     #[test]
     fn set_nested_creates_and_replaces() {
         let mut root = json!({"keep": 1, "a": "scalar"});
-        set_nested(&mut root, "a.b.c", json!("v"));
+        assert_eq!(
+            set_nested(&mut root, "a.b.c", json!("v")),
+            Some("a".to_string())
+        );
         assert_eq!(root["a"]["b"]["c"], "v");
         assert_eq!(root["keep"], 1);
-        set_nested(&mut root, "deep", json!(2));
+        assert_eq!(set_nested(&mut root, "deep", json!(2)), None);
         assert_eq!(root["deep"], 2);
+    }
+
+    #[test]
+    fn set_nested_reports_clobbered_values() {
+        // Scalar at an intermediate segment.
+        let mut root = json!({"a": "Menu"});
+        assert_eq!(
+            set_nested(&mut root, "a.b.c", json!("v")),
+            Some("a".to_string())
+        );
+        // Array at the deepest intermediate.
+        let mut root = json!({"a": {"b": [1, 2]}});
+        assert_eq!(
+            set_nested(&mut root, "a.b.c", json!("v")),
+            Some("a.b".to_string())
+        );
+        // Object subtree at the leaf.
+        let mut root = json!({"a": {"b": {"x": 1}}});
+        assert_eq!(
+            set_nested(&mut root, "a.b", json!("v")),
+            Some("a.b".to_string())
+        );
+        // Null is treated as absent, not content.
+        let mut root = json!({"a": null});
+        assert_eq!(set_nested(&mut root, "a.b", json!("v")), None);
+        // Scalar leaf overwrite (normal fill) is not a clobber.
+        let mut root = json!({"a": {"b": "old"}});
+        assert_eq!(set_nested(&mut root, "a.b", json!("new")), None);
     }
 }

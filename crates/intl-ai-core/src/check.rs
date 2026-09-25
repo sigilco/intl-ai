@@ -159,9 +159,10 @@ pub fn check(
                     .iter()
                     .filter(|(k, e)| {
                         target.contains_key(*k)
-                            && !e.reviewed
                             && effective_origin(e, target.get(*k), &HashSet::new(), k)
                                 == Origin::Human
+                            && (!e.reviewed
+                                || (e.origin == Origin::Human && target.get(*k) != Some(&e.value)))
                     })
                     .count();
             }

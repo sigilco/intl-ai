@@ -110,14 +110,14 @@ args = ["fake-agent.sh"]
 prompt_via = "argv"
 "#,
     );
-    cmd(&dir).arg("fill").assert().success();
+    // nav.home is omitted from the provider answer -> an output_truncated
+    // failure, so the run exits 1 while still writing the answered key.
+    cmd(&dir).arg("fill").assert().code(1);
 
     let prompt = fs::read_to_string(dir.path().join("argv-prompt.txt")).unwrap();
     assert!(prompt.contains("You are a professional translation engine"));
     let fr = read_json(&dir, "locales/fr.json");
     assert_eq!(fr["greeting"], "Salut");
-    // nav.home was omitted from the provider answer -> reported omitted,
-    // still a successful run (exit 0, key counted as omitted).
     let shard = intl_ai_core::lockfile::load_shard(&dir.path().join("locales"), "fr").unwrap();
     assert_eq!(
         shard.entries["greeting"].origin,
@@ -156,7 +156,8 @@ command = "sh"
 args = ["flaky-agent.sh"]
 "#,
     );
-    cmd(&dir).arg("fill").assert().success();
+    // Retry succeeds but nav.home is omitted -> output_truncated failure.
+    cmd(&dir).arg("fill").assert().code(1);
     assert!(dir.path().join("tries.txt").exists());
     let fr = read_json(&dir, "locales/fr.json");
     assert_eq!(fr["greeting"], "Bonjour");
@@ -350,6 +351,7 @@ base_url = "{}"
             srv.url
         ),
     );
-    cmd(&dir).arg("fill").assert().success();
+    // Retry succeeds but nav.home is omitted -> output_truncated failure.
+    cmd(&dir).arg("fill").assert().code(1);
     assert_eq!(calls.load(std::sync::atomic::Ordering::SeqCst), 2);
 }

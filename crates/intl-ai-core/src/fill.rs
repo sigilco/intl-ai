@@ -3,7 +3,7 @@ use crate::config::ResolvedConfig;
 use crate::diff::effective_origin;
 use crate::error::{Error, ErrorType, Result};
 use crate::flatten::{FlatMap, flatten, set_nested};
-use crate::lockfile::{Entry, Origin, Shard, load_shard, save_shard};
+use crate::lockfile::{Entry, Origin, Shard, ShardLock, load_shard, save_shard};
 use crate::selector::KeySelector;
 use crate::stat_cache::StatCache;
 use crate::transport::{TranslateRequest, TranslationEntry, Transport};
@@ -43,6 +43,11 @@ pub struct LocaleFillResult {
     pub skipped_human: usize,
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub omitted: Vec<String>,
+    /// Existing values destroyed by a write (a scalar/array replaced by an
+    /// intermediate object, or an object/array replaced by a leaf). These
+    /// were human content the diff reported only as `extra`.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub clobbered: Vec<String>,
 }
 
 #[derive(Debug, Serialize)]
@@ -106,6 +111,12 @@ pub fn fill(
                 report.failures.extend(failures);
             }
             Err(e) => {
+                // Corrupt/locked shard, bad locale file, IO failure:
+                // unrecoverable state, fail the whole run rather than
+                // degrade to a per-locale report entry.
+                if e.is_hard() {
+                    return Err(e);
+                }
                 report.failures.push(FillFailure {
                     locale,
                     key: None,
@@ -137,8 +148,11 @@ fn fill_locale(
     let target_path = cfg.locale_path(locale);
     let mut target_value = read(&target_path)?.unwrap_or_else(|| Value::Object(Map::new()));
     let target = flatten(&target_value);
+    // Hold the per-locale lock across load -> modify -> save so a second
+    // process cannot interleave a write into this read-modify-write cycle.
+    let _lock = ShardLock::acquire(&cfg.config_dir, locale)?;
     let mut shard = load_shard(locale_dir, locale)?;
-    let written_this_run = HashSet::new();
+    let mut written_this_run = HashSet::new();
 
     // Positional reconciliation (plan 5.6): a recorded-AI value that no
     // longer matches the file was human-edited; flip origin, keep the
@@ -150,6 +164,16 @@ fn fill_locale(
             entry.origin = Origin::Human;
             entry.reviewed = false;
             res.reconciled_human += 1;
+        }
+        // Human-arm drift: `entry.value` is the last-approved snapshot for
+        // human-owned keys too. A file value that diverged since then is
+        // unverified again (modified => unverified applies to both arms).
+        if entry.origin == Origin::Human
+            && let Some(v) = target.get(key)
+            && *v != entry.value
+        {
+            entry.value = v.clone();
+            entry.reviewed = false;
         }
     }
 
@@ -232,21 +256,35 @@ fn fill_locale(
             };
             let answered: HashSet<&str> =
                 resp.translations.iter().map(|t| t.key.as_str()).collect();
+            let chunk_keys: HashSet<&str> = chunk.iter().map(|k| k.as_str()).collect();
             for key in chunk {
                 if !answered.contains(key.as_str()) {
-                    // Omitted key is terminal per plan 5.1.5, not retried.
+                    // Omitted key is terminal per plan 5.1.5, not retried —
+                    // and it is a failure (output_truncated), not a silent
+                    // skip: a provider that drops keys fails the run.
                     res.omitted.push(key.clone());
+                    failures.push(FillFailure {
+                        locale: locale.to_string(),
+                        key: Some(key.clone()),
+                        kind: ErrorType::OutputTruncated,
+                        message: "provider returned no translation for this key".into(),
+                    });
                 }
             }
             for t in resp.translations {
                 // Only write keys we asked for: an over-eager provider must
                 // not overwrite values for keys outside this chunk.
-                if !chunk.iter().any(|k| k == &t.key) {
+                if !chunk_keys.contains(t.key.as_str()) {
                     continue;
                 }
                 if !opts.dry_run {
-                    set_nested(&mut target_value, &t.key, Value::String(t.value.clone()));
+                    if let Some(path) =
+                        set_nested(&mut target_value, &t.key, Value::String(t.value.clone()))
+                    {
+                        res.clobbered.push(path);
+                    }
                 }
+                written_this_run.insert(t.key.clone());
                 shard.entries.insert(
                     t.key.clone(),
                     Entry {
@@ -266,8 +304,11 @@ fn fill_locale(
     }
 
     if !opts.dry_run {
-        write(&target_path, &target_value)?;
+        // Shard first, file second: a shard without the file degrades to
+        // `missing` (the next fill heals it), while the reverse order
+        // misattributes AI text as human-authored on the next run.
         save_shard(locale_dir, locale, &shard)?;
+        write(&target_path, &target_value)?;
     }
     Ok((res, failures))
 }

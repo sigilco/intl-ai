@@ -41,6 +41,7 @@
       "$ref": "#/$defs/CheckConfig",
       "default": {
         "fail_on": [
+          "missing",
           "stale",
           "invalid"
         ]
@@ -304,6 +305,7 @@
             "$ref": "#/$defs/FindingKind"
           },
           "default": [
+            "missing",
             "stale",
             "invalid"
           ]

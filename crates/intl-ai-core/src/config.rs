@@ -248,7 +248,13 @@ impl Default for CheckConfig {
 }
 
 fn default_fail_on() -> Vec<FindingKind> {
-    vec![FindingKind::Stale, FindingKind::Invalid]
+    // `missing` is gated by default: a fill that omits keys must not ship
+    // green (fail-first posture, plan 5.6).
+    vec![
+        FindingKind::Missing,
+        FindingKind::Stale,
+        FindingKind::Invalid,
+    ]
 }
 
 #[derive(Debug, Clone)]
@@ -373,7 +379,14 @@ pub fn load_from_str(text: &str, format: FileFormat, cwd: &Path) -> Result<Resol
     let builder = Config::builder()
         .add_source(File::from_str(text, format))
         .add_source(env_overlay());
-    finish(builder, cwd.to_path_buf(), None)
+    let resolved = finish(builder, cwd.to_path_buf(), None)?;
+    if resolved.config.extends.is_some() {
+        return Err(Error::Config(
+            "extends needs a config file on disk; --config - cannot resolve relative extends"
+                .into(),
+        ));
+    }
+    Ok(resolved)
 }
 
 fn env_overlay() -> Environment {
@@ -387,15 +400,19 @@ fn env_overlay() -> Environment {
 /// are hard config errors.
 fn collect_extends(path: &Path, config_dir: &Path) -> Result<Vec<PathBuf>> {
     let mut ordered = Vec::new();
-    let mut visiting = HashSet::new();
-    walk_extends(path, config_dir, &mut visiting, &mut ordered, 0)?;
+    // `stack` is the current recursion path (true cycles); `seen` dedups
+    // files already merged (a diamond `extends` is a DAG, not a cycle).
+    let mut stack = HashSet::new();
+    let mut seen = HashSet::new();
+    walk_extends(path, config_dir, &mut stack, &mut seen, &mut ordered, 0)?;
     Ok(ordered)
 }
 
 fn walk_extends(
     path: &Path,
     config_dir: &Path,
-    visiting: &mut HashSet<PathBuf>,
+    stack: &mut HashSet<PathBuf>,
+    seen: &mut HashSet<PathBuf>,
     ordered: &mut Vec<PathBuf>,
     depth: usize,
 ) -> Result<()> {
@@ -406,29 +423,47 @@ fn walk_extends(
         )));
     }
     let canon = fs::canonicalize(path).unwrap_or_else(|_| path.to_path_buf());
-    if !visiting.insert(canon.clone()) {
+    // `stack` is the active recursion path (true cycles); `seen` dedups files
+    // already fully merged (a diamond is a DAG, not a cycle).
+    if stack.contains(&canon) {
         return Err(Error::Config(format!(
             "extends cycle at {}",
             path.display()
         )));
     }
+    if !seen.insert(canon.clone()) {
+        return Ok(());
+    }
+    stack.insert(canon.clone());
     let cfg = Config::builder()
         .add_source(File::from(path.to_path_buf()))
         .build()
         .map_err(|e| Error::Config(format!("{}: {e}", path.display())))?;
-    // Free-form commands must not arrive via a base file: a config dropped
-    // into `extends` by a dependency could otherwise spawn an arbitrary
-    // program (plan 5.1.6 boundary). Presets stay allowed everywhere.
+    let raw: Value = cfg
+        .try_deserialize()
+        .map_err(|e| Error::Config(format!("{}: {e}", path.display())))?;
+    // A base file is data, never code: it must not spawn programs, redirect
+    // the provider endpoint (which carries api_key as a Bearer token), or
+    // interpolate ${env:}/${file:} secrets into prompt-bound fields
+    // (plan 5.1.6 boundary).
     if depth > 0 {
-        if let Ok(provider) = cfg.get::<Value>("provider") {
-            if provider.get("command").is_some_and(|c| !c.is_null()) {
-                return Err(Error::Config(format!(
-                    "{}: provider.command is only allowed in the root config file, not via extends",
-                    path.display()
-                )));
+        if let Some(field) = first_interpolated(&raw) {
+            return Err(Error::Config(format!(
+                "{}: {field} uses ${{...}} interpolation, only allowed in the root config file, not via extends",
+                path.display()
+            )));
+        }
+        if let Some(provider) = raw.get("provider") {
+            for field in ["command", "agent", "base_url"] {
+                if provider.get(field).is_some_and(|c| !c.is_null()) {
+                    return Err(Error::Config(format!(
+                        "{}: provider.{field} is only allowed in the root config file, not via extends",
+                        path.display()
+                    )));
+                }
             }
         }
-        if let Ok(checks) = cfg.get::<Value>("checks") {
+        if let Some(checks) = raw.get("checks") {
             let has_exec = checks.as_array().is_some_and(|arr| {
                 arr.iter()
                     .any(|c| c.get("exec").is_some_and(|e| !e.is_null()))
@@ -441,8 +476,11 @@ fn walk_extends(
             }
         }
     }
-    // config-rs errors on absent keys even for Option<T>; treat absent as None.
-    let extends: Option<StringOrList> = cfg.get::<Option<StringOrList>>("extends").ok().flatten();
+    // Absent or mistyped `extends` is treated as absent.
+    let extends: Option<StringOrList> = raw
+        .get("extends")
+        .cloned()
+        .and_then(|v| serde_json::from_value(v).ok());
     let parent_dir = path
         .parent()
         .map(Path::to_path_buf)
@@ -457,11 +495,31 @@ fn walk_extends(
                     path.display()
                 )));
             }
-            walk_extends(&base_path, config_dir, visiting, ordered, depth + 1)?;
+            walk_extends(&base_path, config_dir, stack, seen, ordered, depth + 1)?;
         }
     }
+    stack.remove(&canon);
     ordered.push(path.to_path_buf());
     Ok(())
+}
+
+/// First dotted path whose string value contains `${`, or None. Used to
+/// keep interpolation (secrets) out of non-root config sources.
+fn first_interpolated(v: &Value) -> Option<String> {
+    fn walk(v: &Value, path: &str) -> Option<String> {
+        match v {
+            Value::String(s) if s.contains("${") => Some(path.to_string()),
+            Value::Array(items) => items
+                .iter()
+                .enumerate()
+                .find_map(|(i, item)| walk(item, &format!("{path}[{i}]"))),
+            Value::Object(map) => map
+                .iter()
+                .find_map(|(k, val)| walk(val, &format!("{path}.{k}"))),
+            _ => None,
+        }
+    }
+    walk(v, "")
 }
 
 /// Merge -> raw tree -> string interpolation -> typed deserialize.
@@ -489,8 +547,43 @@ fn finish(
     })
 }
 
+/// Config format version currently understood. Newer files are refused
+/// (same fail-closed forward-compat rule as lockfile shards, plan 5.5).
+pub const CONFIG_VERSION: u32 = 1;
+
+/// Locale ids become filenames (`<locale>.json`, `<locale>.toml`):
+/// anything path-unsafe is a config error, not a silent write elsewhere.
+fn valid_locale_id(id: &str) -> bool {
+    !id.is_empty()
+        && !id.contains("..")
+        && !id
+            .bytes()
+            .any(|b| matches!(b, b'/' | b'\\' | 0) || b < 0x20)
+}
+
 /// Cross-field rules the type shape can't express.
 fn validate(config: &IntlAiConfig) -> Result<()> {
+    if config.version > CONFIG_VERSION {
+        return Err(Error::Config(format!(
+            "config version {} exceeds supported {CONFIG_VERSION}",
+            config.version
+        )));
+    }
+    if config.targets.is_empty() {
+        return Err(Error::Config("targets must not be empty".into()));
+    }
+    if config.targets.iter().any(|t| t == &config.source) {
+        return Err(Error::Config(
+            "targets must not contain the source locale".into(),
+        ));
+    }
+    for id in std::iter::once(&config.source).chain(config.targets.iter()) {
+        if !valid_locale_id(id) {
+            return Err(Error::Config(format!(
+                "invalid locale id '{id}' (used as a filename; no path separators or '..')"
+            )));
+        }
+    }
     match &config.provider {
         ProviderConfig::Replay(_) => {}
         ProviderConfig::Http(h) => {
@@ -511,8 +604,9 @@ fn validate(config: &IntlAiConfig) -> Result<()> {
                 ));
             }
             if c.agent.is_some() && c.command.is_some() {
-                // `command` beats `agent` preset per plan 5.1.6 — allow but
-                // surface the override in `config validate` output later.
+                return Err(Error::Config(
+                    "provider: `agent` and `command` are mutually exclusive (keep one)".into(),
+                ));
             }
         }
     }
@@ -700,7 +794,7 @@ file = "cassette.json"
         write(
             dir.path(),
             "intl-ai.toml",
-            "locale_dir = \"${env:INTL_AI_TEST_DIR}\"\nsource = \"en\"\ntargets = []\nprovider = { kind = \"replay\", file = \"${env:MISSING:-fallback.json}\" }\n",
+            "locale_dir = \"${env:INTL_AI_TEST_DIR}\"\nsource = \"en\"\ntargets = [\"fr\"]\nprovider = { kind = \"replay\", file = \"${env:MISSING:-fallback.json}\" }\n",
         );
         let cfg = load(None, dir.path()).unwrap();
         assert_eq!(cfg.config.locale_dir, Path::new("from-env"));
@@ -720,7 +814,7 @@ file = "cassette.json"
         write(
             dir.path(),
             "intl-ai.toml",
-            "extends = \"./base.toml\"\nlocale_dir = \"l\"\nsource = \"en\"\ntargets = []\nprovider = { kind = \"replay\", file = \"c\" }\n",
+            "extends = \"./base.toml\"\nlocale_dir = \"l\"\nsource = \"en\"\ntargets = [\"fr\"]\nprovider = { kind = \"replay\", file = \"c\" }\n",
         );
         let cfg = load(None, dir.path()).unwrap();
         assert_eq!(cfg.config.source, "en");

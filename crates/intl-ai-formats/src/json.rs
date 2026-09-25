@@ -40,7 +40,10 @@ pub fn write_atomic(path: &Path, bytes: &[u8]) -> Result<(), FormatError> {
             source,
         })?;
     }
-    let tmp = path.with_extension("tmp-intl-ai");
+    // Unique tmp per process: two concurrent writers must not share a
+    // staging file (the per-locale ShardLock serializes shard writers;
+    // locale files still get the last-writer-wins rename either way).
+    let tmp = path.with_extension(format!("tmp-intl-ai-{}", std::process::id()));
     fs::write(&tmp, bytes).map_err(|source| FormatError::Write {
         path: tmp.clone(),
         source,
