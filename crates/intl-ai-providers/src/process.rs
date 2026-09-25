@@ -95,7 +95,7 @@ pub fn run(spec: &RunSpec) -> Result<String> {
             out_thread.join().ok();
             err_thread.join().ok();
             return Err(Error::transport(
-                ErrorType::Unknown,
+                ErrorType::OutputTruncated,
                 format!(
                     "command transport: {} stdout exceeded {} bytes",
                     spec.command, spec.max_stdout
@@ -269,7 +269,7 @@ mod tests {
         assert!(matches!(
             err,
             Error::Transport {
-                kind: ErrorType::Unknown,
+                kind: ErrorType::OutputTruncated,
                 ..
             }
         ));

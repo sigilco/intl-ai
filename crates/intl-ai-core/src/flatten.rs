@@ -12,6 +12,20 @@ pub fn flatten(value: &Value) -> FlatMap {
     out
 }
 
+/// Leaves the JSON tree has that `flatten` cannot represent (ghost
+/// keys): empty objects and dotted-path collisions where a later leaf
+/// overwrites an earlier one. Nonzero means flattening lost data.
+pub fn dropped_leaf_count(value: &Value) -> usize {
+    leaf_count(value).saturating_sub(flatten(value).len())
+}
+
+fn leaf_count(value: &Value) -> usize {
+    match value {
+        Value::Object(map) if !map.is_empty() => map.values().map(leaf_count).sum(),
+        _ => 1,
+    }
+}
+
 fn walk(value: &Value, prefix: &str, out: &mut FlatMap) {
     match value {
         Value::Object(map) => {

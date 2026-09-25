@@ -36,9 +36,17 @@ pub struct Entry {
     pub updated_at: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub quality: Option<toml::Value>,
+    /// Tombstone: the key is deliberately untranslated. `fill` never
+    /// refills it and `check` doesn't report it missing (mark --absent).
+    #[serde(default, skip_serializing_if = "is_false")]
+    pub absent: bool,
     /// Unknown fields from newer binaries round-trip verbatim.
     #[serde(flatten)]
     pub extra: BTreeMap<String, toml::Value>,
+}
+
+fn is_false(b: &bool) -> bool {
+    !*b
 }
 
 #[derive(Debug, Clone, Default, Serialize)]

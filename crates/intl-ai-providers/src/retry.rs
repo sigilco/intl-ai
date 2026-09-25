@@ -1,8 +1,15 @@
-//! Shared retry policy (plan 5.1.10): every error class is retried,
-//! including 401/403 — the policy is "attempt cap, no backoff", identical
-//! for HTTP and command transports.
+//! Shared retry policy: every error class is retried EXCEPT auth
+//! failures (a bad key never succeeds), identical for HTTP and command
+//! transports. Rate limits back off exponentially and honor a
+//! server-supplied Retry-After hint when present (plan 5.1.10/M9).
 
 use intl_ai_core::error::{Error, ErrorType, Result};
+use std::time::Duration;
+
+/// Exponential backoff for rate limits: 250ms << attempt, capped. A
+/// server Retry-After overrides the computed delay upward.
+const BACKOFF_BASE: Duration = Duration::from_millis(250);
+const BACKOFF_CAP: Duration = Duration::from_secs(30);
 
 /// Runs `attempt` up to `max_retries` times, returning the last error.
 /// The attempt includes fetching AND parsing — parse errors consume
@@ -25,14 +32,36 @@ where
                     kind_name(&e),
                     e
                 );
-                if is_last {
+                if is_last || !e.retryable() {
                     return Err(e);
+                }
+                let delay = retry_delay(i, &e);
+                if !delay.is_zero() {
+                    std::thread::sleep(delay);
                 }
                 last = Some(e);
             }
         }
     }
     Err(last.unwrap_or_else(|| Error::transport(ErrorType::Unknown, "no attempts")))
+}
+
+/// Only rate limits sleep between attempts: exponential backoff, raised
+/// to the server's Retry-After when it asks for longer. Every other
+/// error class retries immediately (unchanged W1 policy).
+fn retry_delay(attempt_index: u32, e: &Error) -> Duration {
+    match e {
+        Error::Transport {
+            kind: ErrorType::RateLimit,
+            ..
+        } => {
+            let backoff = BACKOFF_BASE
+                .saturating_mul(1u32 << attempt_index.min(7))
+                .min(BACKOFF_CAP);
+            e.retry_after().unwrap_or_default().max(backoff)
+        }
+        _ => Duration::ZERO,
+    }
 }
 
 fn kind_name(e: &Error) -> &'static str {
@@ -50,6 +79,7 @@ fn kind_name(e: &Error) -> &'static str {
             ErrorType::Config => "config",
             ErrorType::Lockfile => "lockfile",
             ErrorType::Io => "io",
+            ErrorType::Auth => "auth",
             ErrorType::Unknown => "unknown",
         },
         _ => "other",
@@ -103,5 +133,38 @@ mod tests {
             Err::<String, _>(Error::transport(ErrorType::Http, "x"))
         });
         assert_eq!(*calls.lock().unwrap(), 1);
+    }
+
+    #[test]
+    fn auth_errors_are_not_retried() {
+        let calls = Mutex::new(0);
+        let err = attempt_with_retries(5, || {
+            *calls.lock().unwrap() += 1;
+            Err::<String, _>(Error::transport(ErrorType::Auth, "401 bad key"))
+        })
+        .unwrap_err();
+        assert!(matches!(
+            err,
+            Error::Transport {
+                kind: ErrorType::Auth,
+                ..
+            }
+        ));
+        assert_eq!(*calls.lock().unwrap(), 1);
+    }
+
+    #[test]
+    fn retry_after_hint_raises_the_delay() {
+        let e =
+            Error::transport(ErrorType::RateLimit, "429").with_retry_after(Duration::from_secs(5));
+        assert_eq!(retry_delay(0, &e), Duration::from_secs(5));
+
+        // Backoff grows: attempt 2 -> 1s floor.
+        let e = Error::transport(ErrorType::RateLimit, "429");
+        assert_eq!(retry_delay(2, &e), Duration::from_secs(1));
+
+        // Non-rate-limit errors never sleep.
+        let e = Error::transport(ErrorType::Http, "500");
+        assert_eq!(retry_delay(0, &e), Duration::ZERO);
     }
 }

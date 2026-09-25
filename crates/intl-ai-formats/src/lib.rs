@@ -84,17 +84,23 @@ pub fn read(path: &Path) -> Result<Option<Value>, FormatError> {
     }
 }
 
-/// Dispatching write: format follows the extension on `path`.
+/// Dispatching write: format follows the extension on `path`. Skips the
+/// write entirely when the serialized bytes already match the file —
+/// unchanged locale files keep their mtime and trigger no watchers (M2).
 pub fn write(path: &Path, value: &Value) -> Result<(), FormatError> {
-    match path
+    let body = match path
         .extension()
         .and_then(|e| e.to_str())
         .and_then(FileFormat::for_extension)
         .unwrap_or_default()
     {
-        FileFormat::Json => json::write(path, value),
-        FileFormat::Yaml => yaml::write(path, value),
+        FileFormat::Json => json::serialize(value),
+        FileFormat::Yaml => yaml::serialize(path, value)?,
+    };
+    if std::fs::read(path).ok().as_deref() == Some(body.as_slice()) {
+        return Ok(());
     }
+    json::write_atomic(path, &body)
 }
 
 #[cfg(test)]

@@ -28,12 +28,19 @@ pub fn read(path: &Path) -> Result<Option<Value>, FormatError> {
     }
 }
 
+/// Canonical YAML bytes. Split from `write` so callers can
+/// byte-compare before touching disk.
+pub fn serialize(path: &Path, value: &Value) -> Result<Vec<u8>, FormatError> {
+    Ok(serde_yaml_ng::to_string(value)
+        .map_err(|e| FormatError::ParseYaml {
+            path: path.to_path_buf(),
+            source: e,
+        })?
+        .into_bytes())
+}
+
 /// Writes YAML via atomic tmp+rename. serde_yaml_ng emits plain block
 /// mappings with stable insertion order for our ordered Value tree.
 pub fn write(path: &Path, value: &Value) -> Result<(), FormatError> {
-    let body = serde_yaml_ng::to_string(value).map_err(|e| FormatError::ParseYaml {
-        path: path.to_path_buf(),
-        source: e,
-    })?;
-    write_atomic(path, body.as_bytes())
+    write_atomic(path, &serialize(path, value)?)
 }

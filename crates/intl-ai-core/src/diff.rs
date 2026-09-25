@@ -62,7 +62,8 @@ pub struct LocaleDiff {
     pub stale: Vec<String>,
     pub modified: Vec<String>,
     pub extra: Vec<String>,
-    pub unreviewed: usize,
+    /// Keys needing a human review pass (M4: the list, not just a count).
+    pub unreviewed: Vec<String>,
     /// Rule-level violations from configured checks (`[[checks]]`).
     pub invalid: Vec<CheckFinding>,
 }
@@ -100,7 +101,8 @@ pub fn diff(
 ) -> LocaleDiff {
     let mut d = LocaleDiff::default();
     for key in source.keys() {
-        if !target.contains_key(key) {
+        // Absent tombstones are deliberately untranslated, not missing.
+        if !target.contains_key(key) && !shard.entries.get(key).is_some_and(|e| e.absent) {
             d.missing.push(key.clone());
         }
     }
@@ -110,6 +112,10 @@ pub fn diff(
         }
     }
     for (key, entry) in &shard.entries {
+        // Tombstones carry no review state; every bucket below skips them.
+        if entry.absent {
+            continue;
+        }
         let Some(src_hash) = source.get(key).and_then(|_| src_hashes.get(key)) else {
             continue;
         };
@@ -127,7 +133,7 @@ pub fn diff(
         let drifted_human =
             entry.origin == Origin::Human && target.get(key).is_some_and(|v| v != &entry.value);
         if target.contains_key(key) && (!entry.reviewed || drifted_human) {
-            d.unreviewed += 1;
+            d.unreviewed.push(key.clone());
         }
     }
     d
