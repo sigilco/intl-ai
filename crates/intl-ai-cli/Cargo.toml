@@ -6,6 +6,7 @@ license.workspace = true
 rust-version.workspace = true
 
 [dependencies]
+intl-ai-checks = { path = "../intl-ai-checks" }
 intl-ai-core = { path = "../intl-ai-core" }
 intl-ai-providers = { path = "../intl-ai-providers" }
 anyhow.workspace = true

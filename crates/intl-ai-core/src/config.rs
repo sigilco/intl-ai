@@ -52,6 +52,45 @@ pub struct IntlAiConfig {
     /// file's own extension always wins over this preference).
     #[serde(default)]
     pub format: Option<intl_ai_formats::FileFormat>,
+    /// Check entries (`[[checks]]`): builtins by `id`, declarative YAML
+    /// specs by `spec`, external checkers by `exec` (v1 JSONL protocol).
+    #[serde(default)]
+    pub checks: Vec<CheckEntry>,
+}
+
+/// One `[[checks]]` entry: exactly one of `id`, `spec`, `exec`.
+#[derive(Debug, Clone, Deserialize, serde::Serialize, schemars::JsonSchema)]
+#[serde(deny_unknown_fields)]
+pub struct CheckEntry {
+    /// Builtin check id: `icu`, `placeholder-parity`, `dialect:<locale>`,
+    /// `judge`.
+    pub id: Option<String>,
+    /// Declarative YAML check spec, resolved against the config file's
+    /// directory.
+    pub spec: Option<PathBuf>,
+    /// Exec check command (v1 JSONL protocol: one request line, one
+    /// response line). Root config only, never via `extends` (same
+    /// boundary as provider.command).
+    pub exec: Option<String>,
+    pub args: Option<Vec<String>>,
+    /// Exec working directory, resolved against the config file's
+    /// directory.
+    pub cwd: Option<PathBuf>,
+    /// Exec wall-clock budget (default 60_000 ms).
+    pub timeout_ms: Option<u64>,
+    /// Exec buffered stdout cap (default 1 MiB).
+    pub max_stdout_bytes: Option<u64>,
+}
+
+impl CheckEntry {
+    /// Human label for errors and reports.
+    pub fn label(&self) -> String {
+        self.id
+            .clone()
+            .or_else(|| self.spec.as_ref().map(|p| p.display().to_string()))
+            .or_else(|| self.exec.clone())
+            .unwrap_or_else(|| "<empty check entry>".into())
+    }
 }
 
 #[derive(Debug, Clone, Copy, Deserialize, serde::Serialize, schemars::JsonSchema)]
@@ -389,6 +428,18 @@ fn walk_extends(
                 )));
             }
         }
+        if let Ok(checks) = cfg.get::<Value>("checks") {
+            let has_exec = checks.as_array().is_some_and(|arr| {
+                arr.iter()
+                    .any(|c| c.get("exec").is_some_and(|e| !e.is_null()))
+            });
+            if has_exec {
+                return Err(Error::Config(format!(
+                    "{}: [[checks]] exec is only allowed in the root config file, not via extends",
+                    path.display()
+                )));
+            }
+        }
     }
     // config-rs errors on absent keys even for Option<T>; treat absent as None.
     let extends: Option<StringOrList> = cfg.get::<Option<StringOrList>>("extends").ok().flatten();
@@ -473,6 +524,33 @@ fn validate(config: &IntlAiConfig) -> Result<()> {
     if let Some(b) = config.batch_size {
         if b == 0 {
             return Err(Error::Config("batch_size must be >= 1".into()));
+        }
+    }
+    for (i, entry) in config.checks.iter().enumerate() {
+        let kinds = [
+            entry.id.is_some(),
+            entry.spec.is_some(),
+            entry.exec.is_some(),
+        ]
+        .iter()
+        .filter(|p| **p)
+        .count();
+        if kinds != 1 {
+            return Err(Error::Config(format!(
+                "checks[{i}]: exactly one of `id`, `spec`, `exec` is required"
+            )));
+        }
+        if let Some(cmd) = &entry.exec {
+            if cmd.trim().is_empty() {
+                return Err(Error::Config(format!(
+                    "checks[{i}]: exec must not be empty"
+                )));
+            }
+        }
+        if let Some(id) = &entry.id {
+            if id.trim().is_empty() {
+                return Err(Error::Config(format!("checks[{i}]: id must not be empty")));
+            }
         }
     }
     Ok(())
