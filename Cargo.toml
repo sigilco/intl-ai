@@ -21,3 +21,5 @@ sha1 = "0.10"
 tempfile = "3"
 thiserror = "2"
 toml = "0.9"
+ureq = { version = "3", default-features = false, features = ["rustls", "json", "charset"] }
+libc = "0.2"

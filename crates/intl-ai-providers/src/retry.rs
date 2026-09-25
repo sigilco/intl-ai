@@ -1,0 +1,107 @@
+//! Shared retry policy (plan 5.1.10): every error class is retried,
+//! including 401/403 — the policy is "attempt cap, no backoff", identical
+//! for HTTP and command transports.
+
+use intl_ai_core::error::{Error, ErrorType, Result};
+
+/// Runs `attempt` up to `max_retries` times, returning the last error.
+/// The attempt includes fetching AND parsing — parse errors consume
+/// retry budget too (TS parity: every class retried).
+pub fn attempt_with_retries<F, T>(max_retries: u32, mut attempt: F) -> Result<T>
+where
+    F: FnMut() -> Result<T>,
+{
+    let tries = max_retries.max(1);
+    let mut last: Option<Error> = None;
+    for i in 0..tries {
+        match attempt() {
+            Ok(out) => return Ok(out),
+            Err(e) => {
+                let is_last = i + 1 == tries;
+                eprintln!(
+                    "intl-ai: attempt {}/{} failed ({}): {}",
+                    i + 1,
+                    tries,
+                    kind_name(&e),
+                    e
+                );
+                if is_last {
+                    return Err(e);
+                }
+                last = Some(e);
+            }
+        }
+    }
+    Err(last.unwrap_or_else(|| Error::transport(ErrorType::Unknown, "no attempts")))
+}
+
+fn kind_name(e: &Error) -> &'static str {
+    match e {
+        Error::Transport { kind, .. } => match kind {
+            ErrorType::RateLimit => "rate_limit",
+            ErrorType::Http => "http",
+            ErrorType::SpawnFailure => "spawn_failure",
+            ErrorType::Timeout => "timeout",
+            ErrorType::ProcessExit => "process_exit",
+            ErrorType::ParseError => "parse_error",
+            ErrorType::OutputTruncated => "output_truncated",
+            ErrorType::Validation => "validation",
+            ErrorType::Empty => "empty",
+            ErrorType::Config => "config",
+            ErrorType::Lockfile => "lockfile",
+            ErrorType::Io => "io",
+            ErrorType::Unknown => "unknown",
+        },
+        _ => "other",
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::sync::Mutex;
+
+    #[test]
+    fn retries_all_classes_then_succeeds() {
+        let calls = Mutex::new(0);
+        let out = attempt_with_retries(3, || {
+            *calls.lock().unwrap() += 1;
+            if *calls.lock().unwrap() < 3 {
+                Err(Error::transport(ErrorType::RateLimit, "429"))
+            } else {
+                Ok("done".to_string())
+            }
+        })
+        .unwrap();
+        assert_eq!(out, "done");
+        assert_eq!(*calls.lock().unwrap(), 3);
+    }
+
+    #[test]
+    fn exhausted_returns_last() {
+        let calls = Mutex::new(0);
+        let err = attempt_with_retries(2, || {
+            *calls.lock().unwrap() += 1;
+            Err::<String, _>(Error::transport(ErrorType::Timeout, "t"))
+        })
+        .unwrap_err();
+        assert!(matches!(
+            err,
+            Error::Transport {
+                kind: ErrorType::Timeout,
+                ..
+            }
+        ));
+        assert_eq!(*calls.lock().unwrap(), 2);
+    }
+
+    #[test]
+    fn zero_retries_means_one_attempt() {
+        let calls = Mutex::new(0);
+        let _ = attempt_with_retries(0, || {
+            *calls.lock().unwrap() += 1;
+            Err::<String, _>(Error::transport(ErrorType::Http, "x"))
+        });
+        assert_eq!(*calls.lock().unwrap(), 1);
+    }
+}
