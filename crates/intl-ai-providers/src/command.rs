@@ -4,12 +4,17 @@
 
 use intl_ai_core::config::PromptVia;
 use intl_ai_core::error::{Error, ErrorType, Result};
-use intl_ai_core::transport::{TranslateRequest, TranslateResponse, Translated, Transport};
+use intl_ai_core::transport::{
+    JudgeRequest, Judgement, TranslateRequest, TranslateResponse, Translated, Transport,
+};
 use std::path::PathBuf;
 
 use crate::payload::{payload_or_self, strip_vt};
 use crate::process::{self, DEFAULT_STDOUT_CAP, DEFAULT_TIMEOUT, RunSpec};
-use crate::prompt::{parse_translations, system_prompt, user_prompt};
+use crate::prompt::{
+    ADVERSARIAL_SYSTEM_PROMPT, judge_user_prompt, parse_judgements, parse_translations,
+    system_prompt, user_prompt,
+};
 use crate::retry::attempt_with_retries;
 
 #[derive(Debug, Clone)]
@@ -68,6 +73,32 @@ impl Transport for CommandTransport {
                     .collect(),
                 model: self.spec.id.clone(),
             })
+        })
+    }
+
+    fn judge(&self, req: &JudgeRequest) -> Result<Vec<Judgement>> {
+        let user = judge_user_prompt(&req.items, req.locale_instruction.as_deref());
+        let framed = format!("{ADVERSARIAL_SYSTEM_PROMPT}\n\n---\n\n{user}");
+        attempt_with_retries(self.spec.max_retries, || {
+            let content = self.attempt(&framed)?;
+            let cleaned = strip_vt(&content);
+            let payload = payload_or_self(&cleaned);
+            let parsed = parse_judgements(&payload).map_err(|e| {
+                Error::transport(
+                    ErrorType::ParseError,
+                    format!("command transport: {}: judge: {e}", self.spec.id),
+                )
+            })?;
+            Ok(parsed
+                .judgements
+                .into_iter()
+                .map(|r| Judgement {
+                    key: r.key,
+                    score: r.score,
+                    reason: r.reason,
+                    errors: r.errors,
+                })
+                .collect())
         })
     }
 }

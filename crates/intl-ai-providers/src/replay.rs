@@ -1,5 +1,7 @@
 use intl_ai_core::error::{Error, ErrorType, Result};
-use intl_ai_core::transport::{TranslateRequest, TranslateResponse, Translated, Transport};
+use intl_ai_core::transport::{
+    JudgeRequest, Judgement, TranslateRequest, TranslateResponse, Translated, Transport,
+};
 use std::collections::BTreeMap;
 use std::fs;
 use std::path::Path;
@@ -66,5 +68,29 @@ impl Transport for ReplayTransport {
             translations,
             model: "replay".into(),
         })
+    }
+
+    /// Deterministic judge: every recorded pair scores clean so the golden
+    /// path can exercise the `judge` check without a provider. A cassette
+    /// may carry a `"<locale>.judge"` table `{ "<key>": score }` to
+    /// simulate low scores in tests.
+    fn judge(&self, req: &JudgeRequest) -> Result<Vec<Judgement>> {
+        let scores = req
+            .items
+            .first()
+            .and_then(|i| self.cassettes.get(&format!("{}.judge", i.locale)));
+        Ok(req
+            .items
+            .iter()
+            .map(|i| Judgement {
+                key: i.key.clone(),
+                score: scores
+                    .and_then(|t| t.get(&i.key))
+                    .and_then(|s| s.parse::<f64>().ok())
+                    .unwrap_or(1.0),
+                reason: None,
+                errors: Vec::new(),
+            })
+            .collect())
     }
 }

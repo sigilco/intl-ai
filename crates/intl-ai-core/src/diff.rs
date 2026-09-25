@@ -3,6 +3,19 @@ use crate::lockfile::{Origin, Shard};
 use serde::{Deserialize, Serialize};
 use std::collections::{BTreeMap, HashSet};
 
+/// One rule-level violation found by a `Check` (ICU syntax, placeholder
+/// parity, dialect, spec rule, exec check, judge). Distinct from the
+/// structural `FindingKind` buckets: an `invalid` finding always carries the
+/// check that produced it.
+#[derive(Debug, Clone, Serialize)]
+pub struct CheckFinding {
+    pub key: String,
+    /// Check id that reported the violation (`icu`, `dialect:en-US`, spec
+    /// id, exec check name).
+    pub check: String,
+    pub message: String,
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize, schemars::JsonSchema)]
 #[serde(rename_all = "snake_case")]
 pub enum FindingKind {
@@ -50,6 +63,8 @@ pub struct LocaleDiff {
     pub modified: Vec<String>,
     pub extra: Vec<String>,
     pub unreviewed: usize,
+    /// Rule-level violations from configured checks (`[[checks]]`).
+    pub invalid: Vec<CheckFinding>,
 }
 
 /// Positional human-ownership rule (plan 5.6): the file value differing from

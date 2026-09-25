@@ -1,0 +1,18 @@
+[package]
+name = "intl-ai-checks"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+intl-ai-core = { path = "../intl-ai-core" }
+intl-ai-providers = { path = "../intl-ai-providers" }
+formatjs_icu_messageformat_parser = "0.3"
+regex = "1"
+serde = { workspace = true, features = ["derive"] }
+serde_json.workspace = true
+serde_yaml_ng.workspace = true
+
+[target.'cfg(unix)'.dependencies]
+libc.workspace = true

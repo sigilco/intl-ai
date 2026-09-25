@@ -54,6 +54,20 @@ file = "cassette.json"
 
 [check]
 fail_on = ["stale", "invalid"]
+
+# Checks run per target value. Builtins: icu | placeholder-parity |
+# dialect:<locale> | judge. Or point `spec` at a YAML rules file, or
+# `exec` at a command speaking the v1 JSONL protocol:
+#
+#   [[checks]]
+#   id = "icu"
+#
+#   [[checks]]
+#   spec = "checks/house-style.yaml"
+#
+#   [[checks]]
+#   exec = "python3"
+#   args = ["checks/my_check.py"]
 "#
     );
     fs::write(&path, body)?;
