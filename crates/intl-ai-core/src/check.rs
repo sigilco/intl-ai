@@ -1,7 +1,9 @@
+use crate::check_cache::{BATCH_KEY, CheckCache};
 use crate::config::ResolvedConfig;
 use crate::diff::{CheckFinding, FindingKind, LocaleDiff, diff, effective_origin};
 use crate::error::Result;
 use crate::flatten::flatten;
+use crate::hash::fingerprint;
 use crate::lockfile::{Origin, load_shard};
 use crate::selector::KeySelector;
 use crate::stat_cache::StatCache;
@@ -45,6 +47,16 @@ pub struct CheckCtx<'a> {
     pub locale_instruction: Option<&'a str>,
 }
 
+/// How a check consumes its inputs — drives the incremental cache
+/// (part B). PerKey fingerprints each item separately; WholeBatch
+/// fingerprints the whole item list once (exec sees it as a single
+/// request, so one changed key re-runs all of them).
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum CheckGranularity {
+    PerKey,
+    WholeBatch,
+}
+
 /// A check rule or external checker. Implementations live in
 /// `intl-ai-checks`; the trait sits in core so `check()` can run them without
 /// knowing the impls. `run` gets the locale's full item batch in one call
@@ -59,6 +71,14 @@ pub trait Check {
     fn needs_transport(&self) -> bool {
         false
     }
+    fn granularity(&self) -> CheckGranularity {
+        CheckGranularity::PerKey
+    }
+    /// Ambient inputs beyond (key, source, target) that change a check's
+    /// output — wordlist identities, thresholds, the exec command line.
+    /// Folded into the cache fingerprint; required so every impl makes a
+    /// deliberate decision about what its results depend on.
+    fn cache_ctx(&self) -> BTreeMap<String, String>;
     fn run(&self, ctx: &CheckCtx, items: &[CheckItem]) -> Result<Vec<CheckFinding>>;
 }
 
@@ -115,6 +135,13 @@ pub fn check(
     } else {
         StatCache::load(&cfg.cache_path())
     };
+    // `[check] cache = false` or --no-cache disables the findings cache.
+    let check_cache_enabled = !opts.no_cache && cfg.config.check.cache;
+    let mut check_cache = if check_cache_enabled {
+        CheckCache::load(&cfg.check_cache_path())
+    } else {
+        CheckCache::default()
+    };
     let src_hashes = cache.source_hashes(&source_path, &source);
 
     let locales: Vec<String> = match &opts.locales {
@@ -164,11 +191,19 @@ pub fn check(
             transport,
             locale_instruction: instruction.as_deref(),
         };
-        for c in checks {
-            match c.run(&ctx, &items) {
-                Ok(findings) => d.invalid.extend(findings),
-                Err(e) => report.errors.push(format!("{locale}/{}: {e}", c.id())),
-            }
+        run_checks(
+            &locale,
+            checks,
+            &ctx,
+            &items,
+            &mut check_cache,
+            &mut d,
+            &mut report,
+        );
+        if opts.selector.is_any() {
+            let live: std::collections::BTreeSet<String> =
+                items.iter().map(|i| i.key.clone()).collect();
+            check_cache.prune_locale(&locale, &live);
         }
 
         if let Some(origin) = opts.origin_filter {
@@ -253,5 +288,106 @@ pub fn check(
     if !opts.no_cache {
         cache.save(&cfg.cache_path());
     }
+    if check_cache_enabled {
+        check_cache.save(&cfg.check_cache_path());
+    }
     Ok(report)
+}
+
+/// Run `checks` over `items`, replaying from `cache` where the
+/// fingerprint of a check's inputs still matches. Cache misses run and
+/// store; errors are never cached (a flaky check retries next run).
+fn run_checks(
+    locale: &str,
+    checks: &[Box<dyn Check>],
+    ctx: &CheckCtx,
+    items: &[CheckItem],
+    cache: &mut CheckCache,
+    d: &mut LocaleDiff,
+    report: &mut CheckReport,
+) {
+    for c in checks {
+        // Ambient inputs the check itself declares (wordlist, command
+        // line, threshold) plus the locale pair it ran under.
+        let mut ambient: Vec<String> = vec![
+            ctx.source_locale.to_string(),
+            ctx.target_locale.to_string(),
+            ctx.locale_instruction.unwrap_or_default().to_string(),
+        ];
+        for (k, v) in c.cache_ctx() {
+            ambient.push(k);
+            ambient.push(v);
+        }
+        let ambient_refs: Vec<&str> = ambient.iter().map(|s| s.as_str()).collect();
+
+        match c.granularity() {
+            CheckGranularity::WholeBatch => {
+                let mut parts = ambient_refs.clone();
+                for i in items {
+                    parts.extend([i.key.as_str(), i.source.as_deref().unwrap_or(""), &i.target]);
+                }
+                let fp = fingerprint(&parts);
+                if let Some(hit) = cache.get(locale, BATCH_KEY, c.id())
+                    && hit.fingerprint == fp
+                {
+                    d.invalid
+                        .extend(hit.findings.iter().cloned().map(mark_cached));
+                    continue;
+                }
+                match c.run(ctx, items) {
+                    Ok(findings) => {
+                        cache.put(locale, BATCH_KEY, c.id(), fp, findings.clone());
+                        d.invalid.extend(findings);
+                    }
+                    Err(e) => report.errors.push(format!("{locale}/{}: {e}", c.id())),
+                }
+            }
+            CheckGranularity::PerKey => {
+                let mut run_items: Vec<CheckItem> = Vec::new();
+                let mut run_fps: Vec<(String, String)> = Vec::new();
+                for item in items {
+                    let mut parts = ambient_refs.clone();
+                    parts.extend([
+                        item.key.as_str(),
+                        item.source.as_deref().unwrap_or(""),
+                        &item.target,
+                    ]);
+                    let fp = fingerprint(&parts);
+                    if let Some(hit) = cache.get(locale, &item.key, c.id())
+                        && hit.fingerprint == fp
+                    {
+                        d.invalid
+                            .extend(hit.findings.iter().cloned().map(mark_cached));
+                    } else {
+                        run_fps.push((item.key.clone(), fp));
+                        run_items.push(item.clone());
+                    }
+                }
+                if run_items.is_empty() {
+                    continue;
+                }
+                match c.run(ctx, &run_items) {
+                    Ok(findings) => {
+                        let mut per_key: BTreeMap<String, Vec<CheckFinding>> = BTreeMap::new();
+                        for f in findings {
+                            per_key.entry(f.key.clone()).or_default().push(f);
+                        }
+                        for f in per_key.values().flatten() {
+                            d.invalid.push(f.clone());
+                        }
+                        for (key, fp) in run_fps {
+                            let fs = per_key.get(&key).cloned().unwrap_or_default();
+                            cache.put(locale, &key, c.id(), fp, fs);
+                        }
+                    }
+                    Err(e) => report.errors.push(format!("{locale}/{}: {e}", c.id())),
+                }
+            }
+        }
+    }
+}
+
+fn mark_cached(mut f: CheckFinding) -> CheckFinding {
+    f.cached = true;
+    f
 }

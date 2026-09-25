@@ -149,6 +149,10 @@ impl Check for DialectCheck {
         &self.id
     }
 
+    fn cache_ctx(&self) -> BTreeMap<String, String> {
+        BTreeMap::from([("variant".into(), format!("{:?}", self.variant))])
+    }
+
     fn run(&self, _ctx: &CheckCtx, items: &[CheckItem]) -> Result<Vec<CheckFinding>> {
         let mut out = Vec::new();
         for item in items {
@@ -158,6 +162,7 @@ impl Check for DialectCheck {
                     key: item.key.clone(),
                     check: self.id.clone(),
                     message: format!("'{}' should be '{}'", hit.term, hit.suggestion),
+                    ..Default::default()
                 });
             }
         }
