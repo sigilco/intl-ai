@@ -91,6 +91,14 @@ struct FillArgs {
     /// Compute and report without writing locale files or lockfile shards.
     #[arg(long)]
     dry_run: bool,
+    /// Shift-left gate: run these checks inside fill before adopting
+    /// values (overrides [fill] validate). Feedback-eligible ids only:
+    /// icu, placeholder-parity, judge.
+    #[arg(long, value_delimiter = ',', conflicts_with = "no_validate")]
+    validate: Vec<String>,
+    /// Disable the configured [fill] validate gate for this run.
+    #[arg(long)]
+    no_validate: bool,
     /// Output format for the run report.
     #[arg(long, value_enum, default_value_t = OutFormat::Human)]
     format: OutFormat,

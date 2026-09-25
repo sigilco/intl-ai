@@ -9,10 +9,18 @@ use intl_ai_core::error::Result;
 use std::collections::{BTreeMap, BTreeSet};
 
 /// Parse a message as ICU MF1. Error text is the parser's own.
+/// `requires_other_clause` matches FormatJS runtime behavior: a plural
+/// or select without `other` is a runtime crash, so it is a parse error.
 pub fn parse_message(message: &str) -> std::result::Result<Vec<MessageFormatElement>, String> {
-    Parser::new(message, ParserOptions::default())
-        .parse()
-        .map_err(|e| format!("{e:?}"))
+    Parser::new(
+        message,
+        ParserOptions {
+            requires_other_clause: true,
+            ..Default::default()
+        },
+    )
+    .parse()
+    .map_err(|e| format!("{e:?}"))
 }
 
 /// Argument names a message binds. Port of the TS icu processor's
@@ -70,6 +78,12 @@ impl Check for IcuCheck {
         "icu"
     }
 
+    /// Syntax findings are mechanically actionable: the model can fix
+    /// broken braces or a missing `other` from the error text.
+    fn supports_feedback(&self) -> bool {
+        true
+    }
+
     fn cache_ctx(&self) -> BTreeMap<String, String> {
         BTreeMap::new()
     }
@@ -103,10 +117,21 @@ impl Check for PlaceholderParity {
         BTreeMap::new()
     }
 
+    /// Token-level findings name exactly which arguments to add or drop.
+    fn supports_feedback(&self) -> bool {
+        true
+    }
+
     fn run(&self, _ctx: &CheckCtx, items: &[CheckItem]) -> Result<Vec<CheckFinding>> {
         let mut out = Vec::new();
         for item in items {
             let Some(source) = &item.source else { continue };
+            // An unparseable source yields no tokens to compare against;
+            // flagging the target's real placeholders as "extra" would
+            // instruct a refill to strip them.
+            if parse_message(source).is_err() {
+                continue;
+            }
             let src: BTreeSet<String> = extract_tokens(source).into_iter().collect();
             let tgt: BTreeSet<String> = extract_tokens(&item.target).into_iter().collect();
             let missing: Vec<String> = src.difference(&tgt).cloned().collect();
