@@ -46,9 +46,18 @@ impl Transport for ReplayTransport {
                 format!("replay: no cassette for locale {}", req.target_locale),
             )
         })?;
+        // Corrective rounds (requests carrying reviewer feedback) consult
+        // an optional `"<locale>.retry"` table keyed by *key*, so fixtures
+        // can model a provider healing or repeating a bad value.
+        let retry = (!req.feedback.is_empty())
+            .then(|| self.cassettes.get(&format!("{}.retry", req.target_locale)))
+            .flatten();
         let mut translations = Vec::with_capacity(req.entries.len());
         for e in &req.entries {
-            match table.get(&e.source) {
+            let value = retry
+                .and_then(|t| t.get(&e.key))
+                .or_else(|| table.get(&e.source));
+            match value {
                 Some(v) => translations.push(Translated {
                     key: e.key.clone(),
                     value: v.clone(),

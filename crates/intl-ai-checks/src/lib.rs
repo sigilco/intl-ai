@@ -57,6 +57,33 @@ pub fn build_entry(cfg: &ResolvedConfig, entry: &CheckEntry) -> Result<Box<dyn C
     )))
 }
 
+/// Resolve a `fill.validate` name to a gate-eligible check: a configured
+/// `[[checks]]` entry whose id matches wins, else a builtin id. Entries
+/// that cannot serve as reviewer notes (no `supports_feedback`) are
+/// rejected here so `config validate` and `fill` reject them alike.
+pub fn gate_check(cfg: &ResolvedConfig, name: &str) -> Result<Box<dyn Check>> {
+    let mut found = None;
+    for entry in &cfg.config.checks {
+        let c = build_entry(cfg, entry)?;
+        if c.id() == name {
+            found = Some(c);
+            break;
+        }
+    }
+    let c = match found {
+        Some(c) => c,
+        None => builtin(name)?,
+    };
+    if !c.supports_feedback() {
+        return Err(Error::Config(format!(
+            "fill.validate: check '{name}' cannot gate fill — its findings \
+             are not mechanically actionable (eligible: icu, \
+             placeholder-parity, judge)"
+        )));
+    }
+    Ok(c)
+}
+
 /// Resolve a builtin id (`icu`, `placeholder-parity`, `judge`,
 /// `dialect:<locale>`).
 pub fn builtin(id: &str) -> Result<Box<dyn Check>> {
