@@ -1,4 +1,11 @@
-//! Provider transports. W0 ships `replay` only; W1 adds OpenAI-compatible
-//! HTTP and the command transport (agent presets).
+//! Provider transports: `replay` (deterministic cassettes), `http`
+//! (OpenAI-compatible chat completions), and `command` (agent CLIs).
 
+pub mod command;
+pub mod http;
+pub mod payload;
+pub mod presets;
+pub mod process;
+pub mod prompt;
 pub mod replay;
+pub mod retry;

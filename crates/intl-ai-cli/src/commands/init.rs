@@ -37,8 +37,17 @@ locale_dir = "{locale_dir}"
 source = "{source}"
 targets = [{targets_toml}]
 
-# Provider: W0 supports replay (deterministic cassettes). W1 adds
-# http (OpenAI-compatible) and command (agent CLI) providers.
+# Provider: pick one arm. `replay` replays a cassette (deterministic,
+# good for tests). `http` is the OpenAI-compatible surface:
+#
+#   [provider]
+#   kind = "http"
+#   model = "gpt-5-mini"
+#   api_key = "${{env:OPENAI_API_KEY}}"
+#
+# `command` runs a local agent CLI (keyless): `agent = "claude-code"`
+# presets claude-code | opencode | codex | crush | gemini, or a
+# free-form `command`/`args` in this file.
 [provider]
 kind = "replay"
 file = "cassette.json"

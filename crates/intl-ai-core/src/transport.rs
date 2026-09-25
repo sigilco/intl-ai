@@ -7,11 +7,20 @@ pub struct TranslationEntry {
     pub source: String,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Default)]
 pub struct TranslateRequest {
     pub source_locale: String,
     pub target_locale: String,
     pub entries: Vec<TranslationEntry>,
+    /// Fixed term -> translation pairs injected into the prompt.
+    pub glossary: std::collections::BTreeMap<String, String>,
+    /// Freeform style/dialect instruction resolved for the target locale.
+    pub locale_instruction: Option<String>,
+    /// Reviewer notes per key, injected when refilling a rejected entry.
+    /// Unused until the W2 quality loop lands.
+    pub feedback: std::collections::BTreeMap<String, String>,
+    /// Syntax hint for the prompt's placeholder contract (processor choice).
+    pub syntax_hint: Option<String>,
 }
 
 #[derive(Debug)]
