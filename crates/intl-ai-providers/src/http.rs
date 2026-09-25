@@ -4,16 +4,22 @@
 
 use intl_ai_core::config::HttpProvider;
 use intl_ai_core::error::{Error, ErrorType, Result};
-use intl_ai_core::transport::{TranslateRequest, TranslateResponse, Translated, Transport};
+use intl_ai_core::transport::{
+    JudgeRequest, Judgement, TranslateRequest, TranslateResponse, Translated, Transport,
+};
 use serde_json::{Map, Value, json};
 use std::time::Duration;
 
-use crate::prompt::{parse_translations, system_prompt, user_prompt};
+use crate::prompt::{
+    ADVERSARIAL_SYSTEM_PROMPT, judge_user_prompt, parse_judgements, parse_translations,
+    system_prompt, user_prompt,
+};
 use crate::retry::attempt_with_retries;
 
 const PER_ATTEMPT_TIMEOUT: Duration = Duration::from_secs(300);
 const DEFAULT_BASE_URL: &str = "https://api.openai.com/v1";
 const TEMPERATURE: f64 = 0.3;
+const JUDGE_TEMPERATURE: f64 = 0.0;
 
 /// Frozen response contract (plan 5.1.5).
 const TRANSLATIONS_SCHEMA: &str = r#"{
@@ -33,6 +39,29 @@ const TRANSLATIONS_SCHEMA: &str = r#"{
     }
   },
   "required": ["translations"],
+  "additionalProperties": false
+}"#;
+
+/// Judge response contract (plan 5.2).
+const JUDGEMENTS_SCHEMA: &str = r#"{
+  "type": "object",
+  "properties": {
+    "judgements": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "key": { "type": "string" },
+          "score": { "type": "number", "minimum": 0, "maximum": 1 },
+          "reason": { "type": "string" },
+          "errors": { "type": "array", "items": { "type": "string" } }
+        },
+        "required": ["key", "score"],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": ["judgements"],
   "additionalProperties": false
 }"#;
 
@@ -73,9 +102,15 @@ impl HttpTransport {
         self
     }
 
-    fn request_body(&self, system: &str, user: &str) -> Value {
-        let schema: Value =
-            serde_json::from_str(TRANSLATIONS_SCHEMA).expect("static schema parses");
+    fn request_body(
+        &self,
+        system: &str,
+        user: &str,
+        schema_name: &str,
+        schema_src: &str,
+        temperature: f64,
+    ) -> Value {
+        let schema: Value = serde_json::from_str(schema_src).expect("static schema parses");
         let mut body = json!({
             "model": self.model,
             "messages": [
@@ -84,9 +119,9 @@ impl HttpTransport {
             ],
             "response_format": {
                 "type": "json_schema",
-                "json_schema": { "name": "translations", "schema": schema }
+                "json_schema": { "name": schema_name, "schema": schema }
             },
-            "temperature": TEMPERATURE,
+            "temperature": temperature,
         });
         // modelParams spread last: user params win over our defaults
         // (plan 5.1.9), e.g. reasoning models overriding temperature.
@@ -96,14 +131,21 @@ impl HttpTransport {
         body
     }
 
-    fn attempt(&self, system: &str, user: &str) -> Result<String> {
+    fn attempt(
+        &self,
+        system: &str,
+        user: &str,
+        schema_name: &str,
+        schema_src: &str,
+        temperature: f64,
+    ) -> Result<String> {
         let url = format!("{}/chat/completions", self.base_url);
         let mut resp = self
             .agent
             .post(&url)
             .header("Content-Type", "application/json")
             .header("Authorization", &format!("Bearer {}", self.api_key))
-            .send_json(self.request_body(system, user))
+            .send_json(self.request_body(system, user, schema_name, schema_src, temperature))
             .map_err(|e| self.classify_transport_err(&e))?;
 
         let status = resp.status().as_u16();
@@ -184,7 +226,13 @@ impl Transport for HttpTransport {
         // Fetch + parse inside the attempt: parse_error and empty burn the
         // retry budget like transport errors (plan 5.1.10).
         attempt_with_retries(self.max_retries, || {
-            let content = self.attempt(&system, &user)?;
+            let content = self.attempt(
+                &system,
+                &user,
+                "translations",
+                TRANSLATIONS_SCHEMA,
+                TEMPERATURE,
+            )?;
             let parsed = parse_translations(&content).map_err(|e| {
                 Error::transport(
                     ErrorType::ParseError,
@@ -207,6 +255,38 @@ impl Transport for HttpTransport {
             })
         })
     }
+
+    fn judge(&self, req: &JudgeRequest) -> Result<Vec<Judgement>> {
+        let user = judge_user_prompt(&req.items, req.locale_instruction.as_deref());
+        attempt_with_retries(self.max_retries, || {
+            let content = self.attempt(
+                ADVERSARIAL_SYSTEM_PROMPT,
+                &user,
+                "judgements",
+                JUDGEMENTS_SCHEMA,
+                JUDGE_TEMPERATURE,
+            )?;
+            let parsed = parse_judgements(&content).map_err(|e| {
+                Error::transport(
+                    ErrorType::ParseError,
+                    format!(
+                        "openai: judge: {e} (content: {})",
+                        &content[..content.len().min(300)]
+                    ),
+                )
+            })?;
+            Ok(parsed
+                .judgements
+                .into_iter()
+                .map(|r| Judgement {
+                    key: r.key,
+                    score: r.score,
+                    reason: r.reason,
+                    errors: r.errors,
+                })
+                .collect())
+        })
+    }
 }
 
 #[cfg(test)]
@@ -224,7 +304,13 @@ mod tests {
             model_params: Some(Map::from_iter([("temperature".to_string(), json!(0.9))])),
         };
         let t = HttpTransport::new(&provider);
-        let body = t.request_body("SYS", "USR");
+        let body = t.request_body(
+            "SYS",
+            "USR",
+            "translations",
+            TRANSLATIONS_SCHEMA,
+            TEMPERATURE,
+        );
         assert_eq!(body["model"], "gpt-5");
         assert_eq!(body["messages"][0]["role"], "system");
         assert_eq!(body["messages"][0]["content"], "SYS");

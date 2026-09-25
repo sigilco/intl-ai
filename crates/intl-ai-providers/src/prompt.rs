@@ -1,13 +1,16 @@
 //! Frozen prompt contract (plan 5.1.5 — ported verbatim from the TS
 //! translator; wording is part of the external contract with models).
 
-use intl_ai_core::transport::TranslateRequest;
+use intl_ai_core::transport::{JudgeItem, TranslateRequest};
 use serde::Deserialize;
 
 pub const SYSTEM_PROMPT: &str = "You are a professional translation engine. You respond only with valid JSON matching the requested schema.";
 
 pub const DEFAULT_SYNTAX_HINT: &str =
     "Preserve any placeholders like {variable} exactly as they appear.";
+
+/// Verbatim from TS `services/fill/prompts.ts`.
+pub const ADVERSARIAL_SYSTEM_PROMPT: &str = "You are an adversarial translation quality reviewer. Your role is to find flaws in translations, not to be polite.\n\nFor each translation provided:\n- Compare against the source string for accuracy, fluency, terminology, style, and locale convention.\n- Specifically look for: meaning shifts, hallucinated content, omitted words, wrong formality, terminology that does not match a domain glossary, unnatural word order, wrong pluralization, and untranslated placeholders or variables.\n- Score from 0 to 1 where 1 is a publishable translation and 0 is unusable.\n- A translation is good when a native speaker would accept it without edits in context.\n- Do not be generous: assume issues exist and verify.\n\nRespond strictly with JSON matching the requested schema.";
 
 /// Response contract shared by both transports: providers answer
 /// `{ "translations": [{ "key": ..., "translated": ... }] }`.
@@ -82,6 +85,51 @@ pub fn user_prompt(req: &TranslateRequest) -> String {
 /// Parses `{"translations":[{key,translated}]}` — lenient on extra fields
 /// (models add `confidence`, `notes`, etc.) but strict on the contract keys.
 pub fn parse_translations(content: &str) -> serde_json::Result<TranslationsPayload> {
+    serde_json::from_str(content)
+}
+
+/// Judge user prompt, verbatim from TS `judgeBatch`'s `buildJudgePrompt`.
+pub fn judge_user_prompt(items: &[JudgeItem], locale_instruction: Option<&str>) -> String {
+    let entries_text = items
+        .iter()
+        .enumerate()
+        .map(|(i, c)| {
+            format!(
+                "{}. key=\"{}\" locale={}\n   source: {}\n   translation: {}",
+                i + 1,
+                c.key,
+                c.locale,
+                c.source,
+                c.translation
+            )
+        })
+        .collect::<Vec<_>>()
+        .join("\n\n");
+    let instruction_block = locale_instruction
+        .map(|i| format!("\n\nLocale style instruction: {i}"))
+        .unwrap_or_default();
+    format!(
+        "Evaluate each translation for accuracy, fluency, terminology, style, and locale convention. Be a strict adversarial reviewer: assume any translation has issues until you have evidence otherwise.\n\n{entries_text}{instruction_block}\n\nRespond with JSON: {{ \"judgements\": [{{ \"key\": \"...\", \"score\": 0..1, \"reason\": \"...\", \"errors\": [\"...\"] }}] }}"
+    )
+}
+
+/// Judge response contract: `{ "judgements": [{key, score, reason?, errors?}] }`.
+#[derive(Debug, Deserialize)]
+pub struct JudgementsPayload {
+    pub judgements: Vec<JudgementRow>,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct JudgementRow {
+    pub key: String,
+    pub score: f64,
+    #[serde(default)]
+    pub reason: Option<String>,
+    #[serde(default)]
+    pub errors: Vec<String>,
+}
+
+pub fn parse_judgements(content: &str) -> serde_json::Result<JudgementsPayload> {
     serde_json::from_str(content)
 }
 

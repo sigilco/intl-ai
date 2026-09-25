@@ -105,6 +105,14 @@
         }
       ],
       "default": null
+    },
+    "checks": {
+      "description": "Check entries (`[[checks]]`): builtins by `id`, declarative YAML\nspecs by `spec`, external checkers by `exec` (v1 JSONL protocol).",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/CheckEntry"
+      },
+      "default": []
     }
   },
   "additionalProperties": false,
@@ -327,6 +335,68 @@
         "json",
         "yaml"
       ]
+    },
+    "CheckEntry": {
+      "description": "One `[[checks]]` entry: exactly one of `id`, `spec`, `exec`.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "description": "Builtin check id: `icu`, `placeholder-parity`, `dialect:<locale>`,\n`judge`.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "spec": {
+          "description": "Declarative YAML check spec, resolved against the config file's\ndirectory.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "exec": {
+          "description": "Exec check command (v1 JSONL protocol: one request line, one\nresponse line). Root config only, never via `extends` (same\nboundary as provider.command).",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "args": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          }
+        },
+        "cwd": {
+          "description": "Exec working directory, resolved against the config file's\ndirectory.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "timeout_ms": {
+          "description": "Exec wall-clock budget (default 60_000 ms).",
+          "type": [
+            "integer",
+            "null"
+          ],
+          "format": "uint64",
+          "minimum": 0
+        },
+        "max_stdout_bytes": {
+          "description": "Exec buffered stdout cap (default 1 MiB).",
+          "type": [
+            "integer",
+            "null"
+          ],
+          "format": "uint64",
+          "minimum": 0
+        }
+      },
+      "additionalProperties": false
     }
   }
 }

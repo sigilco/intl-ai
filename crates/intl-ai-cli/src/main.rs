@@ -97,6 +97,10 @@ struct CheckArgs {
     /// Output format for the findings report.
     #[arg(long, value_enum, default_value_t = OutFormat::Human)]
     format: OutFormat,
+    /// Run each configured spec check's self_test fixtures instead of
+    /// checking locales (plan 5.2).
+    #[arg(long)]
+    self_test: bool,
 }
 
 #[derive(Args)]
