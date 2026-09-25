@@ -290,7 +290,7 @@ impl ResolvedConfig {
     pub fn instruction_for(&self, locale: &str) -> Option<String> {
         let m = &self.config.locale_instructions;
         m.get(locale)
-            .or_else(|| locale.split('-').next().and_then(|lang| m.get(lang)))
+            .or_else(|| locale.split(['-', '_']).next().and_then(|lang| m.get(lang)))
             .or_else(|| m.get("*"))
             .cloned()
     }
@@ -318,6 +318,17 @@ impl ResolvedConfig {
         intl_ai_formats::resolve(&self.locale_dir(), locale, self.file_format())
     }
 
+    /// Every on-disk file this locale could resolve to, in resolve order.
+    /// `len() > 1` means shadowed siblings (e.g. fr.json AND fr.yaml);
+    /// callers warn once per locale rather than silently picking.
+    pub fn shadowed_locale_files(&self, locale: &str) -> Vec<PathBuf> {
+        ["json", "yaml", "yml"]
+            .iter()
+            .map(|ext| self.locale_dir().join(format!("{locale}.{ext}")))
+            .filter(|p| p.is_file())
+            .collect()
+    }
+
     /// Gitignored stat-cache path, `.intl-ai/cache.json` next to the
     /// config file.
     pub fn cache_path(&self) -> PathBuf {
@@ -343,10 +354,23 @@ fn resolve(base: &Path, p: &Path) -> PathBuf {
 /// Finds `intl-ai.{toml,json,yaml,yml}` in `cwd` (first hit wins) or honors
 /// `--config`. `--config -` reads TOML from stdin.
 pub fn discover(cwd: &Path) -> Option<PathBuf> {
-    EXTENSIONS
-        .iter()
-        .map(|ext| cwd.join(format!("{FILE_STEM}.{ext}")))
-        .find(|p| p.is_file())
+    // Walk ancestors so `fill`/`check` work from any subdirectory; a `.git`
+    // dir marks the repo boundary and stops the walk (M5).
+    let mut dir = Some(cwd);
+    while let Some(d) = dir {
+        if let Some(p) = EXTENSIONS
+            .iter()
+            .map(|ext| d.join(format!("{FILE_STEM}.{ext}")))
+            .find(|p| p.is_file())
+        {
+            return Some(p);
+        }
+        if d.join(".git").exists() {
+            return None;
+        }
+        dir = d.parent();
+    }
+    None
 }
 
 pub fn load(config_arg: Option<&Path>, cwd: &Path) -> Result<ResolvedConfig> {

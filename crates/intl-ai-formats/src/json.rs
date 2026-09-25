@@ -23,14 +23,20 @@ pub fn read(path: &Path) -> Result<Option<Value>, FormatError> {
     }
 }
 
-/// Writes canonical JSON (2-space indent, insertion order preserved,
-/// trailing newline) via atomic tmp+rename.
-pub fn write(path: &Path, value: &Value) -> Result<(), FormatError> {
-    let body = format!(
+/// Canonical JSON bytes (2-space indent, insertion order preserved,
+/// trailing newline). Split from `write` so callers can byte-compare
+/// before touching disk.
+pub fn serialize(value: &Value) -> Vec<u8> {
+    format!(
         "{}\n",
         serde_json::to_string_pretty(value).unwrap_or_default()
-    );
-    write_atomic(path, body.as_bytes())
+    )
+    .into_bytes()
+}
+
+/// Writes canonical JSON via atomic tmp+rename.
+pub fn write(path: &Path, value: &Value) -> Result<(), FormatError> {
+    write_atomic(path, &serialize(value))
 }
 
 pub fn write_atomic(path: &Path, bytes: &[u8]) -> Result<(), FormatError> {

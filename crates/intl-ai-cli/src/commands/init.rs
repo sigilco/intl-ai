@@ -2,16 +2,20 @@ use anyhow::{Result, anyhow};
 use std::fs;
 
 use crate::InitArgs;
+use crate::commands::{is_json, print_json};
 
-/// Writes a starter `intl-ai.toml`. Refuses to overwrite an existing config;
-/// discovers a likely locale dir (a subdir holding >=2 *.json files) when
-/// --locale-dir is not given.
+/// Writes a starter `intl-ai.toml`. Refuses to overwrite any existing
+/// config (all four extensions count); discovers a likely locale dir
+/// (a subdir holding >=2 locale files) when --locale-dir is not given.
 pub fn run(args: &InitArgs) -> Result<u8> {
     let cwd = std::env::current_dir()?;
-    let path = cwd.join("intl-ai.toml");
-    if path.exists() {
-        return Err(anyhow!("intl-ai.toml already exists"));
+    for ext in ["toml", "json", "yaml", "yml"] {
+        let existing = cwd.join(format!("intl-ai.{ext}"));
+        if existing.exists() {
+            return Err(anyhow!("{} already exists", existing.display()));
+        }
     }
+    let path = cwd.join("intl-ai.toml");
 
     let locale_dir = args
         .locale_dir
@@ -70,8 +74,23 @@ fail_on = ["missing", "stale", "invalid"]
 #   args = ["checks/my_check.py"]
 "#
     );
-    fs::write(&path, body)?;
-    println!("wrote {}", path.display());
+    fs::write(&path, &body)?;
+    // First run must work: the scaffolded provider is `replay` pointed at
+    // a cassette that would otherwise not exist (M6).
+    let cassette = cwd.join("cassette.json");
+    if !cassette.exists() {
+        // Replay cassette shape: { "<locale>": { "<source>": "<text>" } }.
+        fs::write(&cassette, "{}\n")?;
+    }
+    if is_json(args.format) {
+        print_json(&serde_json::json!({
+            "config": path.display().to_string(),
+            "cassette": cassette.display().to_string(),
+        }))?;
+    } else {
+        println!("wrote {}", path.display());
+        println!("wrote {}", cassette.display());
+    }
     gitignore_stat_cache(&cwd);
     Ok(0)
 }

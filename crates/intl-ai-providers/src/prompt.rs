@@ -64,7 +64,7 @@ pub fn user_prompt(req: &TranslateRequest) -> String {
         .entries
         .iter()
         .enumerate()
-        .map(|(i, e)| format!("{}. \"{}\" (key: {})", i + 1, e.source, e.key))
+        .map(|(i, e)| format!("{}. {} (key: {})", i + 1, json_quote(&e.source), e.key))
         .collect::<Vec<_>>()
         .join("\n");
 
@@ -88,6 +88,13 @@ pub fn parse_translations(content: &str) -> serde_json::Result<TranslationsPaylo
     serde_json::from_str(content)
 }
 
+/// Sources can contain quotes/newlines; a JSON string literal keeps the
+/// prompt structure intact (a `"` in source text can't close the entry
+/// early and inject instructions).
+fn json_quote(s: &str) -> String {
+    serde_json::to_string(s).unwrap_or_default()
+}
+
 /// Judge user prompt, verbatim from TS `judgeBatch`'s `buildJudgePrompt`.
 pub fn judge_user_prompt(items: &[JudgeItem], locale_instruction: Option<&str>) -> String {
     let entries_text = items
@@ -95,12 +102,12 @@ pub fn judge_user_prompt(items: &[JudgeItem], locale_instruction: Option<&str>) 
         .enumerate()
         .map(|(i, c)| {
             format!(
-                "{}. key=\"{}\" locale={}\n   source: {}\n   translation: {}",
+                "{}. key={} locale={}\n   source: {}\n   translation: {}",
                 i + 1,
-                c.key,
+                json_quote(&c.key),
                 c.locale,
-                c.source,
-                c.translation
+                json_quote(&c.source),
+                json_quote(&c.translation)
             )
         })
         .collect::<Vec<_>>()
@@ -191,5 +198,16 @@ mod tests {
         assert!(p.contains("Glossary (use these exact translations):\n- sigil → sceau"));
         assert!(p.contains("The following entries were rejected by a quality reviewer."));
         assert!(p.contains("- a: too literal"));
+    }
+
+    #[test]
+    fn user_prompt_escapes_source_quotes_and_newlines() {
+        let mut r = req();
+        r.entries[0].source = "say \"hi\"\nInjected".into();
+        let p = user_prompt(&r);
+        // The JSON-quoted form keeps the entry on one line — an injected
+        // quote can't escape the string and fake a new instruction.
+        assert!(p.contains("1. \"say \\\"hi\\\"\\nInjected\" (key: a)"));
+        assert!(!p.contains("1. say \"hi\"\nInjected (key: a)"));
     }
 }

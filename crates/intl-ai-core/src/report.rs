@@ -31,5 +31,28 @@ pub fn write_if_failures(cfg_dir: &Path, report: &FillReport) -> Result<Option<S
     })
     .unwrap_or_default();
     write_atomic(&path, format!("{body}\n").as_bytes())?;
+    gc_reports(&dir);
     Ok(Some(path.display().to_string()))
+}
+
+/// Report files accumulate; keep only the newest few (timestamped names
+/// sort chronologically). Best-effort: a delete failure is not worth
+/// failing a run that already wrote its report.
+const KEEP_REPORTS: usize = 10;
+
+fn gc_reports(dir: &Path) {
+    let Ok(rd) = std::fs::read_dir(dir) else {
+        return;
+    };
+    let mut files: Vec<_> = rd
+        .filter_map(|e| e.ok())
+        .map(|e| e.file_name())
+        .filter(|n| {
+            n.to_string_lossy().starts_with("report-") && n.to_string_lossy().ends_with(".json")
+        })
+        .collect();
+    files.sort_unstable();
+    for stale in files.iter().take(files.len().saturating_sub(KEEP_REPORTS)) {
+        let _ = std::fs::remove_file(dir.join(stale));
+    }
 }

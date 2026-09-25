@@ -150,9 +150,22 @@ impl HttpTransport {
 
         let status = resp.status().as_u16();
         if status == 429 {
-            return Err(Error::transport(
+            let mut err = Error::transport(
                 ErrorType::RateLimit,
                 format!("openai: HTTP 429 {}", body_preview(&mut resp)),
+            );
+            if let Some(ms) = retry_after_ms(&resp) {
+                err = err.with_retry_after(Duration::from_millis(ms));
+            }
+            return Err(err);
+        }
+        if status == 401 || status == 403 {
+            return Err(Error::transport(
+                ErrorType::Auth,
+                format!(
+                    "openai: HTTP {status} {} (check provider.api_key)",
+                    body_preview(&mut resp)
+                ),
             ));
         }
         if !(200..300).contains(&status) {
@@ -191,6 +204,21 @@ impl HttpTransport {
             other => Error::transport(ErrorType::Http, format!("openai: {other}")),
         }
     }
+}
+
+/// Retry-After / Retry-After-Ms header -> milliseconds. Delta-seconds
+/// (and the -ms variant) are what OpenAI-compatible endpoints actually
+/// send; an HTTP-date we can't parse just falls back to our own backoff.
+fn retry_after_ms(resp: &ureq::http::Response<ureq::Body>) -> Option<u64> {
+    let headers = resp.headers();
+    for (name, scale) in [("retry-after-ms", 1.0), ("retry-after", 1000.0)] {
+        if let Some(v) = headers.get(name).and_then(|v| v.to_str().ok()) {
+            if let Ok(n) = v.trim().parse::<f64>() {
+                return Some((n * scale) as u64);
+            }
+        }
+    }
+    None
 }
 
 fn strip_code_fences(content: &str) -> String {

@@ -17,6 +17,11 @@ use crate::prompt::{
 };
 use crate::retry::attempt_with_retries;
 
+/// A single argv string can't exceed ~128KiB on unix (MAX_ARG_STRLEN).
+/// Stay under it so the spawn can't fail with E2BIG mid-run; larger
+/// prompts belong on stdin anyway.
+const MAX_ARGV_PROMPT: usize = 120 * 1024;
+
 #[derive(Debug, Clone)]
 pub struct CommandSpec {
     /// Display id used as `model` on lockfile entries ("claude-code", ...).
@@ -107,6 +112,17 @@ impl CommandTransport {
     fn attempt(&self, framed: &str) -> Result<String> {
         let (args, input) = match self.spec.prompt_via {
             PromptVia::Argv => {
+                if framed.len() > MAX_ARGV_PROMPT {
+                    return Err(Error::transport(
+                        ErrorType::SpawnFailure,
+                        format!(
+                            "command transport: {} prompt is {} bytes, over the {} byte single-argument limit; set prompt_via = \"stdin\"",
+                            self.spec.id,
+                            framed.len(),
+                            MAX_ARGV_PROMPT
+                        ),
+                    ));
+                }
                 let mut args = self.spec.args.clone();
                 args.push(framed.to_string());
                 (args, None)
@@ -133,3 +149,26 @@ impl CommandTransport {
 }
 
 use std::time::Duration;
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn argv_prompt_over_limit_fails_clean() {
+        let t = CommandTransport::new(CommandSpec {
+            id: "probe".into(),
+            command: "true".into(),
+            args: vec![],
+            prompt_via: PromptVia::Argv,
+            cwd: None,
+            timeout_ms: None,
+            max_stdout_bytes: None,
+            max_retries: 1,
+        });
+        let err = t.attempt(&"x".repeat(MAX_ARGV_PROMPT + 1)).unwrap_err();
+        let msg = err.to_string();
+        assert!(msg.contains("single-argument limit"), "{msg}");
+        assert!(msg.contains("prompt_via"), "{msg}");
+    }
+}
