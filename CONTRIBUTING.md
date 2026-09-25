@@ -248,7 +248,7 @@ After rendering:
 
 ### Gotchas already hit once
 
-- `demo/setup-scratch.sh` is *sourced* into the tape's live shell, not executed as a subprocess. It must never leave `set -e` active afterward: `intl-ai check` intentionally exits non-zero (10) when it finds missing translations, and a leaked `errexit` kills the whole recording silently at that point with no error shown beyond a VHS timeout.
+- `demo/setup-scratch.sh` is _sourced_ into the tape's live shell, not executed as a subprocess. It must never leave `set -e` active afterward: `intl-ai check` intentionally exits non-zero (10) when it finds missing translations, and a leaked `errexit` kills the whole recording silently at that point with no error shown beyond a VHS timeout.
 - Keep the CLI's `logtape` meta-logger configured to `warning` or above (see `packages/cli/src/logger.ts`). Left at its default, logtape prints an unconfigured-diagnostic line long enough to wrap mid-escape-sequence, which desyncs VHS's terminal emulator and silently swallows every command typed afterward.
 - `gum style --foreground N -- "-> ..."` needs the `--` before a value starting with `-`, otherwise gum's flag parser rejects it as an unknown flag.
 - If a render fails, VHS produces zero output. Isolate the failing beat in a throwaway minimal tape rather than debugging the full recording.

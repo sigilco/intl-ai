@@ -50,7 +50,10 @@
         },
         "processor": {
           "type": "string",
-          "enum": ["passthrough", "icu"]
+          "enum": [
+            "passthrough",
+            "icu"
+          ]
         },
         "batchSize": {
           "type": "integer",
@@ -105,7 +108,15 @@
           "additionalProperties": {}
         }
       },
-      "required": ["kind", "defaultLocale", "locales", "localeDir", "provider", "model", "apiKey"],
+      "required": [
+        "kind",
+        "defaultLocale",
+        "locales",
+        "localeDir",
+        "provider",
+        "model",
+        "apiKey"
+      ],
       "additionalProperties": false
     },
     {
@@ -156,7 +167,10 @@
         },
         "processor": {
           "type": "string",
-          "enum": ["passthrough", "icu"]
+          "enum": [
+            "passthrough",
+            "icu"
+          ]
         },
         "batchSize": {
           "type": "integer",
@@ -188,10 +202,22 @@
         },
         "agent": {
           "type": "string",
-          "enum": ["claude-code", "opencode", "codex", "crush", "gemini"]
+          "enum": [
+            "claude-code",
+            "opencode",
+            "codex",
+            "crush",
+            "gemini"
+          ]
         }
       },
-      "required": ["kind", "defaultLocale", "locales", "localeDir", "agent"],
+      "required": [
+        "kind",
+        "defaultLocale",
+        "locales",
+        "localeDir",
+        "agent"
+      ],
       "additionalProperties": false
     }
   ],

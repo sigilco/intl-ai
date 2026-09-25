@@ -150,7 +150,9 @@ describe("runFill (api) — quality loop", () => {
       for (const key of ["nav.home", "stash.title"]) {
         const entry = lockfile.entries[`es||${key}`] as Record<string, unknown>;
         expect(entry, `missing lockfile entry for ${key}`).toBeDefined();
-        expect(entry.sourceHash, `${key} hashed the empty string (v0.3.0 bug)`).not.toBe(EMPTY_SHA1);
+        expect(entry.sourceHash, `${key} hashed the empty string (v0.3.0 bug)`).not.toBe(
+          EMPTY_SHA1,
+        );
       }
 
       // Hashes must match SHA-1 of the actual source values.
