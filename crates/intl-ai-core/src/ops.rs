@@ -2,10 +2,10 @@ use crate::clock::now;
 use crate::config::ResolvedConfig;
 use crate::error::Result;
 use crate::flatten::flatten;
-use crate::hash::source_hash;
 use crate::lockfile::{Entry, Origin, load_shard, save_shard};
 use crate::selector::KeySelector;
-use intl_ai_formats::json::read;
+use crate::stat_cache::StatCache;
+use intl_ai_formats::read;
 use serde::Serialize;
 
 /// Per-locale outcome of mark/review/unreview.
@@ -28,7 +28,7 @@ pub fn mark(
     origin: Origin,
 ) -> Result<OpResult> {
     let locale_dir = cfg.locale_dir();
-    let (source, target) = load_flats(cfg, locale)?;
+    let (source, target, src_hashes) = load_flats(cfg, locale)?;
     let mut shard = load_shard(&locale_dir, locale)?;
     let mut res = OpResult::default();
     let now_s = now();
@@ -55,10 +55,7 @@ pub fn mark(
                             key.clone(),
                             Entry {
                                 value: val.clone(),
-                                source_hash: source
-                                    .get(&key)
-                                    .map(|s| source_hash(s))
-                                    .unwrap_or_default(),
+                                source_hash: src_hashes.get(&key).cloned().unwrap_or_default(),
                                 origin: Origin::Human,
                                 reviewed: false,
                                 model: None,
@@ -89,7 +86,7 @@ pub fn set_reviewed(
     reviewed: bool,
 ) -> Result<OpResult> {
     let locale_dir = cfg.locale_dir();
-    let (source, target) = load_flats(cfg, locale)?;
+    let (source, target, _src_hashes) = load_flats(cfg, locale)?;
     let mut shard = load_shard(&locale_dir, locale)?;
     let mut res = OpResult::default();
     let now_s = now();
@@ -118,13 +115,17 @@ pub fn set_reviewed(
 fn load_flats(
     cfg: &ResolvedConfig,
     locale: &str,
-) -> Result<(crate::flatten::FlatMap, crate::flatten::FlatMap)> {
-    let locale_dir = cfg.locale_dir();
-    let source = read(&locale_dir.join(format!("{}.json", cfg.config.source)))?
+) -> Result<(
+    crate::flatten::FlatMap,
+    crate::flatten::FlatMap,
+    std::collections::BTreeMap<String, String>,
+)> {
+    let source_path = cfg.locale_path(&cfg.config.source);
+    let source = read(&source_path)?.map(|v| flatten(&v)).unwrap_or_default();
+    let mut cache = StatCache::load(&cfg.cache_path());
+    let src_hashes = cache.source_hashes(&source_path, &source);
+    let target = read(&cfg.locale_path(locale))?
         .map(|v| flatten(&v))
         .unwrap_or_default();
-    let target = read(&locale_dir.join(format!("{locale}.json")))?
-        .map(|v| flatten(&v))
-        .unwrap_or_default();
-    Ok((source, target))
+    Ok((source, target, src_hashes))
 }

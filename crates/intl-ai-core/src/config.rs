@@ -14,7 +14,7 @@ const MAX_EXTENDS_DEPTH: usize = 8;
 
 /// One typed contract with `deny_unknown_fields` regardless of the file
 /// format the user picked (plan section 7).
-#[derive(Debug, Clone, Deserialize, serde::Serialize)]
+#[derive(Debug, Clone, Deserialize, serde::Serialize, schemars::JsonSchema)]
 #[serde(deny_unknown_fields)]
 pub struct IntlAiConfig {
     #[serde(default = "default_version")]
@@ -48,9 +48,13 @@ pub struct IntlAiConfig {
     /// MessageFormat hint; the ICU validator itself lands with W2 checks.
     #[serde(default)]
     pub processor: Option<ProcessorKind>,
+    /// Locale file format minted for new files (plan 5.5: an existing
+    /// file's own extension always wins over this preference).
+    #[serde(default)]
+    pub format: Option<intl_ai_formats::FileFormat>,
 }
 
-#[derive(Debug, Clone, Copy, Deserialize, serde::Serialize)]
+#[derive(Debug, Clone, Copy, Deserialize, serde::Serialize, schemars::JsonSchema)]
 #[serde(rename_all = "snake_case")]
 pub enum ProcessorKind {
     Passthrough,
@@ -74,7 +78,7 @@ fn default_version() -> u32 {
     1
 }
 
-#[derive(Debug, Clone, Deserialize, serde::Serialize)]
+#[derive(Debug, Clone, Deserialize, serde::Serialize, schemars::JsonSchema)]
 #[serde(untagged)]
 pub enum StringOrList {
     One(String),
@@ -90,7 +94,7 @@ impl StringOrList {
     }
 }
 
-#[derive(Debug, Clone, Deserialize, serde::Serialize)]
+#[derive(Debug, Clone, Deserialize, serde::Serialize, schemars::JsonSchema)]
 #[serde(tag = "kind", rename_all = "snake_case")]
 pub enum ProviderConfig {
     Replay(ReplayProvider),
@@ -98,7 +102,7 @@ pub enum ProviderConfig {
     Command(CommandProvider),
 }
 
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize, schemars::JsonSchema)]
 #[serde(deny_unknown_fields)]
 pub struct ReplayProvider {
     /// Cassette JSON: `{ "<locale>": { "<source value>": "<translation>" } }`.
@@ -115,7 +119,7 @@ impl serde::Serialize for ReplayProvider {
 /// OpenAI-compatible chat-completions surface (plan 5.1.9): every surveyed
 /// tool converges on api-url + api-key + model. `provider` selects the wire
 /// shape; only "openai" is wired in W1.
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize, schemars::JsonSchema)]
 #[serde(deny_unknown_fields)]
 pub struct HttpProvider {
     #[serde(default = "default_http_provider")]
@@ -150,7 +154,7 @@ impl serde::Serialize for HttpProvider {
 /// Headless coding-agent CLI as a transport (the v1 differentiator: keyless
 /// dev). Either `agent` (a preset) or `command`+optional `args`; `command`
 /// wins when both are set (plan 5.1.6).
-#[derive(Debug, Clone, Deserialize, serde::Serialize)]
+#[derive(Debug, Clone, Deserialize, serde::Serialize, schemars::JsonSchema)]
 #[serde(deny_unknown_fields)]
 pub struct CommandProvider {
     /// Preset name from the agent table (kebab-case, see providers/presets).
@@ -172,7 +176,7 @@ pub struct CommandProvider {
     pub max_stdout_bytes: Option<u64>,
 }
 
-#[derive(Debug, Clone, Copy, Deserialize, serde::Serialize)]
+#[derive(Debug, Clone, Copy, Deserialize, serde::Serialize, schemars::JsonSchema)]
 #[serde(rename_all = "kebab-case")]
 pub enum AgentPreset {
     ClaudeCode,
@@ -182,14 +186,14 @@ pub enum AgentPreset {
     Gemini,
 }
 
-#[derive(Debug, Clone, Copy, Deserialize, serde::Serialize)]
+#[derive(Debug, Clone, Copy, Deserialize, serde::Serialize, schemars::JsonSchema)]
 #[serde(rename_all = "snake_case")]
 pub enum PromptVia {
     Stdin,
     Argv,
 }
 
-#[derive(Debug, Clone, Deserialize, serde::Serialize)]
+#[derive(Debug, Clone, Deserialize, serde::Serialize, schemars::JsonSchema)]
 #[serde(deny_unknown_fields)]
 pub struct CheckConfig {
     #[serde(default = "default_fail_on")]
@@ -257,6 +261,30 @@ impl ResolvedConfig {
     pub fn max_retries(&self) -> u32 {
         self.config.max_retries.unwrap_or(3)
     }
+
+    /// Preferred format for minting new locale files (default JSON).
+    pub fn file_format(&self) -> intl_ai_formats::FileFormat {
+        self.config.format.unwrap_or_default()
+    }
+
+    /// Locale file path for `locale`: an existing file's extension wins,
+    /// else the configured `format` mints it (plan 5.5).
+    pub fn locale_path(&self, locale: &str) -> PathBuf {
+        intl_ai_formats::resolve(&self.locale_dir(), locale, self.file_format())
+    }
+
+    /// Gitignored stat-cache path, `.intl-ai/cache.json` next to the
+    /// config file.
+    pub fn cache_path(&self) -> PathBuf {
+        self.config_dir.join(".intl-ai/cache.json")
+    }
+}
+
+/// JSON Schema for the typed config contract. Generated, so `config
+/// validate` and the committed schema file can never drift apart.
+pub fn json_schema() -> serde_json::Value {
+    serde_json::to_value(schemars::schema_for!(IntlAiConfig))
+        .expect("schema serialization is infallible")
 }
 
 fn resolve(base: &Path, p: &Path) -> PathBuf {

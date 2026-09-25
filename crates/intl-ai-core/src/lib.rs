@@ -14,6 +14,7 @@ pub mod lockfile;
 pub mod ops;
 pub mod report;
 pub mod selector;
+pub mod stat_cache;
 pub mod transport;
 
 pub use error::{Error, ErrorType, Result};

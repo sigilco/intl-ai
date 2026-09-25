@@ -1,5 +1,8 @@
-use anyhow::{Result, anyhow};
-use intl_ai_core::lockfile::{check_shards, load_shard, save_shard};
+use anyhow::Result;
+use intl_ai_core::lockfile::{
+    LOCKFILE_DIR, check_shards, load_shard, merge_shard_file, save_shard,
+};
+use std::fs;
 
 use crate::commands::resolve_config;
 use crate::{Cli, LockfileArgs, LockfileCommand};
@@ -35,9 +38,33 @@ pub fn run(cli: &Cli, args: &LockfileArgs) -> Result<u8> {
             }
             Ok(0)
         }
-        LockfileCommand::Merge => Err(anyhow!(
-            "lockfile merge is not implemented yet (planned for W1); \
-             resolve shard conflicts by hand or with lockfile fmt"
-        )),
+        LockfileCommand::Merge => {
+            let dir = locale_dir.join(LOCKFILE_DIR);
+            let mut merged = 0usize;
+            if dir.is_dir() {
+                for entry in fs::read_dir(&dir)? {
+                    let path = entry?.path();
+                    if path.extension().and_then(|e| e.to_str()) != Some("toml") {
+                        continue;
+                    }
+                    let locale = path
+                        .file_stem()
+                        .and_then(|s| s.to_str())
+                        .unwrap_or_default()
+                        .to_string();
+                    if let Some(m) = merge_shard_file(&locale_dir, &locale)? {
+                        merged += 1;
+                        println!(
+                            "{locale}: merged ({} entries, {} overlapping keys)",
+                            m.entries, m.overlaps
+                        );
+                    }
+                }
+            }
+            if merged == 0 {
+                println!("no conflicted shards");
+            }
+            Ok(0)
+        }
     }
 }

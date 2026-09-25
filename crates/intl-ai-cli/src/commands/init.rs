@@ -58,7 +58,26 @@ fail_on = ["stale", "invalid"]
     );
     fs::write(&path, body)?;
     println!("wrote {}", path.display());
+    gitignore_stat_cache(&cwd);
     Ok(0)
+}
+
+/// `.intl-ai/` holds the disposable stat-cache (plan 5.5); it must never
+/// be committed. Idempotent: appends only when the line is absent.
+fn gitignore_stat_cache(cwd: &std::path::Path) {
+    let path = cwd.join(".gitignore");
+    let existing = fs::read_to_string(&path).unwrap_or_default();
+    if existing.lines().any(|l| l.trim() == ".intl-ai/") {
+        return;
+    }
+    let mut body = existing;
+    if !body.is_empty() && !body.ends_with('\n') {
+        body.push('\n');
+    }
+    body.push_str(".intl-ai/\n");
+    if fs::write(&path, body).is_ok() {
+        println!("added .intl-ai/ to .gitignore");
+    }
 }
 
 fn detect_locale_dir() -> Option<std::path::PathBuf> {

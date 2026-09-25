@@ -3,11 +3,11 @@ use crate::config::ResolvedConfig;
 use crate::diff::effective_origin;
 use crate::error::{Error, ErrorType, Result};
 use crate::flatten::{FlatMap, flatten, set_nested};
-use crate::hash::source_hash;
 use crate::lockfile::{Entry, Origin, Shard, load_shard, save_shard};
 use crate::selector::KeySelector;
+use crate::stat_cache::StatCache;
 use crate::transport::{TranslateRequest, TranslationEntry, Transport};
-use intl_ai_formats::json::{read, write};
+use intl_ai_formats::{read, write};
 use serde::Serialize;
 use serde_json::{Map, Value};
 use std::collections::{BTreeMap, HashSet};
@@ -69,7 +69,7 @@ pub fn fill(
     opts: &FillOptions,
 ) -> Result<FillReport> {
     let locale_dir = cfg.locale_dir();
-    let source_path = locale_dir.join(format!("{}.json", cfg.config.source));
+    let source_path = cfg.locale_path(&cfg.config.source);
     let source_value = read(&source_path)?.ok_or_else(|| {
         Error::Message(format!(
             "source locale file {} not found",
@@ -77,6 +77,8 @@ pub fn fill(
         ))
     })?;
     let source = flatten(&source_value);
+    let mut cache = StatCache::load(&cfg.cache_path());
+    let src_hashes = cache.source_hashes(&source_path, &source);
 
     let locales: Vec<String> = match &opts.locales {
         Some(l) if !l.is_empty() => l.clone(),
@@ -90,7 +92,15 @@ pub fn fill(
     };
 
     for locale in locales {
-        match fill_locale(cfg, &locale_dir, &source, &locale, transport, opts) {
+        match fill_locale(
+            cfg,
+            &locale_dir,
+            &source,
+            &src_hashes,
+            &locale,
+            transport,
+            opts,
+        ) {
             Ok((res, failures)) => {
                 report.locales.insert(locale, res);
                 report.failures.extend(failures);
@@ -108,6 +118,9 @@ pub fn fill(
             }
         }
     }
+    if !opts.dry_run {
+        cache.save(&cfg.cache_path());
+    }
     Ok(report)
 }
 
@@ -115,12 +128,13 @@ fn fill_locale(
     cfg: &ResolvedConfig,
     locale_dir: &Path,
     source: &FlatMap,
+    src_hashes: &BTreeMap<String, String>,
     locale: &str,
     transport: &dyn Transport,
     opts: &FillOptions,
 ) -> Result<(LocaleFillResult, Vec<FillFailure>)> {
     let mut res = LocaleFillResult::empty();
-    let target_path = locale_dir.join(format!("{locale}.json"));
+    let target_path = cfg.locale_path(locale);
     let mut target_value = read(&target_path)?.unwrap_or_else(|| Value::Object(Map::new()));
     let target = flatten(&target_value);
     let mut shard = load_shard(locale_dir, locale)?;
@@ -146,7 +160,7 @@ fn fill_locale(
                 key.clone(),
                 Entry {
                     value: val.clone(),
-                    source_hash: source_hash(&source[key]),
+                    source_hash: src_hashes[key].clone(),
                     origin: Origin::Human,
                     reviewed: false,
                     model: None,
@@ -161,7 +175,7 @@ fn fill_locale(
     let wanted: Vec<String> = source
         .keys()
         .filter(|k| opts.selector.matches(k))
-        .filter(|k| needs_translation(k, source, &target, &shard, opts))
+        .filter(|k| needs_translation(k, source, src_hashes, &target, &shard, opts))
         .cloned()
         .collect();
     res.requested = wanted.len();
@@ -237,7 +251,7 @@ fn fill_locale(
                     t.key.clone(),
                     Entry {
                         value: t.value,
-                        source_hash: source_hash(&source[&t.key]),
+                        source_hash: src_hashes[&t.key].clone(),
                         origin: Origin::Ai,
                         reviewed: false,
                         model: Some(resp.model.clone()),
@@ -261,6 +275,7 @@ fn fill_locale(
 fn needs_translation(
     key: &str,
     source: &FlatMap,
+    src_hashes: &BTreeMap<String, String>,
     target: &FlatMap,
     shard: &Shard,
     opts: &FillOptions,
@@ -271,7 +286,7 @@ fn needs_translation(
     if opts.stale_only {
         // AI-owned entries whose recorded source hash drifted.
         return match shard.entries.get(key) {
-            Some(e) if e.origin == Origin::Ai => e.source_hash != source_hash(&source[key]),
+            Some(e) if e.origin == Origin::Ai => e.source_hash != src_hashes[key],
             _ => false,
         };
     }

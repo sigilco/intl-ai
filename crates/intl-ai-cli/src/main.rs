@@ -148,6 +148,10 @@ struct ConfigArgs {
 enum ConfigCommand {
     /// Validate the resolved config and print it.
     Validate(ValidateArgs),
+    /// Print the JSON Schema for the config contract (same types
+    /// `config validate` checks against; the schema file is also
+    /// committed at docs/public/schema/intl-ai.schema.json).
+    Schema,
 }
 
 #[derive(Args)]
