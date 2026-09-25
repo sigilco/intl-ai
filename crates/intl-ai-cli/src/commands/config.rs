@@ -7,6 +7,11 @@ pub fn run(cli: &Cli, args: &ConfigArgs) -> Result<u8> {
     match &args.command {
         ConfigCommand::Validate(v) => {
             let cfg = resolve_config(cli)?;
+            // `[fill] validate` names must resolve to gate-eligible
+            // checks (same rule `fill` applies at build time).
+            for name in &cfg.config.fill.validate {
+                intl_ai_checks::gate_check(&cfg, name)?;
+            }
             if is_json(v.format) {
                 // Serializes the resolved (post-extends, post-env-overlay,
                 // post-interpolation) typed config.

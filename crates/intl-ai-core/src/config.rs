@@ -29,6 +29,8 @@ pub struct IntlAiConfig {
     pub provider: ProviderConfig,
     #[serde(default)]
     pub check: CheckConfig,
+    #[serde(default)]
+    pub fill: FillConfig,
     /// Fixed term -> translation pairs injected into every translate prompt.
     #[serde(default)]
     pub glossary: std::collections::BTreeMap<String, String>,
@@ -254,6 +256,19 @@ impl Default for CheckConfig {
 
 fn default_true() -> bool {
     true
+}
+
+#[derive(Debug, Clone, Default, Deserialize, serde::Serialize, schemars::JsonSchema)]
+#[serde(deny_unknown_fields)]
+pub struct FillConfig {
+    /// Shift-left validation gate (plan W2b-C): these checks run inside
+    /// `fill` between translate and adoption — failed keys get one
+    /// corrective round with the findings as reviewer notes. Only
+    /// feedback-eligible checks qualify: `icu`, `placeholder-parity`,
+    /// `judge`. Unresolved keys are adopted anyway and recorded under
+    /// `quality.unresolved` in the lockfile; `check` keeps flagging them.
+    #[serde(default)]
+    pub validate: Vec<String>,
 }
 
 fn default_fail_on() -> Vec<FindingKind> {

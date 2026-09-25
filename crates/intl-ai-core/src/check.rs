@@ -71,6 +71,14 @@ pub trait Check {
     fn needs_transport(&self) -> bool {
         false
     }
+    /// Whether this check's findings are mechanically actionable reviewer
+    /// notes — the fill-time gate (plan W2b-C) only accepts these.
+    /// `icu`/`placeholder-parity`/`judge` qualify; dialect/spec findings
+    /// describe style judgments the model cannot reliably re-derive, and
+    /// exec findings are arbitrary text.
+    fn supports_feedback(&self) -> bool {
+        false
+    }
     fn granularity(&self) -> CheckGranularity {
         CheckGranularity::PerKey
     }
@@ -80,6 +88,20 @@ pub trait Check {
     /// deliberate decision about what its results depend on.
     fn cache_ctx(&self) -> BTreeMap<String, String>;
     fn run(&self, ctx: &CheckCtx, items: &[CheckItem]) -> Result<Vec<CheckFinding>>;
+}
+
+/// The fill-time validation gate (plan W2b-C): a configured subset of
+/// checks runs inside `fill` between `translate()` and adoption. Members
+/// must all report `supports_feedback()`. v1 allows one corrective round
+/// (`max_rounds = 1`); oscillation is bounded by construction.
+pub struct Gate {
+    pub checks: Vec<Box<dyn Check>>,
+    pub max_rounds: u32,
+}
+
+impl Gate {
+    /// Fixed corrective-round cap for v1 (`refill_rounds` config deferred).
+    pub const DEFAULT_MAX_ROUNDS: u32 = 1;
 }
 
 #[derive(Debug, Serialize)]

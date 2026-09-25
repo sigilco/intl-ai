@@ -24,6 +24,12 @@ impl Check for JudgeCheck {
         true
     }
 
+    /// Judge scores carry reasons and error lists that read naturally as
+    /// reviewer notes.
+    fn supports_feedback(&self) -> bool {
+        true
+    }
+
     fn cache_ctx(&self) -> BTreeMap<String, String> {
         // Provider identity is ambient but deliberately not fingerprinted
         // (same posture as the stat-cache) — `--no-cache` is the escape

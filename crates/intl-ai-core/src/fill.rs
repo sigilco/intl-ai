@@ -1,12 +1,13 @@
+use crate::check::{CheckCtx, CheckItem, Gate};
 use crate::clock::now;
 use crate::config::ResolvedConfig;
-use crate::diff::effective_origin;
+use crate::diff::{CheckFinding, effective_origin};
 use crate::error::{Error, ErrorType, Result};
 use crate::flatten::{FlatMap, flatten, set_nested};
 use crate::lockfile::{Entry, Origin, Shard, ShardLock, load_shard, save_shard};
 use crate::selector::KeySelector;
 use crate::stat_cache::StatCache;
-use crate::transport::{TranslateRequest, TranslationEntry, Transport};
+use crate::transport::{TranslateRequest, Translated, TranslationEntry, Transport};
 use intl_ai_formats::{read, write};
 use serde::Serialize;
 use serde_json::{Map, Value};
@@ -62,6 +63,14 @@ pub struct LocaleFillResult {
     /// were human content the diff reported only as `extra`.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub clobbered: Vec<String>,
+    /// Keys sent through a corrective round by the validation gate.
+    #[serde(default, skip_serializing_if = "is_zero")]
+    pub refilled: usize,
+    /// Findings still open after the gate's last corrective round; the
+    /// values were adopted anyway and the findings live on the shard
+    /// entry's `quality.unresolved` (provenance, not suppression).
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub unresolved: Vec<CheckFinding>,
 }
 
 fn is_zero(n: &usize) -> bool {
@@ -90,6 +99,7 @@ pub fn fill(
     cfg: &ResolvedConfig,
     transport: &dyn Transport,
     opts: &FillOptions,
+    gate: Option<&Gate>,
 ) -> Result<FillReport> {
     let locale_dir = cfg.locale_dir();
     let source_path = cfg.locale_path(&cfg.config.source);
@@ -152,6 +162,7 @@ pub fn fill(
             &locale,
             transport,
             opts,
+            gate,
         ) {
             Ok((res, failures)) => {
                 report.locales.insert(locale, res);
@@ -182,6 +193,7 @@ pub fn fill(
     Ok(report)
 }
 
+#[allow(clippy::too_many_arguments)]
 fn fill_locale(
     cfg: &ResolvedConfig,
     locale_dir: &Path,
@@ -190,6 +202,7 @@ fn fill_locale(
     locale: &str,
     transport: &dyn Transport,
     opts: &FillOptions,
+    gate: Option<&Gate>,
 ) -> Result<(LocaleFillResult, Vec<FillFailure>)> {
     let mut res = LocaleFillResult::empty();
     let target_path = cfg.locale_path(locale);
@@ -316,9 +329,31 @@ fn fill_locale(
                     continue;
                 }
             };
-            let answered: HashSet<&str> =
-                resp.translations.iter().map(|t| t.key.as_str()).collect();
             let chunk_keys: HashSet<&str> = chunk.iter().map(|k| k.as_str()).collect();
+            let model = resp.model.clone();
+            // Only keys we asked for: an over-eager provider must not
+            // overwrite values for keys outside this chunk.
+            let mut translations: Vec<Translated> = resp
+                .translations
+                .into_iter()
+                .filter(|t| chunk_keys.contains(t.key.as_str()))
+                .collect();
+            let answered: HashSet<String> = translations.iter().map(|t| t.key.clone()).collect();
+            let unresolved = gate_rounds(
+                gate,
+                locale,
+                cfg,
+                source,
+                &instruction,
+                &hint,
+                transport,
+                &mut translations,
+                &mut res,
+                &mut failures,
+            );
+            for f in unresolved.values().flatten() {
+                res.unresolved.push(f.clone());
+            }
             for key in chunk {
                 if !answered.contains(key.as_str()) {
                     // Omitted key is terminal per plan 5.1.5, not retried —
@@ -333,12 +368,7 @@ fn fill_locale(
                     });
                 }
             }
-            for t in resp.translations {
-                // Only write keys we asked for: an over-eager provider must
-                // not overwrite values for keys outside this chunk.
-                if !chunk_keys.contains(t.key.as_str()) {
-                    continue;
-                }
+            for t in translations {
                 res.translated += 1;
                 if shard
                     .entries
@@ -362,8 +392,9 @@ fn fill_locale(
                         source_hash: src_hashes[&t.key].clone(),
                         origin: Origin::Ai,
                         reviewed: false,
-                        model: Some(resp.model.clone()),
+                        model: Some(model.clone()),
                         updated_at: Some(now()),
+                        quality: unresolved.get(&t.key).map(|fs| unresolved_quality(fs)),
                         ..Default::default()
                     },
                 );
@@ -380,6 +411,152 @@ fn fill_locale(
         write(&target_path, &target_value)?;
     }
     Ok((res, failures))
+}
+
+/// The shift-left gate (plan W2b-C): validate the provider's answers
+/// before adoption, then give failed keys one corrective round with the
+/// findings as reviewer notes. Keys still failing are adopted anyway —
+/// their findings return as `unresolved` so the entry can record them —
+/// and a gate check that errors is a run failure, never a silent pass.
+/// Returns failed-key findings keyed by key (empty when clean or no gate).
+#[allow(clippy::too_many_arguments)]
+fn gate_rounds(
+    gate: Option<&Gate>,
+    locale: &str,
+    cfg: &ResolvedConfig,
+    source: &FlatMap,
+    instruction: &Option<String>,
+    hint: &str,
+    transport: &dyn Transport,
+    translations: &mut [Translated],
+    res: &mut LocaleFillResult,
+    failures: &mut Vec<FillFailure>,
+) -> BTreeMap<String, Vec<CheckFinding>> {
+    let Some(g) = gate.filter(|g| !g.checks.is_empty()) else {
+        return BTreeMap::new();
+    };
+    if translations.is_empty() {
+        return BTreeMap::new();
+    }
+    let ctx = CheckCtx {
+        source_locale: &cfg.config.source,
+        target_locale: locale,
+        transport: Some(transport),
+        locale_instruction: instruction.as_deref(),
+    };
+    for round in 0..=g.max_rounds {
+        let items: Vec<CheckItem> = translations
+            .iter()
+            .map(|t| CheckItem {
+                key: t.key.clone(),
+                source: source.get(&t.key).cloned(),
+                target: t.value.clone(),
+            })
+            .collect();
+        let mut findings = Vec::new();
+        for c in &g.checks {
+            match c.run(&ctx, &items) {
+                Ok(f) => findings.extend(f),
+                Err(e) => failures.push(FillFailure {
+                    locale: locale.to_string(),
+                    key: None,
+                    kind: ErrorType::Unknown,
+                    message: format!("gate check '{}': {e}", c.id()),
+                }),
+            }
+        }
+        if findings.is_empty() {
+            return BTreeMap::new();
+        }
+        let mut by_key: BTreeMap<String, Vec<CheckFinding>> = BTreeMap::new();
+        for f in findings {
+            by_key.entry(f.key.clone()).or_default().push(f);
+        }
+        // Findings on keys the gate did not translate (a check misbehaving)
+        // belong nowhere: keep only keys actually in this batch.
+        by_key.retain(|k, _| translations.iter().any(|t| &t.key == k));
+        if by_key.is_empty() {
+            return BTreeMap::new();
+        }
+        if round == g.max_rounds {
+            return by_key;
+        }
+        // Corrective round: failed keys only, findings become reviewer
+        // notes. "Previous attempt" wording is TS parity (plan W2b-C).
+        let mut feedback = BTreeMap::new();
+        for (key, fs) in &by_key {
+            let prev = translations
+                .iter()
+                .find(|t| &t.key == key)
+                .map(|t| t.value.as_str())
+                .unwrap_or_default();
+            let notes = fs
+                .iter()
+                .map(|f| format!("{}: {}", f.check, f.message))
+                .collect::<Vec<_>>()
+                .join("; ");
+            feedback.insert(key.clone(), format!("Previous attempt: {prev}\n{notes}"));
+        }
+        let req = TranslateRequest {
+            source_locale: cfg.config.source.clone(),
+            target_locale: locale.to_string(),
+            entries: by_key
+                .keys()
+                .map(|k| TranslationEntry {
+                    key: k.clone(),
+                    source: source[k].clone(),
+                })
+                .collect(),
+            glossary: cfg.config.glossary.clone(),
+            locale_instruction: instruction.clone(),
+            feedback,
+            syntax_hint: Some(hint.to_string()),
+        };
+        match transport.translate(&req) {
+            Ok(resp) => {
+                // Adopt corrections only for keys that actually failed —
+                // an over-eager provider must not touch the rest.
+                for t in resp.translations {
+                    if let Some(existing) = translations.iter_mut().find(|x| x.key == t.key) {
+                        existing.value = t.value;
+                        res.refilled += 1;
+                    }
+                }
+            }
+            Err(e) => {
+                // The refill itself failed: adopt the rejected values and
+                // report the transport error; findings still record.
+                let kind = match &e {
+                    Error::Transport { kind, .. } => *kind,
+                    _ => ErrorType::Unknown,
+                };
+                failures.push(FillFailure {
+                    locale: locale.to_string(),
+                    key: None,
+                    kind,
+                    message: format!("gate refill: {e}"),
+                });
+                return by_key;
+            }
+        }
+    }
+    BTreeMap::new()
+}
+
+/// `quality.unresolved` shard payload: one `{check}: {message}` line per
+/// finding, so the lockfile records *why* the gate let a value through.
+fn unresolved_quality(findings: &[CheckFinding]) -> toml::Value {
+    let mut m = toml::Table::new();
+    m.insert(
+        "unresolved".into(),
+        toml::Value::Array(
+            findings
+                .iter()
+                .map(|f| toml::Value::String(format!("{}: {}", f.check, f.message)))
+                .collect(),
+        ),
+    );
+    toml::Value::Table(m)
 }
 
 fn needs_translation(

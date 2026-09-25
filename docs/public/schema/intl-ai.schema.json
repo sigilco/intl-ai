@@ -48,6 +48,12 @@
         "cache": true
       }
     },
+    "fill": {
+      "$ref": "#/$defs/FillConfig",
+      "default": {
+        "validate": []
+      }
+    },
     "glossary": {
       "description": "Fixed term -> translation pairs injected into every translate prompt.",
       "type": "object",
@@ -329,6 +335,20 @@
         "extra",
         "unreviewed"
       ]
+    },
+    "FillConfig": {
+      "type": "object",
+      "properties": {
+        "validate": {
+          "description": "Shift-left validation gate (plan W2b-C): these checks run inside\n`fill` between translate and adoption — failed keys get one\ncorrective round with the findings as reviewer notes. Only\nfeedback-eligible checks qualify: `icu`, `placeholder-parity`,\n`judge`. Unresolved keys are adopted anyway and recorded under\n`quality.unresolved` in the lockfile; `check` keeps flagging them.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": []
+        }
+      },
+      "additionalProperties": false
     },
     "ProcessorKind": {
       "type": "string",

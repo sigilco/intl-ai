@@ -231,7 +231,10 @@ mod tests {
 
     #[test]
     fn nonzero_exit_is_process_exit() {
-        let err = run(&sh_spec("echo errmsg >&2; exit 3")).unwrap_err();
+        // `cat` consumes our stdin write first: without it the child can
+        // exit before the write lands and the EPIPE classifies as a
+        // spawn failure instead of the exit code (load-dependent flake).
+        let err = run(&sh_spec("cat >/dev/null; echo errmsg >&2; exit 3")).unwrap_err();
         assert!(matches!(
             err,
             Error::Transport {
