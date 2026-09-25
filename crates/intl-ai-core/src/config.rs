@@ -237,14 +237,23 @@ pub enum PromptVia {
 pub struct CheckConfig {
     #[serde(default = "default_fail_on")]
     pub fail_on: Vec<FindingKind>,
+    /// Incremental findings cache (`.intl-ai/check-cache.json`); set
+    /// false to always re-run every check on every key (part B).
+    #[serde(default = "default_true")]
+    pub cache: bool,
 }
 
 impl Default for CheckConfig {
     fn default() -> Self {
         Self {
             fail_on: default_fail_on(),
+            cache: true,
         }
     }
+}
+
+fn default_true() -> bool {
+    true
 }
 
 fn default_fail_on() -> Vec<FindingKind> {
@@ -333,6 +342,11 @@ impl ResolvedConfig {
     /// config file.
     pub fn cache_path(&self) -> PathBuf {
         self.config_dir.join(".intl-ai/cache.json")
+    }
+
+    /// Gitignored incremental-check cache (part B).
+    pub fn check_cache_path(&self) -> PathBuf {
+        self.config_dir.join(".intl-ai/check-cache.json")
     }
 }
 

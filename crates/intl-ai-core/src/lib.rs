@@ -3,6 +3,7 @@
 //! (command transport lives in intl-ai-providers, per plan section 3).
 
 pub mod check;
+pub mod check_cache;
 pub mod clock;
 pub mod config;
 pub mod diff;

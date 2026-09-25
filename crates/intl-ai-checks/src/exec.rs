@@ -18,11 +18,12 @@
 //! negotiation, warm-process rules — is the model; it applies when a v2
 //! ever exists.)
 
-use intl_ai_core::check::{Check, CheckCtx, CheckItem};
+use intl_ai_core::check::{Check, CheckCtx, CheckGranularity, CheckItem};
 use intl_ai_core::diff::CheckFinding;
 use intl_ai_core::error::{Error, Result};
 use intl_ai_providers::process::{self, RunSpec};
 use serde::{Deserialize, Serialize};
+use std::collections::BTreeMap;
 use std::path::PathBuf;
 use std::time::Duration;
 
@@ -107,6 +108,27 @@ impl Check for ExecCheck {
         &self.id
     }
 
+    /// Exec sees the item list as one request, so its cache fingerprint
+    /// covers all of it — a single changed key re-runs the batch.
+    fn granularity(&self) -> CheckGranularity {
+        CheckGranularity::WholeBatch
+    }
+
+    fn cache_ctx(&self) -> BTreeMap<String, String> {
+        BTreeMap::from([
+            ("v".into(), PROTOCOL_VERSION.to_string()),
+            ("command".into(), self.command.clone()),
+            ("args".into(), self.args.join("\u{1f}")),
+            (
+                "cwd".into(),
+                self.cwd
+                    .as_ref()
+                    .map(|p| p.display().to_string())
+                    .unwrap_or_default(),
+            ),
+        ])
+    }
+
     fn run(&self, ctx: &CheckCtx, items: &[CheckItem]) -> Result<Vec<CheckFinding>> {
         let req = ExecRequest {
             v: PROTOCOL_VERSION,
@@ -164,6 +186,7 @@ impl Check for ExecCheck {
                 key: f.key,
                 check: f.check.unwrap_or_else(|| self.id.clone()),
                 message: f.message,
+                ..Default::default()
             })
             .collect())
     }

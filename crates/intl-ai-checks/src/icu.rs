@@ -6,7 +6,7 @@ use formatjs_icu_messageformat_parser::{Parser, ParserOptions};
 use intl_ai_core::check::{Check, CheckCtx, CheckItem};
 use intl_ai_core::diff::CheckFinding;
 use intl_ai_core::error::Result;
-use std::collections::BTreeSet;
+use std::collections::{BTreeMap, BTreeSet};
 
 /// Parse a message as ICU MF1. Error text is the parser's own.
 pub fn parse_message(message: &str) -> std::result::Result<Vec<MessageFormatElement>, String> {
@@ -70,6 +70,10 @@ impl Check for IcuCheck {
         "icu"
     }
 
+    fn cache_ctx(&self) -> BTreeMap<String, String> {
+        BTreeMap::new()
+    }
+
     fn run(&self, _ctx: &CheckCtx, items: &[CheckItem]) -> Result<Vec<CheckFinding>> {
         let mut out = Vec::new();
         for item in items {
@@ -78,6 +82,7 @@ impl Check for IcuCheck {
                     key: item.key.clone(),
                     check: self.id().into(),
                     message: format!("invalid ICU MessageFormat: {e}"),
+                    ..Default::default()
                 });
             }
         }
@@ -92,6 +97,10 @@ pub struct PlaceholderParity;
 impl Check for PlaceholderParity {
     fn id(&self) -> &str {
         "placeholder-parity"
+    }
+
+    fn cache_ctx(&self) -> BTreeMap<String, String> {
+        BTreeMap::new()
     }
 
     fn run(&self, _ctx: &CheckCtx, items: &[CheckItem]) -> Result<Vec<CheckFinding>> {
@@ -116,6 +125,7 @@ impl Check for PlaceholderParity {
                 key: item.key.clone(),
                 check: self.id().into(),
                 message: parts.join("; "),
+                ..Default::default()
             });
         }
         Ok(out)

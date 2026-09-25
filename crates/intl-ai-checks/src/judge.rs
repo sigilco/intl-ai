@@ -8,6 +8,7 @@ use intl_ai_core::check::{Check, CheckCtx, CheckItem};
 use intl_ai_core::diff::CheckFinding;
 use intl_ai_core::error::{Error, Result};
 use intl_ai_core::transport::{JudgeItem, JudgeRequest};
+use std::collections::BTreeMap;
 
 /// Publishable threshold, verbatim from the TS judge (0..1 scale).
 pub const JUDGE_THRESHOLD: f64 = 0.8;
@@ -21,6 +22,13 @@ impl Check for JudgeCheck {
 
     fn needs_transport(&self) -> bool {
         true
+    }
+
+    fn cache_ctx(&self) -> BTreeMap<String, String> {
+        // Provider identity is ambient but deliberately not fingerprinted
+        // (same posture as the stat-cache) — `--no-cache` is the escape
+        // hatch when switching models.
+        BTreeMap::from([("threshold".into(), JUDGE_THRESHOLD.to_string())])
     }
 
     fn run(&self, ctx: &CheckCtx, items: &[CheckItem]) -> Result<Vec<CheckFinding>> {
@@ -60,6 +68,7 @@ impl Check for JudgeCheck {
                     key: j.key,
                     check: self.id().into(),
                     message,
+                    ..Default::default()
                 }
             })
             .collect())
