@@ -2,6 +2,21 @@
 resolver = "3"
 members = ["crates/*"]
 
+# Dev: line tables for workspace crates only; deps get no debug info.
+# Escape hatch: RUSTFLAGS="-C debuginfo=2" cargo build (full deps debug).
+[profile.dev]
+debug = 1
+
+[profile.dev.package."*"]
+debug = 0
+
+# cargo-dist builds release artifacts with this profile.
+[profile.dist]
+inherits = "release"
+lto = "thin"
+codegen-units = 1
+strip = true
+
 [workspace.package]
 version = "0.5.0"
 edition = "2024"
@@ -25,3 +40,24 @@ ureq = { version = "3", default-features = false, features = ["rustls", "json", 
 libc = "0.2"
 serde_yaml_ng = "0.10"
 schemars = "1"
+
+[workspace.metadata.dist]
+cargo-dist-version = "0.33.0"
+ci = "github"
+installers = ["shell", "powershell", "homebrew", "npm"]
+tap = "sigilco/homebrew-tap-intl-ai"
+npm-package = "intl-ai"
+publish-jobs = ["homebrew", "npm"]
+targets = [
+    "aarch64-apple-darwin",
+    "x86_64-apple-darwin",
+    "x86_64-pc-windows-msvc",
+    "x86_64-unknown-linux-gnu",
+    "aarch64-unknown-linux-gnu",
+]
+install-path = "CARGO_HOME"
+github-attestations = true
+pr-run-mode = "plan"
+# release.yml carries two hand-maintained deltas dist cannot express:
+# the `concurrency` group and `environment: npm-publish` on publish-npm.
+allow-dirty = ["ci"]

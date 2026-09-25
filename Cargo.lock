@@ -988,21 +988,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "intl-ai-checks"
-version = "0.5.0"
-dependencies = [
- "formatjs_icu_messageformat_parser",
- "intl-ai-core",
- "intl-ai-providers",
- "libc",
- "regex",
- "serde",
- "serde_json",
- "serde_yaml_ng",
-]
-
-[[package]]
-name = "intl-ai-cli"
+name = "intl-ai"
 version = "0.5.0"
 dependencies = [
  "anyhow",
@@ -1018,6 +1004,20 @@ dependencies = [
  "serde_yaml_ng",
  "tempfile",
  "toml 0.9.12+spec-1.1.0",
+]
+
+[[package]]
+name = "intl-ai-checks"
+version = "0.5.0"
+dependencies = [
+ "formatjs_icu_messageformat_parser",
+ "intl-ai-core",
+ "intl-ai-providers",
+ "libc",
+ "regex",
+ "serde",
+ "serde_json",
+ "serde_yaml_ng",
 ]
 
 [[package]]

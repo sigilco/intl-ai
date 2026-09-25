@@ -1,9 +1,12 @@
 [package]
-name = "intl-ai-cli"
+name = "intl-ai"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
 rust-version.workspace = true
+repository = "https://github.com/sigilco/intl-ai"
+description = "AI-powered build-time i18n translation CLI"
+homepage = "https://intl-ai.pages.dev"
 
 [dependencies]
 intl-ai-checks = { path = "../intl-ai-checks" }
