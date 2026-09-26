@@ -367,6 +367,18 @@ jobs:
           done
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      # Deprecate the legacy scoped TS packages so installs warn and point at the
+      # Rust binary. Idempotent: 'name@*' covers every published version, so
+      # re-running on each release also catches any straggler 0.4.x publish.
+      # NOTE: dist regenerates this file; re-add this step after `dist generate`.
+      - name: Deprecate legacy @intl-ai/* packages
+        run: |
+          msg='Deprecated: intl-ai is now a Rust binary. Install via install.sh, brew, mise, or the "intl-ai" npm package. Migration: https://github.com/sigilco/intl-ai#migration'
+          for pkg in @intl-ai/cli @intl-ai/unplugin @intl-ai/next @intl-ai/api; do
+            npm deprecate "${pkg}@*" "$msg" || echo "::warning::deprecate failed for $pkg"
+          done
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
   announce:
     needs:
