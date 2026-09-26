@@ -184,6 +184,7 @@ self_test:
         .code(1);
 }
 
+#[cfg(unix)]
 #[test]
 fn exec_check_protocol_v1() {
     let dir = TempDir::new().unwrap();
@@ -228,6 +229,7 @@ printf '{"v":1,"findings":[{"key":"a","message":"exec flagged it"}]}\n'
     );
 }
 
+#[cfg(unix)]
 #[test]
 fn exec_check_error_fails_closed() {
     let dir = TempDir::new().unwrap();

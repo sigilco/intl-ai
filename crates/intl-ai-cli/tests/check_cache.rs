@@ -110,6 +110,7 @@ fn changed_key_reruns_while_unchanged_replays() {
     assert!(fr["a"]["dialect:en-GB"].is_object());
 }
 
+#[cfg(unix)]
 #[test]
 fn exec_whole_batch_invalidates_on_any_key_change() {
     let dir = TempDir::new().unwrap();
@@ -171,6 +172,7 @@ printf '{"v":1,"findings":[{"key":"a","message":"exec flagged"}]}\n'
     assert!(third["locales"]["fr"]["invalid"][0].get("cached").is_none());
 }
 
+#[cfg(unix)]
 #[test]
 fn config_cache_false_and_no_cache_flag_bypass() {
     for extra in ["[check]\ncache = false\n", ""] {

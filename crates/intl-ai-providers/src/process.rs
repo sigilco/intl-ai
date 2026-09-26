@@ -169,6 +169,7 @@ fn drain_capped<R: Read>(mut reader: R, cap: usize, flagged: Arc<AtomicBool>) ->
     buf
 }
 
+#[cfg(unix)]
 fn escalate(child: &mut Child) {
     signal(child, libc::SIGTERM);
     let deadline = Instant::now() + GRACE_AFTER_SIGTERM;
@@ -182,18 +183,19 @@ fn escalate(child: &mut Child) {
     let _ = child.wait();
 }
 
+#[cfg(not(unix))]
+fn escalate(child: &mut Child) {
+    // No SIGTERM on non-unix: kill() (TerminateProcess) is all we have.
+    let _ = child.kill();
+    let _ = child.wait();
+}
+
 #[cfg(unix)]
 fn signal(child: &mut Child, sig: libc::c_int) {
     // Negative pid targets the process group created by process_group(0),
     // so SIGTERM reaches grandchildren (shells/workers the agent spawned)
     // that would otherwise keep our pipes open.
     unsafe { libc::kill(-(child.id() as i32), sig) };
-}
-
-#[cfg(not(unix))]
-fn signal(child: &mut Child, _sig: i32) {
-    // No SIGTERM on non-unix: kill() (TerminateProcess) is all we have.
-    let _ = child.kill();
 }
 
 fn preview(stderr: &[u8]) -> String {
