@@ -1,0 +1,227 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "oneOf": [
+    {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "default": "http",
+          "type": "string",
+          "const": "http"
+        },
+        "defaultLocale": {
+          "type": "string",
+          "minLength": 1
+        },
+        "locales": {
+          "minItems": 1,
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "localeDir": {
+          "type": "string",
+          "minLength": 1
+        },
+        "glossary": {
+          "type": "object",
+          "propertyNames": {
+            "type": "string"
+          },
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "localeInstructions": {
+          "type": "object",
+          "propertyNames": {
+            "type": "string"
+          },
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "maxRetries": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10
+        },
+        "processor": {
+          "type": "string",
+          "enum": [
+            "passthrough",
+            "icu"
+          ]
+        },
+        "batchSize": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "quality": {
+          "type": "object",
+          "properties": {
+            "threshold": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "maxRetries": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 5
+            }
+          },
+          "additionalProperties": false
+        },
+        "format": {
+          "type": "string"
+        },
+        "$schema": {
+          "type": "string",
+          "minLength": 1
+        },
+        "provider": {
+          "default": "openai",
+          "type": "string",
+          "minLength": 1
+        },
+        "model": {
+          "type": "string",
+          "minLength": 1
+        },
+        "apiKey": {
+          "type": "string",
+          "minLength": 1
+        },
+        "baseURL": {
+          "type": "string",
+          "format": "uri"
+        },
+        "modelParams": {
+          "type": "object",
+          "propertyNames": {
+            "type": "string"
+          },
+          "additionalProperties": {}
+        }
+      },
+      "required": [
+        "kind",
+        "defaultLocale",
+        "locales",
+        "localeDir",
+        "provider",
+        "model",
+        "apiKey"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "type": "string",
+          "const": "agent"
+        },
+        "defaultLocale": {
+          "type": "string",
+          "minLength": 1
+        },
+        "locales": {
+          "minItems": 1,
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "localeDir": {
+          "type": "string",
+          "minLength": 1
+        },
+        "glossary": {
+          "type": "object",
+          "propertyNames": {
+            "type": "string"
+          },
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "localeInstructions": {
+          "type": "object",
+          "propertyNames": {
+            "type": "string"
+          },
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "maxRetries": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10
+        },
+        "processor": {
+          "type": "string",
+          "enum": [
+            "passthrough",
+            "icu"
+          ]
+        },
+        "batchSize": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "quality": {
+          "type": "object",
+          "properties": {
+            "threshold": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "maxRetries": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 5
+            }
+          },
+          "additionalProperties": false
+        },
+        "format": {
+          "type": "string"
+        },
+        "$schema": {
+          "type": "string",
+          "minLength": 1
+        },
+        "agent": {
+          "type": "string",
+          "enum": [
+            "claude-code",
+            "opencode",
+            "codex",
+            "crush",
+            "gemini"
+          ]
+        }
+      },
+      "required": [
+        "kind",
+        "defaultLocale",
+        "locales",
+        "localeDir",
+        "agent"
+      ],
+      "additionalProperties": false
+    }
+  ],
+  "$id": "https://www.schemastore.org/intl-ai.json",
+  "title": "intl-ai config",
+  "description": "Configuration for the intl-ai translation build step"
+}

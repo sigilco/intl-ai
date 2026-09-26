@@ -1,0 +1,65 @@
+{
+  "name": "@intl-ai/next",
+  "version": "0.4.1",
+  "description": "Turbopack bridge for @intl-ai/unplugin in Next.js 15+ apps",
+  "keywords": [
+    "ai",
+    "i18n",
+    "internationalization",
+    "intl",
+    "next",
+    "nextjs",
+    "translation"
+  ],
+  "homepage": "https://intl-ai.pages.dev",
+  "bugs": "https://github.com/sigilco/intl-ai/issues",
+  "license": "MIT",
+  "author": "Joaquin Terrasa",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sigilco/intl-ai.git"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "types": "./dist/index.d.mts",
+      "default": "./dist/index.mjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "dev": "tsdown --watch",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@intl-ai/api": "workspace:*",
+    "@intl-ai/unplugin": "workspace:*",
+    "pathe": "catalog:"
+  },
+  "devDependencies": {
+    "@repo/typescript-config": "workspace:*",
+    "@types/node": "catalog:",
+    "next": "catalog:react18",
+    "react": "catalog:react18",
+    "react-dom": "catalog:react18",
+    "tsdown": "catalog:",
+    "typescript": "catalog:"
+  },
+  "peerDependencies": {
+    "next": ">=14.0.0"
+  },
+  "engines": {
+    "node": "^22.18.0 || >=24"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "IndexPage": {
+    "title": "Accueil",
+    "description": "Cette est la page d'accueil."
+  },
+  "RootLayout": {
+    "title": "next-intl example"
+  }
+}

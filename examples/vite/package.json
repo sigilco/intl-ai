@@ -1,0 +1,21 @@
+{
+  "name": "@examples/vite",
+  "version": "0.0.4",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@intl-ai/unplugin": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "catalog:",
+    "vite": "8.0.12"
+  },
+  "engines": {
+    "node": "^22.18.0 || >=24"
+  }
+}

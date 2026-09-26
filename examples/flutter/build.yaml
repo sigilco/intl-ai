@@ -1,0 +1,8 @@
+targets:
+  $default:
+    builders:
+      intl_ai_flutter|intl_ai:
+        enabled: true
+        options:
+          configPath: "intl-ai.config.json"
+          verbose: true

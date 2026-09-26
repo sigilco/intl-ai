@@ -1,0 +1,3 @@
+backends = ["ubi:sigilco/intl-ai[exe=intl-ai]", "npm:intl-ai"]
+description = "AI-powered build-time i18n translation CLI"
+test = { cmd = "intl-ai --version", expected = "{{version}}" }

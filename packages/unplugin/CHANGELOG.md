@@ -1,0 +1,46 @@
+# @intl-ai/unplugin
+
+## 0.4.1
+
+### Patch Changes
+
+- fix(config): thread JSON config `model` field to `translateBatch`/`judgeBatch`, and accept the `$schema` JSON Schema meta-key. The `model` field in `intl-ai.config.json` was being ignored in favour of a hardcoded fallback. `model` is now required in the JSON schema, threaded all the way through to batch translators, and recorded in the lockfile. The Zod schema also accepts `$schema` (the standard JSON Schema meta-key editors read for autocomplete) while keeping `.strict()` for everything else.
+- Updated dependencies
+  - @intl-ai/api@0.4.1
+
+## 0.4.0
+
+### Minor Changes
+
+- 49d7109: feat(fill): quality-aware fill loop with LLM-as-a-Judge retry. `runFill(config, { quality })` now runs an optional quality loop: after each fill batch, the same provider judges the translations, entries below the configured threshold are refilled with the judge's feedback, and a build plugin enabled with `quality: true` fails the build when keys remain below threshold after retries. Threshold and `maxRetries` come from `intl-ai.config.json`; the build plugin option only toggles the loop. Custom judges plug in via `config.quality.assessor: QualityAssessorInstance`. Closes #14.
+
+### Patch Changes
+
+- Updated dependencies
+- Updated dependencies [49d7109]
+  - @intl-ai/api@0.4.0
+
+## 0.3.0
+
+### Minor Changes
+
+- v0.3.0: refactor docs, narrow Next.js integration, and add alternative install paths.
+  - Docs restructured with central `<DocsUrl>` URL management, a new `Build systems` section (Vite, Webpack, Rollup, esbuild, Rspack, Rolldown, Farm, Bun, Next.js), and an `i18n libraries` compatibility page.
+  - `@intl-ai/next` narrowed to a Next.js 15+ Turbopack bridge. Webpack builds now delegate to `@intl-ai/unplugin/webpack`, removing duplicated config loading and eager `runFill()` startup.
+  - Added Homebrew tap (`brew install sigilco/tap/intl-ai`) and mise registry (`mise use npm:intl-ai`) support.
+  - All documentation links now point to `https://intl-ai.pages.dev` instead of the previous `illo.fyi` domain.
+
+  The v0.2.0 tag was created prematurely and is replaced by v0.3.0.
+
+### Patch Changes
+
+- Updated dependencies
+  - @intl-ai/api@0.3.0
+
+## 0.2.0
+
+### Minor Changes
+
+- 448b5b4: v0.2.0 release: `@intl-ai/unplugin` and `@intl-ai/next` join `@intl-ai/api` and `@intl-ai/cli` at v0.2.0.
+
+  This release also includes the runtime-agnostic rethink (Zod replacing AJV, trimmed public API surface, config file consolidation) and the config loader cleanup (core removed, only .ts/.json config files supported) which brought `@intl-ai/api` and `@intl-ai/cli` to v0.2.0.

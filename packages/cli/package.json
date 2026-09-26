@@ -1,0 +1,67 @@
+{
+  "name": "@intl-ai/cli",
+  "version": "0.3.2",
+  "description": "CLI for AI-powered i18n translation",
+  "keywords": [
+    "ai",
+    "cli",
+    "i18n",
+    "internationalization",
+    "intl",
+    "translation"
+  ],
+  "homepage": "https://intl-ai.pages.dev",
+  "bugs": "https://github.com/sigilco/intl-ai/issues",
+  "license": "MIT",
+  "author": "Joaquin Terrasa",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sigilco/intl-ai.git"
+  },
+  "bin": {
+    "intl-ai": "./dist/index.mjs"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "type": "module",
+  "main": "./dist/index.mjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.mts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.mjs",
+      "default": "./dist/index.mjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "dev": "tsdown --watch",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@intl-ai/api": "workspace:*",
+    "@logtape/logtape": "catalog:",
+    "cleye": "catalog:",
+    "pathe": "catalog:"
+  },
+  "devDependencies": {
+    "@repo/typescript-config": "workspace:*",
+    "@types/node": "catalog:",
+    "tsdown": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  },
+  "engines": {
+    "node": "^22.18.0 || >=24"
+  }
+}

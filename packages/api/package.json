@@ -1,0 +1,83 @@
+{
+  "name": "@intl-ai/api",
+  "version": "0.4.1",
+  "description": "Runtime-agnostic translation core for intl-ai (zero Node.js-only deps)",
+  "keywords": [
+    "ai",
+    "i18n",
+    "internationalization",
+    "intl",
+    "translation"
+  ],
+  "homepage": "https://intl-ai.pages.dev",
+  "bugs": "https://github.com/sigilco/intl-ai/issues",
+  "license": "MIT",
+  "author": "Joaquin Terrasa",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sigilco/intl-ai.git",
+    "directory": "packages/api"
+  },
+  "files": [
+    "dist",
+    "src/schema",
+    "README.md",
+    "LICENSE"
+  ],
+  "type": "module",
+  "sideEffects": false,
+  "main": "./dist/index.mjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.mts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.mjs",
+      "default": "./dist/index.mjs"
+    },
+    "./internal": {
+      "types": "./dist/internal.d.mts",
+      "import": "./dist/internal.mjs",
+      "require": "./dist/internal.mjs",
+      "default": "./dist/internal.mjs"
+    },
+    "./schema": {
+      "types": "./dist/schema/index.d.mts",
+      "import": "./dist/schema/index.mjs",
+      "require": "./dist/schema/index.mjs",
+      "default": "./dist/schema/index.mjs"
+    },
+    "./schema.json": "./src/schema/intl-ai.schema.json"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "dev": "tsdown --watch",
+    "schema:build": "jiti scripts/build-schema.ts",
+    "test": "vitest run",
+    "test:integration": "vitest run -c vitest.integration.config.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@formatjs/icu-messageformat-parser": "3.5.12",
+    "@logtape/logtape": "catalog:",
+    "jiti": "catalog:",
+    "pathe": "catalog:",
+    "yaml": "2.9.0",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@repo/typescript-config": "workspace:*",
+    "@types/node": "catalog:",
+    "dotenv": "16.4.7",
+    "tsdown": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  },
+  "engines": {
+    "node": "^22.18.0 || >=24"
+  }
+}

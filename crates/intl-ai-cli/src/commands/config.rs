@@ -1,0 +1,43 @@
+use anyhow::Result;
+
+use crate::commands::{is_json, print_json, resolve_config};
+use crate::{Cli, ConfigArgs, ConfigCommand};
+
+pub fn run(cli: &Cli, args: &ConfigArgs) -> Result<u8> {
+    match &args.command {
+        ConfigCommand::Validate(v) => {
+            let cfg = resolve_config(cli)?;
+            // `[fill] validate` names must resolve to gate-eligible
+            // checks (same rule `fill` applies at build time).
+            for name in &cfg.config.fill.validate {
+                intl_ai_checks::gate_check(&cfg, name)?;
+            }
+            if is_json(v.format) {
+                // Serializes the resolved (post-extends, post-env-overlay,
+                // post-interpolation) typed config.
+                print_json(&serde_json::json!({
+                    "valid": true,
+                    "config": cfg.config,
+                    "resolved": {
+                        "locale_dir": cfg.locale_dir(),
+                        "config_path": cfg.config_path,
+                    }
+                }))?;
+            } else {
+                println!("valid");
+                println!("locale_dir = {}", cfg.locale_dir().display());
+                if let Some(p) = &cfg.config_path {
+                    println!("config = {}", p.display());
+                }
+            }
+            Ok(0)
+        }
+        ConfigCommand::Schema => {
+            // Generated from the typed contract, so it can never drift
+            // from `config validate` (plan 7: one schema, all formats).
+            let schema = intl_ai_core::config::json_schema();
+            println!("{}", serde_json::to_string_pretty(&schema)?);
+            Ok(0)
+        }
+    }
+}

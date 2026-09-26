@@ -1,0 +1,174 @@
+//! The command transport: frames `system\n\n---\n\nuser`, feeds it via
+//! stdin (or argv when `prompt_via = "argv"`), and parses JSON out of
+//! however the agent CLIs dress their output.
+
+use intl_ai_core::config::PromptVia;
+use intl_ai_core::error::{Error, ErrorType, Result};
+use intl_ai_core::transport::{
+    JudgeRequest, Judgement, TranslateRequest, TranslateResponse, Translated, Transport,
+};
+use std::path::PathBuf;
+
+use crate::payload::{payload_or_self, strip_vt};
+use crate::process::{self, DEFAULT_STDOUT_CAP, DEFAULT_TIMEOUT, RunSpec};
+use crate::prompt::{
+    ADVERSARIAL_SYSTEM_PROMPT, judge_user_prompt, parse_judgements, parse_translations,
+    system_prompt, user_prompt,
+};
+use crate::retry::attempt_with_retries;
+
+/// A single argv string can't exceed ~128KiB on unix (MAX_ARG_STRLEN).
+/// Stay under it so the spawn can't fail with E2BIG mid-run; larger
+/// prompts belong on stdin anyway.
+const MAX_ARGV_PROMPT: usize = 120 * 1024;
+
+#[derive(Debug, Clone)]
+pub struct CommandSpec {
+    /// Display id used as `model` on lockfile entries ("claude-code", ...).
+    pub id: String,
+    pub command: String,
+    pub args: Vec<String>,
+    pub prompt_via: PromptVia,
+    pub cwd: Option<PathBuf>,
+    pub timeout_ms: Option<u64>,
+    pub max_stdout_bytes: Option<u64>,
+    pub max_retries: u32,
+}
+
+pub struct CommandTransport {
+    spec: CommandSpec,
+}
+
+impl CommandTransport {
+    pub fn new(spec: CommandSpec) -> Self {
+        Self { spec }
+    }
+}
+
+impl Transport for CommandTransport {
+    fn id(&self) -> &str {
+        &self.spec.id
+    }
+
+    fn translate(&self, req: &TranslateRequest) -> Result<TranslateResponse> {
+        let system = system_prompt(req.locale_instruction.as_deref());
+        let user = user_prompt(req);
+        let framed = format!("{system}\n\n---\n\n{user}");
+
+        // Fetch + parse are inside the attempt so malformed output (plain
+        // text, truncated JSON) consumes retry budget like transport errors.
+        attempt_with_retries(self.spec.max_retries, || {
+            let content = self.attempt(&framed)?;
+            let cleaned = strip_vt(&content);
+            let payload = payload_or_self(&cleaned);
+            let parsed = parse_translations(&payload).map_err(|e| {
+                Error::transport(
+                    ErrorType::ParseError,
+                    format!("command transport: {}: {e}", self.spec.id),
+                )
+            })?;
+            Ok(TranslateResponse {
+                translations: parsed
+                    .translations
+                    .into_iter()
+                    .map(|r| Translated {
+                        key: r.key,
+                        value: r.translated,
+                    })
+                    .collect(),
+                model: self.spec.id.clone(),
+            })
+        })
+    }
+
+    fn judge(&self, req: &JudgeRequest) -> Result<Vec<Judgement>> {
+        let user = judge_user_prompt(&req.items, req.locale_instruction.as_deref());
+        let framed = format!("{ADVERSARIAL_SYSTEM_PROMPT}\n\n---\n\n{user}");
+        attempt_with_retries(self.spec.max_retries, || {
+            let content = self.attempt(&framed)?;
+            let cleaned = strip_vt(&content);
+            let payload = payload_or_self(&cleaned);
+            let parsed = parse_judgements(&payload).map_err(|e| {
+                Error::transport(
+                    ErrorType::ParseError,
+                    format!("command transport: {}: judge: {e}", self.spec.id),
+                )
+            })?;
+            Ok(parsed
+                .judgements
+                .into_iter()
+                .map(|r| Judgement {
+                    key: r.key,
+                    score: r.score,
+                    reason: r.reason,
+                    errors: r.errors,
+                })
+                .collect())
+        })
+    }
+}
+
+impl CommandTransport {
+    fn attempt(&self, framed: &str) -> Result<String> {
+        let (args, input) = match self.spec.prompt_via {
+            PromptVia::Argv => {
+                if framed.len() > MAX_ARGV_PROMPT {
+                    return Err(Error::transport(
+                        ErrorType::SpawnFailure,
+                        format!(
+                            "command transport: {} prompt is {} bytes, over the {} byte single-argument limit; set prompt_via = \"stdin\"",
+                            self.spec.id,
+                            framed.len(),
+                            MAX_ARGV_PROMPT
+                        ),
+                    ));
+                }
+                let mut args = self.spec.args.clone();
+                args.push(framed.to_string());
+                (args, None)
+            }
+            PromptVia::Stdin => (self.spec.args.clone(), Some(framed.to_string())),
+        };
+        process::run(&RunSpec {
+            command: self.spec.command.clone(),
+            args,
+            cwd: self.spec.cwd.clone(),
+            input,
+            timeout: self
+                .spec
+                .timeout_ms
+                .map(Duration::from_millis)
+                .unwrap_or(DEFAULT_TIMEOUT),
+            max_stdout: self
+                .spec
+                .max_stdout_bytes
+                .map(|b| b as usize)
+                .unwrap_or(DEFAULT_STDOUT_CAP),
+        })
+    }
+}
+
+use std::time::Duration;
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn argv_prompt_over_limit_fails_clean() {
+        let t = CommandTransport::new(CommandSpec {
+            id: "probe".into(),
+            command: "true".into(),
+            args: vec![],
+            prompt_via: PromptVia::Argv,
+            cwd: None,
+            timeout_ms: None,
+            max_stdout_bytes: None,
+            max_retries: 1,
+        });
+        let err = t.attempt(&"x".repeat(MAX_ARGV_PROMPT + 1)).unwrap_err();
+        let msg = err.to_string();
+        assert!(msg.contains("single-argument limit"), "{msg}");
+        assert!(msg.contains("prompt_via"), "{msg}");
+    }
+}

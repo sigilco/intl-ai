@@ -1,0 +1,33 @@
+{
+  "name": "@examples/expo",
+  "private": true,
+  "main": "expo/AppEntry.js",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web",
+    "prebuild": "expo prebuild",
+    "build:plugin": "tsdown --config plugin/tsdown.config.ts",
+    "typecheck:plugin": "tsc --project plugin/tsconfig.json --noEmit",
+    "test:plugin": "vitest run --config plugin/vitest.config.ts"
+  },
+  "dependencies": {
+    "expo": "~52.0.0",
+    "react": "catalog:react18",
+    "react-native": "0.76.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.24.0",
+    "@expo/config-plugins": "9.0.17",
+    "@repo/typescript-config": "workspace:*",
+    "@types/node": "catalog:",
+    "pathe": "catalog:",
+    "tsdown": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  },
+  "engines": {
+    "node": "^22.18.0 || >=24"
+  }
+}
