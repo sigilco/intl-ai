@@ -3,6 +3,7 @@
 //! project doesn't mean re-validating every key on every `check`.
 //! Gitignored, like the stat-cache; never the source of truth.
 
+use crate::check::CheckOutput;
 use crate::diff::CheckFinding;
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
@@ -39,6 +40,10 @@ pub struct CacheHit {
     pub fingerprint: String,
     #[serde(default)]
     pub findings: Vec<CheckFinding>,
+    /// Scores emitted by scoring checks (`judge`), cached alongside
+    /// findings so `[quality]` aggregation still works on a hit.
+    #[serde(default)]
+    pub scores: BTreeMap<String, f64>,
 }
 
 fn default_version() -> u32 {
@@ -74,7 +79,7 @@ impl CheckCache {
         self.entries.get(locale)?.get(key)?.get(check_id)
     }
 
-    /// Remember the finding set a run produced (empty included — absence
+    /// Remember the output a run produced (empty included — absence
     /// of findings is a cacheable result).
     pub fn put(
         &mut self,
@@ -82,7 +87,7 @@ impl CheckCache {
         key: &str,
         check_id: &str,
         fingerprint: String,
-        findings: Vec<CheckFinding>,
+        output: CheckOutput,
     ) {
         self.entries
             .entry(locale.to_string())
@@ -93,7 +98,8 @@ impl CheckCache {
                 check_id.to_string(),
                 CacheHit {
                     fingerprint,
-                    findings,
+                    findings: output.findings,
+                    scores: output.scores,
                 },
             );
     }
@@ -117,7 +123,7 @@ mod tests {
         let dir = tempfile::tempdir().unwrap();
         let path = dir.path().join("check-cache.json");
         let mut c = CheckCache::default();
-        c.put("fr", "k", "icu", "fp1".into(), vec![]);
+        c.put("fr", "k", "icu", "fp1".into(), CheckOutput::default());
         c.save(&path);
         let loaded = CheckCache::load(&path);
         assert_eq!(loaded.get("fr", "k", "icu").unwrap().fingerprint, "fp1");
@@ -129,9 +135,15 @@ mod tests {
     #[test]
     fn prune_keeps_batch_and_live_keys() {
         let mut c = CheckCache::default();
-        c.put("fr", "a", "icu", "f".into(), vec![]);
-        c.put("fr", "dead", "icu", "f".into(), vec![]);
-        c.put("fr", BATCH_KEY, "exec:x", "f".into(), vec![]);
+        c.put("fr", "a", "icu", "f".into(), CheckOutput::default());
+        c.put("fr", "dead", "icu", "f".into(), CheckOutput::default());
+        c.put(
+            "fr",
+            BATCH_KEY,
+            "exec:x",
+            "f".into(),
+            CheckOutput::default(),
+        );
         let live = BTreeSet::from(["a".to_string()]);
         c.prune_locale("fr", &live);
         let keys: Vec<&String> = c.entries["fr"].keys().collect();

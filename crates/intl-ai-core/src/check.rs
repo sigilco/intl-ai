@@ -1,6 +1,6 @@
 use crate::check_cache::{BATCH_KEY, CheckCache};
-use crate::config::ResolvedConfig;
-use crate::diff::{CheckFinding, FindingKind, LocaleDiff, diff, effective_origin};
+use crate::config::{QualityConfig, ResolvedConfig};
+use crate::diff::{CheckFinding, FindingKind, LocaleDiff, QualityRecord, diff, effective_origin};
 use crate::error::Result;
 use crate::flatten::flatten;
 use crate::hash::fingerprint;
@@ -57,6 +57,27 @@ pub enum CheckGranularity {
     WholeBatch,
 }
 
+/// What a check produced for a batch of items: rule violations plus,
+/// for scoring checks (`judge`), a normalized 0..=1 score per key.
+/// Binary checks leave `scores` empty — the `[quality]` aggregator
+/// then treats a covered key with a finding as 0 and without as 1.
+/// A key absent from `scores` on a scoring check means the check had
+/// no opinion (judge skips sourceless keys), not a pass.
+#[derive(Debug, Default, Clone)]
+pub struct CheckOutput {
+    pub findings: Vec<CheckFinding>,
+    pub scores: BTreeMap<String, f64>,
+}
+
+impl From<Vec<CheckFinding>> for CheckOutput {
+    fn from(findings: Vec<CheckFinding>) -> Self {
+        Self {
+            findings,
+            scores: BTreeMap::new(),
+        }
+    }
+}
+
 /// A check rule or external checker. Implementations live in
 /// `intl-ai-checks`; the trait sits in core so `check()` can run them without
 /// knowing the impls. `run` gets the locale's full item batch in one call
@@ -86,8 +107,19 @@ pub trait Check {
     /// output — wordlist identities, thresholds, the exec command line.
     /// Folded into the cache fingerprint; required so every impl makes a
     /// deliberate decision about what its results depend on.
+    /// True for checks that emit real normalized scores (`judge`);
+    /// drives `[quality]` aggregation coverage — scoring checks only
+    /// contribute for keys present in `CheckOutput::scores`, binary
+    /// checks contribute for every item they ran on.
+    fn emits_scores(&self) -> bool {
+        false
+    }
+    /// Aggregation weight under `[quality]` (from `[[checks]] weight`).
+    fn weight(&self) -> f64 {
+        1.0
+    }
     fn cache_ctx(&self) -> BTreeMap<String, String>;
-    fn run(&self, ctx: &CheckCtx, items: &[CheckItem]) -> Result<Vec<CheckFinding>>;
+    fn run(&self, ctx: &CheckCtx, items: &[CheckItem]) -> Result<CheckOutput>;
 }
 
 /// The fill-time validation gate (plan W2b-C): a configured subset of
@@ -213,15 +245,13 @@ pub fn check(
             transport,
             locale_instruction: instruction.as_deref(),
         };
-        run_checks(
-            &locale,
-            checks,
-            &ctx,
-            &items,
-            &mut check_cache,
-            &mut d,
-            &mut report,
-        );
+        let outcomes = run_checks(&locale, checks, &ctx, &items, &mut check_cache, &mut report);
+        for o in &outcomes {
+            d.invalid.extend(o.findings.iter().cloned());
+        }
+        if let Some(q) = &cfg.config.quality {
+            apply_quality(q, &outcomes, &items, &mut d);
+        }
         if opts.selector.is_any() {
             let live: std::collections::BTreeSet<String> =
                 items.iter().map(|i| i.key.clone()).collect();
@@ -276,7 +306,10 @@ pub fn check(
         d.modified.retain(|k| opts.selector.matches(k));
         d.extra.retain(|k| opts.selector.matches(k));
         d.unreviewed.retain(|k| opts.selector.matches(k));
+        d.unreviewed.sort();
+        d.unreviewed.dedup();
         d.invalid.retain(|f| opts.selector.matches(&f.key));
+        d.quality.retain(|k, _| opts.selector.matches(k));
 
         if !d.missing.is_empty()
             || !d.stale.is_empty()
@@ -316,19 +349,37 @@ pub fn check(
     Ok(report)
 }
 
+/// One check's outcome for the batch: replayed or fresh findings, any
+/// emitted scores, and the metadata `[quality]` aggregation needs
+/// (weight + whether the check scores at all).
+struct CheckOutcome {
+    weight: f64,
+    scored: bool,
+    findings: Vec<CheckFinding>,
+    scores: BTreeMap<String, f64>,
+}
+
 /// Run `checks` over `items`, replaying from `cache` where the
 /// fingerprint of a check's inputs still matches. Cache misses run and
-/// store; errors are never cached (a flaky check retries next run).
+/// store; errors are never cached (a flaky check retries next run) and
+/// exclude the check from quality aggregation entirely — an errored
+/// check never counts as coverage.
 fn run_checks(
     locale: &str,
     checks: &[Box<dyn Check>],
     ctx: &CheckCtx,
     items: &[CheckItem],
     cache: &mut CheckCache,
-    d: &mut LocaleDiff,
     report: &mut CheckReport,
-) {
+) -> Vec<CheckOutcome> {
+    let mut outcomes = Vec::with_capacity(checks.len());
     for c in checks {
+        let mut outcome = CheckOutcome {
+            weight: c.weight(),
+            scored: c.emits_scores(),
+            findings: Vec::new(),
+            scores: BTreeMap::new(),
+        };
         // Ambient inputs the check itself declares (wordlist, command
         // line, threshold) plus the locale pair it ran under.
         let mut ambient: Vec<String> = vec![
@@ -352,14 +403,17 @@ fn run_checks(
                 if let Some(hit) = cache.get(locale, BATCH_KEY, c.id())
                     && hit.fingerprint == fp
                 {
-                    d.invalid
-                        .extend(hit.findings.iter().cloned().map(mark_cached));
+                    outcome.findings = hit.findings.iter().cloned().map(mark_cached).collect();
+                    outcome.scores = hit.scores.clone();
+                    outcomes.push(outcome);
                     continue;
                 }
                 match c.run(ctx, items) {
-                    Ok(findings) => {
-                        cache.put(locale, BATCH_KEY, c.id(), fp, findings.clone());
-                        d.invalid.extend(findings);
+                    Ok(out) => {
+                        outcome.findings.clone_from(&out.findings);
+                        outcome.scores.clone_from(&out.scores);
+                        cache.put(locale, BATCH_KEY, c.id(), fp, out);
+                        outcomes.push(outcome);
                     }
                     Err(e) => report.errors.push(format!("{locale}/{}: {e}", c.id())),
                 }
@@ -378,33 +432,114 @@ fn run_checks(
                     if let Some(hit) = cache.get(locale, &item.key, c.id())
                         && hit.fingerprint == fp
                     {
-                        d.invalid
+                        outcome
+                            .findings
                             .extend(hit.findings.iter().cloned().map(mark_cached));
+                        if let Some(s) = hit.scores.get(&item.key) {
+                            outcome.scores.insert(item.key.clone(), *s);
+                        }
                     } else {
                         run_fps.push((item.key.clone(), fp));
                         run_items.push(item.clone());
                     }
                 }
-                if run_items.is_empty() {
-                    continue;
-                }
-                match c.run(ctx, &run_items) {
-                    Ok(findings) => {
-                        let mut per_key: BTreeMap<String, Vec<CheckFinding>> = BTreeMap::new();
-                        for f in findings {
-                            per_key.entry(f.key.clone()).or_default().push(f);
+                if !run_items.is_empty() {
+                    match c.run(ctx, &run_items) {
+                        Ok(out) => {
+                            let mut per_key_findings: BTreeMap<String, Vec<CheckFinding>> =
+                                BTreeMap::new();
+                            for f in &out.findings {
+                                per_key_findings
+                                    .entry(f.key.clone())
+                                    .or_default()
+                                    .push(f.clone());
+                            }
+                            outcome.findings.extend(out.findings.iter().cloned());
+                            outcome
+                                .scores
+                                .extend(out.scores.iter().map(|(k, v)| (k.clone(), *v)));
+                            for (key, fp) in run_fps {
+                                let single = CheckOutput {
+                                    findings: per_key_findings
+                                        .get(&key)
+                                        .cloned()
+                                        .unwrap_or_default(),
+                                    scores: out
+                                        .scores
+                                        .get(&key)
+                                        .map(|s| BTreeMap::from([(key.clone(), *s)]))
+                                        .unwrap_or_default(),
+                                };
+                                cache.put(locale, &key, c.id(), fp, single);
+                            }
                         }
-                        for f in per_key.values().flatten() {
-                            d.invalid.push(f.clone());
-                        }
-                        for (key, fp) in run_fps {
-                            let fs = per_key.get(&key).cloned().unwrap_or_default();
-                            cache.put(locale, &key, c.id(), fp, fs);
+                        Err(e) => {
+                            // Fresh-run error: cached hits stay (they are
+                            // still valid replays), the errored slice just
+                            // contributes nothing this run.
+                            report.errors.push(format!("{locale}/{}: {e}", c.id()));
                         }
                     }
-                    Err(e) => report.errors.push(format!("{locale}/{}: {e}", c.id())),
+                }
+                outcomes.push(outcome);
+            }
+        }
+    }
+    outcomes
+}
+
+/// `[quality]` policy: per-key weighted mean over the configured checks.
+/// Scoring checks contribute their real score for keys they covered;
+/// binary checks contribute 1.0 (no finding) or 0.0 (finding). Bands:
+/// `< fail_below` -> `invalid` finding under check id `quality`,
+/// `< review_below` -> the key joins `unreviewed`; every covered key
+/// records its score and band in `d.quality`.
+fn apply_quality(
+    q: &QualityConfig,
+    outcomes: &[CheckOutcome],
+    items: &[CheckItem],
+    d: &mut LocaleDiff,
+) {
+    for item in items {
+        let (mut num, mut den) = (0.0f64, 0.0f64);
+        for o in outcomes {
+            if o.scored {
+                if let Some(s) = o.scores.get(&item.key) {
+                    num += o.weight * s;
+                    den += o.weight;
+                }
+            } else {
+                den += o.weight;
+                if !o.findings.iter().any(|f| f.key == item.key) {
+                    num += o.weight;
                 }
             }
+        }
+        if den == 0.0 {
+            continue;
+        }
+        let score = num / den;
+        let band = if q.fail_below.is_some_and(|b| score < b) {
+            "fail"
+        } else if q.review_below.is_some_and(|b| score < b) {
+            "review"
+        } else {
+            "pass"
+        };
+        d.quality
+            .insert(item.key.clone(), QualityRecord { score, band });
+        match band {
+            "fail" => d.invalid.push(CheckFinding {
+                key: item.key.clone(),
+                check: "quality".into(),
+                message: format!(
+                    "aggregate quality {score:.2} below fail_below {:.2}",
+                    q.fail_below.unwrap_or_default()
+                ),
+                ..Default::default()
+            }),
+            "review" => d.unreviewed.push(item.key.clone()),
+            _ => {}
         }
     }
 }
