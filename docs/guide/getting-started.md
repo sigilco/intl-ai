@@ -1,47 +1,21 @@
 ---
 title: Getting Started
-description: Set up intl-ai in minutes. Install the plugin, configure your AI model, and translate.
+description: Set up intl-ai in minutes. Install the binary, configure your provider, and translate.
 ---
 
 # Getting Started
 
-This guide will help you set up `@intl-ai/unplugin` in your project.
+intl-ai is a single binary that translates the locale files your i18n library already reads. This guide gets it running in minutes.
 
-## Installation
+## Install the binary
 
-Pick the channel that matches your workflow. The bundler plugin and the CLI binary are independent: use either or both.
-
-### Bundler plugin
-
-Install into your project. Works with Vite, Webpack, Rollup, esbuild, Rspack, Rolldown, and Farm.
+Pick the channel that matches your workflow.
 
 ::: code-group
 
-```sh [npm]
-npm install -D @intl-ai/unplugin
+```sh [install.sh]
+curl -fsSL https://intl-ai.pages.dev/install.sh | bash
 ```
-
-```sh [pnpm]
-pnpm add -D @intl-ai/unplugin
-```
-
-```sh [yarn]
-yarn add -D @intl-ai/unplugin
-```
-
-```sh [bun]
-bun add -D @intl-ai/unplugin
-```
-
-:::
-
-For Next.js, swap to `@intl-ai/next` and follow the [Next.js setup](/guide/build-systems/next-js).
-
-### CLI binary
-
-Install the `intl-ai` command globally.
-
-::: code-group
 
 ```sh [Homebrew]
 brew install sigilco/tap-intl-ai/intl-ai
@@ -51,183 +25,68 @@ brew install sigilco/tap-intl-ai/intl-ai
 mise use npm:intl-ai@latest
 ```
 
-```sh [install.sh]
-curl -fsSL https://intl-ai.pages.dev/install.sh | bash
+```sh [npm]
+npm install -g intl-ai
 ```
 
 :::
 
-Override the install path with `INTL_AI_INSTALL_DIR` and pin a version with `INTL_AI_VERSION` before running `install.sh`.
+On Windows, use the PowerShell installer:
 
-### No install
-
-Run the CLI through `npx` if you don't want to install globally.
-
-```bash
-npx @intl-ai/cli fill
+```powershell
+irm https://github.com/sigilco/intl-ai/releases/latest/download/intl-ai-installer.ps1 | iex
 ```
 
-Requires Node.js 22+ and an [AI model provider](/guide/ai-model). Verify with `intl-ai --help`.
+Or run it without a global install via `npx intl-ai` / `bunx intl-ai`. Verify with `intl-ai --help`.
 
-## Quick Start
+## 1. Initialize
 
-### 1. Create Configuration File
+Run `intl-ai init` at your project root. It writes `intl-ai.toml` and a `cassette.json` replay fixture so you can try `fill` with no provider configured.
 
-Create an `intl-ai.config.ts` file in your project root.
-If you do not have a local model or cloud API key, you can use OpenRouter's free tier with no account setup beyond an API key.
+Point `locale_dir` at the directory your i18n library reads, for example `locales/`, `messages/`, or `public/locales/`.
 
-### Local model (LM Studio)
+## 2. Configure a provider
 
-```typescript
-import { resolveProvider } from "@intl-ai/api/internal";
+`intl-ai.toml` needs one provider arm.
 
-export default {
-  provider: resolveProvider("openai"),
-  model: "qwen3.5-4b-instruct",
-  apiKey: "lm-studio",
-  baseURL: "http://127.0.0.1:1234/v1",
-  defaultLocale: "en",
-  locales: ["en", "de", "es", "fr"],
-  localeDir: "./locales",
-};
+OpenAI-compatible HTTP endpoint (any hosted or local server that speaks chat completions):
+
+```toml
+[provider]
+kind = "http"
+model = "your-model"
+api_key = "${env:OPENAI_API_KEY}"
+# base_url = "https://api.openai.com/v1"  # optional override
 ```
 
-### Cloud model (OpenRouter free tier)
+Or go keyless with a local agent CLI:
 
-```typescript
-import { resolveProvider } from "@intl-ai/api/internal";
-
-const openrouter = resolveProvider("openai");
-
-export default {
-  provider: openrouter,
-  model: "google/gemini-2.0-flash-exp:free",
-  apiKey: "${OPENROUTER_API_KEY}",
-  baseURL: "https://openrouter.ai/api/v1",
-  defaultLocale: "en",
-  locales: ["en", "de", "es", "fr"],
-  localeDir: "./locales",
-};
+```toml
+[provider]
+kind = "command"
+agent = "claude-code" # claude-code | opencode | codex | crush | gemini
 ```
 
-See [AI model setup](/guide/ai-model) for all provider options.
+`api_key` accepts `${env:VAR}` and `${file:PATH}` interpolation, so secrets never sit in the file. Validate with `intl-ai config validate`.
 
-**Key Configuration:**
-
-- `provider`: Provider ID or AIProvider instance (e.g. `"openai"`, `"anthropic"`, or a custom provider)
-- `model`: Model name passed to the provider
-- `apiKey`: Your API key (use `${ENV_VAR}` for environment variables)
-- `baseURL`: Provider endpoint URL
-- `defaultLocale`: The primary language for your application
-
-### 2. Set Up Your Bundler
-
-::: code-group
-
-```typescript [Vite]
-import { defineConfig } from "vite";
-import intlAi from "@intl-ai/unplugin/vite";
-
-export default defineConfig({
-  plugins: [intlAi()],
-});
-```
-
-```javascript [Webpack]
-const IntlAiPlugin = require("@intl-ai/unplugin/webpack");
-
-module.exports = {
-  plugins: [new IntlAiPlugin()],
-};
-```
-
-:::
-
-See [Build systems](/guide/build-systems/) for Next.js, Rollup, esbuild, Rspack, Rolldown, Farm, and more.
-
-### 3. Create Directory and Translation Files
-
-Create the directory specified in your config (default: `./locales`), then add your first translation file for the default locale:
-
-**locales/en.json:**
-
-```json
-{
-  "greeting": "Hello, {name}!",
-  "welcome": "Welcome to our application",
-  "description": "This is a sample translation"
-}
-```
-
-### 4. Run Translation
-
-Run the CLI to fill in translations for your target locales:
+## 3. Fill translations
 
 ```bash
 intl-ai fill
 ```
 
-Or use `runFill` programmatically from `@intl-ai/api`:
+Fill is additive by default: it writes only missing keys and never touches existing values, whether human-written or previously generated. Target locale files appear next to your source, and `intl-ai.lock.d/` shards record each key's origin (`ai` or `human`), source hash, and review state. Commit both.
 
-```typescript
-import { runFill } from "@intl-ai/api";
-import type { IntlAiConfig } from "@intl-ai/api";
-
-const config: IntlAiConfig = {
-  defaultLocale: "en",
-  locales: ["en", "de", "es", "fr"],
-  localeDir: "./locales",
-  model: "openai",
-  apiKey: "${OPENAI_API_KEY}",
-  baseURL: "https://api.openai.com/v1",
-};
-
-const result = await runFill(config);
-// { locales: ["de", "es", "fr"], translated: 12, skipped: 0, errors: 0 }
-```
-
-This produces `locales/de.json`, `locales/es.json`, and `locales/fr.json` with AI-generated translations, plus a `locales/intl-ai.lock.json` lockfile that tracks which keys were translated and their source hashes.
-
-### 5. Optional: Check Translation Quality
-
-After filling, run `check` to detect missing keys, stale translations (keys whose source changed), and extra keys with no source:
+## 4. Check
 
 ```bash
 intl-ai check
 ```
 
-Or use `runCheck` programmatically from `@intl-ai/api`:
+Check is read-only: it reports missing, stale, invalid, modified, extra, and unreviewed keys. Use `--fail-on missing,stale,invalid` in CI (exit code 10 on findings) and `--format json` for machine-readable output.
 
-```typescript
-import { runCheck } from "@intl-ai/api";
+## Build tool and framework integrations
 
-const result = await runCheck(config, { locale: "es" });
-// { results: [{ locale: "es", missing: [...], stale: [...], extra: [...] }], hasIssues: true }
-```
+intl-ai pairs with the i18n library you already use rather than your bundler: point `locale_dir` at the directory the library reads, then run `intl-ai fill` in the lifecycle hook your stack provides (an npm `prebuild` script, an Expo config plugin, a Gradle or Xcode build phase, `flutter gen-l10n` ordering, and so on).
 
-`runCheck` is read-only. It writes nothing to disk and does not call hooks (hooks fire only during `runFill`). Use it in CI to enforce translation completeness before deploying.
-
-Add `--dialect <locale>` to scan an existing catalog for British/American spelling mismatches, e.g. `intl-ai check --dialect en-US` flags British spellings in your `en-US` catalog. This is detection only: it reports mismatches, it does not rewrite anything.
-
-## Supported Bundlers
-
-`@intl-ai/unplugin` works with all major bundlers. See [Build systems](/guide/build-systems/) for dedicated setup guides:
-
-- [Vite](/guide/build-systems/vite) - Modern, fast build tool
-- [Webpack](/guide/build-systems/webpack) - Industry standard bundler
-- [Rollup](/guide/build-systems/rollup) - Flexible module bundler
-- [esbuild](/guide/build-systems/esbuild) - Extremely fast JavaScript bundler
-- [Rspack](/guide/build-systems/rspack) - Rust-based, webpack-compatible bundler
-- [Rolldown](/guide/build-systems/rolldown) - Rust-powered Rollup-compatible bundler
-- [Farm](/guide/build-systems/farm) - Rust-based web build tool
-- [Next.js](/guide/build-systems/next-js) - React framework with Turbopack bridge
-
-## Verify Installation
-
-To verify everything is working:
-
-1. Start your development server: `npm run dev`, `pnpm dev`, or `yarn dev`
-2. Check that your bundler loads without errors and translation files are being processed
-3. Verify translations render correctly in your application
-
-If you encounter issues, check the [AI model setup](/guide/ai-model) guide to ensure your model provider is configured correctly.
+See [Build systems](/guide/build-systems/) and the per-library guides under [i18n libraries](/guide/i18n-libraries/) for concrete recipes.
