@@ -131,3 +131,55 @@ export function runIntlAi(bin: ResolvedBin, argv: string[], cwd: string): Promis
     child.on("close", (code) => resolve(code ?? 1));
   });
 }
+
+/**
+ * Resolve the binary, run `fill` (unless `fill: false`), then the
+ * `check --fail-on` gate. Shared by the unplugin `buildStart` hook and
+ * the `@intl-ai/next` config-eval shim. Throws on failure when
+ * `strict !== false`, otherwise warns.
+ */
+export async function runIntlAiPipeline(
+  o: IntlAiPluginOptions,
+  cwd = process.cwd(),
+): Promise<void> {
+  const strict = o.strict !== false;
+  const fail = (message: string) => {
+    if (strict) {
+      throw new Error(`@intl-ai: ${message}`);
+    }
+    console.warn(`@intl-ai: ${message}`);
+  };
+  let bin: ResolvedBin;
+  try {
+    bin = resolveIntlAiBin(o.bin, cwd);
+  } catch (error) {
+    fail((error as Error).message);
+    return;
+  }
+  if (o.fill !== false) {
+    let code: number;
+    try {
+      code = await runIntlAi(bin, buildFillArgs(o), cwd);
+    } catch (error) {
+      fail(`intl-ai fill failed to start: ${(error as Error).message}`);
+      return;
+    }
+    if (code !== 0) {
+      fail(`intl-ai fill exited with code ${code}`);
+      return;
+    }
+  }
+  const failOn = normalizeFailOn(o.failOn);
+  if (failOn.length) {
+    let code: number;
+    try {
+      code = await runIntlAi(bin, buildCheckArgs(o, failOn), cwd);
+    } catch (error) {
+      fail(`intl-ai check failed to start: ${(error as Error).message}`);
+      return;
+    }
+    if (code !== 0) {
+      fail(`intl-ai check --fail-on ${failOn.join(",")} exited with code ${code}`);
+    }
+  }
+}

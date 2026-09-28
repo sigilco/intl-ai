@@ -130,7 +130,7 @@ describe("@intl-ai/unplugin shim", () => {
     delete process.env.INTL_AI_STUB_CHECK_EXIT;
     expect(errors).toHaveLength(1);
     expect(errors[0]).toContain("intl-ai check --fail-on missing exited with code 10");
-    expect(errors[0]).toContain("@intl-ai/unplugin");
+    expect(errors[0]).toContain("@intl-ai");
     expect(readFileSync(log, "utf8").trim().split("\n")).toEqual([
       "fill",
       "check --fail-on missing",

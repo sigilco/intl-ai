@@ -1,72 +1,50 @@
 import type { NextConfig } from "next";
-import intlAiUnplugin from "@intl-ai/unplugin/webpack";
-import { join, dirname } from "node:path";
-import { fileURLToPath } from "url";
+import { PHASE_DEVELOPMENT_SERVER, PHASE_EXPORT, PHASE_PRODUCTION_BUILD } from "next/constants";
+import type { IntlAiPluginOptions } from "@intl-ai/unplugin";
+import { runIntlAiPipeline } from "@intl-ai/unplugin";
 
-export interface IntlAiNextOptions {
-  debug?: boolean;
-  /**
-   * Forwarded to the underlying unplugin. When `true`, the fill-time
-   * validation gate runs during `next build` and unresolved keys fail
-   * the build. Check selection and thresholds come from `intl-ai.toml`.
-   */
-  quality?: boolean;
+/** Same option surface as `@intl-ai/unplugin`; see its README. */
+export type IntlAiNextOptions = IntlAiPluginOptions;
+
+export interface NextConfigContext {
+  defaultConfig: NextConfig;
 }
 
-export function withIntlAi(options?: IntlAiNextOptions) {
-  return async (
-    nextConfig?: NextConfig | (() => NextConfig | Promise<NextConfig>),
-  ): Promise<NextConfig> => {
-    const resolved = typeof nextConfig === "function" ? await nextConfig() : nextConfig;
-    return addIntlAiToConfig(resolved, options);
-  };
+export type NextConfigResult = NextConfig | Promise<NextConfig>;
+export type NextConfigInput =
+  | NextConfig
+  | ((phase: string, ctx: NextConfigContext) => NextConfigResult);
+
+function shouldRunInPhase(phase: string, o: IntlAiNextOptions): boolean {
+  if (phase === PHASE_PRODUCTION_BUILD || phase === PHASE_EXPORT) return true;
+  if (phase === PHASE_DEVELOPMENT_SERVER) return o.dev !== false;
+  return false;
 }
 
-function addIntlAiToConfig(
-  nextConfig?: NextConfig | undefined,
-  options?: IntlAiNextOptions,
-): NextConfig {
-  // Resolve loader path dynamically to work in both compiled-JS and TS contexts
-  const loaderPath = (() => {
-    try {
-      return require.resolve("./next-loader");
-    } catch {
-      const __filename = fileURLToPath(import.meta.url);
-      const __dirname = dirname(__filename);
-      return join(__dirname, "next-loader.ts");
+/**
+ * Wrap a `next.config` so the `intl-ai` binary runs while Next.js
+ * evaluates the config (before either webpack or Turbopack starts):
+ *
+ * ```ts
+ * // next.config.ts
+ * import { withIntlAi } from "@intl-ai/next";
+ * export default withIntlAi(nextConfig, { failOn: ["missing"] });
+ * ```
+ *
+ * `intl-ai fill` runs on `next build` and `next export`, and on
+ * `next dev` unless `dev: false`. A nonzero exit throws (fails the
+ * build) unless `strict: false`, which downgrades to a warning.
+ */
+export function withIntlAi(nextConfig: NextConfigInput = {}, options: IntlAiNextOptions = {}) {
+  return async function intlAiNextConfig(
+    phase: string,
+    ctx: NextConfigContext,
+  ): Promise<NextConfig> {
+    const resolved = typeof nextConfig === "function" ? await nextConfig(phase, ctx) : nextConfig;
+    if (shouldRunInPhase(phase, options)) {
+      await runIntlAiPipeline(options, options.cwd ?? process.cwd());
     }
-  })();
-
-  const debug = options?.debug ?? false;
-  const quality = options?.quality === true;
-
-  return {
-    ...nextConfig,
-    turbopack: {
-      ...(nextConfig as any)?.turbopack,
-      rules: {
-        "*.locale.json": {
-          loaders: [
-            {
-              loader: loaderPath,
-              options: { debug },
-            },
-          ],
-          as: "*.js",
-        },
-        ...((nextConfig as any)?.turbopack?.rules ?? {}),
-      },
-    },
-    webpack: (config: any, context: any) => {
-      if (typeof nextConfig?.webpack === "function") {
-        config = nextConfig.webpack(config, context);
-      }
-      config.plugins = config.plugins || [];
-      // The unplugin webpack adapter spawns `intl-ai fill` once per
-      // build; `quality` maps to the fill-time validation gate.
-      config.plugins.push(intlAiUnplugin({ validate: quality || undefined }));
-      return config;
-    },
+    return resolved;
   };
 }
 
