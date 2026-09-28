@@ -32,8 +32,8 @@ AI-powered build-time i18n translation CLI. A single Rust binary fills missing l
 | Package                                                 | npm name                  | Purpose                                                                   |
 | ------------------------------------------------------- | ------------------------- | ------------------------------------------------------------------------- |
 | `crates/intl-ai-{core,formats,providers,checks,cli}`    | — (binary `intl-ai`)      | Rust workspace: config, locale formats, provider transports, checks, CLI  |
-| `packages/api`                                          | `@intl-ai/api`            | DEPRECATED (TS era, frozen). Do not add features                          |
-| `packages/cli`                                          | `@intl-ai/cli`            | DEPRECATED (TS era, frozen)                                               |
+| `packages/api` (removed)                                 | `@intl-ai/api`            | TS era, deleted from the tree; npm stays deprecated at its last version   |
+| `packages/cli` (removed)                                 | `@intl-ai/cli`            | TS era, deleted from the tree; npm stays deprecated at its last version   |
 | `packages/unplugin`                                     | `@intl-ai/unplugin`       | Bundler shim via unplugin 3 — spawns the `intl-ai` binary in `buildStart` |
 | `packages/next`                                         | `@intl-ai/next`           | Next.js `withIntlAi()` config wrapper — spawns the binary at config eval  |
 | `packages/typescript-config`                            | `@repo/typescript-config` | Shared tsconfig — internal only, not published                            |
@@ -65,7 +65,7 @@ All published artifacts share one version, currently the `workspace.package.vers
 
 - Rust crates pin `version.workspace = true`; the binary, GitHub Release, brew formula, and the `intl-ai` npm wrapper all inherit it via cargo-dist (tag `vX.Y.Z` to release).
 - `@intl-ai/*` npm shims bump in lockstep via the changesets `fixed` group in `.changeset/config.json`. Add new shims to that group.
-- Deprecated `@intl-ai/{api,cli}` are frozen; their versions are aligned but never republish.
+- Deprecated `@intl-ai/{api,cli}` were deleted from the tree at their last released versions (0.4.1 and 0.3.2); npm stays deprecated and they never republish.
 
 ### Config Files
 

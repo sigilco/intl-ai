@@ -15,9 +15,6 @@
       "dependsOn": ["^build"],
       "outputs": []
     },
-    "schema:build": {
-      "outputs": ["src/schema/intl-ai.schema.json"]
-    },
     "dev": {
       "cache": false,
       "persistent": true
