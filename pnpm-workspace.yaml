@@ -10,6 +10,7 @@ peerDependencyRules:
     "@ai-sdk/openai-compatible>zod": "*"
     "@ai-sdk/provider-utils>zod": "*"
 allowBuilds:
+  "@docmd/engine-rust": true
   "@parcel/watcher": true
   "@swc/core": true
   esbuild: true
