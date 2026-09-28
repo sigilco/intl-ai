@@ -30,6 +30,12 @@ function baseConfig() {
   return { name: "App", slug: "app" };
 }
 
+interface WrappedConfig {
+  name: string;
+  slug: string;
+  mods: Record<string, { dangerous: (c: unknown) => Promise<unknown> }>;
+}
+
 function modContext(platform: "ios" | "android") {
   return {
     name: "App",
@@ -49,9 +55,7 @@ async function runMod(
   options: Record<string, unknown>,
   platform: "ios" | "android",
 ) {
-  const wrapped = withIntlAi(config as never, options as never) as typeof config & {
-    mods: Record<string, { dangerous: (c: unknown) => Promise<unknown> }>;
-  };
+  const wrapped = withIntlAi(config as never, options as never) as unknown as WrappedConfig;
   const mod = wrapped.mods?.[platform]?.dangerous;
   if (!mod) throw new Error(`no ${platform} dangerous mod registered`);
   await mod(modContext(platform));
@@ -69,9 +73,7 @@ afterEach(() => {
 
 describe("@intl-ai/expo shim", () => {
   test("registers dangerous mods on ios and android", () => {
-    const wrapped = withIntlAi(baseConfig() as never, {}) as typeof baseConfig & {
-      mods: Record<string, unknown>;
-    };
+    const wrapped = withIntlAi(baseConfig() as never, {}) as unknown as WrappedConfig;
     expect(wrapped.name).toBe("App");
     expect(wrapped.mods?.ios?.dangerous).toBeTypeOf("function");
     expect(wrapped.mods?.android?.dangerous).toBeTypeOf("function");
@@ -86,9 +88,7 @@ describe("@intl-ai/expo shim", () => {
   test("runs the pipeline once across platform mods", async () => {
     process.env.INTL_AI_STUB_LOG = log;
     const bin = stubBin();
-    const wrapped = withIntlAi(baseConfig() as never, { bin } as never) as typeof baseConfig & {
-      mods: Record<string, { dangerous: (c: unknown) => Promise<unknown> }>;
-    };
+    const wrapped = withIntlAi(baseConfig() as never, { bin } as never) as unknown as WrappedConfig;
     await wrapped.mods.ios.dangerous(modContext("ios"));
     await wrapped.mods.android.dangerous(modContext("android"));
     const lines = readFileSync(log, "utf8").trim().split("\n");
