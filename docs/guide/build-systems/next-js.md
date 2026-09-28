@@ -9,21 +9,29 @@ Next.js 15+ defaults to Turbopack. Use `@intl-ai/next` to register the Turbopack
 
 ## Installation
 
-::: code-group
+::: tabs
 
-```sh [npm]
+== tab "npm"
+
+```sh
 npm install @intl-ai/next
 ```
 
-```sh [pnpm]
+== tab "pnpm"
+
+```sh
 pnpm add @intl-ai/next
 ```
 
-```sh [yarn]
+== tab "yarn"
+
+```sh
 yarn add @intl-ai/next
 ```
 
-```sh [bun]
+== tab "bun"
+
+```sh
 bun add @intl-ai/next
 ```
 

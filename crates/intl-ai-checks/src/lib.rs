@@ -25,8 +25,9 @@ pub fn build(cfg: &ResolvedConfig) -> Result<Vec<Box<dyn Check>>> {
 }
 
 pub fn build_entry(cfg: &ResolvedConfig, entry: &CheckEntry) -> Result<Box<dyn Check>> {
+    let weight = entry.weight.unwrap_or(1.0);
     if let Some(id) = &entry.id {
-        return builtin(id);
+        return builtin_tuned(id, entry.threshold, weight);
     }
     if let Some(spec_path) = &entry.spec {
         let path = if spec_path.is_absolute() {
@@ -34,10 +35,12 @@ pub fn build_entry(cfg: &ResolvedConfig, entry: &CheckEntry) -> Result<Box<dyn C
         } else {
             cfg.config_dir.join(spec_path)
         };
-        return Ok(Box::new(spec::SpecCheck::load(&path)?));
+        let mut c = spec::SpecCheck::load(&path)?;
+        c.weight = weight;
+        return Ok(Box::new(c));
     }
     if let Some(cmd) = &entry.exec {
-        return Ok(Box::new(exec::ExecCheck::new(
+        let mut c = exec::ExecCheck::new(
             cmd.clone(),
             entry.args.clone().unwrap_or_default(),
             entry.cwd.as_ref().map(|p| {
@@ -49,7 +52,9 @@ pub fn build_entry(cfg: &ResolvedConfig, entry: &CheckEntry) -> Result<Box<dyn C
             }),
             entry.timeout_ms,
             entry.max_stdout_bytes,
-        )));
+        );
+        c.weight = weight;
+        return Ok(Box::new(c));
     }
     Err(Error::Config(format!(
         "check entry {}: exactly one of `id`, `spec`, `exec`",
@@ -85,15 +90,27 @@ pub fn gate_check(cfg: &ResolvedConfig, name: &str) -> Result<Box<dyn Check>> {
 }
 
 /// Resolve a builtin id (`icu`, `placeholder-parity`, `judge`,
-/// `dialect:<locale>`).
+/// `dialect:<locale>`) with default tuning — used for `fill.validate`
+/// names that are not backed by a `[[checks]]` entry.
 pub fn builtin(id: &str) -> Result<Box<dyn Check>> {
+    builtin_tuned(id, None, 1.0)
+}
+
+/// Builtin resolution with `[[checks]]` tuning: `threshold` applies to
+/// `judge` only (validated in config), `weight` feeds `[quality]`.
+fn builtin_tuned(id: &str, threshold: Option<f64>, weight: f64) -> Result<Box<dyn Check>> {
     match id {
-        "icu" => Ok(Box::new(icu::IcuCheck)),
-        "placeholder-parity" => Ok(Box::new(icu::PlaceholderParity)),
-        "judge" => Ok(Box::new(judge::JudgeCheck)),
+        "icu" => Ok(Box::new(icu::IcuCheck { weight })),
+        "placeholder-parity" => Ok(Box::new(icu::PlaceholderParity { weight })),
+        "judge" => Ok(Box::new(judge::JudgeCheck {
+            threshold: threshold.unwrap_or(judge::JUDGE_THRESHOLD),
+            weight,
+        })),
         _ if id.starts_with("dialect:") => {
             let name = id.strip_prefix("dialect:").unwrap_or(id);
-            Ok(Box::new(dialect::DialectCheck::new(name)?))
+            let mut c = dialect::DialectCheck::new(name)?;
+            c.weight = weight;
+            Ok(Box::new(c))
         }
         other => Err(Error::Config(format!(
             "unknown check '{other}'. Builtins: {}, dialect:<locale>",

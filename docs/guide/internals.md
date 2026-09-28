@@ -36,8 +36,8 @@ The schema is submitted to SchemaStore so editors discover it automatically for 
 
 ## Release pipeline
 
-- Binaries are built with `bun build --compile` for `bun-darwin-arm64`, `bun-linux-x64`, and `bun-linux-arm64`.
-- npm packages are published with changesets.
-- Docs are built with VitePress and deployed to GitHub Pages.
+- Binaries are built with cargo-dist for Linux (x64, arm64), macOS (x64, arm64), and Windows (x64).
+- The `intl-ai` npm package installs the platform binary; `@intl-ai/*` scoped packages are integration shims.
+- Docs are built with docmd and deployed to Cloudflare Pages.
 
 See `.github/workflows/release.yml` for details.

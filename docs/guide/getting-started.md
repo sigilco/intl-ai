@@ -11,21 +11,29 @@ intl-ai is a single binary that translates the locale files your i18n library al
 
 Pick the channel that matches your workflow.
 
-::: code-group
+::: tabs
 
-```sh [install.sh]
+== tab "install script"
+
+```sh
 curl -fsSL https://intl-ai.pages.dev/install.sh | bash
 ```
 
-```sh [Homebrew]
+== tab "Homebrew"
+
+```sh
 brew install sigilco/tap-intl-ai/intl-ai
 ```
 
-```sh [mise]
+== tab "mise"
+
+```sh
 mise use npm:intl-ai@latest
 ```
 
-```sh [npm]
+== tab "npm"
+
+```sh
 npm install -g intl-ai
 ```
 

@@ -72,6 +72,18 @@ fail_on = ["missing", "stale", "invalid"]
 #   [[checks]]
 #   exec = "python3"
 #   args = ["checks/my_check.py"]
+#
+# `judge` accepts `threshold` (default 0.8); every entry accepts
+# `weight` for the `[quality]` aggregate below.
+#
+# [quality] aggregates per-key scores over the configured checks:
+# judge contributes its real score, other checks 1.0 clean / 0.0 on a
+# finding. Below `fail_below` is an `invalid` finding; below
+# `review_below` the key joins `unreviewed`.
+#
+#   [quality]
+#   fail_below = 0.5
+#   review_below = 0.9
 "#
     );
     fs::write(&path, &body)?;

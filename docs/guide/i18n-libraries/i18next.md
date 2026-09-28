@@ -13,21 +13,29 @@ intl-ai generates translation JSON files at build time. i18next consumes these f
 
 ## Installation
 
-::: code-group
+::: tabs
 
-```sh [npm]
+== tab "npm"
+
+```sh
 npm install @intl-ai/unplugin i18next react-i18next
 ```
 
-```sh [pnpm]
+== tab "pnpm"
+
+```sh
 pnpm add @intl-ai/unplugin i18next react-i18next
 ```
 
-```sh [yarn]
+== tab "yarn"
+
+```sh
 yarn add @intl-ai/unplugin i18next react-i18next
 ```
 
-```sh [bun]
+== tab "bun"
+
+```sh
 bun add @intl-ai/unplugin i18next react-i18next
 ```
 
