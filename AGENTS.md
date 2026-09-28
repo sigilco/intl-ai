@@ -34,6 +34,7 @@ AI-powered build-time i18n translation plugin. Hooks into any bundler via unplug
 | `packages/api`                                          | `@intl-ai/api`            | Runtime-agnostic core — `runFill`, `IntlAiConfig`, JSON schema                    |
 | `packages/unplugin`                                     | `@intl-ai/unplugin`       | Universal bundler plugin via unplugin 3 (Vite/Rollup/Webpack/esbuild/Rspack/etc.) |
 | `packages/next`                                         | `@intl-ai/next`           | Next.js `withIntlAi()` wrapper — webpack plugin + Turbopack loader                |
+| `packages/expo`                                         | `@intl-ai/expo`           | Expo config plugin — spawns the `intl-ai` binary during prebuild                  |
 | `packages/cli`                                          | `@intl-ai/cli`            | CLI: `intl-ai fill` and `intl-ai check`                                           |
 | `packages/typescript-config`                            | `@repo/typescript-config` | Shared tsconfig — internal only, not published                                    |
 | `examples/{next,legacy-next,vite,webpack,expo,flutter}` | —                         | Reference consumer apps, not published                                            |
