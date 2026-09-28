@@ -82,16 +82,15 @@ describe("withIntlAi", () => {
     expect(intlAiPlugin).toBeDefined();
   });
 
-  test("passes debug option to unplugin factory", async () => {
+  test("maps quality option to the fill validation gate", async () => {
     const config: NextConfig = { reactStrictMode: true };
-    const wrapped = await withIntlAi({ debug: true })(config);
+    const wrapped = await withIntlAi({ quality: true })(config);
 
     const mockConfig = { plugins: [] };
     wrapped.webpack!(mockConfig, {} as any);
 
-    // Verify the unplugin factory was called with the correct options
     const intlAiUnplugin = (await import("@intl-ai/unplugin/webpack")).default;
-    expect(intlAiUnplugin).toHaveBeenCalledWith({ debug: true, quality: false });
+    expect(intlAiUnplugin).toHaveBeenCalledWith({ validate: true });
   });
 
   test("preserves all NextConfig properties", async () => {

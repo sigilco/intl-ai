@@ -37,7 +37,7 @@ bun add @intl-ai/unplugin
 
 ## Configuration
 
-Create an `intl-ai.config.ts` at your project root. See [Configuration](/guide/configuration) for the full schema.
+Create an `intl-ai.toml` at your project root. See [Configuration](/guide/configuration) for the full schema.
 
 ```javascript
 import IntlAi from "@intl-ai/unplugin/rolldown";
