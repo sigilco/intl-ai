@@ -6,6 +6,6 @@
     "orientation": "portrait",
     "userInterfaceStyle": "light",
     "assetBundlePatterns": ["**/*"],
-    "plugins": [["./plugin", { "configPath": "intl-ai.config.json" }]]
+    "plugins": [["@intl-ai/expo", {}]]
   }
 }
