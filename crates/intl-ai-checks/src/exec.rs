@@ -18,7 +18,7 @@
 //! negotiation, warm-process rules — is the model; it applies when a v2
 //! ever exists.)
 
-use intl_ai_core::check::{Check, CheckCtx, CheckGranularity, CheckItem};
+use intl_ai_core::check::{Check, CheckCtx, CheckGranularity, CheckItem, CheckOutput};
 use intl_ai_core::diff::CheckFinding;
 use intl_ai_core::error::{Error, Result};
 use intl_ai_providers::process::{self, RunSpec};
@@ -76,6 +76,8 @@ pub struct ExecCheck {
     cwd: Option<PathBuf>,
     timeout: Duration,
     max_stdout: usize,
+    /// `[quality]` aggregation weight (set by `[[checks]] weight`).
+    pub weight: f64,
 }
 
 impl ExecCheck {
@@ -99,6 +101,7 @@ impl ExecCheck {
             cwd,
             timeout,
             max_stdout,
+            weight: 1.0,
         }
     }
 }
@@ -129,7 +132,11 @@ impl Check for ExecCheck {
         ])
     }
 
-    fn run(&self, ctx: &CheckCtx, items: &[CheckItem]) -> Result<Vec<CheckFinding>> {
+    fn weight(&self) -> f64 {
+        self.weight
+    }
+
+    fn run(&self, ctx: &CheckCtx, items: &[CheckItem]) -> Result<CheckOutput> {
         let req = ExecRequest {
             v: PROTOCOL_VERSION,
             check: self.id.clone(),
@@ -188,6 +195,7 @@ impl Check for ExecCheck {
                 message: f.message,
                 ..Default::default()
             })
-            .collect())
+            .collect::<Vec<_>>()
+            .into())
     }
 }

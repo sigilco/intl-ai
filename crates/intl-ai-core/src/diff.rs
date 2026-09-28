@@ -24,6 +24,14 @@ fn is_false(b: &bool) -> bool {
     !*b
 }
 
+/// Per-key aggregate quality when `[quality]` is configured: the
+/// weighted mean over the configured checks and the band it landed in.
+#[derive(Debug, Clone, Copy, Serialize)]
+pub struct QualityRecord {
+    pub score: f64,
+    pub band: &'static str,
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize, schemars::JsonSchema)]
 #[serde(rename_all = "snake_case")]
 pub enum FindingKind {
@@ -74,6 +82,10 @@ pub struct LocaleDiff {
     pub unreviewed: Vec<String>,
     /// Rule-level violations from configured checks (`[[checks]]`).
     pub invalid: Vec<CheckFinding>,
+    /// Per-key aggregate quality when `[quality]` is configured
+    /// (absent from the report otherwise).
+    #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
+    pub quality: BTreeMap<String, QualityRecord>,
 }
 
 /// Positional human-ownership rule (plan 5.6): the file value differing from
