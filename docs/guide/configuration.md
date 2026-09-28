@@ -1,256 +1,159 @@
 ---
 title: Configuration
-description: intl-ai config file reference. Single JSON or TypeScript file, validated against a published schema.
+description: intl-ai config file reference. intl-ai.toml, .json, or .yaml, validated against a published schema.
 ---
 
 # Configuration
 
-intl-ai reads a single config file. The JSON format is validated against a published JSON Schema and works in any runtime.
+intl-ai reads a single config file, `intl-ai.toml`, `intl-ai.json`, `intl-ai.yaml`, or `intl-ai.yml`, discovered at your project root (first hit wins). Pass `--config <path>` to pick one explicitly, or `--config -` to read TOML from stdin.
 
-## Config file discovery
+The contract is validated against a published JSON Schema served at `https://intl-ai.pages.dev/schema/v1.json` (`intl-ai config schema` prints the same schema).
 
-The CLI and bundler plugins look for one of these files in your project root:
+## Minimal config
 
-- `intl-ai.config.json` (recommended for runtime-agnostic setups and non-Node consumers)
-- `intl-ai.config.ts` (when you need a custom AIProvider instance)
+```toml
+locale_dir = "locales"
+source = "en"
+targets = ["es", "fr"]
 
-## JSON config
-
-```json
-{
-  "$schema": "https://www.schemastore.org/intl-ai.json",
-  "defaultLocale": "en",
-  "locales": ["en", "es", "fr"],
-  "localeDir": "./locales",
-  "provider": "openai",
-  "model": "gpt-4o-mini",
-  "apiKey": "${OPENAI_API_KEY}",
-  "baseURL": "https://api.openai.com/v1",
-  "maxRetries": 3
-}
+[provider]
+kind = "http"
+model = "your-model-name"
+api_key = "${env:OPENAI_API_KEY}"
 ```
 
-## Required options
+## Required fields
 
-### `defaultLocale`
+### `locale_dir`
 
-Source language for translations.
+Directory containing locale files, resolved against the config file's directory. One file per locale: `${locale_dir}/${locale}.json` (or `.yaml`).
 
-```json
-"defaultLocale": "en"
-```
+### `source`
 
-### `locales`
+Source locale code, e.g. `"en"`.
 
-All supported locale codes.
+### `targets`
 
-```json
-"locales": ["en", "es", "fr"]
-```
+Target locale codes to fill and check.
 
-### `localeDir`
+### `[provider]`
 
-Directory containing locale files. The structure depends on the chosen `format`:
+How translations are produced. Three kinds:
 
-- JSON (default): `${localeDir}/${locale}.json`
-- YAML: `${localeDir}/${locale}.yaml`
+- `kind = "http"`: an OpenAI-compatible chat-completions endpoint (`provider`/`model`/`api_key`/`base_url`/`model_params`). See [Providers](/guide/providers/).
+- `kind = "command"`: a local CLI agent (`command`/`args`/`agent`/`prompt_via`/`cwd`/`timeout_ms`). Allowed only in the root config file, never via `extends`.
+- `kind = "replay"`: a cassette JSON file of canned translations, for tests and demos.
 
-```json
-"localeDir": "./locales"
-```
+## Optional fields
 
-### `provider`
+### `api_key` interpolation
 
-Provider ID. Built-in providers: `openai`, `anthropic`. Custom providers can pass an `AIProvider` instance directly.
+Secrets are interpolated at load: `${env:VAR}` reads an environment variable, `${file:PATH}` reads a file. `config validate` prints them masked.
 
-```json
-"provider": "openai"
-```
-
-For a custom provider, use `resolveProvider` from `@intl-ai/api/internal`:
-
-```typescript
-import { resolveProvider } from "@intl-ai/api/internal";
-
-export default {
-  provider: resolveProvider("openai"),
-  model: "gpt-4o-mini",
-  apiKey: "${OPENAI_API_KEY}",
-  defaultLocale: "en",
-  locales: ["en", "es"],
-  localeDir: "./locales",
-};
-```
-
-### `apiKey`
-
-API key for your provider. We recommend reading it from an environment variable.
-
-```json
-"apiKey": "${OPENAI_API_KEY}"
-```
-
-### `model`
-
-Model name passed to the provider. The model name format depends on your provider.
-
-```json
-"model": "gpt-4o-mini"
-```
-
-## Optional options
-
-### `baseURL`
-
-Provider endpoint. Defaults to `https://api.openai.com/v1`.
-
-```json
-"baseURL": "https://api.openai.com/v1"
+```toml
+api_key = "${env:OPENAI_API_KEY}"
 ```
 
 ### `glossary`
 
-Terms to preserve during translation.
+Fixed term-to-translation pairs injected into every translate prompt.
 
-```json
-"glossary": {
-  "React": "React",
-  "TypeScript": "TypeScript"
-}
+```toml
+[glossary]
+React = "React"
+TypeScript = "TypeScript"
 ```
 
-### `localeInstructions`
+### `locale_instructions`
 
-Freeform style or dialect instruction per locale, sent to the model and to the quality judge.
-Keys resolve in order: exact locale (`en-GB`), then language subtag (`en`), then `*` as a catch-all.
-A key that never matches any configured locale is logged as a warning.
+Freeform style or dialect instruction per locale, sent to the model and to the judge check. Resolution order: exact locale (`en-GB`), then language subtag (`en`), then `*` as a catch-all.
 
-```json
-"localeInstructions": {
-  "en-GB": "Use British spelling (colour, organise).",
-  "en-US": "Use American spelling (color, organize).",
-  "*": "Keep a formal tone."
-}
+```toml
+[locale_instructions]
+en-GB = "Use British spelling (colour, organise)."
+"*" = "Keep a formal tone."
 ```
 
-Changing this instruction does not retranslate existing entries.
-Retranslate a single locale with `intl-ai fill --locale en-GB --force`.
-Note that `--force` overwrites every entry in that locale, including any you edited by hand.
+Changing an instruction does not retranslate existing entries. Retranslate one locale with `intl-ai fill --locale en-GB --regenerate`.
 
-### `maxRetries`
+### `batch_size`
 
-Maximum retry attempts for failed translations. Default is `3`.
+Max source entries per translate request. Default is unlimited (all keys in one batch). Reduce for models with smaller context windows or more granular per-key failures.
 
-```json
-"maxRetries": 3
-```
+### `max_retries`
+
+Transport attempts per request before the batch fails. Default `3`, capped at `10`.
 
 ### `processor`
 
-Syntax processor. Use `icu` for ICU MessageFormat or omit for passthrough.
+Placeholder contract hint sent to the model. `icu` selects ICU MessageFormat; the default is passthrough.
 
-```json
-"processor": "icu"
+### `format`
+
+Locale file format minted for new files: `json` (default) or `yaml`. An existing file's own extension always wins, so mixed directories work.
+
+### `extends`
+
+Compose configs: a root config can extend a base (list or single path). Extended files may not define `provider.command` or `exec` checks: data files from a dependency must not spawn programs.
+
+## Checks and quality gates
+
+### `[[checks]]`
+
+Validation checks run by `intl-ai check` and the fill gate.
+
+```toml
+[[checks]]
+id = "icu"
+
+[[checks]]
+id = "placeholder-parity"
+
+[[checks]]
+id = "judge"
+threshold = 0.85
+weight = 2.0
 ```
 
-Built-in processors: `passthrough`, `icu`.
+Builtin ids: `icu`, `placeholder-parity`, `dialect:<locale>`, `judge`. A check entry can also point at a declarative YAML spec (`spec = "checks/brand.yaml"`) or an external command (`exec = "./my-check"` with `args`/`cwd`/`timeout_ms`/`max_stdout_bytes`, root config only). `threshold` is judge-only (score below it becomes an `invalid` finding, default `0.8`); `weight` feeds the `[quality]` aggregate.
 
-## Locale formats
+### `[check]`
 
-intl-ai supports JSON and YAML locale files out of the box.
-
-### JSON (default)
-
-JSON is the default format. No configuration needed:
-
-```json
-{
-  "greeting": "Hello",
-  "farewell": "Goodbye"
-}
+```toml
+[check]
+fail_on = ["missing", "stale", "invalid"]
+cache = true
 ```
 
-### YAML
+`fail_on` lists finding kinds that fail `intl-ai check`. `cache` toggles the incremental findings cache (`.intl-ai/check-cache.json`).
 
-YAML supports nested keys and is useful for larger projects:
+### `[fill]`
 
-```yaml
-greeting: Hello
-farewell: Goodbye
-nested:
-  welcome: Welcome back
+```toml
+[fill]
+validate = ["icu", "placeholder-parity", "judge"]
 ```
 
-To use YAML, set `format` in your config:
+The shift-left gate: these checks run inside `fill` between translate and adoption. Only feedback-eligible checks qualify (`icu`, `placeholder-parity`, `judge`). Failed keys get one corrective round; unresolved keys are adopted anyway, recorded under `quality.unresolved` in the lockfile, and `check` keeps flagging them. Override per run with `--validate`/`--no-validate`.
 
-```json
-{
-  "format": "yaml"
-}
+### `[quality]`
+
+```toml
+[quality]
+fail_below = 0.5
+review_below = 0.8
 ```
 
-### Other formats
-
-For custom locale formats (CSV, TOML, or custom file formats), intl-ai does not include a built-in adapter. Use one of these approaches:
-
-**Interactive translation (recommended for most cases):** Use the `intl-ai-translate-fill` skill in an opencode agent session. The skill is format-agnostic and works with any file format.
-
-**Batch CI translation:** Build a custom `LocaleFormat` adapter using the `@intl-ai/api` package. See `intl-ai-format-strategy` for guidance on when to build an adapter vs. use a skill.
-
-**Rule of thumb:** Start with the skill. Build an adapter only when you need batch CI on a format the CLI does not support natively.
-
-### Batch size
-
-`batchSize` controls how many keys are sent in a single translation request. Default is unlimited (all keys in one batch). Reduce for models with lower context windows or to get more granular per-key quality control.
-
-```json
-{
-  "batchSize": 50
-}
-```
-
-For most JSON and YAML files, the default (unlimited batch) works well.
+Weighted per-key score over the configured checks (binary checks score 1.0/0.0, judge scores its real 0..1). Below `fail_below` is an `invalid` finding; below `review_below` marks the key unreviewed.
 
 ## Editor intellisense
 
-Add `"$schema": "https://www.schemastore.org/intl-ai.json"` to your JSON config for autocomplete and validation in VS Code, JetBrains, and other editors.
+Add `"$schema": "https://intl-ai.pages.dev/schema/v1.json"` to a JSON config for autocomplete and validation.
 
 ## CI validation
 
-Validate a config file in CI with any JSON Schema tool:
-
 ```bash
-# check-jsonschema
-pip install check-jsonschema
-check-jsonschema --schemafile https://www.schemastore.org/intl-ai.json intl-ai.config.json
+intl-ai config validate   # resolves extends, masks secrets, fails on bad shape
 ```
 
-## TypeScript config
-
-When you need to pass a custom AIProvider instance, use a TypeScript config:
-
-```typescript
-import { resolveProvider } from "@intl-ai/api/internal";
-
-export default {
-  provider: resolveProvider("openai"),
-  model: "gpt-4o-mini",
-  apiKey: "${OPENAI_API_KEY}",
-  baseURL: "https://api.openai.com/v1",
-  defaultLocale: "en",
-  locales: ["en", "es"],
-  localeDir: "./locales",
-};
-```
-
-See [Providers](/guide/providers) for how the provider system works, and [AI model setup](/guide/ai-model) for provider options.
-
-### Parallel locale processing (CLI)
-
-When using the CLI (`intl-ai fill`), `--concurrency` controls how many locales are processed in parallel. Default is 4.
-
-```bash
-intl-ai fill --concurrency 8
-```
-
-Range: 1 to 16.
+See [Providers](/guide/providers/) for provider kinds and [AI model setup](/guide/ai-model/) for endpoint selection.

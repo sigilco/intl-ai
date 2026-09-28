@@ -1,43 +1,30 @@
 ---
 title: Internals
-description: intl-ai internals for contributors. Hexagonal architecture, package layout, and design decisions.
+description: How intl-ai is structured. Rust core crates, the binary, and the npm shims.
 ---
 
 # Internals
 
-This page is for contributors who want to understand how intl-ai is built. User-facing documentation lives under [Guide](/guide/getting-started).
+## Workspace layout
 
-## Package layout
+The translation engine is a Rust workspace; the npm packages are thin shims that spawn the binary.
 
-| Package             | Purpose                                                                                                                                |
-| ------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
-| `@intl-ai/api`      | Runtime-agnostic translation core. Public surface: `runFill`, `IntlAiConfig`, `RunFillOptions`, `RunFillResult`, `IntlAiConfigSchema`. |
-| `@intl-ai/cli`      | `intl-ai fill` and `intl-ai check` commands. Loads `intl-ai.config.ts` or `intl-ai.config.json`.                                       |
-| `@intl-ai/unplugin` | Universal bundler plugin adapters. Loads config and calls `runFill` at `buildStart`.                                                   |
-| `@intl-ai/next`     | Next.js wrapper around the webpack plugin and Turbopack loader. Loads config at startup and on the webpack `emit` hook.                |
-
-## Internal subpath
-
-Modules that SDK consumers do not need are exposed through `@intl-ai/api/internal`. Sibling packages in this monorepo may import them, but external SDKs and plugins should stay on the public surface. The internal barrel includes engine, lockfile, processor, formats, utilities, and JSON config schemas.
-
-## JSON Schema generation
-
-`packages/api/src/schema/intl-ai.schema.json` is generated from `IntlAiJsonConfigSchema` in `packages/api/src/schema/json-config.ts`. Run:
-
-```bash
-pnpm --filter @intl-ai/api schema:build
-```
-
-This writes both the package-local schema and `docs/public/schema/v1.json`, which GitHub Pages serves at `/intl-ai/schema/v1.json`.
-
-## SchemaStore
-
-The schema is submitted to SchemaStore so editors discover it automatically for files matching `intl-ai.config.ts` and `intl-ai.config.json`. See the plan at `.agents/plans/2026-06-22-runtime-agnostic-rethink.md` for the catalog entry format.
+| Package                                   | Purpose                                                                                                                                  |
+| ----------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| `crates/intl-ai-core`                     | Config loading (`intl-ai.toml`/`.json`/`.yaml`), interpolation, lockfile shards (`intl-ai.lock.d/`), provenance.                         |
+| `crates/intl-ai-formats`                  | Locale file formats: JSON and YAML, flatten/unflatten, stat cache.                                                                       |
+| `crates/intl-ai-providers`                | Transports: `http` (OpenAI-compatible), `command` (local agents), `replay` (cassettes). Prompt contract + retries.                       |
+| `crates/intl-ai-checks`                   | Validation framework: `icu`, `placeholder-parity`, `dialect`, `judge`, declarative specs, `exec` checks, the incremental findings cache. |
+| `crates/intl-ai-cli`                      | The `intl-ai` binary: `fill`, `check`, `mark`, `review`, `status`, `lockfile`, `config`, `migrate`.                                      |
+| `packages/unplugin` (`@intl-ai/unplugin`) | Bundler shim (vite, webpack, rollup, esbuild, rspack, rolldown, farm, bun). Runs the pipeline in `buildStart`.                           |
+| `packages/next` (`@intl-ai/next`)         | `withIntlAi()` config wrapper. Runs the pipeline during `next.config` evaluation, before webpack or Turbopack.                           |
+| `packages/expo` (`@intl-ai/expo`)         | Expo config plugin. Runs the pipeline during `expo prebuild`/`eas build`.                                                                |
+| `intl-ai` (npm)                           | Binary delivery: postinstall downloads the platform tarball from GitHub Releases. The shims resolve it via `createRequire`.              |
 
 ## Release pipeline
 
-- Binaries are built with cargo-dist for Linux (x64, arm64), macOS (x64, arm64), and Windows (x64).
-- The `intl-ai` npm package installs the platform binary; `@intl-ai/*` scoped packages are integration shims.
-- Docs are built with docmd and deployed to Cloudflare Pages.
+`cargo dist` generates the release workflow: tag `vX.Y.Z` produces platform tarballs, `intl-ai-installer.sh`/`.ps1`, a homebrew formula, npm wrapper publish, and GitHub attestations. See [Versioning in AGENTS.md](https://github.com/sigilco/intl-ai/blob/develop/AGENTS.md#versioning).
 
-See `.github/workflows/release.yml` for details.
+## Config schema
+
+The config contract is generated from the Rust types and committed at `docs/public/schema/intl-ai.schema.json`; `docs/public/schema/v1.json` is the published copy. CI fails on drift, so edit the types and regenerate with `intl-ai config schema`.

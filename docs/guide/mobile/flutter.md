@@ -22,7 +22,7 @@ targets:
       intl_ai_flutter|intl_ai:
         enabled: true
         options:
-          configPath: "intl-ai.config.json"
+          configPath: "intl-ai.toml"
           executable: "intl-ai"
           verbose: false
 ```
@@ -35,19 +35,18 @@ builders:
     import: "package:my_app/tools/intl_ai_builder/lib/builder.dart"
 ```
 
-## Create `intl-ai.config.json`
+## Create `intl-ai.toml`
 
-```json
-{
-  "$schema": "https://www.schemastore.org/intl-ai.json",
-  "defaultLocale": "en",
-  "locales": ["en", "es"],
-  "localeDir": "assets/locales",
-  "model": "your-provider/your-model",
-  "apiKey": "${OPENAI_API_KEY}",
-  "baseURL": "https://api.openai.com/v1",
-  "maxRetries": 3
-}
+```toml
+locale_dir = "assets/locales"
+source = "en"
+targets = ["es"]
+
+[provider]
+kind = "http"
+base_url = "https://api.openai.com/v1"
+model = "your-model-name"
+api_key = "${env:OPENAI_API_KEY}"
 ```
 
 ## Run build_runner
@@ -60,16 +59,16 @@ flutter pub run build_runner build --delete-conflicting-outputs
 The builder invokes:
 
 ```bash
-intl-ai fill --config intl-ai.config.json
+intl-ai fill --config intl-ai.toml
 ```
 
 ## Builder options
 
-| Option       | Type     | Default               | Description                                                                                              |
-| ------------ | -------- | --------------------- | -------------------------------------------------------------------------------------------------------- |
-| `configPath` | `String` | `intl-ai.config.json` | Path to your JSON config, relative to the package root.                                                  |
-| `executable` | `String` | `intl-ai`             | Command used to invoke the CLI. Use `npx intl-ai` or `bunx intl-ai` if you do not want a global install. |
-| `verbose`    | `bool`   | `false`               | Forward CLI output to the build runner log.                                                              |
+| Option       | Type     | Default        | Description                                                                                              |
+| ------------ | -------- | -------------- | -------------------------------------------------------------------------------------------------------- |
+| `configPath` | `String` | `intl-ai.toml` | Path to your config file, relative to the package root.                                                  |
+| `executable` | `String` | `intl-ai`      | Command used to invoke the CLI. Use `npx intl-ai` or `bunx intl-ai` if you do not want a global install. |
+| `verbose`    | `bool`   | `false`        | Forward CLI output to the build runner log.                                                              |
 
 ## How it works
 
@@ -83,7 +82,7 @@ Load the generated JSON files with your preferred i18n library (`easy_localizati
 
 - Dart SDK 3.0+
 - `intl-ai` CLI on `PATH`
-- An `intl-ai.config.json` file and locale directory
+- An `intl-ai.toml` file and locale directory
 
 ## Example
 
