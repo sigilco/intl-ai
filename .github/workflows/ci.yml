@@ -38,21 +38,6 @@ jobs:
       - run: pnpm build
       - run: pnpm typecheck
 
-  schema-drift:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-      - uses: pnpm/action-setup@v6
-        with:
-          version: "11.5.0"
-      - uses: actions/setup-node@v6
-        with:
-          node-version: 24
-          cache: "pnpm"
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm --filter @intl-ai/api schema:build
-      - run: git diff --exit-code packages/api/src/schema/intl-ai.schema.json docs/public/schema/v1.json
-
   rust:
     runs-on: ubuntu-latest
     steps:
@@ -67,7 +52,8 @@ jobs:
       - name: Rust JSON Schema drift check
         run: |
           ./target/debug/intl-ai config schema > docs/public/schema/intl-ai.schema.json
-          git diff --exit-code docs/public/schema/intl-ai.schema.json
+          cp docs/public/schema/intl-ai.schema.json docs/public/schema/v1.json
+          git diff --exit-code docs/public/schema/
 
   test:
     strategy:
