@@ -1,17 +1,14 @@
 import type { NextConfig } from "next";
-import type { IntlAiConfig } from "@intl-ai/api";
 import intlAiUnplugin from "@intl-ai/unplugin/webpack";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "url";
 
-export interface IntlAiNextOptions extends Omit<Partial<IntlAiConfig>, "quality"> {
+export interface IntlAiNextOptions {
   debug?: boolean;
   /**
-   * Forwarded to the underlying unplugin. When `true`, the quality-aware
-   * fill loop runs during `next build` and a build that contains keys
-   * still below the quality threshold fails the build. Threshold and
-   * `maxRetries` come from `intl-ai.config.json`; this option only
-   * enables or disables the loop.
+   * Forwarded to the underlying unplugin. When `true`, the fill-time
+   * validation gate runs during `next build` and unresolved keys fail
+   * the build. Check selection and thresholds come from `intl-ai.toml`.
    */
   quality?: boolean;
 }
@@ -65,11 +62,9 @@ function addIntlAiToConfig(
         config = nextConfig.webpack(config, context);
       }
       config.plugins = config.plugins || [];
-      // Use the @intl-ai/unplugin webpack adapter — single buildStart hook
-      // does loadConfig() + runFill() once per build. Replaces the local
-      // IntlAiWebpackPlugin and the eager runStartup() both of which were
-      // calling runFill() a second time.
-      config.plugins.push(intlAiUnplugin({ debug, quality }));
+      // The unplugin webpack adapter spawns `intl-ai fill` once per
+      // build; `quality` maps to the fill-time validation gate.
+      config.plugins.push(intlAiUnplugin({ validate: quality || undefined }));
       return config;
     },
   };
