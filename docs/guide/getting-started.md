@@ -85,6 +85,10 @@ intl-ai fill
 
 Fill is additive by default: it writes only missing keys and never touches existing values, whether human-written or previously generated. Target locale files appear next to your source, and `intl-ai.lock.d/` shards record each key's origin (`ai` or `human`), source hash, and review state. Commit both.
 
+::: warning Translations are ICU MessageFormat
+intl-ai only emits and validates [ICU MessageFormat](https://unicode-org.github.io/icu/userguide/format_parse/messages/) syntax: `{name}` placeholders, `plural`/`select`/`selectordinal` with a required `other` arm, `#` pound. This is a hard constraint, not a setting: it is what lets `check` and the fill-time validation gate catch mangled placeholders. Non-ICU syntax (printf `%s`, mustache `{{x}}`) is out of scope.
+:::
+
 ## 4. Check
 
 ```bash
