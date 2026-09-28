@@ -28,17 +28,17 @@ Subpath exports exist for each bundler: `@intl-ai/unplugin/{vite,webpack,rollup,
 
 ## Options
 
-| Option           | Type                   | Default    | Description                                                                       |
-| ---------------- | ---------------------- | ---------- | --------------------------------------------------------------------------------- |
-| `fill`           | `boolean`              | `true`     | Run `intl-ai fill` on build start.                                                |
-| `failOn`         | `string \| string[]`   | `[]`       | Finding kinds that fail the build (`missing`, `stale`, `invalid`, `unreviewed`, ...). Maps to `intl-ai check --fail-on`. |
-| `validate`       | `boolean \| string[]`  | `true`     | Fill-time validation gate. `true` uses your config's `[fill].validate`; a list overrides it (`icu`, `placeholder-parity`, `judge`); `false` maps to `--no-validate`. |
-| `judgeThreshold` | `number`               | config     | Score threshold (0..1) for the `judge` check inside the fill gate.                |
-| `dev`            | `boolean`              | `true`     | Set `false` to skip the plugin in dev/serve/watch mode.                           |
-| `config`         | `string`               | discovered | Path to `intl-ai.toml` (or `.json`/`.yaml`).                                      |
-| `cwd`            | `string`               | project    | Working directory for the `intl-ai` invocation.                                   |
-| `bin`            | `string`               | resolved   | Explicit path to the `intl-ai` binary. Falls back to the bundled dependency, then `PATH`. |
-| `args`           | `string[]`             | `[]`       | Extra arguments appended to `intl-ai fill`.                                       |
+| Option           | Type                  | Default    | Description                                                                                                                                                          |
+| ---------------- | --------------------- | ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `fill`           | `boolean`             | `true`     | Run `intl-ai fill` on build start.                                                                                                                                   |
+| `failOn`         | `string \| string[]`  | `[]`       | Finding kinds that fail the build (`missing`, `stale`, `invalid`, `unreviewed`, ...). Maps to `intl-ai check --fail-on`.                                             |
+| `validate`       | `boolean \| string[]` | `true`     | Fill-time validation gate. `true` uses your config's `[fill].validate`; a list overrides it (`icu`, `placeholder-parity`, `judge`); `false` maps to `--no-validate`. |
+| `judgeThreshold` | `number`              | config     | Score threshold (0..1) for the `judge` check inside the fill gate.                                                                                                   |
+| `dev`            | `boolean`             | `true`     | Set `false` to skip the plugin in dev/serve/watch mode.                                                                                                              |
+| `config`         | `string`              | discovered | Path to `intl-ai.toml` (or `.json`/`.yaml`).                                                                                                                         |
+| `cwd`            | `string`              | project    | Working directory for the `intl-ai` invocation.                                                                                                                      |
+| `bin`            | `string`              | resolved   | Explicit path to the `intl-ai` binary. Falls back to the bundled dependency, then `PATH`.                                                                            |
+| `args`           | `string[]`            | `[]`       | Extra arguments appended to `intl-ai fill`.                                                                                                                          |
 
 ## How it works
 
