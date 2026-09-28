@@ -95,6 +95,6 @@ Check is read-only: it reports missing, stale, invalid, modified, extra, and unr
 
 ## Build tool and framework integrations
 
-intl-ai pairs with the i18n library you already use rather than your bundler: point `locale_dir` at the directory the library reads, then run `intl-ai fill` in the lifecycle hook your stack provides (an npm `prebuild` script, an Expo config plugin, a Gradle or Xcode build phase, `flutter gen-l10n` ordering, and so on).
+intl-ai pairs with the i18n library you already use rather than your bundler: point `locale_dir` at the directory the library reads, then translate in the lifecycle hook your stack provides. For JS/TS stacks the scoped shims do this for you: `@intl-ai/unplugin` (Vite, Webpack, Rollup, esbuild, Rspack, Farm), `@intl-ai/next` for Next.js, and `@intl-ai/expo` for React Native/Expo. On other stacks, run `intl-ai fill` directly (an npm `prebuild` script, a Gradle or Xcode build phase, `flutter gen-l10n` ordering, and so on).
 
 See [Build systems](/guide/build-systems/) and the per-library guides under [i18n libraries](/guide/i18n-libraries/) for concrete recipes.

@@ -57,6 +57,18 @@ npm install -g intl-ai
 npx intl-ai --help
 ```
 
+## Integrations
+
+The binary is the core. These scoped packages are thin shims that drive it from your build tool, so integration is drop-in:
+
+| Package            | Stack                                        | What it does                                                      |
+| ------------------ | -------------------------------------------- | ----------------------------------------------------------------- |
+| `@intl-ai/unplugin` | Vite, Webpack, Rollup, esbuild, Rspack, Farm | Runs `intl-ai fill` on build start and `check` as a CI gate       |
+| `@intl-ai/next`     | Next.js (webpack and Turbopack)              | `withIntlAi()` config wrapper; same fill/check wiring             |
+| `@intl-ai/expo`     | Expo / React Native                          | Config plugin that runs `intl-ai fill` during prebuild            |
+
+Each shim installs `intl-ai` as a dependency and exposes the same quality controls as the CLI (fill validation, judge threshold, `--fail-on` severities) as plugin options. For stacks without a shim (Flutter, Xcode/SwiftPM, Gradle, MSBuild, generic npm scripts), run the binary directly in the lifecycle hook your stack provides; see the per-stack recipes in the [docs](https://intl-ai.pages.dev).
+
 ## Quick start
 
 ```bash
@@ -126,14 +138,14 @@ See [Configuration](https://intl-ai.pages.dev/guide/configuration) for the full 
 
 ## Migration
 
-Coming from the deprecated `@intl-ai/*` npm packages:
+Coming from the 0.4.x `@intl-ai/*` npm packages:
 
-1. Install the binary (see Install above); drop the `@intl-ai/*` dev dependencies.
+1. Install the binary (see Install above). If you used `@intl-ai/unplugin` or `@intl-ai/next`, upgrade to the new major version instead of dropping the dependency: the scoped packages are now thin shims that run the binary for you.
 2. Rename `intl-ai.config.ts` / `.json` to `intl-ai.toml` (config keys are now snake_case: `api_key`, `locale_dir`, `source`/`targets` instead of `defaultLocale`/`locales`).
 3. Run `intl-ai migrate` in your project to import the old `intl-ai.lock.json` into `intl-ai.lock.d/` shards.
 4. `--force` is gone: use `fill --stale` (AI-owned stale keys) or `fill --regenerate` (all AI-owned keys); `--include-human` additionally covers human-owned values.
 
-The TypeScript implementation is frozen on the [`legacy` branch](https://github.com/sigilco/intl-ai/tree/legacy); the scoped packages remain on npm with a deprecation notice for pinned installs.
+The TypeScript implementation is frozen on the [`legacy` branch](https://github.com/sigilco/intl-ai/tree/legacy). `@intl-ai/api` and `@intl-ai/cli` stay deprecated; `@intl-ai/unplugin`, `@intl-ai/next`, and `@intl-ai/expo` are re-released as binary-driven shims.
 
 ## License
 
