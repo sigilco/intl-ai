@@ -9,13 +9,26 @@ use crate::{Cli, FillArgs};
 /// Resolve `fill.validate` names to gate-eligible check instances
 /// (resolution and the `supports_feedback` rule live in
 /// `intl_ai_checks::gate_check` so `config validate` rejects them too).
-fn build_gate(cfg: &ResolvedConfig, names: &[String]) -> Result<Option<Gate>> {
+fn build_gate(
+    cfg: &ResolvedConfig,
+    names: &[String],
+    judge_threshold: Option<f64>,
+) -> Result<Option<Gate>> {
     if names.is_empty() {
         return Ok(None);
     }
     let checks = names
         .iter()
-        .map(|n| intl_ai_checks::gate_check(cfg, n))
+        .map(|n| {
+            let c = intl_ai_checks::gate_check(cfg, n)?;
+            Ok(match (judge_threshold, c.id()) {
+                (Some(t), "judge") => Box::new(intl_ai_checks::judge::JudgeCheck {
+                    threshold: t,
+                    weight: c.weight(),
+                }) as Box<dyn intl_ai_core::check::Check>,
+                _ => c,
+            })
+        })
         .collect::<intl_ai_core::error::Result<Vec<_>>>()?;
     Ok(Some(Gate {
         checks,
@@ -41,7 +54,12 @@ pub fn run(cli: &Cli, args: &FillArgs) -> Result<u8> {
     } else {
         cfg.config.fill.validate.clone()
     };
-    let gate = build_gate(&cfg, &gate_names)?;
+    if let Some(t) = args.judge_threshold {
+        if !(0.0..=1.0).contains(&t) {
+            return Err(anyhow!("--judge-threshold must be in 0..=1 (got {t})"));
+        }
+    }
+    let gate = build_gate(&cfg, &gate_names, args.judge_threshold)?;
     let transport = transport_for(&cfg)?;
     let opts = FillOptions {
         locales: (!args.locale.is_empty()).then(|| args.locale.clone()),

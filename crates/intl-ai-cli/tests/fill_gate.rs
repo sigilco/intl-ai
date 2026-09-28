@@ -197,3 +197,32 @@ fn gate_records_judge_scores() {
         Value::String("judge: score 0.50 below 0.8".into())
     );
 }
+
+#[test]
+fn judge_threshold_flag_overrides_config() {
+    let dir = TempDir::new().unwrap();
+    seed(
+        &dir,
+        &format!(
+            "{REPLAY_CONFIG}\n[fill]\nvalidate = [\"judge\"]\n\n[[checks]]\nid = \"judge\"\nthreshold = 0.8\n"
+        ),
+        r#"{"fr":{"Hello {name}":"Bonjour {name}"},
+            "fr.judge":{"a":"0.9"}}"#,
+    );
+    // 0.9 passes the configured 0.8; --judge-threshold 0.95 re-gates it.
+    let (report, ok) = fill_report(&dir, &["fill", "--judge-threshold", "0.95"]);
+    assert!(!ok, "{report}");
+    let a = shard_entry(&dir, "a");
+    assert_eq!(
+        a["quality"]["unresolved"][0],
+        Value::String("judge: score 0.90 below 0.95".into())
+    );
+
+    cmd(&dir)
+        .args(["fill", "--judge-threshold", "1.5"])
+        .assert()
+        .failure()
+        .stderr(predicates::str::contains(
+            "--judge-threshold must be in 0..=1",
+        ));
+}

@@ -99,6 +99,10 @@ struct FillArgs {
     /// Disable the configured [fill] validate gate for this run.
     #[arg(long)]
     no_validate: bool,
+    /// Override the threshold of any judge check in this run's gate
+    /// (0..=1). Has no effect when the gate does not include judge.
+    #[arg(long, value_name = "SCORE")]
+    judge_threshold: Option<f64>,
     /// Output format for the run report.
     #[arg(long, value_enum, default_value_t = OutFormat::Human)]
     format: OutFormat,
