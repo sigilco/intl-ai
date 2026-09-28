@@ -302,3 +302,141 @@ fn unknown_check_id_fails_fast() {
         .failure()
         .stderr(predicates::str::contains("unknown check"));
 }
+
+#[test]
+fn judge_threshold_override() {
+    let dir = TempDir::new().unwrap();
+    seed(
+        &dir,
+        &format!("{REPLAY_CONFIG}\n[[checks]]\nid = \"judge\"\nthreshold = 0.95\n"),
+    );
+    write(
+        dir.path(),
+        "cassette.json",
+        r#"{"fr":{},"fr.judge":{"a":"0.9"}}"#,
+    );
+    write(dir.path(), "locales/en-US.json", r#"{"a":"Hello"}"#);
+    write(dir.path(), "locales/fr.json", r#"{"a":"Bonjour"}"#);
+    let (report, ok) = report(&dir, &["check"]);
+    assert!(!ok);
+    let invalid = report["locales"]["fr"]["invalid"].as_array().unwrap();
+    assert_eq!(invalid.len(), 1);
+    assert_eq!(invalid[0]["check"], "judge");
+    assert!(
+        invalid[0]["message"]
+            .as_str()
+            .unwrap()
+            .contains("0.90 below 0.95")
+    );
+}
+
+#[test]
+fn quality_bands_fail_review_pass() {
+    let dir = TempDir::new().unwrap();
+    // Judge's own floor is lowered so the aggregate band decides alone.
+    seed(
+        &dir,
+        &format!(
+            "{REPLAY_CONFIG}\n[[checks]]\nid = \"judge\"\nthreshold = 0.0\n\n[quality]\nfail_below = 0.5\nreview_below = 0.9\n"
+        ),
+    );
+    write(
+        dir.path(),
+        "cassette.json",
+        r#"{"fr":{},"fr.judge":{"a":"0.7","b":"0.3"}}"#,
+    );
+    write(
+        dir.path(),
+        "locales/en-US.json",
+        r#"{"a":"Hello","b":"Bye","c":"Welcome"}"#,
+    );
+    write(
+        dir.path(),
+        "locales/fr.json",
+        r#"{"a":"Bonjour","b":"Au revoir","c":"Bienvenue"}"#,
+    );
+    let (report, ok) = report(&dir, &["check"]);
+    assert!(!ok);
+    let quality = &report["locales"]["fr"]["quality"];
+    assert_eq!(quality["a"]["band"], "review");
+    assert_eq!(quality["b"]["band"], "fail");
+    assert_eq!(quality["c"]["band"], "pass");
+    // Fail band lands as an `invalid` finding under check id `quality`.
+    let invalid = report["locales"]["fr"]["invalid"].as_array().unwrap();
+    assert_eq!(invalid.len(), 1);
+    assert_eq!(invalid[0]["check"], "quality");
+    assert_eq!(invalid[0]["key"], "b");
+    // Review band surfaces under unreviewed.
+    let unreviewed = report["locales"]["fr"]["unreviewed"].as_array().unwrap();
+    assert!(unreviewed.contains(&Value::String("a".into())));
+    assert!(!unreviewed.contains(&Value::String("b".into())));
+}
+
+#[test]
+fn quality_weighted_aggregation() {
+    let dir = TempDir::new().unwrap();
+    // judge 0.9 weighted 3 vs icu failing weighted 1: (0.9*3 + 0*1)/4
+    // = 0.675 -> review band. Without the icu weight it would pass.
+    seed(
+        &dir,
+        &format!(
+            "{REPLAY_CONFIG}\n[[checks]]\nid = \"judge\"\nthreshold = 0.0\nweight = 3.0\n[[checks]]\nid = \"icu\"\nweight = 1.0\n\n[quality]\nfail_below = 0.5\nreview_below = 0.8\n"
+        ),
+    );
+    write(
+        dir.path(),
+        "cassette.json",
+        r#"{"fr":{},"fr.judge":{"a":"0.9","b":"0.9"}}"#,
+    );
+    write(
+        dir.path(),
+        "locales/en-US.json",
+        r#"{"a":"Hello","b":"Bye"}"#,
+    );
+    write(
+        dir.path(),
+        "locales/fr.json",
+        r#"{"a":"Bonjour {oops","b":"Salut"}"#,
+    );
+    let (report, ok) = report(&dir, &["check"]);
+    // icu finding on "a" is invalid, so `check` still fails — but the
+    // quality record shows the weighted aggregate, not a raw failure.
+    assert!(!ok);
+    let quality = &report["locales"]["fr"]["quality"];
+    let a = quality["a"]["score"].as_f64().unwrap();
+    assert!((a - 0.675).abs() < 0.001, "score {a}");
+    assert_eq!(quality["a"]["band"], "review");
+    assert_eq!(quality["b"]["band"], "pass");
+}
+
+#[test]
+fn threshold_rejected_on_non_judge() {
+    let dir = TempDir::new().unwrap();
+    seed(
+        &dir,
+        &format!("{REPLAY_CONFIG}\n[[checks]]\nid = \"icu\"\nthreshold = 0.5\n"),
+    );
+    write(dir.path(), "locales/en-US.json", r#"{"a":"x"}"#);
+    cmd(&dir)
+        .arg("check")
+        .assert()
+        .failure()
+        .stderr(predicates::str::contains(
+            "`threshold` applies only to id = \"judge\"",
+        ));
+}
+
+#[test]
+fn quality_band_ordering_validated() {
+    let dir = TempDir::new().unwrap();
+    seed(
+        &dir,
+        &format!("{REPLAY_CONFIG}\n[quality]\nfail_below = 0.9\nreview_below = 0.5\n"),
+    );
+    write(dir.path(), "locales/en-US.json", r#"{"a":"x"}"#);
+    cmd(&dir)
+        .arg("check")
+        .assert()
+        .failure()
+        .stderr(predicates::str::contains("fail_below must be <"));
+}

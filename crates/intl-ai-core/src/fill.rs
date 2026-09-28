@@ -339,7 +339,7 @@ fn fill_locale(
                 .filter(|t| chunk_keys.contains(t.key.as_str()))
                 .collect();
             let answered: HashSet<String> = translations.iter().map(|t| t.key.clone()).collect();
-            let unresolved = gate_rounds(
+            let outcome = gate_rounds(
                 gate,
                 locale,
                 cfg,
@@ -351,7 +351,7 @@ fn fill_locale(
                 &mut res,
                 &mut failures,
             );
-            for f in unresolved.values().flatten() {
+            for f in outcome.unresolved.values().flatten() {
                 res.unresolved.push(f.clone());
             }
             for key in chunk {
@@ -394,7 +394,10 @@ fn fill_locale(
                         reviewed: false,
                         model: Some(model.clone()),
                         updated_at: Some(now()),
-                        quality: unresolved.get(&t.key).map(|fs| unresolved_quality(fs)),
+                        quality: gate_quality(
+                            outcome.unresolved.get(&t.key),
+                            outcome.scores.get(&t.key),
+                        ),
                         ..Default::default()
                     },
                 );
@@ -413,12 +416,20 @@ fn fill_locale(
     Ok((res, failures))
 }
 
+/// What the gate produced for a batch: still-failing findings per key
+/// (recorded as `quality.unresolved`) plus any scores scoring checks
+/// (`judge`) emitted, recorded as `quality.scores`.
+#[derive(Default)]
+struct GateOutcome {
+    unresolved: BTreeMap<String, Vec<CheckFinding>>,
+    scores: BTreeMap<String, BTreeMap<String, f64>>,
+}
+
 /// The shift-left gate (plan W2b-C): validate the provider's answers
 /// before adoption, then give failed keys one corrective round with the
 /// findings as reviewer notes. Keys still failing are adopted anyway —
 /// their findings return as `unresolved` so the entry can record them —
 /// and a gate check that errors is a run failure, never a silent pass.
-/// Returns failed-key findings keyed by key (empty when clean or no gate).
 #[allow(clippy::too_many_arguments)]
 fn gate_rounds(
     gate: Option<&Gate>,
@@ -431,13 +442,14 @@ fn gate_rounds(
     translations: &mut [Translated],
     res: &mut LocaleFillResult,
     failures: &mut Vec<FillFailure>,
-) -> BTreeMap<String, Vec<CheckFinding>> {
+) -> GateOutcome {
     let Some(g) = gate.filter(|g| !g.checks.is_empty()) else {
-        return BTreeMap::new();
+        return GateOutcome::default();
     };
     if translations.is_empty() {
-        return BTreeMap::new();
+        return GateOutcome::default();
     }
+    let mut outcome = GateOutcome::default();
     let ctx = CheckCtx {
         source_locale: &cfg.config.source,
         target_locale: locale,
@@ -456,7 +468,16 @@ fn gate_rounds(
         let mut findings = Vec::new();
         for c in &g.checks {
             match c.run(&ctx, &items) {
-                Ok(f) => findings.extend(f),
+                Ok(out) => {
+                    findings.extend(out.findings);
+                    for (k, s) in out.scores {
+                        outcome
+                            .scores
+                            .entry(k)
+                            .or_default()
+                            .insert(c.id().to_string(), s);
+                    }
+                }
                 Err(e) => failures.push(FillFailure {
                     locale: locale.to_string(),
                     key: None,
@@ -466,7 +487,7 @@ fn gate_rounds(
             }
         }
         if findings.is_empty() {
-            return BTreeMap::new();
+            return outcome;
         }
         let mut by_key: BTreeMap<String, Vec<CheckFinding>> = BTreeMap::new();
         for f in findings {
@@ -476,10 +497,11 @@ fn gate_rounds(
         // belong nowhere: keep only keys actually in this batch.
         by_key.retain(|k, _| translations.iter().any(|t| &t.key == k));
         if by_key.is_empty() {
-            return BTreeMap::new();
+            return outcome;
         }
         if round == g.max_rounds {
-            return by_key;
+            outcome.unresolved = by_key;
+            return outcome;
         }
         // Corrective round: failed keys only, findings become reviewer
         // notes. "Previous attempt" wording is TS parity (plan W2b-C).
@@ -536,27 +558,48 @@ fn gate_rounds(
                     kind,
                     message: format!("gate refill: {e}"),
                 });
-                return by_key;
+                outcome.unresolved = by_key;
+                return outcome;
             }
         }
     }
-    BTreeMap::new()
+    outcome
 }
 
-/// `quality.unresolved` shard payload: one `{check}: {message}` line per
-/// finding, so the lockfile records *why* the gate let a value through.
-fn unresolved_quality(findings: &[CheckFinding]) -> toml::Value {
+/// Lockfile `quality` payload: `unresolved` records *why* the gate let a
+/// value through, `scores` the normalized per-check scores scoring
+/// checks emitted for it (judge). Absent entirely when the gate had
+/// nothing to record.
+fn gate_quality(
+    unresolved: Option<&Vec<CheckFinding>>,
+    scores: Option<&BTreeMap<String, f64>>,
+) -> Option<toml::Value> {
     let mut m = toml::Table::new();
-    m.insert(
-        "unresolved".into(),
-        toml::Value::Array(
-            findings
-                .iter()
-                .map(|f| toml::Value::String(format!("{}: {}", f.check, f.message)))
-                .collect(),
-        ),
-    );
-    toml::Value::Table(m)
+    if let Some(fs) = unresolved {
+        m.insert(
+            "unresolved".into(),
+            toml::Value::Array(
+                fs.iter()
+                    .map(|f| toml::Value::String(format!("{}: {}", f.check, f.message)))
+                    .collect(),
+            ),
+        );
+    }
+    if let Some(sm) = scores.filter(|s| !s.is_empty()) {
+        m.insert(
+            "scores".into(),
+            toml::Value::Table(
+                sm.iter()
+                    .map(|(k, v)| (k.clone(), toml::Value::Float(*v)))
+                    .collect(),
+            ),
+        );
+    }
+    if m.is_empty() {
+        None
+    } else {
+        Some(toml::Value::Table(m))
+    }
 }
 
 fn needs_translation(

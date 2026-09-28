@@ -165,3 +165,35 @@ fn gate_rejects_non_feedback_checks() {
         .failure()
         .stderr(predicates::str::contains("unknown check"));
 }
+
+#[test]
+fn gate_records_judge_scores() {
+    let dir = TempDir::new().unwrap();
+    seed(
+        &dir,
+        &format!(
+            "{REPLAY_CONFIG}\n[fill]\nvalidate = [\"judge\"]\n\n[[checks]]\nid = \"judge\"\nthreshold = 0.8\n"
+        ),
+        // a scores clean (0.9): adopted, quality.scores recorded.
+        // b scores 0.5 and stays broken: unresolved + scores recorded.
+        r#"{"fr":{"Hello {name}":"Bonjour {name}","Bye":"Au revoir"},
+            "fr.judge":{"a":"0.9","b":"0.5"},
+            "fr.retry":{"b":"encore"}}"#,
+    );
+    write(
+        dir.path(),
+        "locales/en-US.json",
+        r#"{"a":"Hello {name}","b":"Bye"}"#,
+    );
+    let (report, ok) = fill_report(&dir, &["fill"]);
+    assert!(!ok, "unresolved key b must fail the run: {report}");
+    let a = shard_entry(&dir, "a");
+    assert_eq!(a["quality"]["scores"]["judge"], 0.9);
+    assert!(a["quality"]["unresolved"].is_null());
+    let b = shard_entry(&dir, "b");
+    assert_eq!(b["quality"]["scores"]["judge"], 0.5);
+    assert_eq!(
+        b["quality"]["unresolved"][0],
+        Value::String("judge: score 0.50 below 0.8".into())
+    );
+}

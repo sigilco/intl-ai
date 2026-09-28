@@ -3,7 +3,7 @@
 
 use formatjs_icu_messageformat_parser::types::MessageFormatElement;
 use formatjs_icu_messageformat_parser::{Parser, ParserOptions};
-use intl_ai_core::check::{Check, CheckCtx, CheckItem};
+use intl_ai_core::check::{Check, CheckCtx, CheckItem, CheckOutput};
 use intl_ai_core::diff::CheckFinding;
 use intl_ai_core::error::Result;
 use std::collections::{BTreeMap, BTreeSet};
@@ -71,11 +71,24 @@ fn extract_from(el: &MessageFormatElement, out: &mut Vec<String>) {
 }
 
 /// `icu`: the target must parse as ICU MessageFormat.
-pub struct IcuCheck;
+pub struct IcuCheck {
+    /// `[quality]` aggregation weight (set by `[[checks]] weight`).
+    pub weight: f64,
+}
+
+impl Default for IcuCheck {
+    fn default() -> Self {
+        Self { weight: 1.0 }
+    }
+}
 
 impl Check for IcuCheck {
     fn id(&self) -> &str {
         "icu"
+    }
+
+    fn weight(&self) -> f64 {
+        self.weight
     }
 
     /// Syntax findings are mechanically actionable: the model can fix
@@ -88,7 +101,7 @@ impl Check for IcuCheck {
         BTreeMap::new()
     }
 
-    fn run(&self, _ctx: &CheckCtx, items: &[CheckItem]) -> Result<Vec<CheckFinding>> {
+    fn run(&self, _ctx: &CheckCtx, items: &[CheckItem]) -> Result<CheckOutput> {
         let mut out = Vec::new();
         for item in items {
             if let Err(e) = parse_message(&item.target) {
@@ -100,17 +113,30 @@ impl Check for IcuCheck {
                 });
             }
         }
-        Ok(out)
+        Ok(out.into())
     }
 }
 
 /// `placeholder-parity`: the target must bind exactly the arguments the
 /// source binds (the TS processor's validation rule, verbatim messages).
-pub struct PlaceholderParity;
+pub struct PlaceholderParity {
+    /// `[quality]` aggregation weight (set by `[[checks]] weight`).
+    pub weight: f64,
+}
+
+impl Default for PlaceholderParity {
+    fn default() -> Self {
+        Self { weight: 1.0 }
+    }
+}
 
 impl Check for PlaceholderParity {
     fn id(&self) -> &str {
         "placeholder-parity"
+    }
+
+    fn weight(&self) -> f64 {
+        self.weight
     }
 
     fn cache_ctx(&self) -> BTreeMap<String, String> {
@@ -122,7 +148,7 @@ impl Check for PlaceholderParity {
         true
     }
 
-    fn run(&self, _ctx: &CheckCtx, items: &[CheckItem]) -> Result<Vec<CheckFinding>> {
+    fn run(&self, _ctx: &CheckCtx, items: &[CheckItem]) -> Result<CheckOutput> {
         let mut out = Vec::new();
         for item in items {
             let Some(source) = &item.source else { continue };
@@ -153,7 +179,7 @@ impl Check for PlaceholderParity {
                 ..Default::default()
             });
         }
-        Ok(out)
+        Ok(out.into())
     }
 }
 
@@ -180,7 +206,7 @@ mod tests {
 
     #[test]
     fn icu_flags_broken_target() {
-        let c = IcuCheck;
+        let c = IcuCheck::default();
         let ctx = CheckCtx {
             source_locale: "en-US",
             target_locale: "de-DE",
@@ -199,14 +225,14 @@ mod tests {
                 target: "Hallo {name".into(),
             },
         ];
-        let findings = c.run(&ctx, &items).unwrap();
+        let findings = c.run(&ctx, &items).unwrap().findings;
         assert_eq!(findings.len(), 1);
         assert_eq!(findings[0].key, "bad");
     }
 
     #[test]
     fn parity_reports_missing_and_extra() {
-        let c = PlaceholderParity;
+        let c = PlaceholderParity::default();
         let ctx = CheckCtx {
             source_locale: "en-US",
             target_locale: "de-DE",
@@ -218,7 +244,7 @@ mod tests {
             source: Some("{count, plural, one {#} other {#}} for {name}".into()),
             target: "{count, plural, one {#} other {#}} fuer {user}".into(),
         }];
-        let findings = c.run(&ctx, &items).unwrap();
+        let findings = c.run(&ctx, &items).unwrap().findings;
         assert_eq!(findings.len(), 1);
         assert!(findings[0].message.contains("Missing tokens: name"));
         assert!(findings[0].message.contains("Extra tokens: user"));
