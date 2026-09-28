@@ -15,21 +15,29 @@ intl-ai generates translation JSON files at build time. vue-i18n consumes these 
 
 Install intl-ai and vue-i18n:
 
-::: code-group
+::: tabs
 
-```sh [npm]
+== tab "npm"
+
+```sh
 npm install @intl-ai/unplugin vue-i18n
 ```
 
-```sh [pnpm]
+== tab "pnpm"
+
+```sh
 pnpm add @intl-ai/unplugin vue-i18n
 ```
 
-```sh [yarn]
+== tab "yarn"
+
+```sh
 yarn add @intl-ai/unplugin vue-i18n
 ```
 
-```sh [bun]
+== tab "bun"
+
+```sh
 bun add @intl-ai/unplugin vue-i18n
 ```
 
