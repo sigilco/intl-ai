@@ -12,9 +12,10 @@ server/dist
 public/dist
 .sisyphus/
 .osgrep/
-docs/.vitepress/cache/
+# docmd build output (path kept for Cloudflare Pages compatibility)
 docs/.vitepress/dist/
 *.js
+!docmd.config.js
 node_modules/
 .dist/
 .next/

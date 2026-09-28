@@ -15,21 +15,29 @@ Pick the channel that matches your workflow. The bundler plugin and the CLI bina
 
 Install into your project. Works with Vite, Webpack, Rollup, esbuild, Rspack, Rolldown, and Farm.
 
-::: code-group
+::: tabs
 
-```sh [npm]
+== tab "npm"
+
+```sh
 npm install -D @intl-ai/unplugin
 ```
 
-```sh [pnpm]
+== tab "pnpm"
+
+```sh
 pnpm add -D @intl-ai/unplugin
 ```
 
-```sh [yarn]
+== tab "yarn"
+
+```sh
 yarn add -D @intl-ai/unplugin
 ```
 
-```sh [bun]
+== tab "bun"
+
+```sh
 bun add -D @intl-ai/unplugin
 ```
 
@@ -41,17 +49,23 @@ For Next.js, swap to `@intl-ai/next` and follow the [Next.js setup](/guide/build
 
 Install the `intl-ai` command globally.
 
-::: code-group
+::: tabs
 
-```sh [Homebrew]
+== tab "Homebrew"
+
+```sh
 brew install sigilco/tap-intl-ai/intl-ai
 ```
 
-```sh [mise]
+== tab "mise"
+
+```sh
 mise use npm:intl-ai@latest
 ```
 
-```sh [install.sh]
+== tab "install script"
+
+```sh
 curl -fsSL https://intl-ai.pages.dev/install.sh | bash
 ```
 
@@ -122,9 +136,11 @@ See [AI model setup](/guide/ai-model) for all provider options.
 
 ### 2. Set Up Your Bundler
 
-::: code-group
+::: tabs
 
-```typescript [Vite]
+== tab "Vite"
+
+```typescript
 import { defineConfig } from "vite";
 import intlAi from "@intl-ai/unplugin/vite";
 
@@ -133,7 +149,9 @@ export default defineConfig({
 });
 ```
 
-```javascript [Webpack]
+== tab "Webpack"
+
+```javascript
 const IntlAiPlugin = require("@intl-ai/unplugin/webpack");
 
 module.exports = {
