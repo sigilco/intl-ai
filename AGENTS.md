@@ -32,8 +32,8 @@ AI-powered build-time i18n translation CLI. A single Rust binary fills missing l
 | Package                                                 | npm name                  | Purpose                                                                   |
 | ------------------------------------------------------- | ------------------------- | ------------------------------------------------------------------------- |
 | `crates/intl-ai-{core,formats,providers,checks,cli}`    | — (binary `intl-ai`)      | Rust workspace: config, locale formats, provider transports, checks, CLI  |
-| `packages/api` (removed)                                 | `@intl-ai/api`            | TS era, deleted from the tree; npm stays deprecated at its last version   |
-| `packages/cli` (removed)                                 | `@intl-ai/cli`            | TS era, deleted from the tree; npm stays deprecated at its last version   |
+| `packages/api` (removed)                                | `@intl-ai/api`            | TS era, deleted from the tree; npm stays deprecated at its last version   |
+| `packages/cli` (removed)                                | `@intl-ai/cli`            | TS era, deleted from the tree; npm stays deprecated at its last version   |
 | `packages/unplugin`                                     | `@intl-ai/unplugin`       | Bundler shim via unplugin 3 — spawns the `intl-ai` binary in `buildStart` |
 | `packages/next`                                         | `@intl-ai/next`           | Next.js `withIntlAi()` config wrapper — spawns the binary at config eval  |
 | `packages/expo`                                         | `@intl-ai/expo`           | Expo config plugin — spawns the `intl-ai` binary during prebuild          |
