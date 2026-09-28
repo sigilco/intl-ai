@@ -5,7 +5,14 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "userInterfaceStyle": "light",
-    "assetBundlePatterns": ["**/*"],
-    "plugins": [["./plugin", { "configPath": "intl-ai.config.json" }]]
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "plugins": [
+      [
+        "@intl-ai/expo",
+        {}
+      ]
+    ]
   }
 }
