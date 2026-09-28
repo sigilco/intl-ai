@@ -5,14 +5,7 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "userInterfaceStyle": "light",
-    "assetBundlePatterns": [
-      "**/*"
-    ],
-    "plugins": [
-      [
-        "@intl-ai/expo",
-        {}
-      ]
-    ]
+    "assetBundlePatterns": ["**/*"],
+    "plugins": [["@intl-ai/expo", {}]]
   }
 }

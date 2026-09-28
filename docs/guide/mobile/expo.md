@@ -69,18 +69,18 @@ The plugin registers on both the ios and android platforms and runs the pipeline
 
 ## Options
 
-| Option           | Type                 | Default  | Description                                      |
-| ---------------- | -------------------- | -------- | ------------------------------------------------ |
-| `fill`           | `boolean`            | `true`   | Run `intl-ai fill`                               |
-| `failOn`         | `string \| string[]` | —        | Run `intl-ai check --fail-on <kinds>` after fill |
-| `validate`       | `boolean \| string[]`| `true`   | Fill-time validation gate                        |
-| `judgeThreshold` | `number`             | —        | Judge score threshold inside the fill gate       |
-| `dev`            | `boolean`            | `true`   | `false` skips when `NODE_ENV !== "production"`   |
-| `strict`         | `boolean`            | `true`   | `false` warns instead of failing the prebuild    |
-| `config`         | `string`             | —        | Path to `intl-ai.toml`/`.json`/`.yaml`           |
-| `cwd`            | `string`             | app root | Working directory for the binary                 |
-| `bin`            | `string`             | —        | Explicit path to the `intl-ai` binary            |
-| `args`           | `string[]`           | —        | Extra args appended to `intl-ai fill`            |
+| Option           | Type                  | Default  | Description                                      |
+| ---------------- | --------------------- | -------- | ------------------------------------------------ |
+| `fill`           | `boolean`             | `true`   | Run `intl-ai fill`                               |
+| `failOn`         | `string \| string[]`  | —        | Run `intl-ai check --fail-on <kinds>` after fill |
+| `validate`       | `boolean \| string[]` | `true`   | Fill-time validation gate                        |
+| `judgeThreshold` | `number`              | —        | Judge score threshold inside the fill gate       |
+| `dev`            | `boolean`             | `true`   | `false` skips when `NODE_ENV !== "production"`   |
+| `strict`         | `boolean`             | `true`   | `false` warns instead of failing the prebuild    |
+| `config`         | `string`              | —        | Path to `intl-ai.toml`/`.json`/`.yaml`           |
+| `cwd`            | `string`              | app root | Working directory for the binary                 |
+| `bin`            | `string`              | —        | Explicit path to the `intl-ai` binary            |
+| `args`           | `string[]`            | —        | Extra args appended to `intl-ai fill`            |
 
 Binary resolution order: `bin` option → `INTL_AI_BIN` env → the `intl-ai` npm package → `PATH`.
 

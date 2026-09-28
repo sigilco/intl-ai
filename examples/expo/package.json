@@ -16,10 +16,10 @@
   },
   "devDependencies": {
     "@babel/core": "^7.24.0",
+    "@intl-ai/expo": "workspace:*",
     "@repo/typescript-config": "workspace:*",
     "@types/node": "catalog:",
-    "typescript": "catalog:",
-    "@intl-ai/expo": "workspace:*"
+    "typescript": "catalog:"
   },
   "engines": {
     "node": "^22.18.0 || >=24"
