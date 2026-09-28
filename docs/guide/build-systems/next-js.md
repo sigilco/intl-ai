@@ -5,7 +5,7 @@ description: Build-time AI translation for Next.js i18n. Zero runtime overhead, 
 
 # Next.js
 
-`@intl-ai/next` wraps your `next.config` so the `intl-ai` binary runs `fill` before the build starts. It works on webpack and Turbopack alike (Next.js 14 and 15).
+`@intl-ai/next` wraps your `next.config` so the `intl-ai` binary runs `fill` before the build starts. It works with both Next.js bundlers, webpack and Turbopack; see the [Next.js docs on Turbopack](https://nextjs.org/docs/app/api-reference/config/next-config-js/turbopack) for which one your version uses. Minimum supported version: Next.js 14+.
 
 ## Installation
 
