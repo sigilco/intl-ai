@@ -9,7 +9,7 @@ intl-ai generates translation files at build time. You choose the runtime i18n l
 
 ## ICU MessageFormat
 
-Most modern i18n libraries speak ICU MessageFormat. Set `processor: "icu"` in your config to use it.
+Most modern i18n libraries speak ICU MessageFormat. Set `processor = "icu"` in `intl-ai.toml` to have the model emit ICU syntax; it is the contract the `icu` check validates.
 
 The main exception is i18next, which uses `{{var}}` interpolation and plural suffixes instead of ICU syntax.
 
@@ -31,19 +31,16 @@ The main exception is i18next, which uses `{{var}}` interpolation and plural suf
 
 ## Configuration
 
-Set `processor: "icu"` in your `intl-ai.config.ts` when your target library uses ICU MessageFormat. Most modern libraries do.
+Set `processor = "icu"` in `intl-ai.toml` when your target library uses ICU MessageFormat. Most modern libraries do.
 
-If you use i18next, omit the processor setting or set `processor: "passthrough"` to preserve its `{{var}}` style.
+If you use i18next, omit the processor setting (passthrough preserves its `{{var}}` style).
 
-```ts
-// intl-ai.config.ts
-export default {
-  // ... your provider setup
-  defaultLocale: "en",
-  locales: ["en", "es", "fr"],
-  localeDir: "./locales",
-  processor: "icu", // recommended for most libraries
-};
+```toml
+# intl-ai.toml
+locale_dir = "locales"
+source = "en"
+targets = ["es", "fr"]
+processor = "icu"   # recommended for most libraries
 ```
 
 ## Per-library guides

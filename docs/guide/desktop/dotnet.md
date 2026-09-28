@@ -12,7 +12,7 @@ You can integrate `intl-ai` into a .NET project by adding an MSBuild target that
 ```
 MyApp/
 ├── MyApp.csproj
-├── intl-ai.config.json
+├── intl-ai.toml
 └── Resources/
     ├── en.json
     └── es.json
@@ -39,7 +39,7 @@ Add the following target to your `.csproj` file:
   </ItemGroup>
 
   <Target Name="IntlAiFill" BeforeTargets="BeforeBuild">
-    <Exec Command="intl-ai fill --config $(MSBuildProjectDirectory)/intl-ai.config.json" />
+    <Exec Command="intl-ai fill --config $(MSBuildProjectDirectory)/intl-ai.toml" />
   </Target>
 
 </Project>
@@ -70,7 +70,7 @@ public static class Translations
 ## Requirements
 
 - `intl-ai` installed on your `PATH` (see [Installation](/guide/getting-started#installation)).
-- `intl-ai.config.json` next to your `.csproj` file. Adjust `localeDir` to point to `Resources`.
+- `intl-ai.toml` next to your `.csproj` file. Adjust `locale_dir` to point to `Resources`.
 
 ## Example
 

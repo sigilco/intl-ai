@@ -110,7 +110,7 @@ export default {
       icon: "book-open",
       collapsible: true,
       children: [
-        { title: "API reference", path: "/guide/api/" },
+        { title: "CLI reference", path: "/guide/api/" },
         { title: "Internals", path: "/guide/internals/" },
         { title: "Contributing", path: "/guide/contributing/" },
       ],
