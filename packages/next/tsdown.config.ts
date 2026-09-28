@@ -7,5 +7,5 @@ export default defineConfig({
   sourcemap: true,
   clean: true,
   treeshake: true,
-  external: ["next"],
+  external: ["next", "next/constants", "@intl-ai/unplugin", "intl-ai"],
 });

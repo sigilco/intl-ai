@@ -1,110 +1,114 @@
-import { describe, test, expect, vi } from "vitest";
-import { withIntlAi } from "./index";
+import { mkdtempSync, writeFileSync, readFileSync, chmodSync, rmSync, existsSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { afterAll, describe, expect, test, vi } from "vitest";
 import type { NextConfig } from "next";
+import {
+  PHASE_DEVELOPMENT_SERVER,
+  PHASE_PRODUCTION_BUILD,
+  PHASE_PRODUCTION_SERVER,
+} from "next/constants";
+import { withIntlAi } from "./index";
+import type { NextConfigContext } from "./index";
 
-// Mock @intl-ai/unplugin/webpack — the factory returns a webpack plugin object
-// with an `apply` method (standard unplugin webpack shape).
-vi.mock("@intl-ai/unplugin/webpack", () => {
-  const apply = vi.fn();
-  const plugin = { apply };
-  return {
-    default: vi.fn().mockReturnValue(plugin),
-  };
-});
+const tmp = mkdtempSync(join(tmpdir(), "intl-ai-next-"));
+afterAll(() => rmSync(tmp, { recursive: true, force: true }));
+
+const ctx: NextConfigContext = { defaultConfig: {} };
+
+function stubBin(): string {
+  const script = join(tmp, "intl-ai-stub.cjs");
+  writeFileSync(
+    script,
+    [
+      "#!/usr/bin/env node",
+      'const fs = require("node:fs");',
+      "const argv = process.argv.slice(2);",
+      'fs.appendFileSync(process.env.INTL_AI_STUB_LOG, argv.join(" ") + "\\n");',
+      "process.exit(Number(process.env.INTL_AI_STUB_EXIT || 0));",
+    ].join("\n"),
+  );
+  chmodSync(script, 0o755);
+  return script;
+}
+
+function stubLog(name: string): string {
+  const log = join(tmp, name);
+  writeFileSync(log, "");
+  process.env.INTL_AI_STUB_LOG = log;
+  return log;
+}
 
 describe("withIntlAi", () => {
-  test("wraps object config", async () => {
+  test("returns a phase-aware config function that preserves the config", async () => {
     const config: NextConfig = { reactStrictMode: true };
-    const wrapped = await withIntlAi()(config);
-
-    expect(wrapped).toBeDefined();
-    expect(wrapped.webpack).toBeDefined();
-    expect(typeof wrapped.webpack).toBe("function");
-    expect(wrapped.reactStrictMode).toBe(true);
+    const wrapped = withIntlAi(config, { bin: stubBin() });
+    expect(typeof wrapped).toBe("function");
+    const resolved = await wrapped(PHASE_PRODUCTION_SERVER, ctx);
+    expect(resolved.reactStrictMode).toBe(true);
   });
 
-  test("wraps sync function config", async () => {
-    const config: NextConfig = { reactStrictMode: true };
-    const wrappedFn = withIntlAi()(() => config);
-    const wrapped = await wrappedFn;
-
-    expect(wrapped).toBeDefined();
-    expect(wrapped.webpack).toBeDefined();
-    expect(typeof wrapped.webpack).toBe("function");
-    expect(wrapped.reactStrictMode).toBe(true);
+  test("wraps sync and async function configs", async () => {
+    for (const input of [
+      () => ({ reactStrictMode: true }),
+      async () => ({ reactStrictMode: true }),
+    ] as const) {
+      const wrapped = withIntlAi(input, { bin: stubBin() });
+      const resolved = await wrapped(PHASE_PRODUCTION_SERVER, ctx);
+      expect(resolved.reactStrictMode).toBe(true);
+    }
   });
 
-  test("wraps async function config", async () => {
-    const config: NextConfig = { reactStrictMode: true };
-    const wrappedFn = withIntlAi()(async () => config);
-    const wrapped = await wrappedFn;
-
-    expect(wrapped).toBeDefined();
-    expect(wrapped.webpack).toBeDefined();
-    expect(typeof wrapped.webpack).toBe("function");
-    expect(wrapped.reactStrictMode).toBe(true);
+  test("runs intl-ai fill on production build", async () => {
+    const log = stubLog("build.log");
+    const wrapped = withIntlAi({}, { bin: stubBin(), judgeThreshold: 0.9 });
+    await wrapped(PHASE_PRODUCTION_BUILD, ctx);
+    expect(readFileSync(log, "utf8").trim()).toBe("fill --judge-threshold 0.9");
   });
 
-  test("preserves existing webpack config", async () => {
-    let called = false;
-    const customWebpack = (cfg: any) => {
-      called = true;
-      return { ...cfg, custom: true };
-    };
-    const config: NextConfig = {
-      webpack: customWebpack,
-    };
-    const wrapped = await withIntlAi()(config);
+  test("runs on dev server unless dev: false", async () => {
+    const log = stubLog("dev.log");
+    await withIntlAi({}, { bin: stubBin() })(PHASE_DEVELOPMENT_SERVER, ctx);
+    expect(readFileSync(log, "utf8").trim()).toBe("fill");
 
-    expect(wrapped.webpack).toBeDefined();
-    expect(typeof wrapped.webpack).toBe("function");
-
-    const mockConfig = { plugins: [] };
-    const result = wrapped.webpack!(mockConfig, {} as any);
-
-    expect(called).toBe(true);
-    expect(result.custom).toBe(true);
+    const log2 = stubLog("dev-off.log");
+    await withIntlAi({}, { bin: stubBin(), dev: false })(PHASE_DEVELOPMENT_SERVER, ctx);
+    expect(readFileSync(log2, "utf8")).toBe("");
   });
 
-  test("adds intl-ai unplugin to webpack plugins", async () => {
-    const config: NextConfig = { reactStrictMode: true };
-    const wrapped = await withIntlAi()(config);
-
-    const mockConfig = { plugins: [] };
-    const result = wrapped.webpack!(mockConfig, {} as any);
-
-    expect(result.plugins).toBeDefined();
-    expect(Array.isArray(result.plugins)).toBe(true);
-    expect(result.plugins.length).toBeGreaterThan(0);
-
-    // unplugin webpack returns an object with an `apply` method
-    const intlAiPlugin = result.plugins.find((p: any) => typeof p.apply === "function");
-    expect(intlAiPlugin).toBeDefined();
+  test("skips phases outside dev/build (e.g. next start)", async () => {
+    const log = stubLog("start.log");
+    await withIntlAi({}, { bin: stubBin() })(PHASE_PRODUCTION_SERVER, ctx);
+    expect(readFileSync(log, "utf8")).toBe("");
+    expect(existsSync(log)).toBe(true);
   });
 
-  test("maps quality option to the fill validation gate", async () => {
-    const config: NextConfig = { reactStrictMode: true };
-    const wrapped = await withIntlAi({ quality: true })(config);
-
-    const mockConfig = { plugins: [] };
-    wrapped.webpack!(mockConfig, {} as any);
-
-    const intlAiUnplugin = (await import("@intl-ai/unplugin/webpack")).default;
-    expect(intlAiUnplugin).toHaveBeenCalledWith({ validate: true });
+  test("failOn adds a check gate after fill", async () => {
+    const log = stubLog("gate.log");
+    await withIntlAi({}, { bin: stubBin(), failOn: ["missing", "invalid"] })(
+      PHASE_PRODUCTION_BUILD,
+      ctx,
+    );
+    expect(readFileSync(log, "utf8").trim().split("\n")).toEqual([
+      "fill",
+      "check --fail-on missing,invalid",
+    ]);
   });
 
-  test("preserves all NextConfig properties", async () => {
-    const config: NextConfig = {
-      reactStrictMode: true,
-      experimental: {
-        caseSensitiveRoutes: true,
-      },
-    };
-    const wrapped = await withIntlAi()(config);
+  test("nonzero exit throws; strict: false warns", async () => {
+    stubLog("strict.log");
+    process.env.INTL_AI_STUB_EXIT = "7";
+    await expect(withIntlAi({}, { bin: stubBin() })(PHASE_PRODUCTION_BUILD, ctx)).rejects.toThrow(
+      "intl-ai fill exited with code 7",
+    );
 
-    expect(wrapped.reactStrictMode).toBe(true);
-    expect(wrapped.experimental).toBeDefined();
-    expect(wrapped.experimental?.caseSensitiveRoutes).toBe(true);
-    expect(wrapped.webpack).toBeDefined();
+    const warnings: string[] = [];
+    const spy = vi.spyOn(console, "warn").mockImplementation((m?: unknown) => {
+      warnings.push(String(m));
+    });
+    await withIntlAi({}, { bin: stubBin(), strict: false })(PHASE_PRODUCTION_BUILD, ctx);
+    spy.mockRestore();
+    delete process.env.INTL_AI_STUB_EXIT;
+    expect(warnings[0]).toContain("intl-ai fill exited with code 7");
   });
 });
