@@ -15,7 +15,7 @@ export default defineConfig({
     "@rspack/core",
     "rolldown",
     "@farmfe/core",
-    "next",
-    "@intl-ai/next",
+    "bun",
+    "intl-ai",
   ],
 });

@@ -12,7 +12,9 @@ peerDependencyRules:
 allowBuilds:
   "@docmd/engine-rust": true
   "@parcel/watcher": true
+  intl-ai: true
   "@swc/core": true
+  core-js: false
   esbuild: true
   sharp: true
   tsdown: true

@@ -1,36 +1,71 @@
 import { createUnplugin } from "unplugin";
 import type { UnpluginFactory } from "unplugin";
-import { getLogger } from "@logtape/logtape";
-import { loadConfig } from "./config";
-import type { QualityOptions } from "@intl-ai/api";
+import {
+  buildCheckArgs,
+  buildFillArgs,
+  normalizeFailOn,
+  resolveIntlAiBin,
+  runIntlAi,
+  shouldSkipInDev,
+} from "./run.js";
+import type { IntlAiPluginOptions, ResolvedBin } from "./run.js";
 
-const logger = getLogger(["intl-ai", "unplugin"]);
+export type { IntlAiPluginOptions } from "./run.js";
+export { resolveIntlAiBin } from "./run.js";
 
-export interface UnpluginIntlAiOptions {
-  debug?: boolean;
-  /**
-   * Enable the quality-aware fill loop. When `true`, `runFill` is called
-   * with a `quality` block that merges `intl-ai.config.json` settings
-   * (threshold, maxRetries) and forces `failOnLowQuality: true` so any
-   * unresolved low-quality key fails the build.
-   */
-  quality?: boolean;
-}
+/** @deprecated Use {@link IntlAiPluginOptions}. */
+export type UnpluginIntlAiOptions = IntlAiPluginOptions;
 
-const unpluginFactory: UnpluginFactory<UnpluginIntlAiOptions | undefined> = (options) => {
-  const enableQuality = options?.quality === true;
+const unpluginFactory: UnpluginFactory<IntlAiPluginOptions | undefined> = (options) => {
+  const o = options ?? {};
   return {
     name: "@intl-ai/unplugin",
     async buildStart() {
+      if (shouldSkipInDev(o)) {
+        console.warn("@intl-ai/unplugin: skipped in dev (pass dev: true to enable)");
+        return;
+      }
+      const cwd = o.cwd ?? process.cwd();
+      const strict = o.strict !== false;
+      const fail = (message: string) => {
+        if (strict) {
+          throw new Error(`@intl-ai/unplugin: ${message}`);
+        }
+        console.warn(`@intl-ai/unplugin: ${message}`);
+      };
+      let bin: ResolvedBin;
       try {
-        const { runFill } = await import("@intl-ai/api");
-        const config = await loadConfig();
-        const quality: QualityOptions | undefined = enableQuality
-          ? { ...config.quality, failOnLowQuality: true }
-          : undefined;
-        await runFill(config, quality ? { quality } : undefined);
+        bin = resolveIntlAiBin(o.bin, cwd);
       } catch (error) {
-        logger.warn`Skipping translation fill due to error: ${error}`;
+        fail((error as Error).message);
+        return;
+      }
+      if (o.fill !== false) {
+        let code: number;
+        try {
+          code = await runIntlAi(bin, buildFillArgs(o), cwd);
+        } catch (error) {
+          fail(`intl-ai fill failed to start: ${(error as Error).message}`);
+          return;
+        }
+        if (code !== 0) {
+          fail(`intl-ai fill exited with code ${code}`);
+          return;
+        }
+      }
+      const failOn = normalizeFailOn(o.failOn);
+      if (failOn.length) {
+        let code: number;
+        try {
+          code = await runIntlAi(bin, buildCheckArgs(o, failOn), cwd);
+        } catch (error) {
+          fail(`intl-ai check failed to start: ${(error as Error).message}`);
+          return;
+        }
+        if (code !== 0) {
+          fail(`intl-ai check --fail-on ${failOn.join(",")} exited with code ${code}`);
+          return;
+        }
       }
     },
   };
