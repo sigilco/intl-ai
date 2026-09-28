@@ -2,7 +2,9 @@
 
 [![npm](https://img.shields.io/npm/v/@intl-ai/next?style=flat-square)](https://www.npmjs.com/package/@intl-ai/next)
 
-Turbopack bridge for `@intl-ai/unplugin` in Next.js 15+ apps. Provides `withIntlAi()` to register the Turbopack locale loader and delegate webpack integration to `@intl-ai/unplugin/webpack`.
+Next.js integration for [intl-ai](https://github.com/sigilco/intl-ai): wraps your `next.config` so the `intl-ai` binary translates locale files before the build, on webpack and Turbopack alike.
+
+This package is a thin shim: all translation logic lives in the `intl-ai` binary (installed automatically as a dependency). Your project needs an `intl-ai.toml` config; see the [getting started guide](https://intl-ai.pages.dev/guide/getting-started/).
 
 ## Install
 
@@ -10,60 +12,30 @@ Turbopack bridge for `@intl-ai/unplugin` in Next.js 15+ apps. Provides `withIntl
 npm install -D @intl-ai/next
 ```
 
-## Quick Start
-
-Create an `intl-ai.config.ts` (or `.json`) at your project root:
-
-```ts
-// intl-ai.config.ts
-import { createOpenAICompatible } from "@ai-sdk/openai-compatible";
-
-const openai = createOpenAICompatible({
-  name: "openai",
-  baseURL: "https://api.openai.com/v1",
-  apiKey: process.env.OPENAI_API_KEY,
-});
-
-export default {
-  model: openai("your-model-name"),
-  defaultLocale: "en",
-  locales: ["en", "es", "fr"],
-  localeDir: "./locales",
-};
-```
-
-Then wrap your Next.js config:
+## Usage
 
 ```ts
 // next.config.ts
-import withIntlAi from "@intl-ai/next";
+import { withIntlAi } from "@intl-ai/next";
 
 export default withIntlAi({
-  // your existing Next.js config
-  reactStrictMode: true,
+  // your usual Next.js config
 });
 ```
 
-No changes to your app code required. Translations are generated at build time with zero runtime overhead.
-
-## Turbopack Support
-
-Next.js 15+ with Turbopack is fully supported. The `withIntlAi()` wrapper registers the Turbopack loader (for `next dev --turbopack`) and delegates webpack builds to `@intl-ai/unplugin/webpack`.
-
-### Next.js 14 (webpack only)
-
-If you are on Next.js 14 with webpack and do not need Turbopack, you can use `@intl-ai/unplugin/webpack` directly in your `next.config.ts`:
+Options for the translation step go in the second argument:
 
 ```ts
-import intlAiWebpackPlugin from "@intl-ai/unplugin/webpack";
-
-export default {
-  webpack(config) {
-    config.plugins = config.plugins || [];
-    config.plugins.push(intlAiWebpackPlugin());
-    return config;
-  },
-};
+export default withIntlAi(nextConfig, {
+  failOn: ["missing", "invalid"],
+  dev: false, // skip during `next dev`
+});
 ```
 
-[Documentation](https://intl-ai.pages.dev/) · [Report an issue](https://github.com/sigilco/intl-ai/issues)
+## Options
+
+Same surface as [`@intl-ai/unplugin`](https://www.npmjs.com/package/@intl-ai/unplugin#options): `fill`, `failOn`, `validate`, `judgeThreshold`, `dev`, `config`, `cwd`, `bin`, `args`.
+
+## License
+
+[Apache-2.0](../../LICENSE)

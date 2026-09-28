@@ -1,142 +1,115 @@
 ---
-title: API reference
-description: "@intl-ai/api reference. Run fill and check operations directly in any JavaScript or TypeScript project."
+title: CLI reference
+description: "intl-ai command reference: fill, check, mark, review, lockfile, config, status, migrate."
 ---
 
-# API reference
+# CLI reference
 
-`@intl-ai/api` is the runtime-agnostic core of intl-ai. It exposes one function and one config type.
+`intl-ai` is a single binary. Every command accepts `--format json` for machine-readable output, and `-` as `--config` reads TOML from stdin.
 
-## `runFill(config, options?)`
+## `intl-ai init`
 
-```typescript
-import { runFill } from "@intl-ai/api";
-import type { IntlAiConfig, RunFillOptions, RunFillResult } from "@intl-ai/api";
+Scaffold `intl-ai.toml` for the current project.
 
-const result: RunFillResult = await runFill(config, {
-  locale: "es",
-  force: false,
-  dryRun: false,
-});
+```bash
+intl-ai init --locale-dir locales --source en --targets es,fr
 ```
 
-The function walks your locale files, translates missing keys, updates the lockfile, and writes the new translations to disk.
+## `intl-ai fill`
 
-### Options
+Translate missing keys. Additive by default: it never overwrites existing values unless `--regenerate` or `--stale` say so.
 
-| Option   | Type      | Description                            |
-| -------- | --------- | -------------------------------------- |
-| `locale` | `string`  | Translate only this locale.            |
-| `force`  | `boolean` | Re-translate human-edited entries.     |
-| `dryRun` | `boolean` | Preview changes without writing files. |
-
-### Result
-
-| Field        | Type       | Description                        |
-| ------------ | ---------- | ---------------------------------- |
-| `translated` | `number`   | Number of keys translated.         |
-| `skipped`    | `number`   | Number of keys already up to date. |
-| `errors`     | `number`   | Number of translation errors.      |
-| `locales`    | `string[]` | Locales that were processed.       |
-
-## `runCheck(config, options?)`
-
-```typescript
-import { runCheck } from "@intl-ai/api";
-import type { IntlAiConfig, RunCheckOptions, RunCheckResult } from "@intl-ai/api";
-
-const result: RunCheckResult = await runCheck(config, {
-  locale: "es",
-});
+```bash
+intl-ai fill                          # all missing keys, all configured targets
+intl-ai fill --locale es              # one locale (repeatable or comma-separated)
+intl-ai fill --keys 'auth.*'          # glob scope (repeatable or comma-separated)
+intl-ai fill --keys-file keys.txt     # one key glob per line
+intl-ai fill --stale                  # re-fill AI-owned keys whose source changed
+intl-ai fill --regenerate --keys 'x'  # rewrite AI-owned existing values
+intl-ai fill --regenerate --yes       # confirm a whole-locale rewrite
+intl-ai fill --regenerate --include-human --keys 'x'  # also human-owned values
+intl-ai fill --dry-run                # report without writing anything
+intl-ai fill --validate icu,judge     # run the fill gate with these checks
+intl-ai fill --no-validate            # skip the configured [fill].validate gate
+intl-ai fill --judge-threshold 0.9    # override the judge threshold for this run
+intl-ai fill --no-cache               # skip the stat cache for this run
 ```
 
-Reads locale files and the lockfile, then reports missing keys, stale translations, and extra keys. Read-only: writes nothing to disk.
+`--regenerate` is destructive: it requires a `--keys` scope, `--keys-file`, or `--yes` to confirm a whole-locale rewrite.
 
-### Options
+## `intl-ai check`
 
-| Option   | Type     | Description             |
-| -------- | -------- | ----------------------- |
-| `locale` | `string` | Check only this locale. |
+Report findings without writing. Exit status follows `--fail-on`.
 
-### Result
-
-| Field       | Type                | Description                                        |
-| ----------- | ------------------- | -------------------------------------------------- |
-| `hasIssues` | `boolean`           | True if any locale has missing or stale entries.   |
-| `results`   | `CheckLocaleResult` | Per-locale breakdown of missing, stale, and extra. |
-
-Each `CheckLocaleResult`:
-
-| Field     | Type                        | Description                                             |
-| --------- | --------------------------- | ------------------------------------------------------- |
-| `locale`  | `string`                    | Locale code.                                            |
-| `missing` | `MissingTranslationEntry[]` | Keys in source but absent or empty in target.           |
-| `stale`   | `StaleEntry[]`              | Keys whose source content changed since last translate. |
-| `extra`   | `string[]`                  | Keys in target with no corresponding source entry.      |
-
-### CLI exit codes
-
-When called via the CLI (`intl-ai check`):
-
-- `0` — all translations are complete and up to date
-- `10` — one or more locales have missing or stale entries
-
-## `IntlAiConfig`
-
-```typescript
-interface IntlAiConfig {
-  defaultLocale: string;
-  locales: string[];
-  localeDir: string;
-  model: AIProvider | string; // provider ID string or AIProvider instance
-  apiKey: ApiKeyValue; // supports $VAR and ${VAR} env interpolation
-  baseURL: string;
-  modelParams?: Record<string, unknown>; // passthrough to provider
-  hook?: TranslationHook;
-  processor?: IntlAiProcessor;
-  glossary?: Record<string, string>;
-  localeInstructions?: Record<string, string>;
-  maxRetries?: number;
-}
+```bash
+intl-ai check                          # all configured checks and targets
+intl-ai check --fail-on missing,invalid
+intl-ai check --fail-on none           # report only, never fail
+intl-ai check --locale es --keys 'auth.*'
+intl-ai check --origin ai              # scope stale/modified/unreviewed to one origin
+intl-ai check --self-test              # run each spec check's fixtures
+intl-ai check --no-cache               # skip stat cache and the findings cache
 ```
 
-For JSON config files, use `IntlAiJsonConfigSchema` and `jsonConfigToIntlAiConfig` from `@intl-ai/api/internal`.
+Findings are cached incrementally in `.intl-ai/check-cache.json`: unchanged keys replay their previous findings (`cached: true` in JSON output) instead of re-running the check.
 
-## Advanced: batched fill (internal)
+## `intl-ai mark`
 
-`batchedFill` is available via `@intl-ai/api/internal` for consumers who need parallel locale processing and the failure report artifact.
+Set the origin on lockfile entries (the escape hatch for the positional review rule).
 
-```typescript
-import { batchedFill } from "@intl-ai/api/internal";
-import type { BatchedFillOptions, BatchedFillResult } from "@intl-ai/api/internal";
-
-const result = await batchedFill(config, {
-  concurrency: 4, // max parallel locales, default 4
-  // ...runFill options (locale, force, dryRun, onProgress, hook)
-});
+```bash
+intl-ai mark 'checkout.*' --locale es --origin ai      # rebaseline as AI-owned
+intl-ai mark 'checkout.*' --locale es --origin human   # claim as human-owned
+intl-ai mark 'legal.*' --locale es --absent            # tombstone: never translate
+intl-ai mark 'legal.*' --locale es --present           # clear a tombstone
 ```
 
-This is the API used by the CLI. The failure report is written to `${localeDir}/.intl-ai/report-<timestamp>.json` when any translation fails and `dryRun` is false.
+`--origin ai` requires an existing entry; `--origin human` upserts one. Tombstoned keys are skipped by `fill` and not reported missing by `check`.
 
-## JSON Schema
+## `intl-ai review` / `intl-ai unreview`
 
-A JSON Schema for `intl-ai.config.json` is published at:
+Set `reviewed` on lockfile entries.
 
-```text
-https://www.schemastore.org/intl-ai.json
+```bash
+intl-ai review 'checkout.*' --locale es
+intl-ai unreview 'auth.*' --locale es
 ```
 
-Add it to your config for editor intellisense and CI validation:
+## `intl-ai status`
 
-```json
-{
-  "$schema": "https://www.schemastore.org/intl-ai.json",
-  "defaultLocale": "en",
-  "locales": ["en", "es"],
-  "localeDir": "./locales",
-  "provider": "openai",
-  "model": "gpt-4o-mini",
-  "apiKey": "${OPENAI_API_KEY}",
-  "baseURL": "https://api.openai.com/v1"
-}
+Per-locale inventory counts. Read-only and cheap enough for agents to call before deciding what to do.
+
+```bash
+intl-ai status
+intl-ai status --locale es
 ```
+
+## `intl-ai lockfile`
+
+Lockfile maintenance over the `intl-ai.lock.d/` shards.
+
+```bash
+intl-ai lockfile check   # validate every shard
+intl-ai lockfile fmt     # rewrite shards to canonical form (idempotent)
+intl-ai lockfile merge   # resolve merge conflicts in shards
+```
+
+## `intl-ai config`
+
+```bash
+intl-ai config validate   # resolve and validate the config (secrets masked)
+intl-ai config schema     # print the JSON Schema for the config contract
+```
+
+The committed schema lives at `docs/public/schema/intl-ai.schema.json` and is served at `https://intl-ai.pages.dev/schema/v1.json`.
+
+## `intl-ai migrate`
+
+Import a 0.4.x `intl-ai.lock.json` into `intl-ai.lock.d/` shards.
+
+## Global flags
+
+| Flag              | Description                                          |
+| ----------------- | ---------------------------------------------------- |
+| `--config <path>` | Config file path. `-` reads TOML from stdin.         |
+| `--format json`   | Machine-readable output (also `human`, the default). |

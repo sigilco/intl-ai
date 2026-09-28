@@ -100,11 +100,17 @@ export default {
       ],
     },
     {
+      title: "Ecosystem",
+      icon: "puzzle",
+      collapsible: true,
+      children: [{ title: "Community integrations", path: "/guide/community-plugins/" }],
+    },
+    {
       title: "Reference",
       icon: "book-open",
       collapsible: true,
       children: [
-        { title: "API reference", path: "/guide/api/" },
+        { title: "CLI reference", path: "/guide/api/" },
         { title: "Internals", path: "/guide/internals/" },
         { title: "Contributing", path: "/guide/contributing/" },
       ],

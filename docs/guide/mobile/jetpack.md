@@ -7,7 +7,7 @@ You can integrate `intl-ai` into an Android Jetpack project by adding a Gradle t
 ```
 app/
 ├── build.gradle.kts
-├── intl-ai.config.json
+├── intl-ai.toml
 └── src/main/assets/locales/
     ├── en.json
     └── es.json
@@ -32,7 +32,7 @@ tasks.register<Exec>("intlAiFill") {
     group = "intl-ai"
     description = "Translate missing locale keys with intl-ai"
 
-    commandLine("intl-ai", "fill", "--config", "${projectDir}/intl-ai.config.json")
+    commandLine("intl-ai", "fill", "--config", "${projectDir}/intl-ai.toml")
 
     // Only run when source locale files change.
     inputs.dir("${projectDir}/src/main/assets/locales")
@@ -40,7 +40,7 @@ tasks.register<Exec>("intlAiFill") {
 
     doFirst {
         if (org.gradle.internal.os.OperatingSystem.current().isWindows) {
-            commandLine("cmd", "/c", "intl-ai", "fill", "--config", "${projectDir}/intl-ai.config.json")
+            commandLine("cmd", "/c", "intl-ai", "fill", "--config", "${projectDir}/intl-ai.toml")
         }
     }
 }
@@ -76,7 +76,7 @@ fun loadLocale(context: Context, locale: String): LocaleMessages {
 ## Requirements
 
 - `intl-ai` installed on your `PATH` (see [Installation](/guide/getting-started#installation)).
-- `intl-ai.config.json` in `app/`. Adjust `localeDir` to point to `src/main/assets/locales`.
+- `intl-ai.toml` in `app/`. Adjust `locale_dir` to point to `src/main/assets/locales`.
 
 ## Example
 
