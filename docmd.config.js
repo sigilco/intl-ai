@@ -100,6 +100,12 @@ export default {
       ],
     },
     {
+      title: "Ecosystem",
+      icon: "puzzle",
+      collapsible: true,
+      children: [{ title: "Community integrations", path: "/guide/community-plugins/" }],
+    },
+    {
       title: "Reference",
       icon: "book-open",
       collapsible: true,
