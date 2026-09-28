@@ -31,47 +31,62 @@
     ".": {
       "import": "./dist/index.mjs",
       "types": "./dist/index.d.mts",
-      "default": "./dist/index.mjs"
+      "default": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
     },
     "./vite": {
       "import": "./dist/vite.mjs",
       "types": "./dist/vite.d.mts",
-      "default": "./dist/vite.mjs"
+      "default": "./dist/vite.mjs",
+      "require": "./dist/vite.cjs"
     },
     "./rollup": {
       "import": "./dist/rollup.mjs",
       "types": "./dist/rollup.d.mts",
-      "default": "./dist/rollup.mjs"
+      "default": "./dist/rollup.mjs",
+      "require": "./dist/rollup.cjs"
     },
     "./webpack": {
       "import": "./dist/webpack.mjs",
       "types": "./dist/webpack.d.mts",
-      "default": "./dist/webpack.mjs"
+      "default": "./dist/webpack.mjs",
+      "require": "./dist/webpack.cjs"
     },
     "./esbuild": {
       "import": "./dist/esbuild.mjs",
       "types": "./dist/esbuild.d.mts",
-      "default": "./dist/esbuild.mjs"
+      "default": "./dist/esbuild.mjs",
+      "require": "./dist/esbuild.cjs"
     },
     "./rspack": {
       "import": "./dist/rspack.mjs",
       "types": "./dist/rspack.d.mts",
-      "default": "./dist/rspack.mjs"
+      "default": "./dist/rspack.mjs",
+      "require": "./dist/rspack.cjs"
     },
     "./rolldown": {
       "import": "./dist/rolldown.mjs",
       "types": "./dist/rolldown.d.mts",
-      "default": "./dist/rolldown.mjs"
+      "default": "./dist/rolldown.mjs",
+      "require": "./dist/rolldown.cjs"
     },
     "./farm": {
       "import": "./dist/farm.mjs",
       "types": "./dist/farm.d.mts",
-      "default": "./dist/farm.mjs"
+      "default": "./dist/farm.mjs",
+      "require": "./dist/farm.cjs"
     },
     "./bun": {
       "import": "./dist/bun.mjs",
       "types": "./dist/bun.d.mts",
-      "default": "./dist/bun.mjs"
+      "default": "./dist/bun.mjs",
+      "require": "./dist/bun.cjs"
+    },
+    "./runner": {
+      "import": "./dist/runner.mjs",
+      "types": "./dist/runner.d.mts",
+      "require": "./dist/runner.cjs",
+      "default": "./dist/runner.mjs"
     },
     "./package.json": "./package.json"
   },

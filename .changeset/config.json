@@ -3,7 +3,7 @@
   "changelog": "@changesets/cli/changelog",
   "commit": false,
   "linked": [],
-  "fixed": [["@intl-ai/unplugin", "@intl-ai/next"]],
+  "fixed": [["@intl-ai/unplugin", "@intl-ai/next", "@intl-ai/expo"]],
   "access": "public",
   "baseBranch": "develop",
   "updateInternalDependencies": "patch",

@@ -1,14 +1,13 @@
 {
-  "name": "@intl-ai/next",
+  "name": "@intl-ai/expo",
   "version": "0.5.0",
-  "description": "Next.js integration for the intl-ai binary: wraps next.config so translations run before the build (webpack and Turbopack)",
+  "description": "Expo config plugin: runs the intl-ai binary during prebuild",
   "keywords": [
     "ai",
+    "expo",
     "i18n",
-    "internationalization",
     "intl",
-    "next",
-    "nextjs",
+    "react-native",
     "translation"
   ],
   "homepage": "https://intl-ai.pages.dev",
@@ -21,14 +20,17 @@
   },
   "files": [
     "dist",
+    "app.plugin.js",
     "README.md",
     "LICENSE"
   ],
   "type": "module",
+  "main": "./dist/index.cjs",
   "exports": {
     ".": {
       "import": "./dist/index.mjs",
       "types": "./dist/index.d.mts",
+      "require": "./dist/index.cjs",
       "default": "./dist/index.mjs"
     },
     "./package.json": "./package.json"
@@ -38,25 +40,20 @@
   },
   "scripts": {
     "build": "tsdown",
-    "dev": "tsdown --watch",
     "typecheck": "tsc --noEmit",
     "test": "vitest run"
   },
   "dependencies": {
+    "@expo/config-plugins": ">=7.0.0",
     "@intl-ai/unplugin": "workspace:*",
     "intl-ai": "^0.5.0"
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
     "@types/node": "catalog:",
-    "next": "catalog:react18",
-    "react": "catalog:react18",
-    "react-dom": "catalog:react18",
     "tsdown": "catalog:",
-    "typescript": "catalog:"
-  },
-  "peerDependencies": {
-    "next": ">=14.0.0"
+    "typescript": "catalog:",
+    "vitest": "catalog:"
   },
   "engines": {
     "node": "^22.18.0 || >=24"
