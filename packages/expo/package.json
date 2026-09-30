@@ -1,6 +1,6 @@
 {
   "name": "@intl-ai/expo",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "Expo config plugin: runs the intl-ai binary during prebuild",
   "keywords": [
     "ai",
@@ -46,7 +46,7 @@
   "dependencies": {
     "@expo/config-plugins": ">=7.0.0",
     "@intl-ai/unplugin": "workspace:*",
-    "intl-ai": "^0.5.0"
+    "intl-ai": ">=0.5.0 <1.0.0"
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
