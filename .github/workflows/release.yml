@@ -410,7 +410,19 @@ jobs:
           cache: "pnpm"
           registry-url: 'https://registry.npmjs.org'
       - run: pnpm install --frozen-lockfile
-      - run: pnpm release
+      - run: turbo run build
+      # @intl-ai/expo has no npm trusted publisher yet (package does not exist),
+      # so it publishes with NPM_TOKEN first. Once it exists and gets a trusted
+      # publisher, delete this step: `changeset publish` covers it via OIDC.
+      - name: Publish @intl-ai/expo (NPM_TOKEN)
+        run: pnpm --filter @intl-ai/expo publish --access public --no-git-checks
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      # No NODE_AUTH_TOKEN here: packages with a trusted publisher configured
+      # (intl-ai, @intl-ai/unplugin, @intl-ai/next) publish via OIDC.
+      # changesets skips expo since its version is already on the registry.
+      - name: Publish remaining shims (trusted publishing)
+        run: pnpm changeset publish
 
   announce:
     needs:
