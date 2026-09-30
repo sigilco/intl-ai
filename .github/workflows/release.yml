@@ -410,7 +410,7 @@ jobs:
           cache: "pnpm"
           registry-url: 'https://registry.npmjs.org'
       - run: pnpm install --frozen-lockfile
-      - run: turbo run build
+      - run: pnpm run build
       # @intl-ai/expo has no npm trusted publisher yet (package does not exist),
       # so it publishes with NPM_TOKEN first. Once it exists and gets a trusted
       # publisher, delete this step: `changeset publish` covers it via OIDC.
