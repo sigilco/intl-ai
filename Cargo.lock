@@ -989,7 +989,7 @@ dependencies = [
 
 [[package]]
 name = "intl-ai"
-version = "0.5.0"
+version = "0.6.0"
 dependencies = [
  "anyhow",
  "assert_cmd",
@@ -1008,7 +1008,7 @@ dependencies = [
 
 [[package]]
 name = "intl-ai-checks"
-version = "0.5.0"
+version = "0.6.0"
 dependencies = [
  "formatjs_icu_messageformat_parser",
  "intl-ai-core",
@@ -1022,7 +1022,7 @@ dependencies = [
 
 [[package]]
 name = "intl-ai-core"
-version = "0.5.0"
+version = "0.6.0"
 dependencies = [
  "config",
  "globset",
@@ -1039,7 +1039,7 @@ dependencies = [
 
 [[package]]
 name = "intl-ai-formats"
-version = "0.5.0"
+version = "0.6.0"
 dependencies = [
  "schemars",
  "serde",
@@ -1051,7 +1051,7 @@ dependencies = [
 
 [[package]]
 name = "intl-ai-providers"
-version = "0.5.0"
+version = "0.6.0"
 dependencies = [
  "intl-ai-core",
  "libc",

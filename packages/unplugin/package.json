@@ -1,6 +1,6 @@
 {
   "name": "@intl-ai/unplugin",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "AI-powered i18n translation plugin for all bundlers (runs the intl-ai binary)",
   "keywords": [
     "ai",
@@ -99,7 +99,7 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "intl-ai": "^0.5.0",
+    "intl-ai": ">=0.5.0 <1.0.0",
     "unplugin": "catalog:"
   },
   "devDependencies": {
