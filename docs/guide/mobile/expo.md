@@ -5,38 +5,59 @@ description: Build-time AI translation for Expo i18n. Translations happen during
 
 # Expo
 
-The Expo integration is provided as a self-contained config plugin in [`examples/expo/plugin`](https://github.com/sigilco/intl-ai/tree/main/examples/expo/plugin). It runs `intl-ai fill` during `expo prebuild` and has zero runtime overhead because all translations are written to disk before Metro bundles your app.
+`@intl-ai/expo` is a config plugin that runs the `intl-ai` binary while Expo evaluates config plugins during `expo prebuild`, `eas build`, and `expo run:*`. Translations are written to disk before Metro bundles your app, so there is zero runtime overhead.
 
-## Copy the plugin
+## Install
 
-Copy `examples/expo/plugin/` into your Expo project (for example, to `./plugins/intl-ai/`). The plugin is not published as an npm package, so you own and can customize the code.
+```bash
+pnpm add -D @intl-ai/expo
+```
+
+The `intl-ai` npm package comes along as a dependency and downloads the platform binary on install. To use a binary you installed another way (brew, mise, install script), set `INTL_AI_BIN` or pass `bin`.
 
 ## Configure `app.json`
-
-Reference the local plugin in your `app.json`:
 
 ```json
 {
   "expo": {
-    "plugins": [["./plugins/intl-ai", { "configPath": "intl-ai.config.json" }]]
+    "plugins": ["@intl-ai/expo"]
   }
 }
 ```
 
-## Create `intl-ai.config.json`
+With options:
 
 ```json
 {
-  "$schema": "https://www.schemastore.org/intl-ai.json",
-  "defaultLocale": "en",
-  "locales": ["en", "es"],
-  "localeDir": "locales",
-  "model": "your-provider/your-model",
-  "apiKey": "${OPENAI_API_KEY}",
-  "baseURL": "https://api.openai.com/v1",
-  "maxRetries": 3
+  "expo": {
+    "plugins": [
+      [
+        "@intl-ai/expo",
+        {
+          "failOn": ["missing", "invalid"],
+          "judgeThreshold": 0.9
+        }
+      ]
+    ]
+  }
 }
 ```
+
+## Create `intl-ai.toml`
+
+```toml
+locale_dir = "locales"
+source = "en"
+targets = ["es", "fr"]
+
+[provider]
+kind = "http"
+base_url = "https://api.openai.com/v1"
+model = "your-model-name"
+api_key = "${OPENAI_API_KEY}"
+```
+
+See [Configuration](/guide/configuration/) for the full schema.
 
 ## Run prebuild
 
@@ -44,19 +65,24 @@ Reference the local plugin in your `app.json`:
 expo prebuild
 ```
 
-The plugin invokes:
+The plugin registers on both the ios and android platforms and runs the pipeline once, with your app root as the working directory.
 
-```bash
-npx intl-ai fill --config intl-ai.config.json
-```
+## Options
 
-## Plugin options
+| Option           | Type                  | Default  | Description                                      |
+| ---------------- | --------------------- | -------- | ------------------------------------------------ |
+| `fill`           | `boolean`             | `true`   | Run `intl-ai fill`                               |
+| `failOn`         | `string \| string[]`  | —        | Run `intl-ai check --fail-on <kinds>` after fill |
+| `validate`       | `boolean \| string[]` | `true`   | Fill-time validation gate                        |
+| `judgeThreshold` | `number`              | —        | Judge score threshold inside the fill gate       |
+| `dev`            | `boolean`             | `true`   | `false` skips when `NODE_ENV !== "production"`   |
+| `strict`         | `boolean`             | `true`   | `false` warns instead of failing the prebuild    |
+| `config`         | `string`              | —        | Path to `intl-ai.toml`/`.json`/`.yaml`           |
+| `cwd`            | `string`              | app root | Working directory for the binary                 |
+| `bin`            | `string`              | —        | Explicit path to the `intl-ai` binary            |
+| `args`           | `string[]`            | —        | Extra args appended to `intl-ai fill`            |
 
-| Option            | Type      | Default               | Description                                             |
-| ----------------- | --------- | --------------------- | ------------------------------------------------------- |
-| `configPath`      | `string`  | `intl-ai.config.json` | Path to your JSON config, relative to the project root. |
-| `verbose`         | `boolean` | `false`               | Forward CLI output to the parent process.               |
-| `continueOnError` | `boolean` | `false`               | Allow prebuild to continue if translation fails.        |
+Binary resolution order: `bin` option → `INTL_AI_BIN` env → the `intl-ai` npm package → `PATH`.
 
 ## Runtime usage
 

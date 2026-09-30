@@ -11,7 +11,7 @@ You can integrate `intl-ai` into a SwiftUI project by running the CLI as an Xcod
 
 ```
 MyApp/
-├── intl-ai.config.json
+├── intl-ai.toml
 ├── locales/
 │   ├── en.json
 │   └── es.json
@@ -37,7 +37,7 @@ set -e
 
 # Run intl-ai fill to generate missing translations.
 if command -v intl-ai &> /dev/null; then
-  intl-ai fill --config "$SRCROOT/intl-ai.config.json"
+  intl-ai fill --config "$SRCROOT/intl-ai.toml"
 else
   echo "warning: intl-ai not found in PATH. Skipping translation."
 fi
@@ -88,7 +88,7 @@ let en = Bundle.main.decode("en.json", as: Localizations.self)
 ## Requirements
 
 - `intl-ai` installed on your `PATH` (see [Installation](/guide/getting-started#installation)).
-- `intl-ai.config.json` at project root.
+- `intl-ai.toml` at project root.
 
 ## Example
 

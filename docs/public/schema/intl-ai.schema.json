@@ -121,6 +121,18 @@
         "$ref": "#/$defs/CheckEntry"
       },
       "default": []
+    },
+    "quality": {
+      "description": "`[quality]` aggregate policy: weighted per-key score over the\nconfigured checks with `pass`/`review`/`fail` bands. Absent =\nno aggregation (checks report findings only).",
+      "anyOf": [
+        {
+          "$ref": "#/$defs/QualityConfig"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
     }
   },
   "additionalProperties": false,
@@ -422,6 +434,45 @@
           ],
           "format": "uint64",
           "minimum": 0
+        },
+        "threshold": {
+          "description": "`judge`-only: score below this becomes an `invalid` finding\n(default 0.8). Rejected on any other check kind.",
+          "type": [
+            "number",
+            "null"
+          ],
+          "format": "double"
+        },
+        "weight": {
+          "description": "Weight in the `[quality]` weighted mean (default 1.0).",
+          "type": [
+            "number",
+            "null"
+          ],
+          "format": "double"
+        }
+      },
+      "additionalProperties": false
+    },
+    "QualityConfig": {
+      "description": "Aggregate quality policy (`[quality]`). Each configured check\ncontributes a normalized 0..=1 score per key — `judge` emits real\nscores, binary checks score 1.0 clean / 0.0 on a finding — weighted\nby the entry's `weight`. `fail_below` produces an `invalid` finding\nunder check id `quality`; `review_below` marks the key `unreviewed`.",
+      "type": "object",
+      "properties": {
+        "fail_below": {
+          "description": "Aggregate score below this is an `invalid` finding (fail band).",
+          "type": [
+            "number",
+            "null"
+          ],
+          "format": "double"
+        },
+        "review_below": {
+          "description": "Aggregate score below this (and at/above `fail_below`) marks the\nkey unreviewed (review band).",
+          "type": [
+            "number",
+            "null"
+          ],
+          "format": "double"
         }
       },
       "additionalProperties": false

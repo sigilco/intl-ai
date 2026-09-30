@@ -7,7 +7,7 @@
 //! same case-matched suggestions, same exclusion of matches that overlap
 //! ICU/placeholder token spans.
 
-use intl_ai_core::check::{Check, CheckCtx, CheckItem};
+use intl_ai_core::check::{Check, CheckCtx, CheckItem, CheckOutput};
 use intl_ai_core::diff::CheckFinding;
 use intl_ai_core::error::{Error, Result};
 use regex::Regex;
@@ -128,6 +128,8 @@ pub struct DialectHit {
 pub struct DialectCheck {
     id: String,
     variant: DialectVariant,
+    /// `[quality]` aggregation weight (set by `[[checks]] weight`).
+    pub weight: f64,
 }
 
 impl DialectCheck {
@@ -140,6 +142,7 @@ impl DialectCheck {
         Ok(Self {
             id: format!("dialect:{name}"),
             variant,
+            weight: 1.0,
         })
     }
 }
@@ -153,7 +156,11 @@ impl Check for DialectCheck {
         BTreeMap::from([("variant".into(), format!("{:?}", self.variant))])
     }
 
-    fn run(&self, _ctx: &CheckCtx, items: &[CheckItem]) -> Result<Vec<CheckFinding>> {
+    fn weight(&self) -> f64 {
+        self.weight
+    }
+
+    fn run(&self, _ctx: &CheckCtx, items: &[CheckItem]) -> Result<CheckOutput> {
         let mut out = Vec::new();
         for item in items {
             let exclude = token_spans(&item.target, &crate::icu::extract_tokens(&item.target));
@@ -166,7 +173,7 @@ impl Check for DialectCheck {
                 });
             }
         }
-        Ok(out)
+        Ok(out.into())
     }
 }
 

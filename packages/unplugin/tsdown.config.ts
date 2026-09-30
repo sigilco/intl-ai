@@ -2,7 +2,7 @@ import { defineConfig } from "tsdown";
 
 export default defineConfig({
   entry: ["src/!(*.test).ts"],
-  format: ["esm"],
+  format: ["esm", "cjs"],
   dts: true,
   sourcemap: true,
   clean: true,
@@ -15,7 +15,7 @@ export default defineConfig({
     "@rspack/core",
     "rolldown",
     "@farmfe/core",
-    "next",
-    "@intl-ai/next",
+    "bun",
+    "intl-ai",
   ],
 });

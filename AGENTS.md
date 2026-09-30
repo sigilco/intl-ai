@@ -1,6 +1,6 @@
 # intl-ai — Agent Context
 
-AI-powered build-time i18n translation plugin. Hooks into any bundler via unplugin, translates JSON/YAML locale files at build time using any AI model (Vercel AI SDK). Zero runtime overhead, zero vendor lock-in. See `.agents/docs/prd.md` for product context and roadmap.
+AI-powered build-time i18n translation CLI. A single Rust binary fills missing locale keys at build time via AI providers, validates ICU MessageFormat output, and tracks provenance in a sharded lockfile. npm packages under `@intl-ai/*` are thin shims that spawn the binary. Zero runtime overhead, zero vendor lock-in. See `.agents/docs/prd.md` for product context and roadmap.
 
 ---
 
@@ -29,14 +29,16 @@ AI-powered build-time i18n translation plugin. Hooks into any bundler via unplug
 
 ## Workspace Map
 
-| Package                                                 | npm name                  | Purpose                                                                           |
-| ------------------------------------------------------- | ------------------------- | --------------------------------------------------------------------------------- |
-| `packages/api`                                          | `@intl-ai/api`            | Runtime-agnostic core — `runFill`, `IntlAiConfig`, JSON schema                    |
-| `packages/unplugin`                                     | `@intl-ai/unplugin`       | Universal bundler plugin via unplugin 3 (Vite/Rollup/Webpack/esbuild/Rspack/etc.) |
-| `packages/next`                                         | `@intl-ai/next`           | Next.js `withIntlAi()` wrapper — webpack plugin + Turbopack loader                |
-| `packages/cli`                                          | `@intl-ai/cli`            | CLI: `intl-ai fill` and `intl-ai check`                                           |
-| `packages/typescript-config`                            | `@repo/typescript-config` | Shared tsconfig — internal only, not published                                    |
-| `examples/{next,legacy-next,vite,webpack,expo,flutter}` | —                         | Reference consumer apps, not published                                            |
+| Package                                                 | npm name                  | Purpose                                                                   |
+| ------------------------------------------------------- | ------------------------- | ------------------------------------------------------------------------- |
+| `crates/intl-ai-{core,formats,providers,checks,cli}`    | — (binary `intl-ai`)      | Rust workspace: config, locale formats, provider transports, checks, CLI  |
+| `packages/api` (removed)                                | `@intl-ai/api`            | TS era, deleted from the tree; npm stays deprecated at its last version   |
+| `packages/cli` (removed)                                | `@intl-ai/cli`            | TS era, deleted from the tree; npm stays deprecated at its last version   |
+| `packages/unplugin`                                     | `@intl-ai/unplugin`       | Bundler shim via unplugin 3 — spawns the `intl-ai` binary in `buildStart` |
+| `packages/next`                                         | `@intl-ai/next`           | Next.js `withIntlAi()` config wrapper — spawns the binary at config eval  |
+| `packages/expo`                                         | `@intl-ai/expo`           | Expo config plugin — spawns the `intl-ai` binary during prebuild          |
+| `packages/typescript-config`                            | `@repo/typescript-config` | Shared tsconfig — internal only, not published                            |
+| `examples/{next,legacy-next,vite,webpack,expo,flutter}` | —                         | Reference consumer apps, not published                                    |
 
 ---
 
@@ -58,13 +60,21 @@ Types: `feat` · `fix` · `docs` · `test` · `chore` · `ci` · `refactor` · `
 
 `pnpm changeset:add` → `pnpm changeset:version` → `pnpm release` (CI-driven on `main`)
 
+### Versioning
+
+All published artifacts share one version, currently the `workspace.package.version` in `Cargo.toml`:
+
+- Rust crates pin `version.workspace = true`; the binary, GitHub Release, brew formula, and the `intl-ai` npm wrapper all inherit it via cargo-dist (tag `vX.Y.Z` to release).
+- `@intl-ai/*` npm shims bump in lockstep via the changesets `fixed` group in `.changeset/config.json`. Add new shims to that group.
+- Deprecated `@intl-ai/{api,cli}` were deleted from the tree at their last released versions (0.4.1 and 0.3.2); npm stays deprecated and they never republish.
+
 ### Config Files
 
-Users place `intl-ai.config.ts` or `intl-ai.config.json` at project root. TypeScript is loaded via `jiti`; JSON is read and validated against the published JSON Schema. These are the only supported filenames; the legacy `.js` / `.mjs` / `.cjs` / `.intl-airc` filenames were removed in v0.2.0.
+Users place `intl-ai.toml` (or `.json`/`.yaml`) at project root. Full schema: `docs/guide/configuration.md`.
 
 ### Lockfile
 
-`intl-ai.lock.json` in `localeDir`. Tracks per-key `sourceHash` (SHA-1), translation, and `origin: "ai"|"human"`. Never delete manually — drives staleness detection.
+`intl-ai.lock.d/<locale>.toml` shards. Tracks per-key `sourceHash`, translation, `origin: "ai"|"human"`, `reviewed`, `quality`. Never delete manually — drives staleness detection, the check cache, and the fill gate.
 
 ---
 

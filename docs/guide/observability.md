@@ -1,198 +1,65 @@
 ---
-title: Observability with hooks
-description: Monitor the intl-ai translation pipeline with hooks. Track batch progress, retries, and failures.
+title: Observability
+description: Monitor the intl-ai pipeline. JSON reports, findings kinds, quality scores, and exec checks as custom hooks.
 ---
 
-# Observability with hooks
+# Observability
 
-TranslationHook is an optional callback interface on the config object. It gives you visibility into every step of the AI translation pipeline: when a batch is sent, when it succeeds, and when it fails.
+The `intl-ai` binary emits machine-readable output on every command. There is no callback API to configure: pipe `--format json` to whatever you use for telemetry, or add an `exec` check for custom instrumentation.
 
-Hooks are available only in TypeScript config files (`intl-ai.config.ts`). JSON config does not support function values.
+## JSON reports
 
-## The three callbacks
+Every command takes `--format json`:
 
-Each callback receives a single info object. All three are optional; implement only the ones you need.
-
-### `onRequest`
-
-Fires before each batch is sent to the AI provider.
-
-```typescript
-onRequest?: (info: {
-  provider: string;   // e.g. "openai", "anthropic"
-  model: string;      // e.g. "gpt-4o-mini"
-  locale: string;     // target locale code
-  entryCount: number; // number of keys in this batch
-}) => void;
+```bash
+intl-ai fill --format json | jq '{translated, written, unresolved: (.unresolved | length)}'
+intl-ai check --format json | jq '.locales.es.invalid'
+intl-ai status --format json
 ```
 
-Use this to log which locales and batch sizes are being processed.
+Errors on stderr carry the same shape: `{"error": {"message": ..., "code": ...}}`.
 
-### `onSuccess`
+## Findings
 
-Fires after a batch completes successfully.
+`intl-ai check` reports per-key findings. Kinds:
 
-```typescript
-onSuccess?: (info: {
-  provider: string;
-  model: string;
-  locale: string;
-  results: TranslationResult[]; // per-key results
-  durationMs: number;           // wall-clock time for this request
-}) => void;
+| Kind         | Meaning                                                                                    |
+| ------------ | ------------------------------------------------------------------------------------------ |
+| `missing`    | Key absent from a target locale file.                                                      |
+| `stale`      | AI-owned value whose source changed since fill.                                            |
+| `modified`   | Human-owned value whose source changed since review.                                       |
+| `unreviewed` | Key never marked `reviewed` (or re-flagged by `[quality]`).                                |
+| `extra`      | Key present in a target file but not in the source.                                        |
+| `invalid`    | A `[[checks]]` entry rejected the value (icu, parity, judge, spec, exec, or `fail_below`). |
+
+Check-level failures (a spec that won't load, an exec that won't spawn, a provider error) land in the report's `errors` array and always fail the run. Replaying a finding from the incremental cache marks it `"cached": true` in JSON output.
+
+## Quality scores in the lockfile
+
+`fill` records what it produced in `intl-ai.lock.d/` shards. Per key:
+
+- `origin`: `ai` or `human`.
+- `reviewed`: flipped back to `false` automatically when a human edits the file.
+- `quality.scores`: normalized per-check scores from the last fill run.
+- `quality.unresolved`: keys that failed the `[fill].validate` gate and were adopted anyway.
+
+Track review coverage in CI with `intl-ai status --format json` and gate merges on `intl-ai check --fail-on`.
+
+## Exec checks as custom telemetry
+
+Need per-run instrumentation inside the pipeline (post to Sentry, emit a metric, append to a log)? Write an `exec` check: the binary sends it one JSONL request per batch of keys and expects one JSONL response of findings. It is a natural seam for "call this on every check run" without forking the pipeline.
+
+```toml
+[[checks]]
+exec = "./scripts/i18n-telemetry"
+timeout_ms = 60000
 ```
 
-Each `TranslationResult` has:
+See `examples/checks/` for the protocol.
 
-| Field        | Type      | Description                                    |
-| ------------ | --------- | ---------------------------------------------- |
-| `key`        | `string`  | The locale key being translated.               |
-| `translated` | `string?` | The translated text, if translation succeeded. |
-| `success`    | `boolean` | Whether this individual key was translated.    |
-| `error`      | `string?` | Error message if this key failed validation.   |
+## Exit codes
 
-### `onError`
+- `0`: success (or findings only below `--fail-on` kinds).
+- `1`: a `--fail-on` kind was found, a configured gate failed, or a hard error occurred. In CI, non-zero always means act.
 
-Fires when a batch exhausts all retry attempts without a successful response.
-
-```typescript
-onError?: (info: {
-  provider: string;
-  model: string;
-  locale: string;
-  error: string;   // human-readable error from the last attempt
-  attempt: number; // the retry attempt that failed (equals maxRetries)
-}) => void;
-```
-
-Note that `onError` fires only after all retries are exhausted. Individual retry attempts within a batch are handled internally and do not trigger `onError`.
-
-## Setting up a hook
-
-Pass the `hook` property on your config object:
-
-```typescript
-import type { IntlAiConfig } from "@intl-ai/api";
-import type { TranslationResult } from "@intl-ai/api/internal";
-
-const hook = {
-  onRequest(info) {
-    console.log(
-      `[${info.locale}] sending ${info.entryCount} keys to ${info.provider}/${info.model}`,
-    );
-  },
-
-  onSuccess(info) {
-    const succeeded = info.results.filter((r) => r.success).length;
-    console.log(
-      `[${info.locale}] translated ${succeeded}/${info.results.length} keys in ${info.durationMs.toFixed(0)}ms`,
-    );
-  },
-
-  onError(info) {
-    console.error(`[${info.locale}] failed after ${info.attempt} attempts: ${info.error}`);
-  },
-};
-
-const config: IntlAiConfig = {
-  provider: "openai",
-  model: "gpt-4o-mini",
-  apiKey: "${OPENAI_API_KEY}",
-  defaultLocale: "en",
-  locales: ["en", "es", "fr"],
-  localeDir: "./locales",
-  hook,
-};
-
-export default config;
-```
-
-This produces output like:
-
-```
-[es] sending 24 keys to openai/gpt-4o-mini
-[es] translated 24/24 keys in 1823ms
-[fr] sending 24 keys to openai/gpt-4o-mini
-[fr] translated 23/24 keys in 2104ms
-```
-
-## Use cases
-
-### Progress logging
-
-The simplest use case is logging translation progress to stdout during builds. This helps you confirm which locales are being processed and how long each takes:
-
-```typescript
-onRequest(info) {
-  console.log(`Translating ${info.locale} (${info.entryCount} keys)...`);
-},
-onSuccess(info) {
-  console.log(`Done: ${info.locale} (${info.durationMs.toFixed(0)}ms)`);
-},
-```
-
-### Error tracking
-
-Route translation failures to an error monitoring service. Because `onError` receives the locale and error message, you can tag and group issues:
-
-```typescript
-import * as Sentry from "@sentry/node";
-
-onError(info) {
-  Sentry.captureMessage("Translation batch failed", {
-    level: "warning",
-    tags: { locale: info.locale, provider: info.provider, model: info.model },
-    extra: { error: info.error, attempt: info.attempt },
-  });
-},
-```
-
-### Duration tracking
-
-Use `onSuccess` to track how long each locale takes. This helps you identify slow locales or provider issues:
-
-```typescript
-const timings: Record<string, number> = {};
-
-onSuccess(info) {
-  timings[info.locale] = (timings[info.locale] ?? 0) + info.durationMs;
-},
-```
-
-### Per-key validation reporting
-
-The `results` array in `onSuccess` includes per-key status. Use this to surface validation failures that do not bubble up to `onError`:
-
-```typescript
-onSuccess(info) {
-  const failed = info.results.filter((r) => !r.success);
-  for (const r of failed) {
-    console.warn(`[${info.locale}] key "${r.key}": ${r.error}`);
-  }
-},
-```
-
-## Sync-only callbacks
-
-All three callbacks are synchronous. They must return `void` and cannot be async. The translation engine calls them inline during the batch loop, so blocking or async work would stall the pipeline.
-
-If you need to perform async work like sending telemetry or writing to a remote service, queue the data in the callback and process it outside the translation pipeline:
-
-```typescript
-const telemetryQueue: Array<Record<string, unknown>> = [];
-
-const hook = {
-  onSuccess(info) {
-    telemetryQueue.push({
-      locale: info.locale,
-      provider: info.provider,
-      durationMs: info.durationMs,
-      keyCount: info.results.length,
-    });
-  },
-};
-
-// After translation completes
-await runFill(config);
-await flushTelemetry(telemetryQueue);
-```
+See [Configuration](/guide/configuration/) for `[[checks]]`, `[check]`, `[fill]`, and `[quality]`.

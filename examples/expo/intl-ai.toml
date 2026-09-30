@@ -1,0 +1,9 @@
+locale_dir = "locales"
+source = "en"
+targets = ["es"]
+
+[provider]
+kind = "http"
+base_url = "https://api.openai.com/v1"
+model = "your-model-name"
+api_key = "${env:OPENAI_API_KEY}"

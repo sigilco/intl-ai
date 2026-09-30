@@ -7,21 +7,29 @@ description: AI-translate Farm i18n locale files at build time. Zero runtime, an
 
 ## Installation
 
-::: code-group
+::: tabs
 
-```sh [npm]
+== tab "npm"
+
+```sh
 npm install @intl-ai/unplugin
 ```
 
-```sh [pnpm]
+== tab "pnpm"
+
+```sh
 pnpm add @intl-ai/unplugin
 ```
 
-```sh [yarn]
+== tab "yarn"
+
+```sh
 yarn add @intl-ai/unplugin
 ```
 
-```sh [bun]
+== tab "bun"
+
+```sh
 bun add @intl-ai/unplugin
 ```
 
@@ -29,7 +37,7 @@ bun add @intl-ai/unplugin
 
 ## Configuration
 
-Create an `intl-ai.config.ts` at your project root. See [Configuration](/guide/configuration) for the full schema.
+Create an `intl-ai.toml` at your project root. See [Configuration](/guide/configuration) for the full schema.
 
 ```javascript
 import IntlAi from "@intl-ai/unplugin/farm";

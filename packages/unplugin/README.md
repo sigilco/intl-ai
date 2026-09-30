@@ -2,7 +2,9 @@
 
 [![npm](https://img.shields.io/npm/v/@intl-ai/unplugin?style=flat-square)](https://www.npmjs.com/package/@intl-ai/unplugin)
 
-AI-powered i18n translation plugin for all bundlers.
+Bundler plugin for [intl-ai](https://github.com/sigilco/intl-ai): runs the `intl-ai` binary during your build so locale files are translated before your app ships. Works with Vite, Webpack, Rollup, esbuild, Rspack, Rolldown, and Farm via [unplugin](https://github.com/unjs/unplugin).
+
+This package is a thin shim: all translation logic lives in the `intl-ai` binary (installed automatically as a dependency). Your project needs an `intl-ai.toml` config; see the [getting started guide](https://intl-ai.pages.dev/guide/getting-started/).
 
 ## Install
 
@@ -10,122 +12,38 @@ AI-powered i18n translation plugin for all bundlers.
 npm install -D @intl-ai/unplugin
 ```
 
-## Quick Start
-
-Create an `intl-ai.config.ts` (or `.json`) at your project root:
-
-```ts
-// intl-ai.config.ts
-import { createOpenAICompatible } from "@ai-sdk/openai-compatible";
-
-const openai = createOpenAICompatible({
-  name: "openai",
-  baseURL: "https://api.openai.com/v1",
-  apiKey: process.env.OPENAI_API_KEY,
-});
-
-export default {
-  model: openai("your-model-name"),
-  defaultLocale: "en",
-  locales: ["en", "es", "fr"],
-  localeDir: "./locales",
-};
-```
-
-Then add the plugin to your bundler config:
-
-### Vite
+## Usage
 
 ```ts
 // vite.config.ts
 import { defineConfig } from "vite";
-import IntlAi from "@intl-ai/unplugin/vite";
+import intlAi from "@intl-ai/unplugin/vite";
 
 export default defineConfig({
-  plugins: [
-    IntlAi({
-      sourceLanguage: "en",
-      targetLanguages: ["es", "fr", "de"],
-    }),
-  ],
+  plugins: [intlAi()],
 });
 ```
 
-### Webpack
+Subpath exports exist for each bundler: `@intl-ai/unplugin/{vite,webpack,rollup,esbuild,rspack,rolldown,farm}`.
 
-```js
-// webpack.config.js
-const IntlAi = require("@intl-ai/unplugin/webpack").default;
+## Options
 
-module.exports = {
-  plugins: [new IntlAi({ sourceLanguage: "en", targetLanguages: ["es", "fr", "de"] })],
-};
-```
+| Option           | Type                  | Default    | Description                                                                                                                                                          |
+| ---------------- | --------------------- | ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `fill`           | `boolean`             | `true`     | Run `intl-ai fill` on build start.                                                                                                                                   |
+| `failOn`         | `string \| string[]`  | `[]`       | Finding kinds that fail the build (`missing`, `stale`, `invalid`, `unreviewed`, ...). Maps to `intl-ai check --fail-on`.                                             |
+| `validate`       | `boolean \| string[]` | `true`     | Fill-time validation gate. `true` uses your config's `[fill].validate`; a list overrides it (`icu`, `placeholder-parity`, `judge`); `false` maps to `--no-validate`. |
+| `judgeThreshold` | `number`              | config     | Score threshold (0..1) for the `judge` check inside the fill gate.                                                                                                   |
+| `dev`            | `boolean`             | `true`     | Set `false` to skip the plugin in dev/serve/watch mode.                                                                                                              |
+| `config`         | `string`              | discovered | Path to `intl-ai.toml` (or `.json`/`.yaml`).                                                                                                                         |
+| `cwd`            | `string`              | project    | Working directory for the `intl-ai` invocation.                                                                                                                      |
+| `bin`            | `string`              | resolved   | Explicit path to the `intl-ai` binary. Falls back to the bundled dependency, then `PATH`.                                                                            |
+| `args`           | `string[]`            | `[]`       | Extra arguments appended to `intl-ai fill`.                                                                                                                          |
 
-### Rollup
+## How it works
 
-```js
-// rollup.config.js
-import IntlAi from "@intl-ai/unplugin/rollup";
+On `buildStart` the plugin spawns `intl-ai fill` (plus `intl-ai check` when `failOn` is set) in your project directory and streams its output into the build log. The lockfile (`intl-ai.lock.d/`) keeps AI output additive and review-aware, exactly as a CLI run would.
 
-export default {
-  plugins: [IntlAi({ sourceLanguage: "en", targetLanguages: ["es", "fr", "de"] })],
-};
-```
+## License
 
-### esbuild
-
-```js
-// esbuild.config.js
-import { esbuildPlugin } from "@intl-ai/unplugin/esbuild";
-
-export default {
-  plugins: [esbuildPlugin({ sourceLanguage: "en", targetLanguages: ["es", "fr", "de"] })],
-};
-```
-
-### Rspack
-
-```js
-// rspack.config.js
-const IntlAi = require("@intl-ai/unplugin/rspack").default;
-
-module.exports = {
-  plugins: [new IntlAi({ sourceLanguage: "en", targetLanguages: ["es", "fr", "de"] })],
-};
-```
-
-### Bun
-
-```ts
-// bunfig.toml
-[plugins][plugins.prebuild];
-script = "intl-ai fill";
-```
-
-Or use the plugin directly:
-
-```ts
-import IntlAi from "@intl-ai/unplugin/bun";
-
-export default {
-  plugins: [IntlAi({ sourceLanguage: "en", targetLanguages: ["es", "fr", "de"] })],
-};
-```
-
-### Nuxt
-
-```ts
-// nuxt.config.ts
-export default defineNuxtConfig({
-  modules: ["@intl-ai/unplugin/nuxt"],
-  intlAi: {
-    sourceLanguage: "en",
-    targetLanguages: ["es", "fr", "de"],
-  },
-});
-```
-
-Zero-config usage also works — the plugin auto-discovers `intl-ai.config.{ts,json}` from your project root.
-
-[Documentation](https://intl-ai.pages.dev) · [Report an issue](https://github.com/sigilco/intl-ai/issues)
+[Apache-2.0](../../LICENSE)

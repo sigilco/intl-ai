@@ -11,7 +11,7 @@ For general contribution guidelines, branch workflows, commit conventions, and t
 
 ## Documentation setup
 
-The docs are built with [VitePress](https://vitepress.dev/), a static site generator optimized for technical documentation.
+The docs are built with [docmd](https://docmd.io/), a Markdown-first static site generator.
 
 ### Prerequisites
 
@@ -33,7 +33,7 @@ Start the development server to preview your changes in real-time:
 pnpm docs:dev
 ```
 
-This starts a local dev server (typically at `http://localhost:5173`) with hot module replacement for instant preview updates.
+This starts a local dev server (typically at `http://localhost:3000`) with live reload for instant preview updates.
 
 ## Building for production
 
@@ -41,43 +41,33 @@ This starts a local dev server (typically at `http://localhost:5173`) with hot m
 pnpm docs:build
 ```
 
-This generates optimized static files in the `docs/.vitepress/dist/` directory.
+This generates optimized static files in the `docs/.vitepress/dist/` directory and copies `docs/public/` assets to the site root.
 
 ## Previewing the production build
 
-After building, preview the production version locally:
-
-```bash
-pnpm docs:preview
-```
+After building, serve the output directory with any static file server to verify the production output.
 
 ## Documentation writing guidelines
 
 ### File structure
 
 ```
+docmd.config.js     # site config, navigation, plugins
+assets/             # images served at /assets/
 docs/
-  .vitepress/
-    config.ts
   guide/
     getting-started.md
     ai-model.md
     configuration.md
     api.md
-    migration.md
     contributing.md
-    next-js.md
-    vue-i18n.md
-    i18next.md
+    build-systems/
+    i18n-libraries/
     mobile/
-      expo.md
-      flutter.md
-      swiftui.md
-      jetpack.md
     desktop/
-      dotnet.md
-  public/
-    logo.svg
+  public/           # files copied to the site root on build
+    install.sh
+    schema/
   index.md
 ```
 
@@ -85,23 +75,25 @@ docs/
 
 - **Headings:** Use `#` for page title, `##` for sections, `###` for subsections
 - **Code blocks:** Specify language for syntax highlighting (` ```bash `, ` ```typescript `, etc.)
-- **Links:** Use relative paths for internal links: `[link text](/guide/page-name)`
+- **Tabs:** Use `::: tabs` containers with `== tab "Label"` entries for alternative instructions (for example, package manager commands)
+- **Links:** Use root-relative paths for internal links, for example `[link text](/guide/getting-started/)`
 - **Line length:** Keep lines under 100 characters
 
 ### Frontmatter
 
-Every documentation page must include YAML frontmatter at the top:
+Every documentation page should include YAML frontmatter at the top:
 
 ```yaml
 ---
 title: Page title
+description: One sentence for SEO and search results.
 ---
 ```
 
 ### Internal links
 
 ```markdown
-[Getting started guide](/guide/getting-started)
+[Getting started guide](/guide/getting-started/)
 ```
 
 ### External links
@@ -110,19 +102,19 @@ External links open in a new tab automatically.
 
 ## Adding new guide pages
 
-1. Create a new `.md` file in `docs/guide/`.
+1. Create a new `.md` file in `docs/guide/` (or the relevant subdirectory).
 2. Add the required YAML frontmatter with a `title` field.
-3. Add the page to the sidebar in `docs/.vitepress/config.ts`.
+3. Add the page to the `navigation` array in `docmd.config.js`.
 4. Run `pnpm docs:dev` and verify your page appears and renders correctly.
 5. Submit a pull request following the [main Contributing Guide](https://github.com/sigilco/intl-ai/blob/main/CONTRIBUTING.md).
 
 ## Documentation commands reference
 
-| Command             | Purpose                                        |
-| ------------------- | ---------------------------------------------- |
-| `pnpm docs:dev`     | Start local development server with hot reload |
-| `pnpm docs:build`   | Build production-ready static files            |
-| `pnpm docs:preview` | Preview the production build locally           |
+| Command              | Purpose                                         |
+| -------------------- | ----------------------------------------------- |
+| `pnpm docs:dev`      | Start local development server with live reload |
+| `pnpm docs:build`    | Build production-ready static files             |
+| `pnpm docs:validate` | Check all internal links for broken targets     |
 
 ## Deployment
 
@@ -139,19 +131,15 @@ No manual deployment steps are required.
 ## Before submitting documentation changes
 
 - Run `pnpm docs:dev` and verify all pages render correctly
-- Check that internal links work (no 404s)
-- Verify code examples are accurate and runnable
-- Ensure frontmatter is present on all new pages
-- Update the sidebar navigation if adding new pages
-- Follow Markdown conventions and style guidelines
-- Proofread for spelling and grammar
+- Run `pnpm docs:validate` to check for broken links
+- Check that all code examples are complete and tested
+- Follow the writing style rules in `AGENTS.md` (sentence case, no em-dashes, no emoji)
 
 ## Code of conduct
 
-All contributors must adhere to our [Code of Conduct](https://github.com/sigilco/intl-ai/blob/main/CODE_OF_CONDUCT.md). We are committed to providing a welcoming and inclusive environment for all contributors.
+Please read and follow our [Code of Conduct](https://github.com/sigilco/intl-ai/blob/main/CODE_OF_CONDUCT.md).
 
 ## Questions or issues?
 
-- Documentation questions: Open a GitHub Discussion
-- Found a typo or error: Open an issue or submit a PR
-- Feature suggestions: Open an issue to discuss before implementing
+- [Open an issue](https://github.com/sigilco/intl-ai/issues) for documentation bugs or suggestions
+- [Start a discussion](https://github.com/sigilco/intl-ai/discussions) for questions
