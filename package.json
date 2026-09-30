@@ -27,12 +27,12 @@
   },
   "devDependencies": {
     "@changesets/cli": "2.31.0",
-    "@docmd/core": "0.9.5",
+    "@docmd/core": "0.9.6",
     "@vitest/coverage-v8": "catalog:",
-    "oxfmt": "0.57.0",
-    "oxlint": "1.72.0",
+    "oxfmt": "0.70.0",
+    "oxlint": "1.85.0",
     "tasuku": "2.3.0",
-    "turbo": "2.10.1",
+    "turbo": "2.11.4",
     "typescript": "catalog:",
     "vitest": "catalog:"
   },
