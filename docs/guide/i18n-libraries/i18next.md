@@ -13,27 +13,35 @@ intl-ai generates translation JSON files at build time. i18next consumes these f
 
 ## Installation
 
-::: code-group
+::: tabs
 
-```sh [npm]
+== tab "npm"
+
+```sh
 npm install @intl-ai/unplugin i18next react-i18next
 ```
 
-```sh [pnpm]
+== tab "pnpm"
+
+```sh
 pnpm add @intl-ai/unplugin i18next react-i18next
 ```
 
-```sh [yarn]
+== tab "yarn"
+
+```sh
 yarn add @intl-ai/unplugin i18next react-i18next
 ```
 
-```sh [bun]
+== tab "bun"
+
+```sh
 bun add @intl-ai/unplugin i18next react-i18next
 ```
 
 :::
 
-You only need `@intl-ai/unplugin`. The translation engine lives in `@intl-ai/api` and is bundled automatically.
+You only need `@intl-ai/unplugin`. It runs the `intl-ai` binary, which the `intl-ai` npm package installs automatically.
 
 ## i18next Syntax Note
 
@@ -48,21 +56,21 @@ i18next uses `{{variable}}` for interpolation (not ICU `{variable}`). For exampl
 
 ## Configuration
 
-Create an `intl-ai.config.ts` (or `.json`) at your project root. See [Configuration](/guide/configuration) for the full schema. For a custom AIProvider instance:
+Create an `intl-ai.toml` at your project root. See [Configuration](/guide/configuration) for the full schema.
 
-```typescript
-import { resolveProvider } from "@intl-ai/api/internal";
+```toml
+locale_dir = "public/locales"
+source = "en"
+targets = ["es", "de"]
 
-export default {
-  provider: resolveProvider("openai"),
-  model: "gpt-4o-mini",
-  apiKey: "${OPENAI_API_KEY}",
-  baseURL: "https://api.openai.com/v1",
-  defaultLocale: "en",
-  locales: ["en", "es", "de"],
-  localeDir: "./public/locales",
-};
+[provider]
+kind = "http"
+base_url = "https://api.openai.com/v1"
+model = "your-model-name"
+api_key = "${env:OPENAI_API_KEY}"
 ```
+
+Omit `processor` (the passthrough default) so i18next's `{{var}}` placeholders survive untouched.
 
 ## React App Usage
 

@@ -23,7 +23,7 @@
 //! `length_ratio` rules need a source string, so they are skipped in
 //! self-test fixtures.
 
-use intl_ai_core::check::{Check, CheckCtx, CheckItem};
+use intl_ai_core::check::{Check, CheckCtx, CheckItem, CheckOutput};
 use intl_ai_core::diff::CheckFinding;
 use intl_ai_core::error::{Error, Result};
 use regex::Regex;
@@ -91,6 +91,8 @@ pub struct SpecCheck {
     /// sha1 of the spec source — cache ctx so an edited spec file
     /// invalidates every key its results cover.
     spec_hash: String,
+    /// `[quality]` aggregation weight (set by `[[checks]] weight`).
+    pub weight: f64,
 }
 
 struct CompiledRule {
@@ -190,6 +192,7 @@ impl SpecCheck {
             self_test: spec.self_test,
             // Filled in by load()/from_str() — compile has no source text.
             spec_hash: String::new(),
+            weight: 1.0,
         })
     }
 
@@ -213,10 +216,10 @@ impl SpecCheck {
                 target: s.clone(),
             }];
             match self.run(&ctx, &items) {
-                Ok(f) if !f.is_empty() => out.push(format!(
+                Ok(f) if !f.findings.is_empty() => out.push(format!(
                     "clean[{i}] produced {} finding(s) ({})",
-                    f.len(),
-                    f[0].message
+                    f.findings.len(),
+                    f.findings[0].message
                 )),
                 Err(e) => out.push(format!("clean[{i}] errored: {e}")),
                 _ => {}
@@ -229,7 +232,9 @@ impl SpecCheck {
                 target: s.clone(),
             }];
             match self.run(&ctx, &items) {
-                Ok(f) if f.is_empty() => out.push(format!("broken[{i}] produced no findings")),
+                Ok(f) if f.findings.is_empty() => {
+                    out.push(format!("broken[{i}] produced no findings"))
+                }
                 Err(e) => out.push(format!("broken[{i}] errored: {e}")),
                 _ => {}
             }
@@ -247,7 +252,11 @@ impl Check for SpecCheck {
         BTreeMap::from([("spec".into(), self.spec_hash.clone())])
     }
 
-    fn run(&self, _ctx: &CheckCtx, items: &[CheckItem]) -> Result<Vec<CheckFinding>> {
+    fn weight(&self) -> f64 {
+        self.weight
+    }
+
+    fn run(&self, _ctx: &CheckCtx, items: &[CheckItem]) -> Result<CheckOutput> {
         let mut out = Vec::new();
         for item in items {
             for rule in &self.rules {
@@ -322,7 +331,7 @@ impl Check for SpecCheck {
                 }
             }
         }
-        Ok(out)
+        Ok(out.into())
     }
 }
 
@@ -350,7 +359,7 @@ mod tests {
             source: None,
             target: "the colour is nice".into(),
         }];
-        let f = c.run(&ctx, &items).unwrap();
+        let f = c.run(&ctx, &items).unwrap().findings;
         assert_eq!(f.len(), 2);
         assert!(f[0].message.contains("colour"));
         assert!(f[1].message.contains("sign in"));
@@ -370,7 +379,7 @@ mod tests {
             source: Some("hi".into()),
             target: "kinda long string here".into(),
         }];
-        let f = c.run(&ctx, &items).unwrap();
+        let f = c.run(&ctx, &items).unwrap().findings;
         assert_eq!(f.len(), 2);
     }
 

@@ -15,45 +15,51 @@ intl-ai generates translation JSON files at build time. vue-i18n consumes these 
 
 Install intl-ai and vue-i18n:
 
-::: code-group
+::: tabs
 
-```sh [npm]
+== tab "npm"
+
+```sh
 npm install @intl-ai/unplugin vue-i18n
 ```
 
-```sh [pnpm]
+== tab "pnpm"
+
+```sh
 pnpm add @intl-ai/unplugin vue-i18n
 ```
 
-```sh [yarn]
+== tab "yarn"
+
+```sh
 yarn add @intl-ai/unplugin vue-i18n
 ```
 
-```sh [bun]
+== tab "bun"
+
+```sh
 bun add @intl-ai/unplugin vue-i18n
 ```
 
 :::
 
-You only need `@intl-ai/unplugin`. The translation engine lives in `@intl-ai/api` and is bundled automatically.
+You only need `@intl-ai/unplugin`. It runs the `intl-ai` binary, which the `intl-ai` npm package installs automatically.
 
 ## Configuration
 
-Create an `intl-ai.config.ts` (or `.json`) at your project root. See [Configuration](/guide/configuration) for the full schema. For a custom AIProvider instance:
+Create an `intl-ai.toml` at your project root. See [Configuration](/guide/configuration) for the full schema.
 
-```typescript
-import { resolveProvider } from "@intl-ai/api/internal";
+```toml
+locale_dir = "locales"
+source = "en"
+targets = ["es", "fr"]
+processor = "icu"
 
-export default {
-  provider: resolveProvider("openai"),
-  model: "gpt-4o-mini",
-  apiKey: "${OPENAI_API_KEY}",
-  baseURL: "https://api.openai.com/v1",
-  defaultLocale: "en",
-  locales: ["en", "es", "fr"],
-  localeDir: "./locales",
-  processor: "icu",
-};
+[provider]
+kind = "http"
+base_url = "https://api.openai.com/v1"
+model = "your-model-name"
+api_key = "${env:OPENAI_API_KEY}"
 ```
 
 ## Vue App Setup
@@ -112,4 +118,4 @@ const { t } = useI18n();
 
 ## Processor Note
 
-vue-i18n supports ICU MessageFormat. Set `processor: "icu"` in your config so AI-generated translations preserve ICU placeholders correctly.
+vue-i18n supports ICU MessageFormat. Set `processor = "icu"` in `intl-ai.toml` so AI-generated translations preserve ICU placeholders correctly.

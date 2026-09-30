@@ -58,6 +58,26 @@ pub struct IntlAiConfig {
     /// specs by `spec`, external checkers by `exec` (v1 JSONL protocol).
     #[serde(default)]
     pub checks: Vec<CheckEntry>,
+    /// `[quality]` aggregate policy: weighted per-key score over the
+    /// configured checks with `pass`/`review`/`fail` bands. Absent =
+    /// no aggregation (checks report findings only).
+    #[serde(default)]
+    pub quality: Option<QualityConfig>,
+}
+
+/// Aggregate quality policy (`[quality]`). Each configured check
+/// contributes a normalized 0..=1 score per key — `judge` emits real
+/// scores, binary checks score 1.0 clean / 0.0 on a finding — weighted
+/// by the entry's `weight`. `fail_below` produces an `invalid` finding
+/// under check id `quality`; `review_below` marks the key `unreviewed`.
+#[derive(Debug, Clone, Deserialize, serde::Serialize, schemars::JsonSchema)]
+#[serde(deny_unknown_fields)]
+pub struct QualityConfig {
+    /// Aggregate score below this is an `invalid` finding (fail band).
+    pub fail_below: Option<f64>,
+    /// Aggregate score below this (and at/above `fail_below`) marks the
+    /// key unreviewed (review band).
+    pub review_below: Option<f64>,
 }
 
 /// One `[[checks]]` entry: exactly one of `id`, `spec`, `exec`.
@@ -82,6 +102,11 @@ pub struct CheckEntry {
     pub timeout_ms: Option<u64>,
     /// Exec buffered stdout cap (default 1 MiB).
     pub max_stdout_bytes: Option<u64>,
+    /// `judge`-only: score below this becomes an `invalid` finding
+    /// (default 0.8). Rejected on any other check kind.
+    pub threshold: Option<f64>,
+    /// Weight in the `[quality]` weighted mean (default 1.0).
+    pub weight: Option<f64>,
 }
 
 impl CheckEntry {
@@ -697,6 +722,46 @@ fn validate(config: &IntlAiConfig) -> Result<()> {
         if let Some(id) = &entry.id {
             if id.trim().is_empty() {
                 return Err(Error::Config(format!("checks[{i}]: id must not be empty")));
+            }
+        }
+        if entry.threshold.is_some() && entry.id.as_deref() != Some("judge") {
+            return Err(Error::Config(format!(
+                "checks[{i}]: `threshold` applies only to id = \"judge\""
+            )));
+        }
+        if let Some(t) = entry.threshold {
+            if !(0.0..=1.0).contains(&t) {
+                return Err(Error::Config(format!(
+                    "checks[{i}]: threshold must be in 0..=1 (got {t})"
+                )));
+            }
+        }
+        if let Some(w) = entry.weight {
+            if w <= 0.0 {
+                return Err(Error::Config(format!(
+                    "checks[{i}]: weight must be > 0 (got {w})"
+                )));
+            }
+        }
+    }
+    if let Some(q) = &config.quality {
+        for (field, v) in [
+            ("fail_below", q.fail_below),
+            ("review_below", q.review_below),
+        ] {
+            if let Some(v) = v {
+                if !(0.0..=1.0).contains(&v) {
+                    return Err(Error::Config(format!(
+                        "quality.{field} must be in 0..=1 (got {v})"
+                    )));
+                }
+            }
+        }
+        if let (Some(f), Some(r)) = (q.fail_below, q.review_below) {
+            if f >= r {
+                return Err(Error::Config(
+                    "quality.fail_below must be < quality.review_below".into(),
+                ));
             }
         }
     }
