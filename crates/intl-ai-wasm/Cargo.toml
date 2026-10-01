@@ -1,0 +1,22 @@
+[package]
+name = "intl-ai-wasm"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+description = "wasm-bindgen bindings for the intl-ai pipeline (browser demo)"
+publish = false
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+intl-ai-checks = { path = "../intl-ai-checks", default-features = false }
+intl-ai-core = { path = "../intl-ai-core" }
+intl-ai-formats = { path = "../intl-ai-formats" }
+intl-ai-providers = { path = "../intl-ai-providers", default-features = false }
+console_error_panic_hook = "0.1"
+serde = { workspace = true, features = ["derive"] }
+serde-wasm-bindgen = "0.6"
+serde_json.workspace = true
+wasm-bindgen = "0.2"
