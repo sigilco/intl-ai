@@ -55,6 +55,18 @@ jobs:
           cp docs/public/schema/intl-ai.schema.json docs/public/schema/v1.json
           git diff --exit-code docs/public/schema/
 
+  wasm:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-unknown-unknown
+      - uses: Swatinem/rust-cache@v2
+      # Compile-check the wasm binding only; transports and fs-bound
+      # modules stay excluded by feature flags.
+      - run: cargo check -p intl-ai-wasm --target wasm32-unknown-unknown
+
   test:
     strategy:
       matrix:
