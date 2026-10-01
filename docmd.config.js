@@ -59,6 +59,7 @@ export default {
         { title: "Configuration", path: "/guide/configuration/" },
         { title: "Providers", path: "/guide/providers/" },
         { title: "Observability", path: "/guide/observability/" },
+        { title: "Migrating from 0.4.x", path: "/guide/migration/" },
       ],
     },
     {
