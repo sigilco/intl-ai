@@ -90,11 +90,29 @@ Placeholder contract hint sent to the model. `icu` selects ICU MessageFormat; th
 
 ### `format`
 
-Locale file format minted for new files: `json` (default) or `yaml`. An existing file's own extension always wins, so mixed directories work.
+Locale file format minted for new files: `json` (default), `yaml`, or a `[[formats]]` name. An existing file's own extension always wins, so mixed directories work. Unknown names fail validation.
 
 ### `extends`
 
-Compose configs: a root config can extend a base (list or single path). Extended files may not define `provider.command` or `exec` checks: data files from a dependency must not spawn programs.
+Compose configs: a root config can extend a base (list or single path). Extended files may not define `provider.command`, `exec` checks, or `exec` formats: data files from a dependency must not spawn programs.
+
+## Custom formats
+
+### `[[formats]]`
+
+External locale formats registered alongside the builtins. See [Format plugins](/guide/format-plugins/) for the protocol and a reference implementation.
+
+```toml
+[[formats]]
+name = "xml"
+exec = "python3"
+args = ["tools/strings_xml.py"]
+extension = "xml"
+extensions = ["axml"]     # optional extra claimed extensions
+cwd = "tools"            # optional; defaults to the config directory
+timeout_ms = 60000       # optional
+max_stdout_bytes = 10485760
+```
 
 ## Checks and quality gates
 

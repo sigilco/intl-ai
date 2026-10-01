@@ -103,7 +103,10 @@ export default {
       title: "Ecosystem",
       icon: "puzzle",
       collapsible: true,
-      children: [{ title: "Community integrations", path: "/guide/community-plugins/" }],
+      children: [
+        { title: "Format plugins", path: "/guide/format-plugins/" },
+        { title: "Community integrations", path: "/guide/community-plugins/" },
+      ],
     },
     {
       title: "Reference",
