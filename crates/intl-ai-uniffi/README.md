@@ -5,9 +5,10 @@ to Swift, Kotlin, and any other language UniFFI generates, so native apps can
 run translations without the CLI.
 
 This crate is phase 1 of the native integration layer: it defines the API
-surface and emits bindings. Packaging (XCFramework, Android AAR, dependency
-distribution) is a separate phase; this crate is excluded from the cargo-dist
-release (`[package.metadata.dist] dist = false`) and produces a `cdylib`, not
+surface and emits bindings. The Kotlin/JVM and Android packaging lives in
+`kotlin/` (`io.github.sigilco:intlai` JAR, `io.github.sigilco:intlai-android`
+AAR); this crate is excluded from the cargo-dist release
+(`[package.metadata.dist] dist = false`) and produces a `cdylib`, not
 a binary.
 
 ## Exported surface
