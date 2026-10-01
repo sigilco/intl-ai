@@ -3,9 +3,11 @@
 //! intl-ai-core; `build` resolves `[[checks]]` config entries.
 
 pub mod dialect;
+#[cfg(feature = "exec")]
 pub mod exec;
 pub mod icu;
 pub mod judge;
+#[cfg(feature = "spec")]
 pub mod spec;
 
 use intl_ai_core::check::Check;
@@ -25,36 +27,56 @@ pub fn build(cfg: &ResolvedConfig) -> Result<Vec<Box<dyn Check>>> {
 }
 
 pub fn build_entry(cfg: &ResolvedConfig, entry: &CheckEntry) -> Result<Box<dyn Check>> {
+    // `cfg` only feeds the spec/exec filesystem branches below.
+    #[cfg(not(any(feature = "spec", feature = "exec")))]
+    let _ = cfg;
     let weight = entry.weight.unwrap_or(1.0);
     if let Some(id) = &entry.id {
         return builtin_tuned(id, entry.threshold, weight);
     }
     if let Some(spec_path) = &entry.spec {
-        let path = if spec_path.is_absolute() {
-            spec_path.clone()
-        } else {
-            cfg.config_dir.join(spec_path)
-        };
-        let mut c = spec::SpecCheck::load(&path)?;
-        c.weight = weight;
-        return Ok(Box::new(c));
+        #[cfg(feature = "spec")]
+        {
+            let path = if spec_path.is_absolute() {
+                spec_path.clone()
+            } else {
+                cfg.config_dir.join(spec_path)
+            };
+            let mut c = spec::SpecCheck::load(&path)?;
+            c.weight = weight;
+            return Ok(Box::new(c));
+        }
+        #[cfg(not(feature = "spec"))]
+        return Err(Error::Config(format!(
+            "check entry {}: spec checks not available in this build ({})",
+            entry.label(),
+            spec_path.display()
+        )));
     }
     if let Some(cmd) = &entry.exec {
-        let mut c = exec::ExecCheck::new(
-            cmd.clone(),
-            entry.args.clone().unwrap_or_default(),
-            entry.cwd.as_ref().map(|p| {
-                if p.is_absolute() {
-                    p.clone()
-                } else {
-                    cfg.config_dir.join(p)
-                }
-            }),
-            entry.timeout_ms,
-            entry.max_stdout_bytes,
-        );
-        c.weight = weight;
-        return Ok(Box::new(c));
+        #[cfg(feature = "exec")]
+        {
+            let mut c = exec::ExecCheck::new(
+                cmd.clone(),
+                entry.args.clone().unwrap_or_default(),
+                entry.cwd.as_ref().map(|p| {
+                    if p.is_absolute() {
+                        p.clone()
+                    } else {
+                        cfg.config_dir.join(p)
+                    }
+                }),
+                entry.timeout_ms,
+                entry.max_stdout_bytes,
+            );
+            c.weight = weight;
+            return Ok(Box::new(c));
+        }
+        #[cfg(not(feature = "exec"))]
+        return Err(Error::Config(format!(
+            "check entry {}: exec checks not available in this build ({cmd})",
+            entry.label()
+        )));
     }
     Err(Error::Config(format!(
         "check entry {}: exactly one of `id`, `spec`, `exec`",
