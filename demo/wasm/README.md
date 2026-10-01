@@ -1,9 +1,11 @@
 # intl-ai wasm demo
 
 A static page that runs the intl-ai pipeline in the browser: drop or paste a
-source locale file, pick a target locale, and the wasm build fills the missing
-keys through an OpenAI-compatible provider, then runs the builtin checks
-(`icu`, `placeholder-parity`, `dialect:*`) on the result.
+source locale file, set the source and target locales, and the wasm build fills
+the missing keys through an OpenAI-compatible provider, then runs the builtin
+checks (`icu`, `placeholder-parity`, `dialect:*`) on the result. All wasm calls
+run inside `worker.mjs` (a module Web Worker) so the main thread stays
+responsive; fetch and batching stay on the page.
 
 ## Build
 

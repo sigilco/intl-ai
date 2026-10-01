@@ -1,19 +1,40 @@
-import init, {
-  flatten,
-  missingKeys,
-  buildTranslateBody,
-  parseTranslations,
-  buildJudgeBody,
-  parseJudgements,
-  runChecks,
-  unflatten,
-} from "./pkg/intl_ai_wasm.js";
+// All wasm calls run inside a Web Worker so the UI stays responsive
+// while the pipeline parses, builds, and checks.
+const worker = new Worker("./worker.mjs", { type: "module" });
 
 const $ = (id) => document.getElementById(id);
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 let targetFormat = "json";
 let wasmReady = false;
+
+let nextCallId = 0;
+const pendingCalls = new Map();
+worker.onmessage = (event) => {
+  const { id, ready, ok, result, error } = event.data;
+  if (ready !== undefined) {
+    if (ready) {
+      wasmReady = true;
+      $("wasmStatus").textContent = "wasm module ready (worker)";
+      $("runBtn").disabled = false;
+    } else {
+      $("wasmStatus").textContent = `failed to load wasm: ${error}`;
+    }
+    return;
+  }
+  const pending = pendingCalls.get(id);
+  if (!pending) return;
+  pendingCalls.delete(id);
+  if (ok) pending.resolve(result);
+  else pending.reject(new Error(error));
+};
+
+const call = (fn, ...args) =>
+  new Promise((resolve, reject) => {
+    nextCallId += 1;
+    pendingCalls.set(nextCallId, { resolve, reject });
+    worker.postMessage({ id: nextCallId, fn, args });
+  });
 
 function status(message, cls) {
   const el = $("progress");
@@ -170,10 +191,10 @@ async function run() {
   if (!sourceText) throw new Error("paste or drop a source locale file first");
 
   status("flattening source…");
-  const sourceFlat = flatten(sourceText);
+  const sourceFlat = await call("flatten", sourceText);
   const targetText = $("targetText").value.trim();
-  const targetFlat = targetText ? flatten(targetText) : null;
-  const missing = missingKeys(sourceFlat, targetFlat);
+  const targetFlat = targetText ? await call("flatten", targetText) : null;
+  const missing = await call("missingKeys", sourceFlat, targetFlat);
   status(
     `${Object.keys(sourceFlat).length} source keys, ` +
       `${missing.length} missing in ${targetLocale}`,
@@ -183,7 +204,7 @@ async function run() {
   for (let i = 0; i < missing.length; i += batchSize) {
     const batch = missing.slice(i, i + batchSize);
     const entries = batch.map((key) => ({ key, source: sourceFlat[key] }));
-    const body = buildTranslateBody({
+    const body = await call("buildTranslateBody", {
       sourceLocale,
       targetLocale,
       entries,
@@ -193,11 +214,11 @@ async function run() {
     });
     status(`translating keys ${i + 1} to ${i + batch.length} via ${baseUrl}…`);
     const content = await chatComplete(baseUrl, apiKey, body);
-    Object.assign(filled, parseTranslations(content));
+    Object.assign(filled, await call("parseTranslations", content));
     status(`translated ${Math.min(i + batch.length, missing.length)}/${missing.length}`);
   }
 
-  const outText = unflatten(targetText || null, filled, targetFormat);
+  const outText = await call("unflatten", targetText || null, filled, targetFormat);
   const finalFlat = targetFlat ? { ...targetFlat, ...filled } : { ...filled };
 
   const ctx = { sourceLocale, targetLocale, localeInstruction };
@@ -208,7 +229,7 @@ async function run() {
   }));
   const ids = checkIdsFor(targetLocale);
   status(`running checks: ${ids.join(", ")}`);
-  const findings = runChecks(items, ids, ctx);
+  const findings = await call("runChecks", items, ids, ctx);
 
   let judgements = null;
   if ($("runJudge").checked && Object.keys(filled).length > 0) {
@@ -218,7 +239,7 @@ async function run() {
       source: sourceFlat[key] ?? "",
       translation,
     }));
-    const body = buildJudgeBody({
+    const body = await call("buildJudgeBody", {
       items: judgeItems,
       localeInstruction,
       model,
@@ -226,7 +247,7 @@ async function run() {
     });
     status("judging translations…");
     const content = await chatComplete(baseUrl, apiKey, body);
-    judgements = parseJudgements(content);
+    judgements = await call("parseJudgements", content);
   }
 
   render({ filled, findings, judgements, outText, targetLocale });
@@ -294,12 +315,6 @@ $("runBtn").addEventListener("click", () => {
     });
 });
 
-init()
-  .then(() => {
-    wasmReady = true;
-    $("wasmStatus").textContent = "wasm module ready";
-    $("runBtn").disabled = false;
-  })
-  .catch((e) => {
-    $("wasmStatus").textContent = `failed to load wasm: ${e.message}`;
-  });
+worker.onerror = (e) => {
+  $("wasmStatus").textContent = `wasm worker failed: ${e.message || e.type}`;
+};

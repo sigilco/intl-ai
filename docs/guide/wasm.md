@@ -14,9 +14,12 @@ loop against an OpenAI-compatible provider, retries, and batching.
 ## Try the demo
 
 A static demo page lives in `demo/wasm/`.
-Drop or paste a source locale file, pick a target locale, and the page
-fills the missing keys, runs the checks, and renders the filled file
-with a download link.
+Drop or paste a source locale file, set the source and target locales, and
+the page fills the missing keys, runs the checks, and renders the filled
+file with a download link.
+Every wasm call runs inside `worker.mjs`, a module Web Worker, so
+parse/check work never blocks the page; the fetch loop, retries, and
+batching stay on the main thread.
 
 ::: tabs
 
