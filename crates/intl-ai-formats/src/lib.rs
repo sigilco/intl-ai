@@ -70,6 +70,33 @@ pub fn resolve(locale_dir: &Path, locale: &str, preferred: FileFormat) -> PathBu
     locale_dir.join(format!("{locale}.{}", preferred.extension()))
 }
 
+/// In-memory counterpart of `read` for callers without a filesystem
+/// (the wasm binding): parses `text` as `format`.
+pub fn parse(text: &str, format: FileFormat) -> Result<Value, FormatError> {
+    let label = PathBuf::from(format!("locale.{}", format.extension()));
+    match format {
+        FileFormat::Json => serde_json::from_str(text).map_err(|source| FormatError::Parse {
+            path: label,
+            source,
+        }),
+        FileFormat::Yaml => {
+            serde_yaml_ng::from_str(text).map_err(|source| FormatError::ParseYaml {
+                path: label,
+                source,
+            })
+        }
+    }
+}
+
+/// Auto-detecting `parse`: JSON first, YAML fallback — used when the
+/// caller has file contents but no extension to dispatch on.
+pub fn parse_auto(text: &str) -> Result<Value, FormatError> {
+    match parse(text, FileFormat::Json) {
+        Ok(value) => Ok(value),
+        Err(_) => parse(text, FileFormat::Yaml),
+    }
+}
+
 /// Dispatching read: the extension on `path` picks the parser, with a
 /// JSON fallback for extension-less paths (fixtures and tests).
 pub fn read(path: &Path) -> Result<Option<Value>, FormatError> {
