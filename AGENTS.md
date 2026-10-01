@@ -32,6 +32,7 @@ AI-powered build-time i18n translation CLI. A single Rust binary fills missing l
 | Package                                                 | npm name                  | Purpose                                                                   |
 | ------------------------------------------------------- | ------------------------- | ------------------------------------------------------------------------- |
 | `crates/intl-ai-{core,formats,providers,checks,cli}`    | — (binary `intl-ai`)      | Rust workspace: config, locale formats, provider transports, checks, CLI  |
+| `crates/intl-ai-uniffi`                                 | — (cdylib, not released)  | UniFFI bindings for Swift/Kotlin; excluded from cargo-dist                |
 | `packages/api` (removed)                                | `@intl-ai/api`            | TS era, deleted from the tree; npm stays deprecated at its last version   |
 | `packages/cli` (removed)                                | `@intl-ai/cli`            | TS era, deleted from the tree; npm stays deprecated at its last version   |
 | `packages/unplugin`                                     | `@intl-ai/unplugin`       | Bundler shim via unplugin 3 — spawns the `intl-ai` binary in `buildStart` |
