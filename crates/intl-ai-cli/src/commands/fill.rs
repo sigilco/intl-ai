@@ -1,40 +1,8 @@
 use anyhow::{Result, anyhow};
-use intl_ai_core::check::Gate;
-use intl_ai_core::config::ResolvedConfig;
 use intl_ai_core::fill::{FillOptions, fill};
 
-use crate::commands::{is_json, print_json, resolve_config, selector, transport_for};
+use crate::commands::{is_json, print_json, resolve_config, selector};
 use crate::{Cli, FillArgs};
-
-/// Resolve `fill.validate` names to gate-eligible check instances
-/// (resolution and the `supports_feedback` rule live in
-/// `intl_ai_checks::gate_check` so `config validate` rejects them too).
-fn build_gate(
-    cfg: &ResolvedConfig,
-    names: &[String],
-    judge_threshold: Option<f64>,
-) -> Result<Option<Gate>> {
-    if names.is_empty() {
-        return Ok(None);
-    }
-    let checks = names
-        .iter()
-        .map(|n| {
-            let c = intl_ai_checks::gate_check(cfg, n)?;
-            Ok(match (judge_threshold, c.id()) {
-                (Some(t), "judge") => Box::new(intl_ai_checks::judge::JudgeCheck {
-                    threshold: t,
-                    weight: c.weight(),
-                }) as Box<dyn intl_ai_core::check::Check>,
-                _ => c,
-            })
-        })
-        .collect::<intl_ai_core::error::Result<Vec<_>>>()?;
-    Ok(Some(Gate {
-        checks,
-        max_rounds: Gate::DEFAULT_MAX_ROUNDS,
-    }))
-}
 
 pub fn run(cli: &Cli, args: &FillArgs) -> Result<u8> {
     let cfg = resolve_config(cli)?;
@@ -59,8 +27,8 @@ pub fn run(cli: &Cli, args: &FillArgs) -> Result<u8> {
             return Err(anyhow!("--judge-threshold must be in 0..=1 (got {t})"));
         }
     }
-    let gate = build_gate(&cfg, &gate_names, args.judge_threshold)?;
-    let transport = transport_for(&cfg)?;
+    let gate = intl_ai_checks::build_gate(&cfg, &gate_names, args.judge_threshold)?;
+    let transport = intl_ai_providers::build_transport(&cfg)?;
     let opts = FillOptions {
         locales: (!args.locale.is_empty()).then(|| args.locale.clone()),
         selector,
