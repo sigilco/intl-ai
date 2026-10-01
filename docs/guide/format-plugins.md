@@ -19,16 +19,16 @@ args = ["tools/strings_xml.py"]
 extension = "xml"
 ```
 
-| Key                | Required | Purpose                                                              |
-| ------------------ | -------- | -------------------------------------------------------------------- |
+| Key                | Required | Purpose                                                                  |
+| ------------------ | -------- | ------------------------------------------------------------------------ |
 | `name`             | yes      | Registry name; `format = "<name>"` selects it. Must not be `json`/`yaml` |
-| `exec`             | yes      | Program to spawn (one process per read/write op)                     |
-| `args`             | no       | Argv passed to `exec`                                                |
-| `extension`        | yes      | Canonical extension minted for new files (`xml` -> `fr.xml`)         |
-| `extensions`       | no       | Extra extensions the format claims on disk                           |
-| `cwd`              | no       | Plugin working directory (default: the config file's directory)      |
-| `timeout_ms`       | no       | Wall-clock budget per op (default `60000`)                           |
-| `max_stdout_bytes` | no       | Buffered stdout cap (default 10 MiB; responses carry whole files)    |
+| `exec`             | yes      | Program to spawn (one process per read/write op)                         |
+| `args`             | no       | Argv passed to `exec`                                                    |
+| `extension`        | yes      | Canonical extension minted for new files (`xml` -> `fr.xml`)             |
+| `extensions`       | no       | Extra extensions the format claims on disk                               |
+| `cwd`              | no       | Plugin working directory (default: the config file's directory)          |
+| `timeout_ms`       | no       | Wall-clock budget per op (default `60000`)                               |
+| `max_stdout_bytes` | no       | Buffered stdout cap (default 10 MiB; responses carry whole files)        |
 
 `format` accepts builtin names (`json`, `yaml`) or a registered `[[formats]]` name. An unknown name fails config validation with the list of known names.
 
@@ -51,13 +51,13 @@ One child process per operation. stdin gets exactly one JSONL request line; stdo
 Request:
 
 ```json
-{"v": 1, "op": "read", "format": "xml", "path": "/abs/locales/fr.xml", "content": "<file text>"}
+{ "v": 1, "op": "read", "format": "xml", "path": "/abs/locales/fr.xml", "content": "<file text>" }
 ```
 
 Response:
 
 ```json
-{"v": 1, "data": {"greeting": "Salut!", "nav": {"home": "Accueil"}}}
+{ "v": 1, "data": { "greeting": "Salut!", "nav": { "home": "Accueil" } } }
 ```
 
 `data` must be a JSON object. `path` is informational (use it in error messages); plugins must not open it.
@@ -67,13 +67,19 @@ Response:
 Request:
 
 ```json
-{"v": 1, "op": "write", "format": "xml", "path": "/abs/locales/fr.xml", "data": {"greeting": "Salut!"}}
+{
+  "v": 1,
+  "op": "write",
+  "format": "xml",
+  "path": "/abs/locales/fr.xml",
+  "data": { "greeting": "Salut!" }
+}
 ```
 
 Response:
 
 ```json
-{"v": 1, "content": "<resources>...</resources>\n"}
+{ "v": 1, "content": "<resources>...</resources>\n" }
 ```
 
 `content` is the complete file text; intl-ai writes it verbatim (skipping the write when bytes are unchanged).
@@ -83,7 +89,7 @@ Response:
 Format-level failures (unparseable input, unsupported constructs) are reported as a response with an `error` field and exit code 0:
 
 ```json
-{"v": 1, "error": "parse:unclosed tag on line 3"}
+{ "v": 1, "error": "parse:unclosed tag on line 3" }
 ```
 
 `error` is free text; prefixing it with a stable code (`parse:`, `write:`) is the convention. A nonzero exit, a timeout, or a malformed/absent response line means the plugin crashed and fails the operation the same way, with the stderr tail attached.
