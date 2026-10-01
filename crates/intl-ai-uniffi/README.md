@@ -16,22 +16,22 @@ a binary.
 
 One resolved configuration. Immutable and thread safe.
 
-| Constructor | Behavior |
-| ----------- | -------- |
-| `IntlAi(configPath: String?, workingDir: String?)` | Loads `intl-ai.{toml,json,yaml}` from `configPath`, or discovers it under `workingDir` (default: process cwd). Relative paths inside the config resolve against the config file's directory. |
-| `IntlAi.fromConfigString(config: String, format: ConfigFormat, workingDir: String?)` | Parses an inline TOML/JSON/YAML config. Paths resolve against `workingDir`. `extends` is rejected for inline configs. |
+| Constructor                                                                          | Behavior                                                                                                                                                                                     |
+| ------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `IntlAi(configPath: String?, workingDir: String?)`                                   | Loads `intl-ai.{toml,json,yaml}` from `configPath`, or discovers it under `workingDir` (default: process cwd). Relative paths inside the config resolve against the config file's directory. |
+| `IntlAi.fromConfigString(config: String, format: ConfigFormat, workingDir: String?)` | Parses an inline TOML/JSON/YAML config. Paths resolve against `workingDir`. `extends` is rejected for inline configs.                                                                        |
 
-| Method | Returns | Notes |
-| ------ | ------- | ----- |
-| `fill(options: FillOptions)` | `FillReport` | Translates missing (or scoped stale/regenerated) keys. Writes locale files and lockfile shards unless `dryRun`. Same semantics as `intl-ai fill`. |
-| `fillJson(options: FillOptions)` | `String` | Same run; returns the exact JSON the CLI emits with `--format json`. |
-| `check(options: CheckOptions)` | `CheckReport` | Findings without writes. Same semantics as `intl-ai check`. |
-| `checkJson(options: CheckOptions)` | `String` | Same run; CLI-shaped JSON. |
-| `status(locales: [String])` | `[LocaleStatus]` | Per-locale inventory counts (read-only; no checks, no transport). Empty `locales` = config targets. |
-| `statusJson(locales: [String])` | `String` | `{"locales": [...]}` like `intl-ai status --format json`. |
-| `sourceLocale()` | `String` | Configured source locale. |
-| `targetLocales()` | `[String]` | Configured target locales. |
-| `localeDir()` | `String` | Resolved locale directory. |
+| Method                             | Returns          | Notes                                                                                                                                             |
+| ---------------------------------- | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `fill(options: FillOptions)`       | `FillReport`     | Translates missing (or scoped stale/regenerated) keys. Writes locale files and lockfile shards unless `dryRun`. Same semantics as `intl-ai fill`. |
+| `fillJson(options: FillOptions)`   | `String`         | Same run; returns the exact JSON the CLI emits with `--format json`.                                                                              |
+| `check(options: CheckOptions)`     | `CheckReport`    | Findings without writes. Same semantics as `intl-ai check`.                                                                                       |
+| `checkJson(options: CheckOptions)` | `String`         | Same run; CLI-shaped JSON.                                                                                                                        |
+| `status(locales: [String])`        | `[LocaleStatus]` | Per-locale inventory counts (read-only; no checks, no transport). Empty `locales` = config targets.                                               |
+| `statusJson(locales: [String])`    | `String`         | `{"locales": [...]}` like `intl-ai status --format json`.                                                                                         |
+| `sourceLocale()`                   | `String`         | Configured source locale.                                                                                                                         |
+| `targetLocales()`                  | `[String]`       | Configured target locales.                                                                                                                        |
+| `localeDir()`                      | `String`         | Resolved locale directory.                                                                                                                        |
 
 ### Records
 
