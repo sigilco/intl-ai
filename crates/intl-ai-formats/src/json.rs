@@ -9,18 +9,21 @@ pub use crate::FormatError;
 /// a corrupt file is an error, never silently treated as empty.
 pub fn read(path: &Path) -> Result<Option<Value>, FormatError> {
     match fs::read_to_string(path) {
-        Ok(text) => serde_json::from_str(&text)
-            .map(Some)
-            .map_err(|source| FormatError::Parse {
-                path: path.to_path_buf(),
-                source,
-            }),
+        Ok(text) => parse(&text, path).map(Some),
         Err(e) if e.kind() == io::ErrorKind::NotFound => Ok(None),
         Err(source) => Err(FormatError::Read {
             path: path.to_path_buf(),
             source,
         }),
     }
+}
+
+/// Parses JSON text into the corpus tree (`Format::parse` for `json`).
+pub fn parse(text: &str, path: &Path) -> Result<Value, FormatError> {
+    serde_json::from_str(text).map_err(|source| FormatError::Parse {
+        path: path.to_path_buf(),
+        source,
+    })
 }
 
 /// Canonical JSON bytes (2-space indent, insertion order preserved,
