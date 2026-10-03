@@ -13,7 +13,9 @@
     </script>
     <title>intl-ai studio</title>
   </head>
-  <body>
+  <!-- docmd's SPA router fetches same-origin links and grafts them into
+       the docs shell; spa-enabled=false forces a full navigation here. -->
+  <body data-spa-enabled="false">
     <div id="app"></div>
     <script type="module" src="/src/main.ts"></script>
   </body>
