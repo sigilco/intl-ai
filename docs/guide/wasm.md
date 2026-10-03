@@ -47,6 +47,17 @@ Then serve the directory over http (ES modules do not load from `file://`):
 cd demo/wasm && python3 -m http.server 8080
 ```
 
+## Studio SPA
+
+`demo/web/` is a fuller Svelte SPA on the same crate: a collapsible
+provider card (presets, `/models` pull, test button, `localStorage`
+persistence), source and target locale selects with file-name
+autodetect, streamed fill that lands row by row, a linear progress
+indicator, and a per-key judge view with expandable reasons and check
+findings.
+See `demo/web/README.md` for the commands (`pnpm dev`,
+`scripts/sync-wasm.sh`).
+
 ## Provider
 
 The demo posts the request bodies the wasm build produces to

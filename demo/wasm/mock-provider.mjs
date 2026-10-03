@@ -5,9 +5,9 @@
 //   node mock-provider.mjs [port]   (default 8787)
 //
 // Then set the demo's base URL to http://localhost:8787/v1.
-// Responds to POST /v1/chat/completions: echoes each entry's source
-// wrapped in guillemets for translate requests, or a fixed 0.9 score
-// for judge requests.
+// Responds to GET /v1/models and POST /v1/chat/completions (including
+// stream:true SSE): echoes each entry's source wrapped in guillemets
+// for translate requests, or a fixed 0.9 score for judge requests.
 
 import { createServer } from "node:http";
 
@@ -15,9 +15,21 @@ const port = Number(process.argv[2]) || 8787;
 
 const server = createServer((req, res) => {
   res.setHeader("access-control-allow-origin", "*");
-  res.setHeader("access-control-allow-headers", "content-type");
+  res.setHeader("access-control-allow-headers", "content-type, authorization");
   if (req.method === "OPTIONS") {
     res.writeHead(204).end();
+    return;
+  }
+  if (req.method === "GET" && req.url.endsWith("/models")) {
+    res.writeHead(200, { "content-type": "application/json" });
+    res.end(
+      JSON.stringify({
+        data: [
+          { id: "illo-mock-translate", object: "model" },
+          { id: "illo-mock-judge", object: "model" },
+        ],
+      }),
+    );
     return;
   }
   if (req.method !== "POST" || !req.url.endsWith("/chat/completions")) {
@@ -31,7 +43,11 @@ const server = createServer((req, res) => {
   req.on("end", () => {
     const body = JSON.parse(raw);
     const user = body.messages?.find((m) => m.role === "user")?.content ?? "";
-    const isJudge = body.response_format?.json_schema?.name === "judgements";
+    // Judge calls name their schema "judgements"; also fall back to the
+    // prompt shape when an endpoint strips response_format.
+    const isJudge =
+      body.response_format?.json_schema?.name === "judgements" ||
+      (!/\d+\. "(?:[^"\\]|\\.)*" \(key: [^)]+\)/.test(user) && /key=\("/.test(user));
     let content;
     if (isJudge) {
       const keys = [...user.matchAll(/key=("[^"]*")/g)].map((m) => JSON.parse(m[1]));
@@ -51,6 +67,35 @@ const server = createServer((req, res) => {
           translated: `«${JSON.parse(src)}»`,
         })),
       });
+    }
+    if (body.stream) {
+      // SSE: stream the assembled content in small deltas so the demo's
+      // progressive fill has something to render.
+      res.writeHead(200, {
+        "content-type": "text/event-stream",
+        "cache-control": "no-cache",
+      });
+      const chunks = content.match(/.{1,40}/gs) ?? [];
+      let i = 0;
+      const tick = () => {
+        if (i < chunks.length) {
+          res.write(
+            `data: ${JSON.stringify({
+              choices: [{ delta: { content: chunks[i] } }],
+            })}\n\n`,
+          );
+          i += 1;
+          setTimeout(tick, 30);
+        } else {
+          res.write(
+            `data: ${JSON.stringify({ choices: [{ delta: {}, finish_reason: "stop" }] })}\n\n`,
+          );
+          res.write("data: [DONE]\n\n");
+          res.end();
+        }
+      };
+      tick();
+      return;
     }
     res.writeHead(200, { "content-type": "application/json" });
     res.end(
