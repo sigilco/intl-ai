@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { GenRow, Phase } from "../types";
-  import GenerationRow from "./GenerationRow.svelte";
+  import KeysSplitView from "./KeysSplitView.svelte";
   import LocaleSelect from "./LocaleSelect.svelte";
 
   let {
@@ -25,22 +25,11 @@
     localeInstruction?: string;
   } = $props();
 
-  let expanded = $state<Record<string, boolean>>({});
   let copied = $state(false);
-  let viewTab = $state<"rows" | "file">("rows");
-  let issuesOnly = $state(false);
+  let viewTab = $state<"keys" | "file">("keys");
 
   const pct = $derived(
     progress.total > 0 ? Math.round((progress.done / progress.total) * 100) : 0,
-  );
-
-  const hasIssue = (r: GenRow) =>
-    r.findings.length > 0 ||
-    r.status === "failed" ||
-    (r.judge !== undefined && r.judge.score < 0.7);
-
-  const shownRows = $derived(
-    issuesOnly ? rows.filter(hasIssue) : rows,
   );
 
   /** Raw output, pretty-printed when it parses as JSON. */
@@ -69,20 +58,10 @@
     </h2>
     <div class="flex items-center gap-2">
       {#if rows.length}
-        {#if viewTab === "rows"}
-          <label class="flex cursor-pointer items-center gap-1.5 font-mono text-xs text-base-content/70">
-            <input
-              type="checkbox"
-              class="toggle toggle-xs toggle-primary"
-              bind:checked={issuesOnly}
-            />
-            issues only
-          </label>
-        {/if}
         <div class="tabs tabs-xs tabs-border">
           <button
-            class={`tab ${viewTab === "rows" ? "tab-active text-base-content" : "text-base-content/70"}`}
-            onclick={() => (viewTab = "rows")}>rows</button
+            class={`tab ${viewTab === "keys" ? "tab-active text-base-content" : "text-base-content/70"}`}
+            onclick={() => (viewTab = "keys")}>keys</button
           >
           <button
             class={`tab ${viewTab === "file" ? "tab-active text-base-content" : "text-base-content/70"}`}
@@ -124,7 +103,7 @@
     ></progress>
   {/if}
 
-  <div class="m-3 min-h-0 flex-1 overflow-y-auto rounded-field border border-base-300 bg-base-100">
+  <div class="m-3 min-h-0 flex-1 overflow-hidden rounded-field border border-base-300 bg-base-100">
     {#if rows.length === 0}
       <div
         class="flex h-full flex-col items-center justify-center gap-1 text-center text-base-content/70"
@@ -136,22 +115,9 @@
       </div>
     {:else if viewTab === "file"}
       <pre
-        class="p-3 font-mono text-xs leading-relaxed whitespace-pre-wrap">{prettyOut}</pre>
+        class="h-full overflow-y-auto p-3 font-mono text-xs leading-relaxed whitespace-pre-wrap">{prettyOut}</pre>
     {:else}
-      <ul class="divide-y divide-base-300/60">
-        {#each shownRows as row (row.key)}
-          <GenerationRow
-            {row}
-            expanded={expanded[row.key] === true}
-            ontoggle={() => (expanded[row.key] = !expanded[row.key])}
-          />
-        {/each}
-        {#if shownRows.length === 0}
-          <li class="px-3 py-6 text-center text-xs text-base-content/70">
-            no rows with issues
-          </li>
-        {/if}
-      </ul>
+      <KeysSplitView {rows} />
     {/if}
   </div>
 
