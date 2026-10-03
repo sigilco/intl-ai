@@ -1,9 +1,10 @@
 // All wasm calls run inside a Web Worker so the UI stays responsive
-// while the pipeline parses, builds, and checks.
+// while the pipeline parses, fetches, and checks. The streaming drivers
+// (runFill/runCheck) own the batch loop in wasm and post every core
+// ProgressEvent back to the page as it fires.
 const worker = new Worker("./worker.mjs", { type: "module" });
 
 const $ = (id) => document.getElementById(id);
-const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 let targetFormat = "json";
 let wasmReady = false;
@@ -11,7 +12,7 @@ let wasmReady = false;
 let nextCallId = 0;
 const pendingCalls = new Map();
 worker.onmessage = (event) => {
-  const { id, ready, ok, result, error } = event.data;
+  const { id, ready, ok, result, error, event: ev, status: note } = event.data;
   if (ready !== undefined) {
     if (ready) {
       wasmReady = true;
@@ -24,6 +25,14 @@ worker.onmessage = (event) => {
   }
   const pending = pendingCalls.get(id);
   if (!pending) return;
+  if (ev !== undefined) {
+    pending.onEvent?.(ev);
+    return;
+  }
+  if (note !== undefined) {
+    status(note);
+    return;
+  }
   pendingCalls.delete(id);
   if (ok) pending.resolve(result);
   else pending.reject(new Error(error));
@@ -36,6 +45,15 @@ const call = (fn, ...args) =>
     worker.postMessage({ id: nextCallId, fn, args });
   });
 
+// runFill/runCheck: (spec, provider, onEvent) — provider is read by the
+// worker's fetch loop, onEvent receives each ProgressEvent object.
+const callStream = (fn, spec, provider, onEvent) =>
+  new Promise((resolve, reject) => {
+    nextCallId += 1;
+    pendingCalls.set(nextCallId, { resolve, reject, onEvent });
+    worker.postMessage({ id: nextCallId, fn, args: [spec, provider] });
+  });
+
 function status(message, cls) {
   const el = $("progress");
   if (cls) {
@@ -46,6 +64,37 @@ function status(message, cls) {
   } else {
     el.append(message + "\n");
   }
+}
+
+// key -> row element for the run in flight, so translations can be
+// filled in once the report arrives.
+const keyRows = new Map();
+
+function addKeyRow(e) {
+  $("keysWrap").classList.remove("hidden");
+  const tr = document.createElement("tr");
+  tr.dataset.key = e.key;
+  const written = e.outcome.status === "written";
+  const cells = [e.key, written ? "filled" : `failed: ${e.outcome.message}`, ""];
+  for (const cell of cells) {
+    const td = document.createElement("td");
+    td.textContent = cell;
+    tr.append(td);
+  }
+  tr.cells[1].className = written ? "ok" : "err";
+  keyRows.set(e.key, tr);
+  $("keysBody").append(tr);
+}
+
+function addFindingRow(f) {
+  $("findingsWrap").classList.remove("hidden");
+  const tr = document.createElement("tr");
+  for (const cell of [f.key, f.check || f.kind, f.message]) {
+    const td = document.createElement("td");
+    td.textContent = cell;
+    tr.append(td);
+  }
+  $("findingsBody").append(tr);
 }
 
 function readFileText(file) {
@@ -81,51 +130,6 @@ function wireDrop(dropId, inputId, textId, onExt) {
     drop.classList.remove("hover");
     if (e.dataTransfer.files[0]) accept(e.dataTransfer.files[0]);
   });
-}
-
-async function chatComplete(baseUrl, apiKey, body) {
-  const url = `${baseUrl.replace(/\/+$/, "")}/chat/completions`;
-  let lastError = null;
-  for (let attempt = 0; attempt < 3; attempt += 1) {
-    const headers = { "content-type": "application/json" };
-    // api.illo.fyi's CORS policy does not allow Authorization; only send
-    // it when the user pasted a key for a BYO endpoint.
-    if (apiKey) headers.authorization = `Bearer ${apiKey}`;
-    try {
-      const res = await fetch(url, {
-        method: "POST",
-        headers,
-        body: JSON.stringify(body),
-      });
-      if (res.ok) {
-        const data = await res.json();
-        const content = data?.choices?.[0]?.message?.content;
-        if (typeof content !== "string") {
-          throw new Error("response missing choices[0].message.content");
-        }
-        return content;
-      }
-      const retryable = res.status === 429 || res.status >= 500;
-      const text = await res.text();
-      lastError = new Error(`provider HTTP ${res.status}: ${text.slice(0, 300)}`);
-      if (!retryable) throw lastError;
-      const retryAfter = Number(res.headers.get("retry-after"));
-      const waitMs = Number.isFinite(retryAfter)
-        ? Math.min(retryAfter * 1000, 20000)
-        : 2000 * (attempt + 1);
-      if (attempt < 2) {
-        status(`HTTP ${res.status}, retrying in ${Math.round(waitMs / 1000)}s…`);
-        await sleep(waitMs);
-      }
-    } catch (e) {
-      if (e instanceof Error && e.message.startsWith("provider HTTP")) throw e;
-      lastError = e;
-      if (attempt < 2) await sleep(2000 * (attempt + 1));
-    }
-  }
-  throw new Error(
-    `provider unavailable after 3 attempts: ${lastError ? lastError.message : "unknown error"}`,
-  );
 }
 
 const SAMPLE_SOURCE = `{
@@ -174,10 +178,19 @@ function checkIdsFor(targetLocale) {
 }
 
 async function run() {
-  const progress = $("progress");
-  progress.textContent = "";
+  $("progress").textContent = "";
+  keyRows.clear();
   $("results").classList.add("hidden");
+  $("keysWrap").classList.add("hidden");
+  $("findingsWrap").classList.add("hidden");
+  $("judgeWrap").classList.add("hidden");
+  $("keysBody").textContent = "";
+  $("findingsBody").textContent = "";
+  $("judgeBody").textContent = "";
+  $("summary").textContent = "";
+  $("output").textContent = "";
   $("download").classList.add("hidden");
+  $("runMeta").classList.add("hidden");
 
   const sourceLocale = $("sourceLocale").value.trim() || "en";
   const targetLocale = $("targetLocale").value.trim() || "fr";
@@ -189,10 +202,10 @@ async function run() {
 
   const sourceText = $("sourceText").value.trim();
   if (!sourceText) throw new Error("paste or drop a source locale file first");
+  const targetText = $("targetText").value.trim();
 
   status("flattening source…");
   const sourceFlat = await call("flatten", sourceText);
-  const targetText = $("targetText").value.trim();
   const targetFlat = targetText ? await call("flatten", targetText) : null;
   const missing = await call("missingKeys", sourceFlat, targetFlat);
   status(
@@ -200,80 +213,122 @@ async function run() {
       `${missing.length} missing in ${targetLocale}`,
   );
 
-  const filled = {};
-  for (let i = 0; i < missing.length; i += batchSize) {
-    const batch = missing.slice(i, i + batchSize);
-    const entries = batch.map((key) => ({ key, source: sourceFlat[key] }));
-    const body = await call("buildTranslateBody", {
+  // Results render live: the card opens now, rows land as events arrive.
+  $("results").classList.remove("hidden");
+  $("runMeta").classList.remove("hidden");
+  const bar = $("fillBar");
+  bar.max = Math.max(missing.length, 1);
+  bar.value = 0;
+  const localeStats = $("localeStats");
+  let pipeline = "";
+  const onEvent = (e) => {
+    switch (e.type) {
+      case "run_started":
+        pipeline = e.pipeline;
+        localeStats.textContent =
+          e.pipeline === "fill"
+            ? `${e.locales[0]}: 0/${missing.length} keys`
+            : `${e.locales[0]}: checking…`;
+        status(`${e.pipeline}: started for ${e.locales.join(", ")}`);
+        break;
+      case "batch_started":
+        status(
+          `${pipeline}: ${pipeline === "check" ? "judging" : "translating"} ${e.keys} key(s)…`,
+        );
+        break;
+      case "batch_finished":
+        status(`batch done: ${e.answered} answered, ${e.failed} failed`);
+        break;
+      case "key_done":
+        addKeyRow(e);
+        bar.value += 1;
+        localeStats.textContent = `${e.locale}: ${bar.value}/${missing.length} keys`;
+        break;
+      case "finding":
+        addFindingRow(e);
+        break;
+      case "locale_finished":
+        status(`${e.pipeline}: ${e.locale} finished`);
+        break;
+      case "run_finished":
+        localeStats.textContent = `${e.pipeline} done`;
+        status(`${e.pipeline}: done, ${e.failures} failure(s)`, e.failures ? "err" : "ok");
+        break;
+    }
+  };
+
+  const provider = { baseUrl, apiKey };
+  const fill = await callStream(
+    "runFill",
+    {
+      source: sourceText,
+      target: targetText || null,
+      targetFormat,
       sourceLocale,
       targetLocale,
-      entries,
       localeInstruction,
       model,
       modelParams: {},
-    });
-    status(`translating keys ${i + 1} to ${i + batch.length} via ${baseUrl}…`);
-    const content = await chatComplete(baseUrl, apiKey, body);
-    Object.assign(filled, await call("parseTranslations", content));
-    status(`translated ${Math.min(i + batch.length, missing.length)}/${missing.length}`);
-  }
+      batchSize,
+    },
+    provider,
+    onEvent,
+  );
+  const { filled, output: outText, failures } = fill;
 
-  const outText = await call("unflatten", targetText || null, filled, targetFormat);
-  const finalFlat = targetFlat ? { ...targetFlat, ...filled } : { ...filled };
-
-  const ctx = { sourceLocale, targetLocale, localeInstruction };
-  const items = Object.entries(finalFlat).map(([key, target]) => ({
-    key,
-    source: sourceFlat[key] ?? null,
-    target,
-  }));
-  const ids = checkIdsFor(targetLocale);
-  status(`running checks: ${ids.join(", ")}`);
-  const findings = await call("runChecks", items, ids, ctx);
-
-  let judgements = null;
-  if ($("runJudge").checked && Object.keys(filled).length > 0) {
-    const judgeItems = Object.entries(filled).map(([key, translation]) => ({
-      key,
-      locale: targetLocale,
-      source: sourceFlat[key] ?? "",
-      translation,
-    }));
-    const body = await call("buildJudgeBody", {
-      items: judgeItems,
+  const check = await callStream(
+    "runCheck",
+    {
+      source: sourceText,
+      target: outText,
+      sourceLocale,
+      targetLocale,
       localeInstruction,
+      checkIds: checkIdsFor(targetLocale),
+      judgeItems:
+        $("runJudge").checked && Object.keys(filled).length > 0
+          ? Object.entries(filled).map(([key, translation]) => ({
+              key,
+              locale: targetLocale,
+              source: sourceFlat[key] ?? "",
+              translation,
+            }))
+          : [],
       model,
       modelParams: {},
-    });
-    status("judging translations…");
-    const content = await chatComplete(baseUrl, apiKey, body);
-    judgements = await call("parseJudgements", content);
-  }
+    },
+    provider,
+    onEvent,
+  );
 
-  render({ filled, findings, judgements, outText, targetLocale });
+  render({
+    filled,
+    failures,
+    findings: check.findings,
+    judgements: check.judgements,
+    errors: check.errors,
+    outText,
+    targetLocale,
+  });
 }
 
-function render({ filled, findings, judgements, outText, targetLocale }) {
-  const results = $("results");
-  results.classList.remove("hidden");
+function render({ filled, failures, findings, judgements, errors, outText, targetLocale }) {
+  // Fill in the translation cells of the streamed key rows.
+  for (const [key, tr] of keyRows) {
+    tr.cells[2].textContent = filled[key] ?? "";
+  }
   $("summary").textContent =
-    `${Object.keys(filled).length} keys filled for ${targetLocale}; ` +
-    `${findings.length} check finding(s).`;
+    `${Object.keys(filled).length} keys filled for ${targetLocale}, ` +
+    `${failures.length} failed; ${findings.length} check finding(s).`;
 
+  // Rows already arrived live via finding events; rebuild from the
+  // report so the final table is authoritative.
   const wrap = $("findingsWrap");
   const tbody = $("findingsBody");
   tbody.textContent = "";
   if (findings.length > 0) {
     wrap.classList.remove("hidden");
-    for (const f of findings) {
-      const tr = document.createElement("tr");
-      for (const cell of [f.key, f.check, f.message]) {
-        const td = document.createElement("td");
-        td.textContent = cell;
-        tr.append(td);
-      }
-      tbody.append(tr);
-    }
+    for (const f of findings) addFindingRow(f);
   } else {
     wrap.classList.add("hidden");
   }
@@ -295,6 +350,10 @@ function render({ filled, findings, judgements, outText, targetLocale }) {
     }
   } else {
     jwrap.classList.add("hidden");
+  }
+
+  for (const e of errors || []) {
+    status(`check error: ${e}`, "err");
   }
 
   $("output").textContent = outText;

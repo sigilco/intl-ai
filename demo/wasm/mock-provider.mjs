@@ -97,13 +97,19 @@ const server = createServer((req, res) => {
       tick();
       return;
     }
-    res.writeHead(200, { "content-type": "application/json" });
-    res.end(
-      JSON.stringify({
-        choices: [{ message: { role: "assistant", content } }],
-        model: body.model,
-      }),
-    );
+    // Small latency on translate calls so the demo's per-batch progress
+    // events are visibly paced.
+    const send = () => {
+      res.writeHead(200, { "content-type": "application/json" });
+      res.end(
+        JSON.stringify({
+          choices: [{ message: { role: "assistant", content } }],
+          model: body.model,
+        }),
+      );
+    };
+    if (isJudge) send();
+    else setTimeout(send, 300);
   });
 });
 

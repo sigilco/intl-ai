@@ -33,6 +33,7 @@ intl-ai fill --validate icu,judge     # run the fill gate with these checks
 intl-ai fill --no-validate            # skip the configured [fill].validate gate
 intl-ai fill --judge-threshold 0.9    # override the judge threshold for this run
 intl-ai fill --no-cache               # skip the stat cache for this run
+intl-ai fill --progress               # stream per-batch progress lines to stderr
 ```
 
 `--regenerate` is destructive: it requires a `--keys` scope, `--keys-file`, or `--yes` to confirm a whole-locale rewrite.
@@ -49,6 +50,7 @@ intl-ai check --locale es --keys 'auth.*'
 intl-ai check --origin ai              # scope stale/modified/unreviewed to one origin
 intl-ai check --self-test              # run each spec check's fixtures
 intl-ai check --no-cache               # skip stat cache and the findings cache
+intl-ai check --progress               # stream per-locale findings to stderr
 ```
 
 Findings are cached incrementally in `.intl-ai/check-cache.json`: unchanged keys replay their previous findings (`cached: true` in JSON output) instead of re-running the check.
