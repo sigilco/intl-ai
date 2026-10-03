@@ -243,6 +243,22 @@ typedef void (*UniffiForeignFutureCompleteVoid)(uint64_t, UniffiForeignFutureRes
     );
 
 #endif
+#ifndef UNIFFI_FFIDEF_CALLBACK_INTERFACE_INTL_AI_PROGRESS_METHOD0
+#define UNIFFI_FFIDEF_CALLBACK_INTERFACE_INTL_AI_PROGRESS_METHOD0
+typedef void (*UniffiCallbackInterfaceIntlAiProgressMethod0)(uint64_t, RustBuffer, void* _Nonnull, 
+        RustCallStatus *_Nonnull uniffiCallStatus
+    );
+
+#endif
+#ifndef UNIFFI_FFIDEF_V_TABLE_CALLBACK_INTERFACE_INTL_AI_PROGRESS
+#define UNIFFI_FFIDEF_V_TABLE_CALLBACK_INTERFACE_INTL_AI_PROGRESS
+typedef struct UniffiVTableCallbackInterfaceIntlAiProgress {
+    UniffiCallbackInterfaceFree _Nonnull uniffiFree;
+    UniffiCallbackInterfaceClone _Nonnull uniffiClone;
+    UniffiCallbackInterfaceIntlAiProgressMethod0 _Nonnull onEvent;
+} UniffiVTableCallbackInterfaceIntlAiProgress;
+
+#endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_INTL_AI_UNIFFI_FN_CLONE_INTLAI
 #define UNIFFI_FFIDEF_UNIFFI_INTL_AI_UNIFFI_FN_CLONE_INTLAI
 uint64_t uniffi_intl_ai_uniffi_fn_clone_intlai(uint64_t handle, RustCallStatus *_Nonnull out_status
@@ -268,6 +284,11 @@ uint64_t uniffi_intl_ai_uniffi_fn_constructor_intlai_new(RustBuffer config_path,
 RustBuffer uniffi_intl_ai_uniffi_fn_method_intlai_check(uint64_t ptr, RustBuffer options, RustCallStatus *_Nonnull out_status
 );
 #endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_INTL_AI_UNIFFI_FN_METHOD_INTLAI_CHECK_ASYNC
+#define UNIFFI_FFIDEF_UNIFFI_INTL_AI_UNIFFI_FN_METHOD_INTLAI_CHECK_ASYNC
+uint64_t uniffi_intl_ai_uniffi_fn_method_intlai_check_async(uint64_t ptr, RustBuffer options, RustBuffer observer
+);
+#endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_INTL_AI_UNIFFI_FN_METHOD_INTLAI_CHECK_JSON
 #define UNIFFI_FFIDEF_UNIFFI_INTL_AI_UNIFFI_FN_METHOD_INTLAI_CHECK_JSON
 RustBuffer uniffi_intl_ai_uniffi_fn_method_intlai_check_json(uint64_t ptr, RustBuffer options, RustCallStatus *_Nonnull out_status
@@ -276,6 +297,11 @@ RustBuffer uniffi_intl_ai_uniffi_fn_method_intlai_check_json(uint64_t ptr, RustB
 #ifndef UNIFFI_FFIDEF_UNIFFI_INTL_AI_UNIFFI_FN_METHOD_INTLAI_FILL
 #define UNIFFI_FFIDEF_UNIFFI_INTL_AI_UNIFFI_FN_METHOD_INTLAI_FILL
 RustBuffer uniffi_intl_ai_uniffi_fn_method_intlai_fill(uint64_t ptr, RustBuffer options, RustCallStatus *_Nonnull out_status
+);
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_INTL_AI_UNIFFI_FN_METHOD_INTLAI_FILL_ASYNC
+#define UNIFFI_FFIDEF_UNIFFI_INTL_AI_UNIFFI_FN_METHOD_INTLAI_FILL_ASYNC
+uint64_t uniffi_intl_ai_uniffi_fn_method_intlai_fill_async(uint64_t ptr, RustBuffer options, RustBuffer observer
 );
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_INTL_AI_UNIFFI_FN_METHOD_INTLAI_FILL_JSON
@@ -306,6 +332,26 @@ RustBuffer uniffi_intl_ai_uniffi_fn_method_intlai_status_json(uint64_t ptr, Rust
 #ifndef UNIFFI_FFIDEF_UNIFFI_INTL_AI_UNIFFI_FN_METHOD_INTLAI_TARGET_LOCALES
 #define UNIFFI_FFIDEF_UNIFFI_INTL_AI_UNIFFI_FN_METHOD_INTLAI_TARGET_LOCALES
 RustBuffer uniffi_intl_ai_uniffi_fn_method_intlai_target_locales(uint64_t ptr, RustCallStatus *_Nonnull out_status
+);
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_INTL_AI_UNIFFI_FN_CLONE_INTLAIPROGRESS
+#define UNIFFI_FFIDEF_UNIFFI_INTL_AI_UNIFFI_FN_CLONE_INTLAIPROGRESS
+uint64_t uniffi_intl_ai_uniffi_fn_clone_intlaiprogress(uint64_t handle, RustCallStatus *_Nonnull out_status
+);
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_INTL_AI_UNIFFI_FN_FREE_INTLAIPROGRESS
+#define UNIFFI_FFIDEF_UNIFFI_INTL_AI_UNIFFI_FN_FREE_INTLAIPROGRESS
+void uniffi_intl_ai_uniffi_fn_free_intlaiprogress(uint64_t handle, RustCallStatus *_Nonnull out_status
+);
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_INTL_AI_UNIFFI_FN_INIT_CALLBACK_VTABLE_INTLAIPROGRESS
+#define UNIFFI_FFIDEF_UNIFFI_INTL_AI_UNIFFI_FN_INIT_CALLBACK_VTABLE_INTLAIPROGRESS
+void uniffi_intl_ai_uniffi_fn_init_callback_vtable_intlaiprogress(const UniffiVTableCallbackInterfaceIntlAiProgress* _Nonnull vtable
+);
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_INTL_AI_UNIFFI_FN_METHOD_INTLAIPROGRESS_ON_EVENT
+#define UNIFFI_FFIDEF_UNIFFI_INTL_AI_UNIFFI_FN_METHOD_INTLAIPROGRESS_ON_EVENT
+void uniffi_intl_ai_uniffi_fn_method_intlaiprogress_on_event(uint64_t ptr, RustBuffer event, RustCallStatus *_Nonnull out_status
 );
 #endif
 #ifndef UNIFFI_FFIDEF_FFI_INTL_AI_UNIFFI_RUSTBUFFER_ALLOC
@@ -574,6 +620,12 @@ uint16_t uniffi_intl_ai_uniffi_checksum_method_intlai_check(void
     
 );
 #endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_INTL_AI_UNIFFI_CHECKSUM_METHOD_INTLAI_CHECK_ASYNC
+#define UNIFFI_FFIDEF_UNIFFI_INTL_AI_UNIFFI_CHECKSUM_METHOD_INTLAI_CHECK_ASYNC
+uint16_t uniffi_intl_ai_uniffi_checksum_method_intlai_check_async(void
+    
+);
+#endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_INTL_AI_UNIFFI_CHECKSUM_METHOD_INTLAI_CHECK_JSON
 #define UNIFFI_FFIDEF_UNIFFI_INTL_AI_UNIFFI_CHECKSUM_METHOD_INTLAI_CHECK_JSON
 uint16_t uniffi_intl_ai_uniffi_checksum_method_intlai_check_json(void
@@ -583,6 +635,12 @@ uint16_t uniffi_intl_ai_uniffi_checksum_method_intlai_check_json(void
 #ifndef UNIFFI_FFIDEF_UNIFFI_INTL_AI_UNIFFI_CHECKSUM_METHOD_INTLAI_FILL
 #define UNIFFI_FFIDEF_UNIFFI_INTL_AI_UNIFFI_CHECKSUM_METHOD_INTLAI_FILL
 uint16_t uniffi_intl_ai_uniffi_checksum_method_intlai_fill(void
+    
+);
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_INTL_AI_UNIFFI_CHECKSUM_METHOD_INTLAI_FILL_ASYNC
+#define UNIFFI_FFIDEF_UNIFFI_INTL_AI_UNIFFI_CHECKSUM_METHOD_INTLAI_FILL_ASYNC
+uint16_t uniffi_intl_ai_uniffi_checksum_method_intlai_fill_async(void
     
 );
 #endif
@@ -619,6 +677,12 @@ uint16_t uniffi_intl_ai_uniffi_checksum_method_intlai_status_json(void
 #ifndef UNIFFI_FFIDEF_UNIFFI_INTL_AI_UNIFFI_CHECKSUM_METHOD_INTLAI_TARGET_LOCALES
 #define UNIFFI_FFIDEF_UNIFFI_INTL_AI_UNIFFI_CHECKSUM_METHOD_INTLAI_TARGET_LOCALES
 uint16_t uniffi_intl_ai_uniffi_checksum_method_intlai_target_locales(void
+    
+);
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_INTL_AI_UNIFFI_CHECKSUM_METHOD_INTLAIPROGRESS_ON_EVENT
+#define UNIFFI_FFIDEF_UNIFFI_INTL_AI_UNIFFI_CHECKSUM_METHOD_INTLAIPROGRESS_ON_EVENT
+uint16_t uniffi_intl_ai_uniffi_checksum_method_intlaiprogress_on_event(void
     
 );
 #endif
