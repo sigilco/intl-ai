@@ -105,6 +105,7 @@ export default {
       icon: "puzzle",
       collapsible: true,
       children: [
+        { title: "Browser demo", path: "/guide/wasm/" },
         { title: "Format plugins", path: "/guide/format-plugins/" },
         { title: "Community integrations", path: "/guide/community-plugins/" },
       ],

@@ -127,6 +127,22 @@ impl Format for FileFormat {
     }
 }
 
+/// In-memory counterpart of `FormatRegistry::read` for callers without a
+/// filesystem (the wasm binding): parses `text` as `format`.
+pub fn parse(text: &str, format: FileFormat) -> Result<Value, FormatError> {
+    let label = PathBuf::from(format!("locale.{}", format.extension()));
+    Format::parse(&format, text, &label)
+}
+
+/// Auto-detecting `parse`: JSON first, YAML fallback — used when the
+/// caller has file contents but no extension to dispatch on.
+pub fn parse_auto(text: &str) -> Result<Value, FormatError> {
+    match parse(text, FileFormat::Json) {
+        Ok(value) => Ok(value),
+        Err(_) => parse(text, FileFormat::Yaml),
+    }
+}
+
 /// The resolution point for locale file IO: format name -> impl for
 /// `format = "<name>"` minting, extension -> impl for existing files.
 /// Registration order is resolve order (builtins first, so `fr.json` and

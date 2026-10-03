@@ -1,6 +1,7 @@
 packages:
   - "packages/*"
   - "examples/*"
+  - "demo/*"
 
 autoInstallPeers: true
 saveExact: true

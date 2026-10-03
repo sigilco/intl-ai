@@ -153,6 +153,7 @@ impl IntlAi {
             include_human: options.include_human,
             dry_run: options.dry_run,
             no_cache: options.no_cache,
+            observer: None,
         };
         Ok(core_fill::fill(
             &self.cfg,
@@ -178,6 +179,7 @@ impl IntlAi {
                 .map(|kinds| kinds.into_iter().map(Into::into).collect()),
             selector: self.selector(&options.keys, options.keys_file.as_deref())?,
             no_cache: options.no_cache,
+            observer: None,
         };
         Ok(core_check::check(
             &self.cfg,
@@ -194,6 +196,7 @@ impl IntlAi {
             fail_on: Some(vec![]),
             selector: KeySelector::any(),
             no_cache: false,
+            observer: None,
         };
         let report = core_check::check(&self.cfg, &opts, &[], None)?;
 
