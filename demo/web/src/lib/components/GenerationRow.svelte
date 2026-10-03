@@ -56,7 +56,7 @@
     onclick={ontoggle}
   >
     <span class="min-w-0">
-      <span class="block truncate font-mono text-xs text-base-content/60">
+      <span class="block truncate font-mono text-xs text-base-content/70">
         {row.key}
       </span>
       <span class="block truncate font-mono text-sm">
@@ -69,7 +69,7 @@
   </button>
   {#if expanded}
     <div class="space-y-1 px-3 pb-2 text-xs">
-      <p class="text-base-content/60">
+      <p class="text-base-content/70">
         source: <span class="font-mono">{row.source}</span>
       </p>
       {#if row.judge}
@@ -88,7 +88,7 @@
         </p>
       {/each}
       {#if !row.judge && row.findings.length === 0}
-        <p class="text-base-content/60">no findings</p>
+        <p class="text-base-content/70">no findings</p>
       {/if}
     </div>
   {/if}

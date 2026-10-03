@@ -59,7 +59,7 @@
   <summary class="collapse-title flex min-h-0 items-center gap-3 py-2 pe-10">
     <span class="badge badge-sm badge-primary font-mono">provider</span>
     <span class="text-sm font-medium">{PRESETS[config.preset].label}</span>
-    <span class="truncate font-mono text-xs text-base-content/60">
+    <span class="truncate font-mono text-xs text-base-content/70">
       {config.baseUrl}
     </span>
     {#if testing.kind === "ok"}
@@ -193,7 +193,7 @@
     </div>
 
     {#if config.preset === "illo"}
-      <p class="mt-1 text-xs text-base-content/60">
+      <p class="mt-1 text-xs text-base-content/70">
         api.illo.fyi only answers CORS from *.illo.fyi origins — local runs
         should point Base URL elsewhere (see demo/wasm/mock-provider.mjs).
       </p>

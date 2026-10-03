@@ -70,7 +70,7 @@
     <div class="flex items-center gap-2">
       {#if rows.length}
         {#if viewTab === "rows"}
-          <label class="flex cursor-pointer items-center gap-1.5 font-mono text-xs text-base-content/60">
+          <label class="flex cursor-pointer items-center gap-1.5 font-mono text-xs text-base-content/70">
             <input
               type="checkbox"
               class="toggle toggle-xs toggle-primary"
@@ -81,11 +81,11 @@
         {/if}
         <div class="tabs tabs-xs tabs-border">
           <button
-            class={`tab ${viewTab === "rows" ? "tab-active text-base-content" : "text-base-content/60"}`}
+            class={`tab ${viewTab === "rows" ? "tab-active text-base-content" : "text-base-content/70"}`}
             onclick={() => (viewTab = "rows")}>rows</button
           >
           <button
-            class={`tab ${viewTab === "file" ? "tab-active text-base-content" : "text-base-content/60"}`}
+            class={`tab ${viewTab === "file" ? "tab-active text-base-content" : "text-base-content/70"}`}
             onclick={() => (viewTab = "file")}>file</button
           >
         </div>
@@ -96,7 +96,7 @@
 
   <details class="group mx-3 mt-2">
     <summary
-      class="cursor-pointer font-mono text-[11px] text-base-content/60 select-none hover:text-base-content/70"
+      class="cursor-pointer font-mono text-[11px] text-base-content/70 select-none hover:text-base-content"
     >
       existing translations + instruction (optional)
     </summary>
@@ -127,7 +127,7 @@
   <div class="m-3 min-h-0 flex-1 overflow-y-auto rounded-field border border-base-300 bg-base-100">
     {#if rows.length === 0}
       <div
-        class="flex h-full flex-col items-center justify-center gap-1 text-center text-base-content/60"
+        class="flex h-full flex-col items-center justify-center gap-1 text-center text-base-content/70"
       >
         <p class="text-sm">Nothing generated yet</p>
         <p class="text-xs">
@@ -147,7 +147,7 @@
           />
         {/each}
         {#if shownRows.length === 0}
-          <li class="px-3 py-6 text-center text-xs text-base-content/60">
+          <li class="px-3 py-6 text-center text-xs text-base-content/70">
             no rows with issues
           </li>
         {/if}
@@ -163,7 +163,7 @@
     >
       {copied ? "copied" : "copy"}
     </button>
-    <span class="truncate font-mono text-xs text-base-content/60">
+    <span class="truncate font-mono text-xs text-base-content/70">
       {statusLine}{progress.total > 0 && phase === "fill" ? ` ${pct}%` : ""}
     </span>
   </div>

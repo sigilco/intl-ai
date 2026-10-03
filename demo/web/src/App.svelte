@@ -100,7 +100,7 @@
 <div class="flex h-dvh flex-col bg-base-100 text-base-content">
   <header class="flex items-baseline gap-3 px-4 pt-3">
     <h1 class="text-base font-semibold tracking-tight">intl-ai studio</h1>
-    <span class="font-mono text-xs text-base-content/60">
+    <span class="font-mono text-xs text-base-content/70">
       wasm pipeline · web demo
     </span>
     <span
@@ -175,7 +175,7 @@
   </main>
 
   <footer
-    class="flex items-center border-t border-base-300 px-4 py-1.5 font-mono text-[11px] text-base-content/60"
+    class="flex items-center border-t border-base-300 px-4 py-1.5 font-mono text-[11px] text-base-content/70"
   >
     <span>intl-ai · crates/intl-ai-wasm · {phase}</span>
   </footer>
