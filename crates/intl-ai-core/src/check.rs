@@ -9,7 +9,7 @@ use crate::progress::{Pipeline, Progress, ProgressEvent};
 use crate::selector::KeySelector;
 use crate::stat_cache::StatCache;
 use crate::transport::Transport;
-use intl_ai_formats::read;
+
 use serde::Serialize;
 use std::collections::{BTreeMap, HashSet};
 
@@ -167,10 +167,10 @@ pub fn check(
     transport: Option<&dyn Transport>,
 ) -> Result<CheckReport> {
     let locale_dir = cfg.locale_dir();
-    let source_path = cfg.locale_path(&cfg.config.source);
+    let source_path = cfg.locale_path(&cfg.config.source)?;
     // A missing source file is an empty corpus, not an error — a fresh
     // `init` scaffold has no strings yet (M6). A corrupt file still fails.
-    let source_value = match read(&source_path)? {
+    let source_value = match cfg.format_registry().read(&source_path)? {
         Some(v) => v,
         None => {
             eprintln!(
@@ -234,8 +234,12 @@ pub fn check(
                 shadowed[0].display()
             );
         }
-        let target_path = cfg.locale_path(&locale);
-        let target = read(&target_path)?.map(|v| flatten(&v)).unwrap_or_default();
+        let target_path = cfg.locale_path(&locale)?;
+        let target = cfg
+            .format_registry()
+            .read(&target_path)?
+            .map(|v| flatten(&v))
+            .unwrap_or_default();
         let shard = load_shard(&locale_dir, &locale)?;
         let mut d = diff(&source, &src_hashes, &target, &shard, &HashSet::new());
 

@@ -30,7 +30,7 @@ A good shim does three things:
 2. **Spawn at the right lifecycle.** `intl-ai fill` where translations should exist (build start, prebuild, asset pipeline), plus `intl-ai check --fail-on <kinds>` if the shim acts as a build gate.
 3. **Expose the quality controls.** Map the CLI's quality surface to your platform's conventions: the `[fill].validate` gate, `judge` threshold via `--judge-threshold`, `--fail-on` severities, and a dev opt-out. Do not reimplement validation in the shim; always delegate to the binary.
 
-Prefer to translate formats other than JSON/YAML (ARB, `.strings`, `.xml`, PO)? That is a locale-format adapter in the Rust core, not a shim. Open an issue first; the adapter layer is still being designed (see the roadmap).
+Prefer to translate formats other than JSON/YAML (ARB, `.strings`, `.xml`, PO)? Register an exec format plugin via `[[formats]]` in `intl-ai.toml`, no Rust required (see [Format plugins](/guide/format-plugins/)). To ship a reusable plugin for a format's community, open an issue or PR to link it here.
 
 ## Getting listed
 

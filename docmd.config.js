@@ -59,6 +59,7 @@ export default {
         { title: "Configuration", path: "/guide/configuration/" },
         { title: "Providers", path: "/guide/providers/" },
         { title: "Observability", path: "/guide/observability/" },
+        { title: "Migrating from 0.4.x", path: "/guide/migration/" },
       ],
     },
     {
@@ -103,7 +104,10 @@ export default {
       title: "Ecosystem",
       icon: "puzzle",
       collapsible: true,
-      children: [{ title: "Community integrations", path: "/guide/community-plugins/" }],
+      children: [
+        { title: "Format plugins", path: "/guide/format-plugins/" },
+        { title: "Community integrations", path: "/guide/community-plugins/" },
+      ],
     },
     {
       title: "Reference",

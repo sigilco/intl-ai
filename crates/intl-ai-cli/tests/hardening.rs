@@ -195,6 +195,16 @@ fn extends_boundary_refuses_code_and_secrets() {
     );
     seed(&dir, &format!("extends = \"./base.toml\"\n{CONFIG}"));
     cmd(&dir).arg("check").assert().code(10);
+
+    // exec format in a base file: refused (same code boundary).
+    let dir = TempDir::new().unwrap();
+    write(
+        dir.path(),
+        "base.toml",
+        "[[formats]]\nname = \"xml\"\nexec = \"sh\"\nextension = \"xml\"\n",
+    );
+    seed(&dir, &format!("extends = \"./base.toml\"\n{CONFIG}"));
+    cmd(&dir).arg("check").assert().code(10);
 }
 
 #[test]

@@ -103,16 +103,20 @@
       "default": null
     },
     "format": {
-      "description": "Locale file format minted for new files (plan 5.5: an existing\nfile's own extension always wins over this preference).",
-      "anyOf": [
-        {
-          "$ref": "#/$defs/FileFormat"
-        },
-        {
-          "type": "null"
-        }
+      "description": "Locale file format minted for new files (plan 5.5: an existing\nfile's own extension always wins over this preference). A builtin\nname (`json`, `yaml`) or a `[[formats]]` name.",
+      "type": [
+        "string",
+        "null"
       ],
       "default": null
+    },
+    "formats": {
+      "description": "Custom locale format registrations (`[[formats]]`): external\nprograms speaking the format protocol v1 (read/write over one\nJSONL request/response). Root config only, never via `extends`\n(same boundary as `[[checks]] exec`).",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/FormatEntry"
+      },
+      "default": []
     },
     "checks": {
       "description": "Check entries (`[[checks]]`): builtins by `id`, declarative YAML\nspecs by `spec`, external checkers by `exec` (v1 JSONL protocol).",
@@ -369,11 +373,70 @@
         "icu"
       ]
     },
-    "FileFormat": {
-      "type": "string",
-      "enum": [
-        "json",
-        "yaml"
+    "FormatEntry": {
+      "description": "One `[[formats]]` entry: an exec-backed custom locale format speaking\nprotocol v1 (one request line, one response line; see\n`intl_ai_formats::exec` and docs/guide/format-plugins.md).",
+      "type": "object",
+      "properties": {
+        "name": {
+          "description": "Registry name selected by `format = \"<name>\"` (must not collide\nwith a builtin).",
+          "type": "string"
+        },
+        "exec": {
+          "description": "Exec command. Root config only, never via `extends` (same\nboundary as `[[checks]] exec`).",
+          "type": "string"
+        },
+        "args": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          }
+        },
+        "extension": {
+          "description": "Canonical extension minted for new files (`xml` mints\n`locale_dir/<locale>.xml`).",
+          "type": "string"
+        },
+        "extensions": {
+          "description": "Extra extensions this format claims on disk (alias for\n`FileFormat::for_extension`-style dispatch).",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": []
+        },
+        "cwd": {
+          "description": "Exec working directory; resolved against the config file's\ndirectory (default: the config directory itself).",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "timeout_ms": {
+          "description": "Exec wall-clock budget per read/write op (default 60_000 ms).",
+          "type": [
+            "integer",
+            "null"
+          ],
+          "format": "uint64",
+          "minimum": 0
+        },
+        "max_stdout_bytes": {
+          "description": "Exec buffered stdout cap (default 10 MiB — responses carry whole\nfiles).",
+          "type": [
+            "integer",
+            "null"
+          ],
+          "format": "uint64",
+          "minimum": 0
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "exec",
+        "extension"
       ]
     },
     "CheckEntry": {
