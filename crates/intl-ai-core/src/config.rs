@@ -51,9 +51,16 @@ pub struct IntlAiConfig {
     #[serde(default)]
     pub processor: Option<ProcessorKind>,
     /// Locale file format minted for new files (plan 5.5: an existing
-    /// file's own extension always wins over this preference).
+    /// file's own extension always wins over this preference). A builtin
+    /// name (`json`, `yaml`) or a `[[formats]]` name.
     #[serde(default)]
-    pub format: Option<intl_ai_formats::FileFormat>,
+    pub format: Option<String>,
+    /// Custom locale format registrations (`[[formats]]`): external
+    /// programs speaking the format protocol v1 (read/write over one
+    /// JSONL request/response). Root config only, never via `extends`
+    /// (same boundary as `[[checks]] exec`).
+    #[serde(default)]
+    pub formats: Vec<FormatEntry>,
     /// Check entries (`[[checks]]`): builtins by `id`, declarative YAML
     /// specs by `spec`, external checkers by `exec` (v1 JSONL protocol).
     #[serde(default)]
@@ -118,6 +125,36 @@ impl CheckEntry {
             .or_else(|| self.exec.clone())
             .unwrap_or_else(|| "<empty check entry>".into())
     }
+}
+
+/// One `[[formats]]` entry: an exec-backed custom locale format speaking
+/// protocol v1 (one request line, one response line; see
+/// `intl_ai_formats::exec` and docs/guide/format-plugins.md).
+#[derive(Debug, Clone, Deserialize, serde::Serialize, schemars::JsonSchema)]
+#[serde(deny_unknown_fields)]
+pub struct FormatEntry {
+    /// Registry name selected by `format = "<name>"` (must not collide
+    /// with a builtin).
+    pub name: String,
+    /// Exec command. Root config only, never via `extends` (same
+    /// boundary as `[[checks]] exec`).
+    pub exec: String,
+    pub args: Option<Vec<String>>,
+    /// Canonical extension minted for new files (`xml` mints
+    /// `locale_dir/<locale>.xml`).
+    pub extension: String,
+    /// Extra extensions this format claims on disk (alias for
+    /// `FileFormat::for_extension`-style dispatch).
+    #[serde(default)]
+    pub extensions: Vec<String>,
+    /// Exec working directory; resolved against the config file's
+    /// directory (default: the config directory itself).
+    pub cwd: Option<PathBuf>,
+    /// Exec wall-clock budget per read/write op (default 60_000 ms).
+    pub timeout_ms: Option<u64>,
+    /// Exec buffered stdout cap (default 10 MiB — responses carry whole
+    /// files).
+    pub max_stdout_bytes: Option<u64>,
 }
 
 #[derive(Debug, Clone, Copy, Deserialize, serde::Serialize, schemars::JsonSchema)]
@@ -312,6 +349,9 @@ pub struct ResolvedConfig {
     /// Directory the config file lives in; relative paths resolve here.
     pub config_dir: PathBuf,
     pub config_path: Option<PathBuf>,
+    /// Builtins plus the `[[formats]]` exec registrations, assembled at
+    /// load so every command resolves locale files the same way.
+    format_registry: intl_ai_formats::FormatRegistry,
 }
 
 impl ResolvedConfig {
@@ -356,22 +396,32 @@ impl ResolvedConfig {
         self.config.max_retries.unwrap_or(3)
     }
 
-    /// Preferred format for minting new locale files (default JSON).
-    pub fn file_format(&self) -> intl_ai_formats::FileFormat {
-        self.config.format.unwrap_or_default()
+    /// Preferred format for minting new locale files (default `json`):
+    /// a builtin name or a `[[formats]]` name.
+    pub fn file_format(&self) -> &str {
+        self.config.format.as_deref().unwrap_or("json")
+    }
+
+    /// The format registry this config resolves locale files through
+    /// (builtins plus `[[formats]]` exec registrations).
+    pub fn format_registry(&self) -> &intl_ai_formats::FormatRegistry {
+        &self.format_registry
     }
 
     /// Locale file path for `locale`: an existing file's extension wins,
     /// else the configured `format` mints it (plan 5.5).
-    pub fn locale_path(&self, locale: &str) -> PathBuf {
-        intl_ai_formats::resolve(&self.locale_dir(), locale, self.file_format())
+    pub fn locale_path(&self, locale: &str) -> Result<PathBuf> {
+        self.format_registry
+            .resolve(&self.locale_dir(), locale, self.file_format())
+            .map_err(Error::from)
     }
 
     /// Every on-disk file this locale could resolve to, in resolve order.
     /// `len() > 1` means shadowed siblings (e.g. fr.json AND fr.yaml);
     /// callers warn once per locale rather than silently picking.
     pub fn shadowed_locale_files(&self, locale: &str) -> Vec<PathBuf> {
-        ["json", "yaml", "yml"]
+        self.format_registry
+            .extensions()
             .iter()
             .map(|ext| self.locale_dir().join(format!("{locale}.{ext}")))
             .filter(|p| p.is_file())
@@ -553,6 +603,18 @@ fn walk_extends(
                 )));
             }
         }
+        if let Some(formats) = raw.get("formats") {
+            let has_exec = formats.as_array().is_some_and(|arr| {
+                arr.iter()
+                    .any(|f| f.get("exec").is_some_and(|e| !e.is_null()))
+            });
+            if has_exec {
+                return Err(Error::Config(format!(
+                    "{}: [[formats]] exec is only allowed in the root config file, not via extends",
+                    path.display()
+                )));
+            }
+        }
     }
     // Absent or mistyped `extends` is treated as absent.
     let extends: Option<StringOrList> = raw
@@ -618,11 +680,55 @@ fn finish(
     let config: IntlAiConfig =
         serde_json::from_value(raw).map_err(|e| Error::Config(format!("schema: {e}")))?;
     validate(&config)?;
+    let format_registry = build_format_registry(&config, &config_dir)?;
     Ok(ResolvedConfig {
         config,
         config_dir,
         config_path,
+        format_registry,
     })
+}
+
+/// Builtins plus one `ExecFormat` per `[[formats]]` entry. Runs after
+/// `validate`, so names and extensions are already known-unique; a
+/// registration error still surfaces as a config error, not a panic.
+fn build_format_registry(
+    config: &IntlAiConfig,
+    config_dir: &Path,
+) -> Result<intl_ai_formats::FormatRegistry> {
+    let mut registry = intl_ai_formats::FormatRegistry::builtins();
+    for entry in &config.formats {
+        let mut extensions = vec![entry.extension.clone()];
+        extensions.extend(entry.extensions.iter().cloned());
+        registry
+            .register(std::sync::Arc::new(intl_ai_formats::exec::ExecFormat::new(
+                entry.name.clone(),
+                entry.exec.clone(),
+                entry.args.clone().unwrap_or_default(),
+                Some(match &entry.cwd {
+                    // Default the plugin's cwd to the config directory so
+                    // `exec = "./fmt-xml"` works from any subdirectory.
+                    Some(p) => resolve(config_dir, p),
+                    None => config_dir.to_path_buf(),
+                }),
+                extensions,
+                entry.timeout_ms,
+                entry.max_stdout_bytes,
+            )))
+            .map_err(|e| Error::Config(e.to_string()))?;
+    }
+    Ok(registry)
+}
+
+/// Extensions become filename suffixes (`<locale>.<ext>`): a dot would
+/// make dispatch ambiguous, path separators or `..` would write outside
+/// `locale_dir`.
+fn valid_extension(ext: &str) -> bool {
+    !ext.is_empty()
+        && !ext.contains('.')
+        && !ext
+            .bytes()
+            .any(|b| matches!(b, b'/' | b'\\' | 0) || b < 0x20)
 }
 
 /// Config format version currently understood. Newer files are refused
@@ -763,6 +869,74 @@ fn validate(config: &IntlAiConfig) -> Result<()> {
                     "quality.fail_below must be < quality.review_below".into(),
                 ));
             }
+        }
+    }
+
+    let mut format_names: Vec<&str> = Vec::new();
+    let mut format_exts: Vec<&str> = Vec::new();
+    for (i, entry) in config.formats.iter().enumerate() {
+        if entry.name.trim().is_empty() {
+            return Err(Error::Config(format!(
+                "formats[{i}]: name must not be empty"
+            )));
+        }
+        if intl_ai_formats::FileFormat::ALL
+            .iter()
+            .any(|f| f.name() == entry.name)
+        {
+            return Err(Error::Config(format!(
+                "formats[{i}]: name '{}' conflicts with a builtin format",
+                entry.name
+            )));
+        }
+        if format_names.contains(&entry.name.as_str()) {
+            return Err(Error::Config(format!(
+                "formats[{i}]: duplicate format name '{}'",
+                entry.name
+            )));
+        }
+        format_names.push(&entry.name);
+        if entry.exec.trim().is_empty() {
+            return Err(Error::Config(format!(
+                "formats[{i}]: exec must not be empty"
+            )));
+        }
+        let mut exts = vec![&entry.extension];
+        exts.extend(entry.extensions.iter());
+        for ext in exts {
+            if !valid_extension(ext) {
+                return Err(Error::Config(format!(
+                    "formats[{i}]: invalid extension '{ext}' (used as a filename suffix; no dots or path separators)"
+                )));
+            }
+            if intl_ai_formats::FileFormat::for_extension(ext).is_some() {
+                return Err(Error::Config(format!(
+                    "formats[{i}]: extension '{ext}' is already claimed by a builtin format"
+                )));
+            }
+            if format_exts.contains(&ext.as_str()) {
+                return Err(Error::Config(format!(
+                    "formats[{i}]: extension '{ext}' is already claimed by another format"
+                )));
+            }
+            format_exts.push(ext);
+        }
+    }
+    if let Some(fmt) = &config.format {
+        let known = format_names.contains(&fmt.as_str())
+            || intl_ai_formats::FileFormat::ALL
+                .iter()
+                .any(|f| f.name() == fmt.as_str());
+        if !known {
+            let names: Vec<&str> = intl_ai_formats::FileFormat::ALL
+                .iter()
+                .map(|f| f.name())
+                .chain(format_names.iter().copied())
+                .collect();
+            return Err(Error::Config(format!(
+                "unknown format '{fmt}' (known: {})",
+                names.join(", ")
+            )));
         }
     }
     Ok(())

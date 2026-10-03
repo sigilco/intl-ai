@@ -1038,9 +1038,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "intl-ai-exec"
+version = "0.6.0"
+dependencies = [
+ "libc",
+]
+
+[[package]]
 name = "intl-ai-formats"
 version = "0.6.0"
 dependencies = [
+ "intl-ai-exec",
  "schemars",
  "serde",
  "serde_json",
@@ -1054,7 +1062,7 @@ name = "intl-ai-providers"
 version = "0.6.0"
 dependencies = [
  "intl-ai-core",
- "libc",
+ "intl-ai-exec",
  "serde",
  "serde_json",
  "thiserror",
