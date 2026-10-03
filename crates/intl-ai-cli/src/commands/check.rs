@@ -74,6 +74,7 @@ pub fn run(cli: &Cli, args: &CheckArgs) -> Result<u8> {
         fail_on,
         selector: selector(&args.keys, args.keys_file.as_ref())?,
         no_cache: args.no_cache,
+        observer: crate::commands::progress::cli_observer(args.progress),
     };
     let report = check(&cfg, &opts, &checks, transport.as_deref())?;
 
