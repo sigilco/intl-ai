@@ -1,0 +1,4 @@
+node_modules/
+dist/
+src/lib/pkg/
+!svelte.config.js

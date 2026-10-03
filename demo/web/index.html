@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script>
+      // Apply a saved theme override before first paint; without one the
+      // daisyUI illolight/illodark pair follows prefers-color-scheme.
+      try {
+        const t = localStorage.getItem("intl-ai-demo:theme");
+        if (t === "illolight" || t === "illodark") document.documentElement.dataset.theme = t;
+      } catch {}
+    </script>
+    <title>intl-ai studio</title>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

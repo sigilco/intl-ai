@@ -17,6 +17,7 @@ pub const DEFAULT_STDOUT_CAP: usize = 10 * 1024 * 1024;
 /// Stderr is drained so the child never blocks, but only the head is kept
 /// for the error preview (the W0 fix for the uncapped-buffer bug).
 const STDERR_RETAIN: usize = 64 * 1024;
+#[cfg(not(target_arch = "wasm32"))]
 const GRACE_AFTER_SIGTERM: Duration = Duration::from_secs(5);
 const POLL: Duration = Duration::from_millis(25);
 /// Chars appended to error messages (plan 5.1.7: preview, not the whole log).
