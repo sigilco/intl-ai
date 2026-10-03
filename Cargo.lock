@@ -1149,7 +1149,7 @@ dependencies = [
 
 [[package]]
 name = "intl-ai"
-version = "0.6.0"
+version = "0.7.0"
 dependencies = [
  "anyhow",
  "assert_cmd",
@@ -1168,7 +1168,7 @@ dependencies = [
 
 [[package]]
 name = "intl-ai-checks"
-version = "0.6.0"
+version = "0.7.0"
 dependencies = [
  "formatjs_icu_messageformat_parser",
  "intl-ai-core",
@@ -1181,7 +1181,7 @@ dependencies = [
 
 [[package]]
 name = "intl-ai-core"
-version = "0.6.0"
+version = "0.7.0"
 dependencies = [
  "config",
  "globset",
@@ -1198,14 +1198,14 @@ dependencies = [
 
 [[package]]
 name = "intl-ai-exec"
-version = "0.6.0"
+version = "0.7.0"
 dependencies = [
  "libc",
 ]
 
 [[package]]
 name = "intl-ai-formats"
-version = "0.6.0"
+version = "0.7.0"
 dependencies = [
  "intl-ai-exec",
  "schemars",
@@ -1218,7 +1218,7 @@ dependencies = [
 
 [[package]]
 name = "intl-ai-providers"
-version = "0.6.0"
+version = "0.7.0"
 dependencies = [
  "intl-ai-core",
  "intl-ai-exec",
@@ -1230,7 +1230,7 @@ dependencies = [
 
 [[package]]
 name = "intl-ai-uniffi"
-version = "0.6.0"
+version = "0.7.0"
 dependencies = [
  "config",
  "intl-ai-checks",
@@ -1245,7 +1245,7 @@ dependencies = [
 
 [[package]]
 name = "intl-ai-wasm"
-version = "0.6.0"
+version = "0.7.0"
 dependencies = [
  "console_error_panic_hook",
  "intl-ai-checks",

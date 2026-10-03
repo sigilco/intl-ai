@@ -1,6 +1,6 @@
 {
   "name": "@intl-ai/expo",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "Expo config plugin: runs the intl-ai binary during prebuild",
   "keywords": [
     "ai",
