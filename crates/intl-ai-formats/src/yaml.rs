@@ -10,22 +10,23 @@ use crate::json::write_atomic;
 /// a corrupt file is an error, never silently treated as empty.
 pub fn read(path: &Path) -> Result<Option<Value>, FormatError> {
     match fs::read_to_string(path) {
-        Ok(text) => {
-            // YAML is self-describing enough to decode straight into the
-            // shared JSON value tree; locale keys stay strings either way.
-            serde_yaml_ng::from_str(&text)
-                .map(Some)
-                .map_err(|source| FormatError::ParseYaml {
-                    path: path.to_path_buf(),
-                    source,
-                })
-        }
+        Ok(text) => parse(&text, path).map(Some),
         Err(e) if e.kind() == io::ErrorKind::NotFound => Ok(None),
         Err(source) => Err(FormatError::Read {
             path: path.to_path_buf(),
             source,
         }),
     }
+}
+
+/// Parses YAML text into the corpus tree (`Format::parse` for `yaml`).
+/// YAML is self-describing enough to decode straight into the shared
+/// JSON value tree; locale keys stay strings either way.
+pub fn parse(text: &str, path: &Path) -> Result<Value, FormatError> {
+    serde_yaml_ng::from_str(text).map_err(|source| FormatError::ParseYaml {
+        path: path.to_path_buf(),
+        source,
+    })
 }
 
 /// Canonical YAML bytes. Split from `write` so callers can

@@ -9,7 +9,6 @@ use crate::progress::{KeyOutcome, Pipeline, Progress, ProgressEvent};
 use crate::selector::KeySelector;
 use crate::stat_cache::StatCache;
 use crate::transport::{TranslateRequest, Translated, TranslationEntry, Transport};
-use intl_ai_formats::{read, write};
 use serde::Serialize;
 use serde_json::{Map, Value};
 use std::collections::{BTreeMap, HashSet};
@@ -106,10 +105,10 @@ pub fn fill(
     gate: Option<&Gate>,
 ) -> Result<FillReport> {
     let locale_dir = cfg.locale_dir();
-    let source_path = cfg.locale_path(&cfg.config.source);
+    let source_path = cfg.locale_path(&cfg.config.source)?;
     // A missing source file is an empty corpus, not an error — a fresh
     // `init` scaffold has no strings yet (M6). A corrupt file still fails.
-    let source_value = match read(&source_path)? {
+    let source_value = match cfg.format_registry().read(&source_path)? {
         Some(v) => v,
         None => {
             eprintln!(
@@ -231,8 +230,11 @@ fn fill_locale(
     obs: &dyn Progress,
 ) -> Result<(LocaleFillResult, Vec<FillFailure>)> {
     let mut res = LocaleFillResult::empty();
-    let target_path = cfg.locale_path(locale);
-    let mut target_value = read(&target_path)?.unwrap_or_else(|| Value::Object(Map::new()));
+    let target_path = cfg.locale_path(locale)?;
+    let mut target_value = cfg
+        .format_registry()
+        .read(&target_path)?
+        .unwrap_or_else(|| Value::Object(Map::new()));
     let target = flatten(&target_value);
     // Hold the per-locale lock across load -> modify -> save so a second
     // process cannot interleave a write into this read-modify-write cycle.
@@ -480,7 +482,7 @@ fn fill_locale(
         // `missing` (the next fill heals it), while the reverse order
         // misattributes AI text as human-authored on the next run.
         save_shard(locale_dir, locale, &shard)?;
-        write(&target_path, &target_value)?;
+        cfg.format_registry().write(&target_path, &target_value)?;
     }
     Ok((res, failures))
 }

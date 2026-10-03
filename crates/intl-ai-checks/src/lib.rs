@@ -10,7 +10,7 @@ pub mod judge;
 #[cfg(feature = "spec")]
 pub mod spec;
 
-use intl_ai_core::check::Check;
+use intl_ai_core::check::{Check, Gate};
 use intl_ai_core::config::{CheckEntry, ResolvedConfig};
 use intl_ai_core::error::{Error, Result};
 
@@ -109,6 +109,36 @@ pub fn gate_check(cfg: &ResolvedConfig, name: &str) -> Result<Box<dyn Check>> {
         )));
     }
     Ok(c)
+}
+
+/// Resolve `fill.validate` names to the fill-time gate: every name maps to
+/// a gate-eligible check (see `gate_check`), and `judge_threshold`
+/// overrides the threshold of any judge member. `None` means no gate.
+pub fn build_gate(
+    cfg: &ResolvedConfig,
+    names: &[String],
+    judge_threshold: Option<f64>,
+) -> Result<Option<Gate>> {
+    if names.is_empty() {
+        return Ok(None);
+    }
+    let checks = names
+        .iter()
+        .map(|n| {
+            let c = gate_check(cfg, n)?;
+            Ok(match (judge_threshold, c.id()) {
+                (Some(t), "judge") => Box::new(judge::JudgeCheck {
+                    threshold: t,
+                    weight: c.weight(),
+                }) as Box<dyn Check>,
+                _ => c,
+            })
+        })
+        .collect::<Result<Vec<_>>>()?;
+    Ok(Some(Gate {
+        checks,
+        max_rounds: Gate::DEFAULT_MAX_ROUNDS,
+    }))
 }
 
 /// Resolve a builtin id (`icu`, `placeholder-parity`, `judge`,

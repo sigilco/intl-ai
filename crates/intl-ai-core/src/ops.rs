@@ -5,7 +5,7 @@ use crate::flatten::flatten;
 use crate::lockfile::{Entry, Origin, ShardLock, load_shard, save_shard};
 use crate::selector::KeySelector;
 use crate::stat_cache::StatCache;
-use intl_ai_formats::read;
+
 use serde::Serialize;
 
 /// Per-locale outcome of mark/review/unreview.
@@ -195,11 +195,17 @@ fn load_flats(
     crate::flatten::FlatMap,
     std::collections::BTreeMap<String, String>,
 )> {
-    let source_path = cfg.locale_path(&cfg.config.source);
-    let source = read(&source_path)?.map(|v| flatten(&v)).unwrap_or_default();
+    let source_path = cfg.locale_path(&cfg.config.source)?;
+    let source = cfg
+        .format_registry()
+        .read(&source_path)?
+        .map(|v| flatten(&v))
+        .unwrap_or_default();
     let mut cache = StatCache::load(&cfg.cache_path());
     let src_hashes = cache.source_hashes(&source_path, &source);
-    let target = read(&cfg.locale_path(locale))?
+    let target = cfg
+        .format_registry()
+        .read(&cfg.locale_path(locale)?)?
         .map(|v| flatten(&v))
         .unwrap_or_default();
     Ok((source, target, src_hashes))
