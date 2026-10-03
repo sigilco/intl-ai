@@ -5,6 +5,7 @@
   let { rows }: { rows: GenRow[] } = $props();
 
   let selectedKey = $state("");
+  let userPicked = $state(false);
   let query = $state("");
   let issuesOnly = $state(false);
 
@@ -23,12 +24,19 @@
 
   const selected = $derived(rows.find((r) => r.key === selectedKey));
 
-  // Keep selection valid as rows stream in: prefer the first flagged key,
-  // otherwise the first visible row.
+  // Keep selection valid as rows stream in: until the user picks a key,
+  // prefer the first flagged one once issues attach; otherwise fall back
+  // to the first visible row.
   $effect(() => {
-    if (selected && shownRows.includes(selected)) return;
-    const next = shownRows.find(hasIssue) ?? shownRows[0];
+    const firstIssue = shownRows.find(hasIssue);
+    if (selected && shownRows.includes(selected)) {
+      if (userPicked || !firstIssue || hasIssue(selected)) return;
+      selectedKey = firstIssue.key;
+      return;
+    }
+    const next = firstIssue ?? shownRows[0];
     selectedKey = next?.key ?? "";
+    if (!next) userPicked = false;
   });
 
   function chipClass(r: GenRow): string {
@@ -98,7 +106,10 @@
           <button
             class="flex w-full items-center justify-between gap-1 px-2 py-1 text-left hover:bg-base-200/60"
             class:bg-base-200={row.key === selectedKey}
-            onclick={() => (selectedKey = row.key)}
+            onclick={() => {
+              selectedKey = row.key;
+              userPicked = true;
+            }}
           >
             <span class="truncate font-mono text-xs">{row.key}</span>
             <span class="badge badge-xs font-mono {chipClass(row)}">
