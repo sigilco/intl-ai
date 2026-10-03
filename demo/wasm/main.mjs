@@ -187,6 +187,8 @@ async function run() {
   $("keysBody").textContent = "";
   $("findingsBody").textContent = "";
   $("judgeBody").textContent = "";
+  $("summary").textContent = "";
+  $("output").textContent = "";
   $("download").classList.add("hidden");
   $("runMeta").classList.add("hidden");
 
@@ -249,6 +251,7 @@ async function run() {
         status(`${e.pipeline}: ${e.locale} finished`);
         break;
       case "run_finished":
+        localeStats.textContent = `${e.pipeline} done`;
         status(`${e.pipeline}: done, ${e.failures} failure(s)`, e.failures ? "err" : "ok");
         break;
     }
