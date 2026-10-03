@@ -1,6 +1,6 @@
 {
   "name": "@intl-ai/next",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "Next.js integration for the intl-ai binary: wraps next.config so translations run before the build (webpack and Turbopack)",
   "keywords": [
     "ai",
