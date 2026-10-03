@@ -103,6 +103,10 @@ struct FillArgs {
     /// (0..=1). Has no effect when the gate does not include judge.
     #[arg(long, value_name = "SCORE")]
     judge_threshold: Option<f64>,
+    /// Stream incremental progress events to stderr (one compact line
+    /// per batch/finding); stdout keeps the final report.
+    #[arg(long)]
+    progress: bool,
     /// Output format for the run report.
     #[arg(long, value_enum, default_value_t = OutFormat::Human)]
     format: OutFormat,
@@ -136,6 +140,10 @@ struct CheckArgs {
     /// checking locales (plan 5.2).
     #[arg(long)]
     self_test: bool,
+    /// Stream incremental progress events to stderr (one compact line
+    /// per locale/finding); stdout keeps the final report.
+    #[arg(long)]
+    progress: bool,
 }
 
 #[derive(Args)]

@@ -18,6 +18,7 @@ pub fn run(cli: &Cli, args: &StatusArgs) -> Result<u8> {
         fail_on: Some(vec![]),
         selector: KeySelector::any(),
         no_cache: false,
+        observer: None,
     };
     let report = check(&cfg, &opts, &[], None)?;
 
