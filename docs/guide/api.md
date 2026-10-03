@@ -1,6 +1,6 @@
 ---
 title: CLI reference
-description: "intl-ai command reference: fill, check, mark, review, lockfile, config, status, migrate."
+description: "intl-ai command reference: fill, check, mark, review, lockfile, config, status."
 ---
 
 # CLI reference
@@ -104,10 +104,6 @@ intl-ai config schema     # print the JSON Schema for the config contract
 ```
 
 The committed schema lives at `docs/public/schema/intl-ai.schema.json` and is served at `https://intl-ai.illo.fyi/schema/v1.json`.
-
-## `intl-ai migrate`
-
-Import a 0.4.x `intl-ai.lock.json` into `intl-ai.lock.d/` shards.
 
 ## Global flags
 

@@ -116,7 +116,6 @@ agent = "claude-code"
 | `intl-ai review` / `unreview`            | Set or clear the review bit on keys                                   |
 | `intl-ai lockfile check\|fmt\|merge`     | Validate, normalize, or merge lockfile shards                         |
 | `intl-ai config validate\|schema`        | Validate a config file or emit the JSON Schema                        |
-| `intl-ai migrate`                        | Import a 0.4.x `intl-ai.lock.json` into shards                        |
 
 Every command accepts `--format json` for agent and CI consumption.
 
@@ -147,7 +146,7 @@ Coming from the 0.4.x `@intl-ai/*` npm packages:
 
 1. Install the binary (see Install above). If you used `@intl-ai/unplugin` or `@intl-ai/next`, upgrade to the new major version instead of dropping the dependency: the scoped packages are now thin shims that run the binary for you.
 2. Rename `intl-ai.config.ts` / `.json` to `intl-ai.toml` (config keys are now snake_case: `api_key`, `locale_dir`, `source`/`targets` instead of `defaultLocale`/`locales`).
-3. Run `intl-ai migrate` in your project to import the old `intl-ai.lock.json` into `intl-ai.lock.d/` shards.
+3. Delete `intl-ai.lock.json` and run `intl-ai fill` once: existing keys are recorded as human-owned (never overwritten) and fresh `intl-ai.lock.d/` shards are written. If you want the 0.4.x provenance imported instead, do it by hand or hand the [migration guide](https://intl-ai.illo.fyi/guide/migration/) to an agent.
 4. `--force` is gone: use `fill --stale` (AI-owned stale keys) or `fill --regenerate` (all AI-owned keys); `--include-human` additionally covers human-owned values.
 
 The TypeScript implementation is frozen on the [`legacy` branch](https://github.com/sigilco/intl-ai/tree/legacy). `@intl-ai/api` and `@intl-ai/cli` stay deprecated; `@intl-ai/unplugin`, `@intl-ai/next`, and `@intl-ai/expo` are re-released as binary-driven shims.

@@ -40,9 +40,6 @@ enum Command {
     /// Per-locale inventory counts (read-only; cheap enough for agents to
     /// call before deciding what to do).
     Status(StatusArgs),
-    /// Import a 0.4.x intl-ai.lock.json into shards.
-    #[command(hide = true)]
-    Migrate,
 }
 
 #[derive(Args)]
@@ -276,7 +273,6 @@ fn main() -> ExitCode {
         Command::Lockfile(args) => commands::lockfile::run(&cli, args),
         Command::Config(args) => commands::config::run(&cli, args),
         Command::Status(args) => commands::status::run(&cli, args),
-        Command::Migrate => commands::migrate::run(),
     };
     match result {
         Ok(code) => ExitCode::from(code),
@@ -310,7 +306,6 @@ fn wants_json(cmd: &Command) -> bool {
             ConfigCommand::Schema => OutFormat::Human,
         },
         Command::Status(a) => a.format,
-        Command::Migrate => OutFormat::Human,
     };
     matches!(f, OutFormat::Json)
 }

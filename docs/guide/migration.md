@@ -88,7 +88,7 @@ Do not paste API keys into `intl-ai.toml`. Use `${env:VAR}` or `${file:PATH}` in
 
 ## Lockfile
 
-0.4.x wrote provenance to a single `intl-ai.lock.json`. 1.x writes sharded `intl-ai.lock.d/<locale>.toml` files. `intl-ai migrate` (planned lockfile importer) is not implemented yet, so on first run existing keys in your locale files are recorded as human-owned: they are never overwritten or re-translated. Only missing keys get AI fills. That means the practical migration is:
+0.4.x wrote provenance to a single `intl-ai.lock.json`. 1.x writes sharded `intl-ai.lock.d/<locale>.toml` files. There is no `intl-ai migrate` command: migrations ship as docs you run manually or hand to an agent. On first run existing keys in your locale files are recorded as human-owned: they are never overwritten or re-translated. Only missing keys get AI fills. That means the practical migration is:
 
 1. Install the binary and translate your config as above.
 2. Run `intl-ai fill` once; it writes fresh `intl-ai.lock.d/` shards and fills only what is missing.

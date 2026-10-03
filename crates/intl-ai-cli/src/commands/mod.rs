@@ -3,7 +3,6 @@ pub mod config;
 pub mod fill;
 pub mod init;
 pub mod lockfile;
-pub mod migrate;
 pub mod progress;
 pub mod spec;
 pub mod status;
