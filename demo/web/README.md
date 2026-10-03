@@ -7,7 +7,7 @@ so the page never blocks.
 
 ## Stack
 
-- Svelte 5 + Vite 8 + Tailwind 4 + daisyUI (custom `illodark` theme)
+- Svelte 5 + Vite 8 + Tailwind 4 + daisyUI (`illolight`/`illodark` themes, follows system with a header toggle)
 - Vercel AI SDK (`ai` + `@ai-sdk/openai-compatible`) for the provider
   calls; zod schemas mirror `crates/intl-ai-providers/src/chat.rs`
 - `crates/intl-ai-wasm` bundle served from `src/lib/pkg` inside a module

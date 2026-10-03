@@ -20,6 +20,8 @@
     (typeof PRESETS)[keyof typeof PRESETS],
   ][];
 
+  let modelsTimer: ReturnType<typeof setTimeout> | undefined;
+
   async function refreshModels() {
     modelsBusy = true;
     try {
@@ -27,6 +29,12 @@
     } finally {
       modelsBusy = false;
     }
+  }
+
+  /** Debounced combobox load: typing a URL or key refetches /models. */
+  function queueModels() {
+    clearTimeout(modelsTimer);
+    modelsTimer = setTimeout(() => void refreshModels(), 500);
   }
 
   async function test() {
@@ -40,7 +48,7 @@
   }
 
   onMount(() => {
-    if (config.apiKey || config.preset !== "custom") void refreshModels();
+    void refreshModels();
   });
 </script>
 
@@ -68,8 +76,10 @@
         <select
           class="select select-bordered select-sm"
           value={config.preset}
-          onchange={(e) =>
-            applyPreset(e.currentTarget.value as keyof typeof PRESETS)}
+          onchange={(e) => {
+            applyPreset(e.currentTarget.value as keyof typeof PRESETS);
+            queueModels();
+          }}
         >
           {#each presetEntries as [id, p] (id)}
             <option value={id}>{p.label}</option>
@@ -82,7 +92,10 @@
         <input
           class="input input-bordered input-sm font-mono"
           bind:value={config.baseUrl}
-          onchange={persist}
+          onchange={() => {
+            persist();
+            queueModels();
+          }}
           placeholder="https://…/v1"
         />
       </label>
@@ -95,31 +108,26 @@
           class="input input-bordered input-sm font-mono"
           type="password"
           bind:value={config.apiKey}
-          onchange={persist}
+          onchange={() => {
+            persist();
+            queueModels();
+          }}
           placeholder="sk-…"
           autocomplete="off"
         />
       </label>
 
       <label class="form-control">
-        <span class="label-text mb-1 text-xs">Model</span>
-        <span class="join">
-          <input
-            class="input input-bordered input-sm join-item w-full font-mono"
-            bind:value={config.model}
-            onchange={persist}
-            list="provider-models"
-            placeholder="model id"
-          />
-          <button
-            class="btn btn-sm join-item"
-            title="pull /models"
-            disabled={modelsBusy}
-            onclick={refreshModels}
-          >
-            {modelsBusy ? "…" : "list"}
-          </button>
+        <span class="label-text mb-1 text-xs">
+          Model{modelsBusy ? " · loading…" : ""}
         </span>
+        <input
+          class="input input-bordered input-sm font-mono"
+          bind:value={config.model}
+          onchange={persist}
+          list="provider-models"
+          placeholder="model id"
+        />
         <datalist id="provider-models">
           {#each models as id (id)}
             <option value={id}></option>
@@ -130,7 +138,7 @@
       <label class="form-control">
         <span class="label-text mb-1 text-xs">Batch size</span>
         <input
-          class="input input-bordered input-sm w-20 font-mono"
+          class="input input-bordered input-sm font-mono"
           type="number"
           min="1"
           max="100"
@@ -139,43 +147,48 @@
         />
       </label>
 
-      <label class="label cursor-pointer justify-start gap-2 pt-6">
+      <label class="form-control">
+        <span class="label-text mb-1 text-xs">Stream fill</span>
         <input
           type="checkbox"
-          class="checkbox checkbox-sm checkbox-primary"
+          class="toggle toggle-sm toggle-primary"
           bind:checked={config.stream}
           onchange={persist}
         />
-        <span class="label-text text-xs">stream fill</span>
       </label>
 
-      <label class="label cursor-pointer justify-start gap-2 pt-6">
+      <label class="form-control">
+        <span class="label-text mb-1 text-xs">Quality judge</span>
         <input
           type="checkbox"
-          class="checkbox checkbox-sm checkbox-primary"
+          class="toggle toggle-sm toggle-primary"
           bind:checked={config.runJudge}
           onchange={persist}
         />
-        <span class="label-text text-xs">quality judge</span>
       </label>
 
-      <div class="flex items-end gap-2">
-        <button
-          class="btn btn-primary btn-sm"
-          onclick={test}
-          disabled={testing.kind === "busy"}
-        >
-          {testing.kind === "busy" ? "testing…" : "test"}
-        </button>
-        {#if testing.detail}
-          <span
-            class="text-xs"
-            class:text-success={testing.kind === "ok"}
-            class:text-error={testing.kind === "fail"}
+      <div class="form-control">
+        <span class="label-text mb-1 text-xs opacity-0" aria-hidden="true">
+          Test
+        </span>
+        <div class="flex items-center gap-2">
+          <button
+            class="btn btn-primary btn-sm"
+            onclick={test}
+            disabled={testing.kind === "busy"}
           >
-            {testing.detail}
-          </span>
-        {/if}
+            {testing.kind === "busy" ? "testing…" : "test"}
+          </button>
+          {#if testing.detail}
+            <span
+              class="truncate text-xs"
+              class:text-success={testing.kind === "ok"}
+              class:text-error={testing.kind === "fail"}
+            >
+              {testing.detail}
+            </span>
+          {/if}
+        </div>
       </div>
     </div>
 

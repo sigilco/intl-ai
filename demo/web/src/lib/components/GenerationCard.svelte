@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { GenRow, Phase } from "../types";
+  import GenerationRow from "./GenerationRow.svelte";
   import LocaleSelect from "./LocaleSelect.svelte";
 
   let {
@@ -27,48 +28,30 @@
   let expanded = $state<Record<string, boolean>>({});
   let copied = $state(false);
   let viewTab = $state<"rows" | "file">("rows");
+  let issuesOnly = $state(false);
 
   const pct = $derived(
     progress.total > 0 ? Math.round((progress.done / progress.total) * 100) : 0,
   );
 
-  function chipClass(row: GenRow): string {
-    if (row.findings.length) return "badge-error";
-    if (row.judge) {
-      if (row.judge.score >= 0.7) return "badge-success";
-      if (row.judge.score >= 0.4) return "badge-warning";
-      return "badge-error";
-    }
-    switch (row.status) {
-      case "existing":
-        return "badge-neutral";
-      case "filled":
-        return "badge-success badge-outline";
-      case "filling":
-        return "badge-info badge-outline";
-      case "failed":
-        return "badge-error";
-      default:
-        return "badge-ghost";
-    }
-  }
+  const hasIssue = (r: GenRow) =>
+    r.findings.length > 0 ||
+    r.status === "failed" ||
+    (r.judge !== undefined && r.judge.score < 0.7);
 
-  function chipText(row: GenRow): string {
-    if (row.findings.length) return `${row.findings.length} finding(s)`;
-    if (row.judge) return `judge ${row.judge.score.toFixed(2)}`;
-    switch (row.status) {
-      case "existing":
-        return "kept";
-      case "filled":
-        return "new";
-      case "filling":
-        return "…";
-      case "failed":
-        return "failed";
-      default:
-        return "queued";
+  const shownRows = $derived(
+    issuesOnly ? rows.filter(hasIssue) : rows,
+  );
+
+  /** Raw output, pretty-printed when it parses as JSON. */
+  const prettyOut = $derived.by(() => {
+    if (!outText) return "";
+    try {
+      return JSON.stringify(JSON.parse(outText), null, 2);
+    } catch {
+      return outText;
     }
-  }
+  });
 
   async function copy() {
     await navigator.clipboard.writeText(outText);
@@ -86,6 +69,16 @@
     </h2>
     <div class="flex items-center gap-2">
       {#if rows.length}
+        {#if viewTab === "rows"}
+          <label class="flex cursor-pointer items-center gap-1.5 font-mono text-xs text-base-content/60">
+            <input
+              type="checkbox"
+              class="toggle toggle-xs toggle-primary"
+              bind:checked={issuesOnly}
+            />
+            issues only
+          </label>
+        {/if}
         <div class="tabs tabs-xs tabs-border">
           <button
             class={`tab ${viewTab === "rows" ? "tab-active text-base-content" : "text-base-content/60"}`}
@@ -143,55 +136,21 @@
       </div>
     {:else if viewTab === "file"}
       <pre
-        class="p-3 font-mono text-xs leading-relaxed whitespace-pre-wrap">{outText}</pre>
+        class="p-3 font-mono text-xs leading-relaxed whitespace-pre-wrap">{prettyOut}</pre>
     {:else}
       <ul class="divide-y divide-base-300/60">
-        {#each rows as row (row.key)}
-          <li>
-            <button
-              class="grid w-full grid-cols-[minmax(0,1fr)_auto] items-center gap-2 px-3 py-1.5 text-left hover:bg-base-200/60"
-              onclick={() =>
-                (expanded[row.key] = !expanded[row.key])}
-            >
-              <span class="min-w-0">
-                <span class="block truncate font-mono text-xs text-base-content/60"
-                  >{row.key}</span
-                >
-                <span class="block truncate font-mono text-sm"
-                  >{row.translation || " "}</span
-                >
-              </span>
-              <span class="badge badge-sm font-mono {chipClass(row)}">
-                {chipText(row)}
-              </span>
-            </button>
-            {#if expanded[row.key]}
-              <div class="space-y-1 px-3 pb-2 text-xs">
-                <p class="text-base-content/60">
-                  source: <span class="font-mono">{row.source}</span>
-                </p>
-                {#if row.judge}
-                  <p>
-                    <span class="font-semibold">judge:</span>
-                    {row.judge.reason || "no reason given"}
-                  </p>
-                  {#each row.judge.errors ?? [] as err (err)}
-                    <p class="text-error">· {err}</p>
-                  {/each}
-                {/if}
-                {#each row.findings as f (f.check)}
-                  <p class="text-warning">
-                    <span class="font-semibold">{f.check}:</span>
-                    {f.message}
-                  </p>
-                {/each}
-                {#if !row.judge && row.findings.length === 0}
-                  <p class="text-base-content/60">no findings</p>
-                {/if}
-              </div>
-            {/if}
-          </li>
+        {#each shownRows as row (row.key)}
+          <GenerationRow
+            {row}
+            expanded={expanded[row.key] === true}
+            ontoggle={() => (expanded[row.key] = !expanded[row.key])}
+          />
         {/each}
+        {#if shownRows.length === 0}
+          <li class="px-3 py-6 text-center text-xs text-base-content/60">
+            no rows with issues
+          </li>
+        {/if}
       </ul>
     {/if}
   </div>

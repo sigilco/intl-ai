@@ -10,8 +10,39 @@
 }
 
 @plugin "daisyui/theme" {
-  name: "illodark";
+  name: "illolight";
   default: true;
+  color-scheme: light;
+
+  --color-base-100: #ffffff;
+  --color-base-200: #f4f6f8;
+  --color-base-300: #e2e7eb;
+  --color-base-content: #1c232b;
+  --color-primary: #0d9f76;
+  --color-primary-content: #eafff7;
+  --color-secondary: #e6ebef;
+  --color-secondary-content: #1c232b;
+  --color-accent: #0d9f76;
+  --color-accent-content: #eafff7;
+  --color-neutral: #dde4e9;
+  --color-neutral-content: #3d4954;
+  --color-info: #1d83c4;
+  --color-info-content: #eaf6fd;
+  --color-success: #0d9f76;
+  --color-success-content: #eafff7;
+  --color-warning: #b97d06;
+  --color-warning-content: #fff8e8;
+  --color-error: #cf3f3f;
+  --color-error-content: #fff5f5;
+
+  --radius-selector: 0.5rem;
+  --radius-field: 0.375rem;
+  --radius-box: 0.75rem;
+  --border: 1px;
+}
+
+@plugin "daisyui/theme" {
+  name: "illodark";
   prefersdark: true;
   color-scheme: dark;
 
@@ -58,4 +89,10 @@ pre,
 * {
   scrollbar-width: thin;
   scrollbar-color: var(--color-base-300) transparent;
+}
+
+/* daisyUI 4 compat: stack field label above its control in the config grid */
+.form-control {
+  display: flex;
+  flex-direction: column;
 }
