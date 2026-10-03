@@ -9,6 +9,10 @@ AI i18n translation at build time. Zero runtime, any bundler, any model.
 
 [Get started](/guide/getting-started/) · [GitHub](https://github.com/sigilco/intl-ai) · [Sponsor](https://buy.polar.sh/polar_cl_Mv1gdlG7bw3I70EC9IHtfeSHJj4PEKvA7JAUz23CFhj)
 
+::: info
+The [live demo](/demo/) runs the fill pipeline in WebAssembly: drop a locale file, watch keys stream in, no install needed.
+:::
+
 ## Why intl-ai
 
 - **Any bundler**: Vite, Webpack, Rollup, esbuild, Rspack, Rolldown, Farm, and Next.js. One plugin, every build tool.
