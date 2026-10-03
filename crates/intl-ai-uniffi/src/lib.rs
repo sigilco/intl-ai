@@ -2,21 +2,26 @@
 //! languages (Swift, Kotlin, and anything else UniFFI generates).
 //!
 //! The core engine's `Transport` trait is synchronous (blocking HTTP via
-//! `ureq`, subprocess commands, replay cassettes), so every exported call
-//! is synchronous too. Foreign callers should dispatch `fill`/`check`
-//! off their UI/main thread; no async bridging is needed because there
-//! is no async runtime in the pipeline.
+//! `ureq`, subprocess commands, replay cassettes), so the plain
+//! `fill`/`check`/`status` calls block the calling thread. The `*_async`
+//! variants run the same pipeline on a dedicated worker thread and
+//! stream `ProgressEvent`s to an `IntlAiProgress` observer; the crate
+//! has no async runtime, so the bridge is `std::thread` + a oneshot
+//! (see `progress.rs`).
 
 mod error;
+mod progress;
 mod types;
 
 pub use error::IntlAiError;
+pub use progress::*;
 pub use types::*;
 
 use intl_ai_core::check::{self as core_check, CheckOptions as CoreCheckOptions};
 use intl_ai_core::config::{self as core_config, ResolvedConfig};
 use intl_ai_core::fill::{self as core_fill, FillOptions as CoreFillOptions};
 use intl_ai_core::lockfile::{Origin, load_shard};
+use intl_ai_core::progress::Progress as CoreProgress;
 use intl_ai_core::selector::KeySelector;
 use std::path::{Path, PathBuf};
 use std::sync::Arc;
@@ -28,7 +33,9 @@ uniffi::setup_scaffolding!();
 /// across threads (UniFFI wraps it in an `Arc`).
 #[derive(uniffi::Object)]
 pub struct IntlAi {
-    cfg: ResolvedConfig,
+    /// `Arc` so the `*_async` methods can move the config onto a worker
+    /// thread without cloning it.
+    cfg: Arc<ResolvedConfig>,
 }
 
 #[uniffi::export]
@@ -44,7 +51,7 @@ impl IntlAi {
     ) -> Result<Arc<Self>, IntlAiError> {
         let cwd = resolve_cwd(working_dir)?;
         let cfg = core_config::load(config_path.as_deref().map(Path::new), &cwd)?;
-        Ok(Arc::new(Self { cfg }))
+        Ok(Arc::new(Self { cfg: Arc::new(cfg) }))
     }
 
     /// Parse an inline config string instead of reading a file. Paths
@@ -58,7 +65,7 @@ impl IntlAi {
     ) -> Result<Arc<Self>, IntlAiError> {
         let cwd = resolve_cwd(working_dir)?;
         let cfg = core_config::load_from_str(&config, format.into(), &cwd)?;
-        Ok(Arc::new(Self { cfg }))
+        Ok(Arc::new(Self { cfg: Arc::new(cfg) }))
     }
 
     /// Configured source locale.
@@ -79,25 +86,59 @@ impl IntlAi {
     /// Translate missing (or scoped stale/regenerated) keys into target
     /// locale files. Same behavior as `intl-ai fill`; blocking.
     pub fn fill(&self, options: FillOptions) -> Result<FillReport, IntlAiError> {
-        Ok(self.run_fill(&options)?.into())
+        Ok(Self::run_fill(&self.cfg, &options, None)?.into())
     }
 
     /// Same run as `fill`, returning the exact JSON the CLI emits with
     /// `--format json`.
     pub fn fill_json(&self, options: FillOptions) -> Result<String, IntlAiError> {
-        Ok(serde_json::to_string_pretty(&self.run_fill(&options)?)?)
+        Ok(serde_json::to_string_pretty(&Self::run_fill(
+            &self.cfg, &options, None,
+        )?)?)
+    }
+
+    /// Async `fill`: the pipeline runs on a dedicated worker thread and
+    /// `observer` (when set) receives every `ProgressEvent` in order on
+    /// that thread. The returned future never blocks the foreign
+    /// executor thread.
+    pub async fn fill_async(
+        &self,
+        options: FillOptions,
+        observer: Option<Arc<dyn IntlAiProgress>>,
+    ) -> Result<FillReport, IntlAiError> {
+        let cfg = Arc::clone(&self.cfg);
+        let observer = observer.map(progress::core_observer);
+        let report =
+            progress::run_blocking(move || Self::run_fill(&cfg, &options, observer)).await??;
+        Ok(report.into())
     }
 
     /// Report missing/stale/modified/unreviewed findings without writing.
     /// Same behavior as `intl-ai check`; blocking.
     pub fn check(&self, options: CheckOptions) -> Result<CheckReport, IntlAiError> {
-        Ok(self.run_check(&options)?.into())
+        Ok(Self::run_check(&self.cfg, &options, None)?.into())
     }
 
     /// Same run as `check`, returning the exact JSON the CLI emits with
     /// `--format json`.
     pub fn check_json(&self, options: CheckOptions) -> Result<String, IntlAiError> {
-        Ok(serde_json::to_string_pretty(&self.run_check(&options)?)?)
+        Ok(serde_json::to_string_pretty(&Self::run_check(
+            &self.cfg, &options, None,
+        )?)?)
+    }
+
+    /// Async `check`: same worker-thread/observer contract as
+    /// `fill_async`.
+    pub async fn check_async(
+        &self,
+        options: CheckOptions,
+        observer: Option<Arc<dyn IntlAiProgress>>,
+    ) -> Result<CheckReport, IntlAiError> {
+        let cfg = Arc::clone(&self.cfg);
+        let observer = observer.map(progress::core_observer);
+        let report =
+            progress::run_blocking(move || Self::run_check(&cfg, &options, observer)).await??;
+        Ok(report.into())
     }
 
     /// Per-locale inventory counts (same as `intl-ai status`). Read-only:
@@ -118,8 +159,12 @@ impl IntlAi {
 }
 
 impl IntlAi {
-    fn run_fill(&self, options: &FillOptions) -> Result<core_fill::FillReport, IntlAiError> {
-        let selector = self.selector(&options.keys, options.keys_file.as_deref())?;
+    fn run_fill(
+        cfg: &ResolvedConfig,
+        options: &FillOptions,
+        observer: Option<Arc<dyn CoreProgress>>,
+    ) -> Result<core_fill::FillReport, IntlAiError> {
+        let selector = Self::selector(cfg, &options.keys, options.keys_file.as_deref())?;
         // Destructive-tier guard (same as the CLI): rewriting every
         // AI-owned value needs an explicit scope or an explicit yes.
         if options.regenerate && selector.is_any() && !options.yes {
@@ -134,7 +179,7 @@ impl IntlAi {
         } else if options.no_validate {
             Vec::new()
         } else {
-            self.cfg.config.fill.validate.clone()
+            cfg.config.fill.validate.clone()
         };
         if let Some(t) = options.judge_threshold {
             if !(0.0..=1.0).contains(&t) {
@@ -143,8 +188,8 @@ impl IntlAi {
                 )));
             }
         }
-        let gate = intl_ai_checks::build_gate(&self.cfg, &gate_names, options.judge_threshold)?;
-        let transport = intl_ai_providers::build_transport(&self.cfg)?;
+        let gate = intl_ai_checks::build_gate(cfg, &gate_names, options.judge_threshold)?;
+        let transport = intl_ai_providers::build_transport(cfg)?;
         let opts = CoreFillOptions {
             locales: non_empty(&options.locales),
             selector,
@@ -153,20 +198,24 @@ impl IntlAi {
             include_human: options.include_human,
             dry_run: options.dry_run,
             no_cache: options.no_cache,
-            observer: None,
+            observer,
         };
         Ok(core_fill::fill(
-            &self.cfg,
+            cfg,
             transport.as_ref(),
             &opts,
             gate.as_ref(),
         )?)
     }
 
-    fn run_check(&self, options: &CheckOptions) -> Result<core_check::CheckReport, IntlAiError> {
-        let checks = intl_ai_checks::build(&self.cfg)?;
+    fn run_check(
+        cfg: &ResolvedConfig,
+        options: &CheckOptions,
+        observer: Option<Arc<dyn CoreProgress>>,
+    ) -> Result<core_check::CheckReport, IntlAiError> {
+        let checks = intl_ai_checks::build(cfg)?;
         let transport = if checks.iter().any(|c| c.needs_transport()) {
-            Some(intl_ai_providers::build_transport(&self.cfg)?)
+            Some(intl_ai_providers::build_transport(cfg)?)
         } else {
             None
         };
@@ -177,12 +226,12 @@ impl IntlAi {
                 .fail_on
                 .clone()
                 .map(|kinds| kinds.into_iter().map(Into::into).collect()),
-            selector: self.selector(&options.keys, options.keys_file.as_deref())?,
+            selector: Self::selector(cfg, &options.keys, options.keys_file.as_deref())?,
             no_cache: options.no_cache,
-            observer: None,
+            observer,
         };
         Ok(core_check::check(
-            &self.cfg,
+            cfg,
             &opts,
             &checks,
             transport.as_deref(),
@@ -239,13 +288,13 @@ impl IntlAi {
     /// Merge `keys` specs with an optional `keys_file` (relative paths
     /// resolve against the config directory).
     fn selector(
-        &self,
+        cfg: &ResolvedConfig,
         keys: &[String],
         keys_file: Option<&str>,
     ) -> Result<KeySelector, IntlAiError> {
         let mut sel = KeySelector::from_specs(keys)?;
         if let Some(path) = keys_file {
-            let path = self.cfg.config_dir.join(path);
+            let path = cfg.config_dir.join(path);
             sel = sel.merge(KeySelector::from_file(&path)?)?;
         }
         Ok(sel)
