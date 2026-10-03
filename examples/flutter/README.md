@@ -11,7 +11,7 @@ The builder lives in `examples/flutter/plugin/`. Copy it into your own project a
 1. Install the `intl-ai` CLI:
 
    ```bash
-   curl -fsSL https://intl-ai.pages.dev/install.sh | sh
+   curl -fsSL https://intl-ai.illo.fyi/install.sh | sh
    ```
 
 2. Set your API key:

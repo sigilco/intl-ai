@@ -15,7 +15,7 @@ The translation engine is a Rust workspace; the npm packages are thin shims that
 | `crates/intl-ai-formats`                  | Locale file formats: JSON and YAML, flatten/unflatten, stat cache.                                                                       |
 | `crates/intl-ai-providers`                | Transports: `http` (OpenAI-compatible), `command` (local agents), `replay` (cassettes). Prompt contract + retries.                       |
 | `crates/intl-ai-checks`                   | Validation framework: `icu`, `placeholder-parity`, `dialect`, `judge`, declarative specs, `exec` checks, the incremental findings cache. |
-| `crates/intl-ai-cli`                      | The `intl-ai` binary: `fill`, `check`, `mark`, `review`, `status`, `lockfile`, `config`, `migrate`.                                      |
+| `crates/intl-ai-cli`                      | The `intl-ai` binary: `fill`, `check`, `mark`, `review`, `status`, `lockfile`, `config`.                                                 |
 | `packages/unplugin` (`@intl-ai/unplugin`) | Bundler shim (vite, webpack, rollup, esbuild, rspack, rolldown, farm, bun). Runs the pipeline in `buildStart`.                           |
 | `packages/next` (`@intl-ai/next`)         | `withIntlAi()` config wrapper. Runs the pipeline during `next.config` evaluation, before webpack or Turbopack.                           |
 | `packages/expo` (`@intl-ai/expo`)         | Expo config plugin. Runs the pipeline during `expo prebuild`/`eas build`.                                                                |

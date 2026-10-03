@@ -32,6 +32,9 @@ AI-powered build-time i18n translation CLI. A single Rust binary fills missing l
 | Package                                                 | npm name                  | Purpose                                                                   |
 | ------------------------------------------------------- | ------------------------- | ------------------------------------------------------------------------- |
 | `crates/intl-ai-{core,formats,providers,checks,cli}`    | — (binary `intl-ai`)      | Rust workspace: config, locale formats, provider transports, checks, CLI  |
+| `crates/intl-ai-uniffi`                                 | — (cdylib, not released)  | UniFFI bindings for Swift/Kotlin; excluded from cargo-dist                |
+| `kotlin/{intlai,intlai-android}`                        | `io.github.sigilco`       | Gradle modules packaging the Kotlin bindings (JVM JAR + Android AAR)      |
+| `swift/IntlAi`                                          | — (SwiftPM, not on npm)   | SwiftPM package: vendored Swift bindings + XCFramework of the uniffi lib  |
 | `packages/api` (removed)                                | `@intl-ai/api`            | TS era, deleted from the tree; npm stays deprecated at its last version   |
 | `packages/cli` (removed)                                | `@intl-ai/cli`            | TS era, deleted from the tree; npm stays deprecated at its last version   |
 | `packages/unplugin`                                     | `@intl-ai/unplugin`       | Bundler shim via unplugin 3 — spawns the `intl-ai` binary in `buildStart` |
@@ -80,7 +83,7 @@ Users place `intl-ai.toml` (or `.json`/`.yaml`) at project root. Full schema: `d
 
 ## GitHub Project Backlog
 
-URL: https://github.com/users/sigilco/projects/10
+URL: https://github.com/orgs/sigilco/projects/2
 Full policy (task fields, refinement checklist, `ghx` usage): `.agents/backlog-policy.md`
 Product context and roadmap: `.agents/docs/prd.md`
 

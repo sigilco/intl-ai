@@ -40,9 +40,6 @@ enum Command {
     /// Per-locale inventory counts (read-only; cheap enough for agents to
     /// call before deciding what to do).
     Status(StatusArgs),
-    /// Import a 0.4.x intl-ai.lock.json into shards.
-    #[command(hide = true)]
-    Migrate,
 }
 
 #[derive(Args)]
@@ -103,6 +100,10 @@ struct FillArgs {
     /// (0..=1). Has no effect when the gate does not include judge.
     #[arg(long, value_name = "SCORE")]
     judge_threshold: Option<f64>,
+    /// Stream incremental progress events to stderr (one compact line
+    /// per batch/finding); stdout keeps the final report.
+    #[arg(long)]
+    progress: bool,
     /// Output format for the run report.
     #[arg(long, value_enum, default_value_t = OutFormat::Human)]
     format: OutFormat,
@@ -136,6 +137,10 @@ struct CheckArgs {
     /// checking locales (plan 5.2).
     #[arg(long)]
     self_test: bool,
+    /// Stream incremental progress events to stderr (one compact line
+    /// per locale/finding); stdout keeps the final report.
+    #[arg(long)]
+    progress: bool,
 }
 
 #[derive(Args)]
@@ -268,7 +273,6 @@ fn main() -> ExitCode {
         Command::Lockfile(args) => commands::lockfile::run(&cli, args),
         Command::Config(args) => commands::config::run(&cli, args),
         Command::Status(args) => commands::status::run(&cli, args),
-        Command::Migrate => commands::migrate::run(),
     };
     match result {
         Ok(code) => ExitCode::from(code),
@@ -302,7 +306,6 @@ fn wants_json(cmd: &Command) -> bool {
             ConfigCommand::Schema => OutFormat::Human,
         },
         Command::Status(a) => a.format,
-        Command::Migrate => OutFormat::Human,
     };
     matches!(f, OutFormat::Json)
 }

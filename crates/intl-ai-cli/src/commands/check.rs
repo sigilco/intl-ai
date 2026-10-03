@@ -4,7 +4,7 @@ use intl_ai_core::check::{Check, CheckOptions, check};
 use intl_ai_core::diff::FindingKind;
 use std::str::FromStr;
 
-use crate::commands::{is_json, print_json, resolve_config, selector, transport_for};
+use crate::commands::{is_json, print_json, resolve_config, selector};
 use crate::{CheckArgs, Cli};
 
 /// `check --self-test`: run each configured spec check's self_test fixtures.
@@ -64,7 +64,7 @@ pub fn run(cli: &Cli, args: &CheckArgs) -> Result<u8> {
     };
     let checks = intl_ai_checks::build(&cfg)?;
     let transport = if checks.iter().any(|c| c.needs_transport()) {
-        Some(transport_for(&cfg)?)
+        Some(intl_ai_providers::build_transport(&cfg)?)
     } else {
         None
     };
@@ -74,6 +74,7 @@ pub fn run(cli: &Cli, args: &CheckArgs) -> Result<u8> {
         fail_on,
         selector: selector(&args.keys, args.keys_file.as_ref())?,
         no_cache: args.no_cache,
+        observer: crate::commands::progress::cli_observer(args.progress),
     };
     let report = check(&cfg, &opts, &checks, transport.as_deref())?;
 

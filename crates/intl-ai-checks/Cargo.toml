@@ -5,14 +5,19 @@ edition.workspace = true
 license.workspace = true
 rust-version.workspace = true
 
+[features]
+default = ["spec", "exec"]
+# YAML spec files load from std::fs — rule compilation is pure but the
+# default entry point is native-only.
+spec = ["dep:serde_yaml_ng"]
+# subprocess checks need std::process — native only.
+exec = ["intl-ai-providers/command"]
+
 [dependencies]
 intl-ai-core = { path = "../intl-ai-core" }
-intl-ai-providers = { path = "../intl-ai-providers" }
+intl-ai-providers = { path = "../intl-ai-providers", default-features = false }
 formatjs_icu_messageformat_parser = "0.3"
 regex = "1"
 serde = { workspace = true, features = ["derive"] }
 serde_json.workspace = true
-serde_yaml_ng.workspace = true
-
-[target.'cfg(unix)'.dependencies]
-libc.workspace = true
+serde_yaml_ng = { workspace = true, optional = true }

@@ -5,12 +5,21 @@ edition.workspace = true
 license.workspace = true
 rust-version.workspace = true
 
+[features]
+default = ["http", "command", "replay"]
+# ureq transport — TLS happens in the platform stack, meaningless on
+# wasm32-unknown-unknown where JS fetch owns the request.
+http = ["dep:ureq"]
+# std::process does not exist on wasm32-unknown-unknown.
+command = []
+# Cassette files are std::fs reads — native only.
+replay = []
+
 [dependencies]
 intl-ai-core = { path = "../intl-ai-core" }
+intl-ai-exec = { path = "../intl-ai-exec" }
 serde = { workspace = true, features = ["derive"] }
 serde_json.workspace = true
 thiserror.workspace = true
-ureq.workspace = true
+ureq = { workspace = true, optional = true }
 
-[target.'cfg(unix)'.dependencies]
-libc.workspace = true

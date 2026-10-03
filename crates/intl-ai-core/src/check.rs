@@ -5,10 +5,11 @@ use crate::error::Result;
 use crate::flatten::flatten;
 use crate::hash::fingerprint;
 use crate::lockfile::{Origin, load_shard};
+use crate::progress::{Pipeline, Progress, ProgressEvent};
 use crate::selector::KeySelector;
 use crate::stat_cache::StatCache;
 use crate::transport::Transport;
-use intl_ai_formats::read;
+
 use serde::Serialize;
 use std::collections::{BTreeMap, HashSet};
 
@@ -25,6 +26,9 @@ pub struct CheckOptions {
     pub selector: KeySelector,
     /// Skip the stat-cache read/write for this run.
     pub no_cache: bool,
+    /// Incremental event sink (progress UI, FFI/WASM forwarding).
+    /// `None` drops every event.
+    pub observer: Option<std::sync::Arc<dyn Progress>>,
 }
 
 /// One flattened target value under review.
@@ -163,10 +167,10 @@ pub fn check(
     transport: Option<&dyn Transport>,
 ) -> Result<CheckReport> {
     let locale_dir = cfg.locale_dir();
-    let source_path = cfg.locale_path(&cfg.config.source);
+    let source_path = cfg.locale_path(&cfg.config.source)?;
     // A missing source file is an empty corpus, not an error — a fresh
     // `init` scaffold has no strings yet (M6). A corrupt file still fails.
-    let source_value = match read(&source_path)? {
+    let source_value = match cfg.format_registry().read(&source_path)? {
         Some(v) => v,
         None => {
             eprintln!(
@@ -203,6 +207,12 @@ pub fn check(
         _ => cfg.config.targets.clone(),
     };
     let fail_on: &[FindingKind] = opts.fail_on.as_deref().unwrap_or(&cfg.config.check.fail_on);
+    static NOOP: crate::progress::NoopProgress = crate::progress::NoopProgress;
+    let obs: &dyn Progress = opts.observer.as_deref().unwrap_or(&NOOP);
+    obs.on_event(ProgressEvent::RunStarted {
+        pipeline: Pipeline::Check,
+        locales: locales.clone(),
+    });
 
     let mut report = CheckReport {
         locales: BTreeMap::new(),
@@ -224,8 +234,12 @@ pub fn check(
                 shadowed[0].display()
             );
         }
-        let target_path = cfg.locale_path(&locale);
-        let target = read(&target_path)?.map(|v| flatten(&v)).unwrap_or_default();
+        let target_path = cfg.locale_path(&locale)?;
+        let target = cfg
+            .format_registry()
+            .read(&target_path)?
+            .map(|v| flatten(&v))
+            .unwrap_or_default();
         let shard = load_shard(&locale_dir, &locale)?;
         let mut d = diff(&source, &src_hashes, &target, &shard, &HashSet::new());
 
@@ -321,6 +335,39 @@ pub fn check(
             report.has_findings = true;
         }
 
+        for (kind, keys) in [
+            (FindingKind::Missing, &d.missing),
+            (FindingKind::Stale, &d.stale),
+            (FindingKind::Modified, &d.modified),
+            (FindingKind::Extra, &d.extra),
+            (FindingKind::Unreviewed, &d.unreviewed),
+        ] {
+            for key in keys {
+                obs.on_event(ProgressEvent::Finding {
+                    locale: locale.clone(),
+                    kind,
+                    key: key.clone(),
+                    check: String::new(),
+                    message: String::new(),
+                    cached: false,
+                });
+            }
+        }
+        for f in &d.invalid {
+            obs.on_event(ProgressEvent::Finding {
+                locale: locale.clone(),
+                kind: FindingKind::Invalid,
+                key: f.key.clone(),
+                check: f.check.clone(),
+                message: f.message.clone(),
+                cached: f.cached,
+            });
+        }
+        obs.on_event(ProgressEvent::LocaleFinished {
+            pipeline: Pipeline::Check,
+            locale: locale.clone(),
+        });
+
         for kind in fail_on {
             let hit = match kind {
                 FindingKind::Missing => !d.missing.is_empty(),
@@ -346,6 +393,11 @@ pub fn check(
     if check_cache_enabled {
         check_cache.save(&cfg.check_cache_path());
     }
+    obs.on_event(ProgressEvent::RunFinished {
+        pipeline: Pipeline::Check,
+        locales: report.locales.len(),
+        failures: report.errors.len(),
+    });
     Ok(report)
 }
 

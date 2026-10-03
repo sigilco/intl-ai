@@ -1,0 +1,39 @@
+[package]
+name = "intl-ai-uniffi"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+publish = false
+description = "UniFFI bindings for intl-ai: fill/check/status for Swift, Kotlin, and other UniFFI targets"
+
+# Not part of the cargo-dist release: produces a cdylib for foreign
+# packaging (phase 2), not a distributable binary.
+[package.metadata.dist]
+dist = false
+
+[lib]
+name = "intl_ai_uniffi"
+crate-type = ["cdylib", "staticlib", "rlib"]
+
+[dependencies]
+intl-ai-checks = { path = "../intl-ai-checks" }
+intl-ai-core = { path = "../intl-ai-core" }
+intl-ai-providers = { path = "../intl-ai-providers" }
+config.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+uniffi.workspace = true
+
+[features]
+# `cli` builds the uniffi-bindgen binary that emits foreign bindings.
+cli = ["uniffi/cli"]
+
+[[bin]]
+name = "uniffi-bindgen"
+path = "src/bin/uniffi_bindgen.rs"
+required-features = ["cli"]
+
+[dev-dependencies]
+tempfile.workspace = true

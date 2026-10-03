@@ -16,7 +16,7 @@
     "sync:schema": "cp docs/public/schema/intl-ai.schema.json docs/public/schema/v1.json",
     "demo:render": "vhs docs/public/intl-ai-demo.tape",
     "predocs:build": "pnpm sync:schema",
-    "docs:build": "docmd build && cp -r docs/public/. docs/.vitepress/dist/",
+    "docs:build": "docmd build && cp -r docs/public/. docs/.vitepress/dist/ && bash scripts/build-docs-demo.sh",
     "publish:local": "turbo run build --filter='./packages/*' && pnpm -r --filter='./packages/*' publish --no-git-checks --registry http://localhost:4873",
     "dev:registry": "turbo watch build --filter='./packages/*'",
     "changeset": "changeset",
@@ -39,5 +39,5 @@
   "engines": {
     "node": "^22.18.0 || >=24"
   },
-  "packageManager": "pnpm@11.5.0"
+  "packageManager": "pnpm@12.9.0"
 }

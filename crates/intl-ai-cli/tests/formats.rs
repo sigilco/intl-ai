@@ -149,6 +149,111 @@ updated_at = "2026-09-25T00:00:00Z"
         .stdout(predicates::str::contains("no conflicted shards"));
 }
 
+#[cfg(unix)]
+const STRINGS_XML_PLUGIN: &str = concat!(
+    env!("CARGO_MANIFEST_DIR"),
+    "/../../examples/formats/strings-xml/strings_xml.py"
+);
+
+#[cfg(unix)]
+fn xml_config() -> String {
+    REPLAY_CONFIG.replacen(
+        "targets = [\"fr\"]",
+        &format!(
+            "targets = [\"fr\"]\nformat = \"xml\"\n\n[[formats]]\nname = \"xml\"\nexec = \"python3\"\nargs = [\"{STRINGS_XML_PLUGIN}\"]\nextension = \"xml\""
+        ),
+        1,
+    )
+}
+
+#[cfg(unix)]
+fn python3_available() -> bool {
+    std::process::Command::new("python3")
+        .arg("--version")
+        .output()
+        .is_ok()
+}
+
+#[cfg(unix)]
+#[test]
+fn fill_mints_and_reads_xml_via_exec_format() {
+    if !python3_available() {
+        return;
+    }
+    let dir = TempDir::new().unwrap();
+    seed(&dir, &xml_config());
+    // An existing xml file round-trips through the plugin's read op.
+    write(
+        dir.path(),
+        "locales/fr.xml",
+        r#"<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="greeting">Salut!</string>
+</resources>
+"#,
+    );
+    cmd(&dir).arg("fill").assert().success();
+
+    let xml = fs::read_to_string(dir.path().join("locales/fr.xml")).unwrap();
+    // Existing value kept; the missing key was minted in the same file
+    // (nested keys flatten to dotted names per the plugin's contract).
+    assert!(xml.contains(r#"<string name="greeting">Salut!</string>"#));
+    assert!(xml.contains(r#"<string name="nav.home">Accueil</string>"#));
+    // `check` reads the xml target through the plugin too.
+    cmd(&dir).arg("check").assert().success();
+}
+
+#[cfg(unix)]
+#[test]
+fn fill_writes_xml_when_configured() {
+    if !python3_available() {
+        return;
+    }
+    let dir = TempDir::new().unwrap();
+    seed(&dir, &xml_config());
+    cmd(&dir).arg("fill").assert().success();
+
+    // New files are minted with the exec format's canonical extension.
+    assert!(!dir.path().join("locales/fr.json").exists());
+    let xml = fs::read_to_string(dir.path().join("locales/fr.xml")).unwrap();
+    assert!(xml.contains(r#"<string name="greeting">Bonjour</string>"#));
+    assert!(xml.contains(r#"<string name="nav.home">Accueil</string>"#));
+}
+
+#[test]
+fn unknown_format_name_fails_closed() {
+    let dir = TempDir::new().unwrap();
+    seed(
+        &dir,
+        &REPLAY_CONFIG.replacen(
+            "targets = [\"fr\"]",
+            "targets = [\"fr\"]\nformat = \"nope\"",
+            1,
+        ),
+    );
+    cmd(&dir)
+        .arg("check")
+        .assert()
+        .code(10)
+        .stderr(predicates::str::contains("unknown format 'nope'"));
+}
+
+#[test]
+fn format_name_colliding_with_builtin_fails() {
+    let dir = TempDir::new().unwrap();
+    seed(
+        &dir,
+        &format!(
+            "{REPLAY_CONFIG}\n[[formats]]\nname = \"json\"\nexec = \"cat\"\nextension = \"jsonx\"\n"
+        ),
+    );
+    cmd(&dir)
+        .arg("check")
+        .assert()
+        .code(10)
+        .stderr(predicates::str::contains("conflicts with a builtin"));
+}
+
 #[test]
 fn config_schema_subcommand_prints_schema() {
     let dir = TempDir::new().unwrap();

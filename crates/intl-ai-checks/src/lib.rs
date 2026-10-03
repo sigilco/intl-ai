@@ -3,12 +3,14 @@
 //! intl-ai-core; `build` resolves `[[checks]]` config entries.
 
 pub mod dialect;
+#[cfg(feature = "exec")]
 pub mod exec;
 pub mod icu;
 pub mod judge;
+#[cfg(feature = "spec")]
 pub mod spec;
 
-use intl_ai_core::check::Check;
+use intl_ai_core::check::{Check, Gate};
 use intl_ai_core::config::{CheckEntry, ResolvedConfig};
 use intl_ai_core::error::{Error, Result};
 
@@ -25,36 +27,56 @@ pub fn build(cfg: &ResolvedConfig) -> Result<Vec<Box<dyn Check>>> {
 }
 
 pub fn build_entry(cfg: &ResolvedConfig, entry: &CheckEntry) -> Result<Box<dyn Check>> {
+    // `cfg` only feeds the spec/exec filesystem branches below.
+    #[cfg(not(any(feature = "spec", feature = "exec")))]
+    let _ = cfg;
     let weight = entry.weight.unwrap_or(1.0);
     if let Some(id) = &entry.id {
         return builtin_tuned(id, entry.threshold, weight);
     }
     if let Some(spec_path) = &entry.spec {
-        let path = if spec_path.is_absolute() {
-            spec_path.clone()
-        } else {
-            cfg.config_dir.join(spec_path)
-        };
-        let mut c = spec::SpecCheck::load(&path)?;
-        c.weight = weight;
-        return Ok(Box::new(c));
+        #[cfg(feature = "spec")]
+        {
+            let path = if spec_path.is_absolute() {
+                spec_path.clone()
+            } else {
+                cfg.config_dir.join(spec_path)
+            };
+            let mut c = spec::SpecCheck::load(&path)?;
+            c.weight = weight;
+            return Ok(Box::new(c));
+        }
+        #[cfg(not(feature = "spec"))]
+        return Err(Error::Config(format!(
+            "check entry {}: spec checks not available in this build ({})",
+            entry.label(),
+            spec_path.display()
+        )));
     }
     if let Some(cmd) = &entry.exec {
-        let mut c = exec::ExecCheck::new(
-            cmd.clone(),
-            entry.args.clone().unwrap_or_default(),
-            entry.cwd.as_ref().map(|p| {
-                if p.is_absolute() {
-                    p.clone()
-                } else {
-                    cfg.config_dir.join(p)
-                }
-            }),
-            entry.timeout_ms,
-            entry.max_stdout_bytes,
-        );
-        c.weight = weight;
-        return Ok(Box::new(c));
+        #[cfg(feature = "exec")]
+        {
+            let mut c = exec::ExecCheck::new(
+                cmd.clone(),
+                entry.args.clone().unwrap_or_default(),
+                entry.cwd.as_ref().map(|p| {
+                    if p.is_absolute() {
+                        p.clone()
+                    } else {
+                        cfg.config_dir.join(p)
+                    }
+                }),
+                entry.timeout_ms,
+                entry.max_stdout_bytes,
+            );
+            c.weight = weight;
+            return Ok(Box::new(c));
+        }
+        #[cfg(not(feature = "exec"))]
+        return Err(Error::Config(format!(
+            "check entry {}: exec checks not available in this build ({cmd})",
+            entry.label()
+        )));
     }
     Err(Error::Config(format!(
         "check entry {}: exactly one of `id`, `spec`, `exec`",
@@ -87,6 +109,36 @@ pub fn gate_check(cfg: &ResolvedConfig, name: &str) -> Result<Box<dyn Check>> {
         )));
     }
     Ok(c)
+}
+
+/// Resolve `fill.validate` names to the fill-time gate: every name maps to
+/// a gate-eligible check (see `gate_check`), and `judge_threshold`
+/// overrides the threshold of any judge member. `None` means no gate.
+pub fn build_gate(
+    cfg: &ResolvedConfig,
+    names: &[String],
+    judge_threshold: Option<f64>,
+) -> Result<Option<Gate>> {
+    if names.is_empty() {
+        return Ok(None);
+    }
+    let checks = names
+        .iter()
+        .map(|n| {
+            let c = gate_check(cfg, n)?;
+            Ok(match (judge_threshold, c.id()) {
+                (Some(t), "judge") => Box::new(judge::JudgeCheck {
+                    threshold: t,
+                    weight: c.weight(),
+                }) as Box<dyn Check>,
+                _ => c,
+            })
+        })
+        .collect::<Result<Vec<_>>>()?;
+    Ok(Some(Gate {
+        checks,
+        max_rounds: Gate::DEFAULT_MAX_ROUNDS,
+    }))
 }
 
 /// Resolve a builtin id (`icu`, `placeholder-parity`, `judge`,

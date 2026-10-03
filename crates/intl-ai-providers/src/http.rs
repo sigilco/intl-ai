@@ -7,9 +7,13 @@ use intl_ai_core::error::{Error, ErrorType, Result};
 use intl_ai_core::transport::{
     JudgeRequest, Judgement, TranslateRequest, TranslateResponse, Translated, Transport,
 };
-use serde_json::{Map, Value, json};
+use serde_json::{Map, Value};
 use std::time::Duration;
 
+use crate::chat::{
+    JUDGE_TEMPERATURE, JUDGEMENTS_SCHEMA, TEMPERATURE, TRANSLATIONS_SCHEMA, build_chat_body,
+    strip_code_fences,
+};
 use crate::prompt::{
     ADVERSARIAL_SYSTEM_PROMPT, judge_user_prompt, parse_judgements, parse_translations,
     system_prompt, user_prompt,
@@ -18,52 +22,6 @@ use crate::retry::attempt_with_retries;
 
 const PER_ATTEMPT_TIMEOUT: Duration = Duration::from_secs(300);
 const DEFAULT_BASE_URL: &str = "https://api.openai.com/v1";
-const TEMPERATURE: f64 = 0.3;
-const JUDGE_TEMPERATURE: f64 = 0.0;
-
-/// Frozen response contract (plan 5.1.5).
-const TRANSLATIONS_SCHEMA: &str = r#"{
-  "type": "object",
-  "properties": {
-    "translations": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "properties": {
-          "key": { "type": "string" },
-          "translated": { "type": "string" }
-        },
-        "required": ["key", "translated"],
-        "additionalProperties": false
-      }
-    }
-  },
-  "required": ["translations"],
-  "additionalProperties": false
-}"#;
-
-/// Judge response contract (plan 5.2).
-const JUDGEMENTS_SCHEMA: &str = r#"{
-  "type": "object",
-  "properties": {
-    "judgements": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "properties": {
-          "key": { "type": "string" },
-          "score": { "type": "number", "minimum": 0, "maximum": 1 },
-          "reason": { "type": "string" },
-          "errors": { "type": "array", "items": { "type": "string" } }
-        },
-        "required": ["key", "score"],
-        "additionalProperties": false
-      }
-    }
-  },
-  "required": ["judgements"],
-  "additionalProperties": false
-}"#;
 
 pub struct HttpTransport {
     base_url: String,
@@ -110,25 +68,15 @@ impl HttpTransport {
         schema_src: &str,
         temperature: f64,
     ) -> Value {
-        let schema: Value = serde_json::from_str(schema_src).expect("static schema parses");
-        let mut body = json!({
-            "model": self.model,
-            "messages": [
-                { "role": "system", "content": system },
-                { "role": "user", "content": user }
-            ],
-            "response_format": {
-                "type": "json_schema",
-                "json_schema": { "name": schema_name, "schema": schema }
-            },
-            "temperature": temperature,
-        });
-        // modelParams spread last: user params win over our defaults
-        // (plan 5.1.9), e.g. reasoning models overriding temperature.
-        for (k, v) in &self.model_params {
-            body[k] = v.clone();
-        }
-        body
+        build_chat_body(
+            system,
+            user,
+            schema_name,
+            schema_src,
+            temperature,
+            &self.model,
+            &self.model_params,
+        )
     }
 
     fn attempt(
@@ -221,19 +169,6 @@ fn retry_after_ms(resp: &ureq::http::Response<ureq::Body>) -> Option<u64> {
     None
 }
 
-fn strip_code_fences(content: &str) -> String {
-    let mut out = String::with_capacity(content.len());
-    for line in content.lines() {
-        let t = line.trim_start();
-        if t.starts_with("```") {
-            continue;
-        }
-        out.push_str(line);
-        out.push('\n');
-    }
-    out
-}
-
 fn body_preview(resp: &mut ureq::http::Response<ureq::Body>) -> String {
     let body = resp
         .body_mut()
@@ -321,6 +256,7 @@ impl Transport for HttpTransport {
 mod tests {
     use super::*;
     use intl_ai_core::transport::TranslationEntry;
+    use serde_json::json;
 
     #[test]
     fn body_shape_matches_ts() {

@@ -1,6 +1,6 @@
 {
   "name": "@intl-ai/expo",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "Expo config plugin: runs the intl-ai binary during prebuild",
   "keywords": [
     "ai",
@@ -10,7 +10,7 @@
     "react-native",
     "translation"
   ],
-  "homepage": "https://intl-ai.pages.dev",
+  "homepage": "https://intl-ai.illo.fyi",
   "bugs": "https://github.com/sigilco/intl-ai/issues",
   "license": "Apache-2.0",
   "author": "Joaquin Terrasa",

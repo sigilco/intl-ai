@@ -11,7 +11,7 @@ flutter pub add --dev intl_ai_flutter
 Make sure the `intl-ai` CLI is on your `PATH`:
 
 ```bash
-curl -fsSL https://intl-ai.pages.dev/install.sh | sh
+curl -fsSL https://intl-ai.illo.fyi/install.sh | sh
 ```
 
 ## Configure `build.yaml`
@@ -34,7 +34,7 @@ targets:
 
 ```json
 {
-  "$schema": "https://intl-ai.pages.dev/schema/v1.json",
+  "$schema": "https://intl-ai.illo.fyi/schema/v1.json",
   "defaultLocale": "en",
   "locales": ["en", "es"],
   "localeDir": "assets/locales",
