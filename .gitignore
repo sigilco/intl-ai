@@ -16,6 +16,8 @@ public/dist
 docs/.vitepress/dist/
 *.js
 !docmd.config.js
+# wasm-bindgen output for the docs demo is committed (CF Pages has no Rust toolchain)
+!demo/web/src/lib/pkg/*
 node_modules/
 .dist/
 .next/
