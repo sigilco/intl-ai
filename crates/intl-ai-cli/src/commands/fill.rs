@@ -37,6 +37,7 @@ pub fn run(cli: &Cli, args: &FillArgs) -> Result<u8> {
         include_human: args.include_human,
         dry_run: args.dry_run,
         no_cache: args.no_cache,
+        observer: crate::commands::progress::cli_observer(args.progress),
     };
     let report = fill(&cfg, transport.as_ref(), &opts, gate.as_ref())?;
 
