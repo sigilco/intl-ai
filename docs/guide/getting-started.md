@@ -16,7 +16,7 @@ Pick the channel that matches your workflow.
 == tab "install script"
 
 ```sh
-curl -fsSL https://intl-ai.pages.dev/install.sh | bash
+curl -fsSL https://intl-ai.illo.fyi/install.sh | bash
 ```
 
 == tab "Homebrew"

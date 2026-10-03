@@ -4,7 +4,7 @@
 
 Next.js integration for [intl-ai](https://github.com/sigilco/intl-ai): wraps your `next.config` so the `intl-ai` binary translates locale files before the build, on webpack and Turbopack alike.
 
-This package is a thin shim: all translation logic lives in the `intl-ai` binary (installed automatically as a dependency). Your project needs an `intl-ai.toml` config; see the [getting started guide](https://intl-ai.pages.dev/guide/getting-started/).
+This package is a thin shim: all translation logic lives in the `intl-ai` binary (installed automatically as a dependency). Your project needs an `intl-ai.toml` config; see the [getting started guide](https://intl-ai.illo.fyi/guide/getting-started/).
 
 ## Install
 

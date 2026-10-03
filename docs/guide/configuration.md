@@ -7,7 +7,7 @@ description: intl-ai config file reference. intl-ai.toml, .json, or .yaml, valid
 
 intl-ai reads a single config file, `intl-ai.toml`, `intl-ai.json`, `intl-ai.yaml`, or `intl-ai.yml`, discovered at your project root (first hit wins). Pass `--config <path>` to pick one explicitly, or `--config -` to read TOML from stdin.
 
-The contract is validated against a published JSON Schema served at `https://intl-ai.pages.dev/schema/v1.json` (`intl-ai config schema` prints the same schema).
+The contract is validated against a published JSON Schema served at `https://intl-ai.illo.fyi/schema/v1.json` (`intl-ai config schema` prints the same schema).
 
 ## Minimal config
 
@@ -166,7 +166,7 @@ Weighted per-key score over the configured checks (binary checks score 1.0/0.0, 
 
 ## Editor intellisense
 
-Add `"$schema": "https://intl-ai.pages.dev/schema/v1.json"` to a JSON config for autocomplete and validation.
+Add `"$schema": "https://intl-ai.illo.fyi/schema/v1.json"` to a JSON config for autocomplete and validation.
 
 ## CI validation
 

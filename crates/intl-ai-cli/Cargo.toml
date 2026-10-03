@@ -6,7 +6,7 @@ license.workspace = true
 rust-version.workspace = true
 repository = "https://github.com/sigilco/intl-ai"
 description = "AI-powered build-time i18n translation CLI"
-homepage = "https://intl-ai.pages.dev"
+homepage = "https://intl-ai.illo.fyi"
 
 [dependencies]
 intl-ai-checks = { path = "../intl-ai-checks" }

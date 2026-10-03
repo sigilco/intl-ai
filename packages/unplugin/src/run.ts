@@ -86,7 +86,7 @@ export function resolveIntlAiBin(explicit?: string, cwd = process.cwd()): Resolv
   }
   throw new Error(
     "intl-ai binary not found: install the `intl-ai` npm package or binary " +
-      "(https://intl-ai.pages.dev), or pass the `bin` option / INTL_AI_BIN",
+      "(https://intl-ai.illo.fyi), or pass the `bin` option / INTL_AI_BIN",
   );
 }
 

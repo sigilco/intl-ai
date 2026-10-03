@@ -103,7 +103,7 @@ intl-ai config validate   # resolve and validate the config (secrets masked)
 intl-ai config schema     # print the JSON Schema for the config contract
 ```
 
-The committed schema lives at `docs/public/schema/intl-ai.schema.json` and is served at `https://intl-ai.pages.dev/schema/v1.json`.
+The committed schema lives at `docs/public/schema/intl-ai.schema.json` and is served at `https://intl-ai.illo.fyi/schema/v1.json`.
 
 ## `intl-ai migrate`
 

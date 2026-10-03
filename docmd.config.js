@@ -3,7 +3,7 @@
 // Pages project's output directory) once the dashboard config can change.
 export default {
   title: "intl-ai",
-  url: "https://intl-ai.pages.dev",
+  url: "https://intl-ai.illo.fyi",
   src: "docs",
   out: "docs/.vitepress/dist",
   base: "/",
