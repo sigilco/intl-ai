@@ -88,13 +88,15 @@
       {#if rows.length}
         <div class="tabs tabs-xs tabs-border">
           <button
-            class="tab"
+            class="tab text-base-content/60"
             class:tab-active={viewTab === "rows"}
+            class:text-base-content={viewTab === "rows"}
             onclick={() => (viewTab = "rows")}>rows</button
           >
           <button
-            class="tab"
+            class="tab text-base-content/60"
             class:tab-active={viewTab === "file"}
+            class:text-base-content={viewTab === "file"}
             onclick={() => (viewTab = "file")}>file</button
           >
         </div>
