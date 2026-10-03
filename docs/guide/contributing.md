@@ -118,7 +118,7 @@ External links open in a new tab automatically.
 
 ## Deployment
 
-Documentation is deployed to Cloudflare Pages at `https://intl-ai.pages.dev/` when changes are merged to the `main` branch.
+Documentation is deployed to Cloudflare Pages at `https://intl-ai.illo.fyi/` when changes are merged to the `main` branch.
 
 The deployment process:
 

@@ -35,7 +35,7 @@ mise use npm:intl-ai@latest
 == tab "install script"
 
 ```sh
-curl -fsSL https://intl-ai.pages.dev/install.sh | sh
+curl -fsSL https://intl-ai.illo.fyi/install.sh | sh
 ```
 
 :::
