@@ -66,6 +66,17 @@ jobs:
       # Compile-check the wasm binding only; transports and fs-bound
       # modules stay excluded by feature flags.
       - run: cargo check -p intl-ai-wasm --target wasm32-unknown-unknown
+      # demo/web ships a committed wasm-bindgen bundle (docs builds have
+      # no Rust toolchain); regenerate it and fail on drift.
+      - name: Install wasm-bindgen CLI matching Cargo.lock
+        run: |
+          ver=$(grep -A1 '^name = "wasm-bindgen"$' Cargo.lock | grep -m1 version | cut -d'"' -f2)
+          curl -sL "https://github.com/wasm-bindgen/wasm-bindgen/releases/download/${ver}/wasm-bindgen-${ver}-x86_64-unknown-linux-musl.tar.gz" | tar -xz
+          install -m755 "wasm-bindgen-${ver}-x86_64-unknown-linux-musl/wasm-bindgen" "$HOME/.cargo/bin/"
+      - name: wasm demo bundle freshness
+        run: |
+          demo/web/scripts/sync-wasm.sh
+          git status --porcelain demo/web/src/lib/pkg/ | grep . && exit 1 || exit 0
 
   test:
     strategy:
