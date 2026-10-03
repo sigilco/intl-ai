@@ -45,7 +45,7 @@ pub enum Error {
         retry_after_ms: Option<u64>,
     },
     #[error("format: {0}")]
-    Format(#[from] intl_ai_formats::json::FormatError),
+    Format(#[from] intl_ai_formats::FormatError),
     #[error("{0}")]
     Message(String),
 }

@@ -14,7 +14,7 @@ dist = false
 
 [lib]
 name = "intl_ai_uniffi"
-crate-type = ["cdylib", "staticlib", "rlib"]
+crate-type = ["cdylib", "rlib"]
 
 [dependencies]
 intl-ai-checks = { path = "../intl-ai-checks" }

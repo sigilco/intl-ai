@@ -460,29 +460,7 @@ fileprivate final class UniffiHandleMap<T>: @unchecked Sendable {
 
 
 // Public interface members begin here.
-// Magic number for the Rust proxy to call using the same mechanism as every other method,
-// to free the callback once it's dropped by Rust.
-private let IDX_CALLBACK_FREE: Int32 = 0
-// Callback return codes
-private let UNIFFI_CALLBACK_SUCCESS: Int32 = 0
-private let UNIFFI_CALLBACK_ERROR: Int32 = 1
-private let UNIFFI_CALLBACK_UNEXPECTED_ERROR: Int32 = 2
 
-#if swift(>=5.8)
-@_documentation(visibility: private)
-#endif
-fileprivate struct FfiConverterUInt32: FfiConverterPrimitive {
-    typealias FfiType = UInt32
-    typealias SwiftType = UInt32
-
-    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> UInt32 {
-        return try lift(readInt(&buf))
-    }
-
-    public static func write(_ value: SwiftType, into buf: inout [UInt8]) {
-        writeInt(&buf, lower(value))
-    }
-}
 
 #if swift(>=5.8)
 @_documentation(visibility: private)
@@ -603,12 +581,6 @@ public protocol IntlAiProtocol: AnyObject, Sendable {
     func check(options: CheckOptions) throws  -> CheckReport
     
     /**
-     * Async `check`: same worker-thread/observer contract as
-     * `fill_async`.
-     */
-    func checkAsync(options: CheckOptions, observer: IntlAiProgress?) async throws  -> CheckReport
-    
-    /**
      * Same run as `check`, returning the exact JSON the CLI emits with
      * `--format json`.
      */
@@ -619,14 +591,6 @@ public protocol IntlAiProtocol: AnyObject, Sendable {
      * locale files. Same behavior as `intl-ai fill`; blocking.
      */
     func fill(options: FillOptions) throws  -> FillReport
-    
-    /**
-     * Async `fill`: the pipeline runs on a dedicated worker thread and
-     * `observer` (when set) receives every `ProgressEvent` in order on
-     * that thread. The returned future never blocks the foreign
-     * executor thread.
-     */
-    func fillAsync(options: FillOptions, observer: IntlAiProgress?) async throws  -> FillReport
     
     /**
      * Same run as `fill`, returning the exact JSON the CLI emits with
@@ -768,26 +732,6 @@ open func check(options: CheckOptions)throws  -> CheckReport  {
 }
     
     /**
-     * Async `check`: same worker-thread/observer contract as
-     * `fill_async`.
-     */
-open func checkAsync(options: CheckOptions, observer: IntlAiProgress?)async throws  -> CheckReport  {
-    return
-        try  await uniffiRustCallAsync(
-            rustFutureFunc: {
-                uniffi_intl_ai_uniffi_fn_method_intlai_check_async(
-                        self.uniffiCloneHandle(),FfiConverterTypeCheckOptions_lower(options),FfiConverterOptionTypeIntlAiProgress.lower(observer)
-                )
-            },
-            pollFunc: ffi_intl_ai_uniffi_rust_future_poll_rust_buffer,
-            completeFunc: ffi_intl_ai_uniffi_rust_future_complete_rust_buffer,
-            freeFunc: ffi_intl_ai_uniffi_rust_future_free_rust_buffer,
-            liftFunc: FfiConverterTypeCheckReport_lift,
-            errorHandler: FfiConverterTypeIntlAiError_lift
-        )
-}
-    
-    /**
      * Same run as `check`, returning the exact JSON the CLI emits with
      * `--format json`.
      */
@@ -813,28 +757,6 @@ open func fill(options: FillOptions)throws  -> FillReport  {
         FfiConverterTypeFillOptions_lower(options),uniffiCallStatus
     )
 })
-}
-    
-    /**
-     * Async `fill`: the pipeline runs on a dedicated worker thread and
-     * `observer` (when set) receives every `ProgressEvent` in order on
-     * that thread. The returned future never blocks the foreign
-     * executor thread.
-     */
-open func fillAsync(options: FillOptions, observer: IntlAiProgress?)async throws  -> FillReport  {
-    return
-        try  await uniffiRustCallAsync(
-            rustFutureFunc: {
-                uniffi_intl_ai_uniffi_fn_method_intlai_fill_async(
-                        self.uniffiCloneHandle(),FfiConverterTypeFillOptions_lower(options),FfiConverterOptionTypeIntlAiProgress.lower(observer)
-                )
-            },
-            pollFunc: ffi_intl_ai_uniffi_rust_future_poll_rust_buffer,
-            completeFunc: ffi_intl_ai_uniffi_rust_future_complete_rust_buffer,
-            freeFunc: ffi_intl_ai_uniffi_rust_future_free_rust_buffer,
-            liftFunc: FfiConverterTypeFillReport_lift,
-            errorHandler: FfiConverterTypeIntlAiError_lift
-        )
 }
     
     /**
@@ -959,222 +881,6 @@ public func FfiConverterTypeIntlAi_lift(_ handle: UInt64) throws -> IntlAi {
 #endif
 public func FfiConverterTypeIntlAi_lower(_ value: IntlAi) -> UInt64 {
     return FfiConverterTypeIntlAi.lower(value)
-}
-
-
-
-
-
-
-/**
- * Foreign-implemented sink for pipeline progress events.
- *
- * `on_event` is called once per event, in emission order, on the
- * pipeline's worker thread — never concurrently for a single run, and
- * never after `RunFinished`. Implementations must be thread-safe
- * (`Send + Sync`) and should return quickly: the pipeline waits on
- * each callback.
- */
-public protocol IntlAiProgress: AnyObject, Sendable {
-    
-    func onEvent(event: ProgressEvent) 
-    
-}
-/**
- * Foreign-implemented sink for pipeline progress events.
- *
- * `on_event` is called once per event, in emission order, on the
- * pipeline's worker thread — never concurrently for a single run, and
- * never after `RunFinished`. Implementations must be thread-safe
- * (`Send + Sync`) and should return quickly: the pipeline waits on
- * each callback.
- */
-open class IntlAiProgressImpl: IntlAiProgress, @unchecked Sendable {
-    fileprivate let handle: UInt64
-
-    /// Used to instantiate a [FFIObject] without an actual handle, for fakes in tests, mostly.
-#if swift(>=5.8)
-    @_documentation(visibility: private)
-#endif
-    public struct NoHandle {
-        public init() {}
-    }
-
-    // TODO: We'd like this to be `private` but for Swifty reasons,
-    // we can't implement `FfiConverter` without making this `required` and we can't
-    // make it `required` without making it `public`.
-#if swift(>=5.8)
-    @_documentation(visibility: private)
-#endif
-    required public init(unsafeFromHandle handle: UInt64) {
-        self.handle = handle
-    }
-
-    // This constructor can be used to instantiate a fake object.
-    // - Parameter noHandle: Placeholder value so we can have a constructor separate from the default empty one that may be implemented for classes extending [FFIObject].
-    //
-    // - Warning:
-    //     Any object instantiated with this constructor cannot be passed to an actual Rust-backed object. Since there isn't a backing handle the FFI lower functions will crash.
-#if swift(>=5.8)
-    @_documentation(visibility: private)
-#endif
-    public init(noHandle: NoHandle) {
-        self.handle = 0
-    }
-
-#if swift(>=5.8)
-    @_documentation(visibility: private)
-#endif
-    public func uniffiCloneHandle() -> UInt64 {
-        return try! rustCall { uniffi_intl_ai_uniffi_fn_clone_intlaiprogress(self.handle, $0) }
-    }
-    // No primary constructor declared for this class.
-
-    deinit {
-        if handle == 0 {
-            // Mock objects have handle=0 don't try to free them
-            return
-        }
-
-        try! rustCall { uniffi_intl_ai_uniffi_fn_free_intlaiprogress(handle, $0) }
-    }
-
-    
-
-    
-open func onEvent(event: ProgressEvent)  {try! rustCall() {
-        uniffiCallStatus in
-    uniffi_intl_ai_uniffi_fn_method_intlaiprogress_on_event(
-            self.uniffiCloneHandle(),
-        FfiConverterTypeProgressEvent_lower(event),uniffiCallStatus
-    )
-}
-}
-    
-
-    
-}
-
-
-
-// Put the implementation in a struct so we don't pollute the top-level namespace
-fileprivate struct UniffiCallbackInterfaceIntlAiProgress {
-
-    // Create the VTable using a series of closures.
-    // Swift automatically converts these into C callback functions.
-    //
-    // Store the vtable directly.
-    static let vtable: UniffiVTableCallbackInterfaceIntlAiProgress = UniffiVTableCallbackInterfaceIntlAiProgress(
-        uniffiFree: { (uniffiHandle: UInt64) -> () in
-            do {
-                try FfiConverterTypeIntlAiProgress.handleMap.remove(handle: uniffiHandle)
-            } catch {
-                print("Uniffi callback interface IntlAiProgress: handle missing in uniffiFree")
-            }
-        },
-        uniffiClone: { (uniffiHandle: UInt64) -> UInt64 in
-            do {
-                return try FfiConverterTypeIntlAiProgress.handleMap.clone(handle: uniffiHandle)
-            } catch {
-                fatalError("Uniffi callback interface IntlAiProgress: handle missing in uniffiClone")
-            }
-        },
-        onEvent: { (
-            uniffiHandle: UInt64,
-            event: RustBuffer,
-            uniffiOutReturn: UnsafeMutableRawPointer,
-            uniffiCallStatus: UnsafeMutablePointer<RustCallStatus>
-        ) in
-            let makeCall = {
-                () throws -> () in
-                guard let uniffiObj = try? FfiConverterTypeIntlAiProgress.handleMap.get(handle: uniffiHandle) else {
-                    throw UniffiInternalError.unexpectedStaleHandle
-                }
-                return uniffiObj.onEvent(
-                     event: try FfiConverterTypeProgressEvent_lift(event)
-                )
-            }
-
-            
-            let writeReturn = { () }
-            uniffiTraitInterfaceCall(
-                callStatus: uniffiCallStatus,
-                makeCall: makeCall,
-                writeReturn: writeReturn
-            )
-        }
-    )
-
-    // Rust stores this pointer for future callback invocations, so it must live
-    // for the process lifetime (not just for the init function call).
-    //
-    // `nonisolated(unsafe)` is needed under Swift 6 strict concurrency.
-    // This is safe because the pointee is initialized once during static init
-    // and never mutated by either side of the FFI.  Its fields are C function pointers.
-    nonisolated(unsafe) static let vtablePtr: UnsafePointer<UniffiVTableCallbackInterfaceIntlAiProgress> = {
-        let ptr = UnsafeMutablePointer<UniffiVTableCallbackInterfaceIntlAiProgress>.allocate(capacity: 1)
-        ptr.initialize(to: vtable)
-        return UnsafePointer(ptr)
-    }()
-}
-
-private func uniffiCallbackInitIntlAiProgress() {
-    uniffi_intl_ai_uniffi_fn_init_callback_vtable_intlaiprogress(UniffiCallbackInterfaceIntlAiProgress.vtablePtr)
-}
-
-#if swift(>=5.8)
-@_documentation(visibility: private)
-#endif
-public struct FfiConverterTypeIntlAiProgress: FfiConverter {
-    fileprivate static let handleMap = UniffiHandleMap<IntlAiProgress>()
-
-    typealias FfiType = UInt64
-    typealias SwiftType = IntlAiProgress
-
-    public static func lift(_ handle: UInt64) throws -> IntlAiProgress {
-        if ((handle & 1) == 0) {
-            // Rust-generated handle, construct a new class that uses the handle to implement the
-            // interface
-            return IntlAiProgressImpl(unsafeFromHandle: handle)
-        } else {
-            // Swift-generated handle, get the object from the handle map
-            return try handleMap.remove(handle: handle)
-        }
-    }
-
-    public static func lower(_ value: IntlAiProgress) -> UInt64 {
-         if let rustImpl = value as? IntlAiProgressImpl {
-             // Rust-implemented object.  Clone the handle and return it
-            return rustImpl.uniffiCloneHandle()
-         } else {
-            // Swift object, generate a new vtable handle and return that.
-            return handleMap.insert(obj: value)
-         }
-    }
-
-    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> IntlAiProgress {
-        let handle: UInt64 = try readInt(&buf)
-        return try lift(handle)
-    }
-
-    public static func write(_ value: IntlAiProgress, into buf: inout [UInt8]) {
-        writeInt(&buf, lower(value))
-    }
-}
-
-
-#if swift(>=5.8)
-@_documentation(visibility: private)
-#endif
-public func FfiConverterTypeIntlAiProgress_lift(_ handle: UInt64) throws -> IntlAiProgress {
-    return try FfiConverterTypeIntlAiProgress.lift(handle)
-}
-
-#if swift(>=5.8)
-@_documentation(visibility: private)
-#endif
-public func FfiConverterTypeIntlAiProgress_lower(_ value: IntlAiProgress) -> UInt64 {
-    return FfiConverterTypeIntlAiProgress.lower(value)
 }
 
 
@@ -2647,104 +2353,6 @@ public func FfiConverterTypeIntlAiError_lower(_ value: IntlAiError) -> RustBuffe
 
 
 /**
- * Per-key outcome of a fill batch (`ProgressEvent::KeyDone`; mirrors
- * `core::progress::KeyOutcome`).
- */
-
-public enum KeyOutcome: Equatable, Hashable {
-    
-    /**
-     * Value adopted into the locale file and lockfile shard.
-     */
-    case written(
-        /**
-         * Lockfile origin of the adopted entry.
-         */origin: OriginFilter, 
-        /**
-         * The adopted value overwrote a human-owned one.
-         */regeneratedHuman: Bool, 
-        /**
-         * Gate findings still open on the adopted value.
-         */unresolved: UInt64, 
-        /**
-         * Per-check quality scores the gate emitted.
-         */scores: [String: Double]
-    )
-    /**
-     * Terminal failure: batch transport error or provider omission.
-     */
-    case failed(kind: ErrorKind, message: String
-    )
-
-
-
-
-
-}
-
-#if compiler(>=6)
-extension KeyOutcome: Sendable {}
-#endif
-
-#if swift(>=5.8)
-@_documentation(visibility: private)
-#endif
-public struct FfiConverterTypeKeyOutcome: FfiConverterRustBuffer {
-    typealias SwiftType = KeyOutcome
-
-    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> KeyOutcome {
-        let variant: Int32 = try readInt(&buf)
-        switch variant {
-        
-        case 1: return .written(origin: try FfiConverterTypeOriginFilter.read(from: &buf), regeneratedHuman: try FfiConverterBool.read(from: &buf), unresolved: try FfiConverterUInt64.read(from: &buf), scores: try FfiConverterDictionaryStringDouble.read(from: &buf)
-        )
-        
-        case 2: return .failed(kind: try FfiConverterTypeErrorKind.read(from: &buf), message: try FfiConverterString.read(from: &buf)
-        )
-        
-        default: throw UniffiInternalError.unexpectedEnumCase
-        }
-    }
-
-    public static func write(_ value: KeyOutcome, into buf: inout [UInt8]) {
-        switch value {
-        
-        
-        case let .written(origin,regeneratedHuman,unresolved,scores):
-            writeInt(&buf, Int32(1))
-            FfiConverterTypeOriginFilter.write(origin, into: &buf)
-            FfiConverterBool.write(regeneratedHuman, into: &buf)
-            FfiConverterUInt64.write(unresolved, into: &buf)
-            FfiConverterDictionaryStringDouble.write(scores, into: &buf)
-            
-        
-        case let .failed(kind,message):
-            writeInt(&buf, Int32(2))
-            FfiConverterTypeErrorKind.write(kind, into: &buf)
-            FfiConverterString.write(message, into: &buf)
-            
-        }
-    }
-}
-
-
-#if swift(>=5.8)
-@_documentation(visibility: private)
-#endif
-public func FfiConverterTypeKeyOutcome_lift(_ buf: RustBuffer) throws -> KeyOutcome {
-    return try FfiConverterTypeKeyOutcome.lift(buf)
-}
-
-#if swift(>=5.8)
-@_documentation(visibility: private)
-#endif
-public func FfiConverterTypeKeyOutcome_lower(_ value: KeyOutcome) -> RustBuffer {
-    return FfiConverterTypeKeyOutcome.lower(value)
-}
-
-
-
-/**
  * Origin scope for `CheckOptions.origin` (mirrors `check --origin`).
  */
 
@@ -2812,244 +2420,6 @@ public func FfiConverterTypeOriginFilter_lower(_ value: OriginFilter) -> RustBuf
 }
 
 
-
-/**
- * Which pipeline produced an event (mirrors `core::progress::Pipeline`).
- */
-
-public enum Pipeline: Equatable, Hashable {
-    
-    case fill
-    case check
-
-
-
-
-
-}
-
-#if compiler(>=6)
-extension Pipeline: Sendable {}
-#endif
-
-#if swift(>=5.8)
-@_documentation(visibility: private)
-#endif
-public struct FfiConverterTypePipeline: FfiConverterRustBuffer {
-    typealias SwiftType = Pipeline
-
-    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> Pipeline {
-        let variant: Int32 = try readInt(&buf)
-        switch variant {
-        
-        case 1: return .fill
-        
-        case 2: return .check
-        
-        default: throw UniffiInternalError.unexpectedEnumCase
-        }
-    }
-
-    public static func write(_ value: Pipeline, into buf: inout [UInt8]) {
-        switch value {
-        
-        
-        case .fill:
-            writeInt(&buf, Int32(1))
-        
-        
-        case .check:
-            writeInt(&buf, Int32(2))
-        
-        }
-    }
-}
-
-
-#if swift(>=5.8)
-@_documentation(visibility: private)
-#endif
-public func FfiConverterTypePipeline_lift(_ buf: RustBuffer) throws -> Pipeline {
-    return try FfiConverterTypePipeline.lift(buf)
-}
-
-#if swift(>=5.8)
-@_documentation(visibility: private)
-#endif
-public func FfiConverterTypePipeline_lower(_ value: Pipeline) -> RustBuffer {
-    return FfiConverterTypePipeline.lower(value)
-}
-
-
-
-/**
- * One incremental pipeline event (mirrors
- * `core::progress::ProgressEvent`; owned data only).
- */
-
-public enum ProgressEvent: Equatable, Hashable {
-    
-    /**
-     * The run started; `locales` is the resolved target list.
-     */
-    case runStarted(pipeline: Pipeline, locales: [String]
-    )
-    /**
-     * Fill requested a batch from the provider. `attempt` is 0 for the
-     * initial pass, 1+ for gate corrective rounds.
-     */
-    case batchStarted(locale: String, keys: UInt64, attempt: UInt32
-    )
-    /**
-     * A provider batch resolved: `answered` keys came back, `failed`
-     * keys terminal-failed.
-     */
-    case batchFinished(locale: String, attempt: UInt32, answered: UInt64, failed: UInt64
-    )
-    /**
-     * One key's outcome in a fill batch.
-     */
-    case keyDone(locale: String, key: String, outcome: KeyOutcome
-    )
-    /**
-     * A check run produced a finding.
-     */
-    case finding(locale: String, kind: FindingKind, key: String, check: String, message: String, 
-        /**
-         * Replayed from the incremental check cache, not re-run.
-         */cached: Bool
-    )
-    /**
-     * A locale's processing concluded (succeeded or soft-failed).
-     */
-    case localeFinished(pipeline: Pipeline, locale: String
-    )
-    /**
-     * The run finished: `locales` processed and `failures` run-level
-     * failures.
-     */
-    case runFinished(pipeline: Pipeline, locales: UInt64, failures: UInt64
-    )
-
-
-
-
-
-}
-
-#if compiler(>=6)
-extension ProgressEvent: Sendable {}
-#endif
-
-#if swift(>=5.8)
-@_documentation(visibility: private)
-#endif
-public struct FfiConverterTypeProgressEvent: FfiConverterRustBuffer {
-    typealias SwiftType = ProgressEvent
-
-    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> ProgressEvent {
-        let variant: Int32 = try readInt(&buf)
-        switch variant {
-        
-        case 1: return .runStarted(pipeline: try FfiConverterTypePipeline.read(from: &buf), locales: try FfiConverterSequenceString.read(from: &buf)
-        )
-        
-        case 2: return .batchStarted(locale: try FfiConverterString.read(from: &buf), keys: try FfiConverterUInt64.read(from: &buf), attempt: try FfiConverterUInt32.read(from: &buf)
-        )
-        
-        case 3: return .batchFinished(locale: try FfiConverterString.read(from: &buf), attempt: try FfiConverterUInt32.read(from: &buf), answered: try FfiConverterUInt64.read(from: &buf), failed: try FfiConverterUInt64.read(from: &buf)
-        )
-        
-        case 4: return .keyDone(locale: try FfiConverterString.read(from: &buf), key: try FfiConverterString.read(from: &buf), outcome: try FfiConverterTypeKeyOutcome.read(from: &buf)
-        )
-        
-        case 5: return .finding(locale: try FfiConverterString.read(from: &buf), kind: try FfiConverterTypeFindingKind.read(from: &buf), key: try FfiConverterString.read(from: &buf), check: try FfiConverterString.read(from: &buf), message: try FfiConverterString.read(from: &buf), cached: try FfiConverterBool.read(from: &buf)
-        )
-        
-        case 6: return .localeFinished(pipeline: try FfiConverterTypePipeline.read(from: &buf), locale: try FfiConverterString.read(from: &buf)
-        )
-        
-        case 7: return .runFinished(pipeline: try FfiConverterTypePipeline.read(from: &buf), locales: try FfiConverterUInt64.read(from: &buf), failures: try FfiConverterUInt64.read(from: &buf)
-        )
-        
-        default: throw UniffiInternalError.unexpectedEnumCase
-        }
-    }
-
-    public static func write(_ value: ProgressEvent, into buf: inout [UInt8]) {
-        switch value {
-        
-        
-        case let .runStarted(pipeline,locales):
-            writeInt(&buf, Int32(1))
-            FfiConverterTypePipeline.write(pipeline, into: &buf)
-            FfiConverterSequenceString.write(locales, into: &buf)
-            
-        
-        case let .batchStarted(locale,keys,attempt):
-            writeInt(&buf, Int32(2))
-            FfiConverterString.write(locale, into: &buf)
-            FfiConverterUInt64.write(keys, into: &buf)
-            FfiConverterUInt32.write(attempt, into: &buf)
-            
-        
-        case let .batchFinished(locale,attempt,answered,failed):
-            writeInt(&buf, Int32(3))
-            FfiConverterString.write(locale, into: &buf)
-            FfiConverterUInt32.write(attempt, into: &buf)
-            FfiConverterUInt64.write(answered, into: &buf)
-            FfiConverterUInt64.write(failed, into: &buf)
-            
-        
-        case let .keyDone(locale,key,outcome):
-            writeInt(&buf, Int32(4))
-            FfiConverterString.write(locale, into: &buf)
-            FfiConverterString.write(key, into: &buf)
-            FfiConverterTypeKeyOutcome.write(outcome, into: &buf)
-            
-        
-        case let .finding(locale,kind,key,check,message,cached):
-            writeInt(&buf, Int32(5))
-            FfiConverterString.write(locale, into: &buf)
-            FfiConverterTypeFindingKind.write(kind, into: &buf)
-            FfiConverterString.write(key, into: &buf)
-            FfiConverterString.write(check, into: &buf)
-            FfiConverterString.write(message, into: &buf)
-            FfiConverterBool.write(cached, into: &buf)
-            
-        
-        case let .localeFinished(pipeline,locale):
-            writeInt(&buf, Int32(6))
-            FfiConverterTypePipeline.write(pipeline, into: &buf)
-            FfiConverterString.write(locale, into: &buf)
-            
-        
-        case let .runFinished(pipeline,locales,failures):
-            writeInt(&buf, Int32(7))
-            FfiConverterTypePipeline.write(pipeline, into: &buf)
-            FfiConverterUInt64.write(locales, into: &buf)
-            FfiConverterUInt64.write(failures, into: &buf)
-            
-        }
-    }
-}
-
-
-#if swift(>=5.8)
-@_documentation(visibility: private)
-#endif
-public func FfiConverterTypeProgressEvent_lift(_ buf: RustBuffer) throws -> ProgressEvent {
-    return try FfiConverterTypeProgressEvent.lift(buf)
-}
-
-#if swift(>=5.8)
-@_documentation(visibility: private)
-#endif
-public func FfiConverterTypeProgressEvent_lower(_ value: ProgressEvent) -> RustBuffer {
-    return FfiConverterTypeProgressEvent.lower(value)
-}
-
-
 #if swift(>=5.8)
 @_documentation(visibility: private)
 #endif
@@ -3093,30 +2463,6 @@ fileprivate struct FfiConverterOptionString: FfiConverterRustBuffer {
         switch try readInt(&buf) as Int8 {
         case 0: return nil
         case 1: return try FfiConverterString.read(from: &buf)
-        default: throw UniffiInternalError.unexpectedOptionalTag
-        }
-    }
-}
-
-#if swift(>=5.8)
-@_documentation(visibility: private)
-#endif
-fileprivate struct FfiConverterOptionTypeIntlAiProgress: FfiConverterRustBuffer {
-    typealias SwiftType = IntlAiProgress?
-
-    public static func write(_ value: SwiftType, into buf: inout [UInt8]) {
-        guard let value = value else {
-            writeInt(&buf, Int8(0))
-            return
-        }
-        writeInt(&buf, Int8(1))
-        FfiConverterTypeIntlAiProgress.write(value, into: &buf)
-    }
-
-    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> SwiftType {
-        switch try readInt(&buf) as Int8 {
-        case 0: return nil
-        case 1: return try FfiConverterTypeIntlAiProgress.read(from: &buf)
         default: throw UniffiInternalError.unexpectedOptionalTag
         }
     }
@@ -3298,32 +2644,6 @@ fileprivate struct FfiConverterSequenceTypeFindingKind: FfiConverterRustBuffer {
 #if swift(>=5.8)
 @_documentation(visibility: private)
 #endif
-fileprivate struct FfiConverterDictionaryStringDouble: FfiConverterRustBuffer {
-    public static func write(_ value: [String: Double], into buf: inout [UInt8]) {
-        let len = Int32(value.count)
-        writeInt(&buf, len)
-        for (key, value) in value {
-            FfiConverterString.write(key, into: &buf)
-            FfiConverterDouble.write(value, into: &buf)
-        }
-    }
-
-    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> [String: Double] {
-        let len: Int32 = try readInt(&buf)
-        var dict = [String: Double]()
-        dict.reserveCapacity(Int(len))
-        for _ in 0..<len {
-            let key = try FfiConverterString.read(from: &buf)
-            let value = try FfiConverterDouble.read(from: &buf)
-            dict[key] = value
-        }
-        return dict
-    }
-}
-
-#if swift(>=5.8)
-@_documentation(visibility: private)
-#endif
 fileprivate struct FfiConverterDictionaryStringTypeLocaleDiff: FfiConverterRustBuffer {
     public static func write(_ value: [String: LocaleDiff], into buf: inout [UInt8]) {
         let len = Int32(value.count)
@@ -3398,54 +2718,6 @@ fileprivate struct FfiConverterDictionaryStringTypeQualityScore: FfiConverterRus
         return dict
     }
 }
-private let UNIFFI_RUST_FUTURE_POLL_READY: Int8 = 0
-private let UNIFFI_RUST_FUTURE_POLL_WAKE: Int8 = 1
-
-fileprivate let uniffiContinuationHandleMap = UniffiHandleMap<UnsafeContinuation<Int8, Never>>()
-
-fileprivate func uniffiRustCallAsync<F, T>(
-    rustFutureFunc: () -> UInt64,
-    pollFunc: (UInt64, @escaping UniffiRustFutureContinuationCallback, UInt64) -> (),
-    completeFunc: (UInt64, UnsafeMutablePointer<RustCallStatus>) -> F,
-    freeFunc: (UInt64) -> (),
-    liftFunc: (F) throws -> T,
-    errorHandler: ((RustBuffer) throws -> Swift.Error)?
-) async throws -> T {
-    // Make sure to call the ensure init function since future creation doesn't have a
-    // RustCallStatus param, so doesn't use makeRustCall()
-    uniffiEnsureIntlAiUniffiInitialized()
-    let rustFuture = rustFutureFunc()
-    defer {
-        freeFunc(rustFuture)
-    }
-    var pollResult: Int8;
-    repeat {
-        pollResult = await withUnsafeContinuation {
-            pollFunc(
-                rustFuture,
-                { handle, pollResult in
-                    uniffiFutureContinuationCallback(handle: handle, pollResult: pollResult)
-                },
-                uniffiContinuationHandleMap.insert(obj: $0)
-            )
-        }
-    } while pollResult != UNIFFI_RUST_FUTURE_POLL_READY
-
-    return try liftFunc(makeRustCall(
-        { completeFunc(rustFuture, $0) },
-        errorHandler: errorHandler
-    ))
-}
-
-// Callback handlers for an async calls.  These are invoked by Rust when the future is ready.  They
-// lift the return value or error and resume the suspended function.
-fileprivate func uniffiFutureContinuationCallback(handle: UInt64, pollResult: Int8) {
-    if let continuation = try? uniffiContinuationHandleMap.remove(handle: handle) {
-        continuation.resume(returning: pollResult)
-    } else {
-        print("uniffiFutureContinuationCallback invalid handle")
-    }
-}
 
 private enum InitializationResult {
     case ok
@@ -3465,16 +2737,10 @@ private let initializationResult: InitializationResult = {
     if (uniffi_intl_ai_uniffi_checksum_method_intlai_check() != 35129) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_intl_ai_uniffi_checksum_method_intlai_check_async() != 30679) {
-        return InitializationResult.apiChecksumMismatch
-    }
     if (uniffi_intl_ai_uniffi_checksum_method_intlai_check_json() != 2072) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_intl_ai_uniffi_checksum_method_intlai_fill() != 7109) {
-        return InitializationResult.apiChecksumMismatch
-    }
-    if (uniffi_intl_ai_uniffi_checksum_method_intlai_fill_async() != 29617) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_intl_ai_uniffi_checksum_method_intlai_fill_json() != 17429) {
@@ -3495,9 +2761,6 @@ private let initializationResult: InitializationResult = {
     if (uniffi_intl_ai_uniffi_checksum_method_intlai_target_locales() != 50423) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_intl_ai_uniffi_checksum_method_intlaiprogress_on_event() != 32585) {
-        return InitializationResult.apiChecksumMismatch
-    }
     if (uniffi_intl_ai_uniffi_checksum_constructor_intlai_from_config_string() != 29246) {
         return InitializationResult.apiChecksumMismatch
     }
@@ -3505,7 +2768,6 @@ private let initializationResult: InitializationResult = {
         return InitializationResult.apiChecksumMismatch
     }
 
-    uniffiCallbackInitIntlAiProgress()
     return InitializationResult.ok
 }()
 
