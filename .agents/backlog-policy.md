@@ -2,7 +2,7 @@
 
 ## Task Refinement Checklist
 
-Every item added to GitHub Project #10 must have all five fields before moving out of "Backlog":
+Every item added to GitHub Project #2 must have all five fields before moving out of "Backlog":
 
 | Field                    | Values                                            | Notes                             |
 | ------------------------ | ------------------------------------------------- | --------------------------------- |
@@ -18,7 +18,7 @@ Additional labels: `release-blocker`, `priority/high`, `priority/low`.
 
 ## Using `ghx` for Project Operations
 
-`ghx` is available at `~/.local/bin/ghx`. It wraps `gh project` commands with project #10 defaults.
+`ghx` is available at `~/.local/bin/ghx`. It wraps `gh project` commands with project #2 defaults.
 
 ```bash
 ghx add <issue-number>
@@ -32,8 +32,8 @@ ghx update <item-id> --field "Iteration" --value "Q3 2026"
 Fallback (raw `gh`):
 
 ```bash
-gh project item-add 10 --owner espetro --url <issue-url>
-gh project item-list 10 --owner espetro --format json
+gh project item-add 2 --owner sigilco --url <issue-url>
+gh project item-list 2 --owner sigilco --format json
 ```
 
 ---
@@ -60,7 +60,7 @@ Plans go to `.agents/plans/<YYYY-MM-DD>-<kebab-purpose>.md`. Each plan header mu
 ## TL;DR
 
 > **GitHub Issue**: #42
-> **Project Item**: https://github.com/users/espetro/projects/10/items/<N>
+> **Project Item**: https://github.com/orgs/sigilco/projects/2/items/<N>
 ```
 
 ---

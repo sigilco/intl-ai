@@ -83,7 +83,7 @@ Users place `intl-ai.toml` (or `.json`/`.yaml`) at project root. Full schema: `d
 
 ## GitHub Project Backlog
 
-URL: https://github.com/users/sigilco/projects/10
+URL: https://github.com/orgs/sigilco/projects/2
 Full policy (task fields, refinement checklist, `ghx` usage): `.agents/backlog-policy.md`
 Product context and roadmap: `.agents/docs/prd.md`
 
