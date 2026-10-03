@@ -16,7 +16,9 @@ intl-ai-core = { path = "../intl-ai-core" }
 intl-ai-formats = { path = "../intl-ai-formats" }
 intl-ai-providers = { path = "../intl-ai-providers", default-features = false }
 console_error_panic_hook = "0.1"
+js-sys = "0.3"
 serde = { workspace = true, features = ["derive"] }
 serde-wasm-bindgen = "0.6"
 serde_json.workspace = true
 wasm-bindgen = "0.2"
+wasm-bindgen-futures = "0.4"

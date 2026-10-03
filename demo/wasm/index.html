@@ -134,11 +134,22 @@
         color: var(--muted);
         white-space: pre-line;
       }
-      #progress .err {
+      .err {
         color: var(--err);
       }
-      #progress .ok {
+      .ok {
         color: var(--ok);
+      }
+      #runMeta {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin: 4px 0 10px;
+      }
+      #runMeta progress {
+        flex: 1;
+        height: 8px;
+        accent-color: var(--accent);
       }
       table {
         width: 100%;
@@ -266,7 +277,7 @@
           </label>
           <label
             >Batch size
-            <input id="batchSize" type="number" value="20" min="1" max="100" />
+            <input id="batchSize" type="number" value="4" min="1" max="100" />
           </label>
         </div>
         <label class="inline">
@@ -282,11 +293,28 @@
       </section>
 
       <button id="runBtn" disabled>fill + check</button>
+      <div id="runMeta" class="hidden">
+        <progress id="fillBar" value="0" max="1"></progress>
+        <span id="localeStats" class="muted"></span>
+      </div>
       <div id="progress"></div>
 
       <section id="results" class="card hidden">
         <h2>Result</h2>
         <div id="summary" class="muted"></div>
+        <div id="keysWrap" class="hidden">
+          <h2>Filled keys</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>key</th>
+                <th>status</th>
+                <th>translation</th>
+              </tr>
+            </thead>
+            <tbody id="keysBody"></tbody>
+          </table>
+        </div>
         <div id="findingsWrap" class="hidden">
           <h2>Check findings</h2>
           <table>

@@ -5,7 +5,9 @@ source locale file, set the source and target locales, and the wasm build fills
 the missing keys through an OpenAI-compatible provider, then runs the builtin
 checks (`icu`, `placeholder-parity`, `dialect:*`) on the result. All wasm calls
 run inside `worker.mjs` (a module Web Worker) so the main thread stays
-responsive; fetch and batching stay on the page.
+responsive; the worker also owns the fetch loop. The `runFill`/`runCheck`
+drivers stream the core `ProgressEvent` stream to the page, so key rows and
+check findings land as they happen instead of after the run completes.
 
 ## Build
 

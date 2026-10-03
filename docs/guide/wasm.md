@@ -88,9 +88,52 @@ An API key is only sent when the field is filled.
 | `parseJudgements(content)`            | Per-key scores, reasons, and error lists          |
 | `runChecks(items, checkIds, ctx)`     | `icu`, `placeholder-parity`, `dialect:*` findings |
 | `unflatten(targetJson, map)`          | Merge flat keys into the target and serialize it  |
+| `runFill(spec, translate, onEvent)`   | Fill missing keys, streaming `ProgressEvent`s     |
+| `runCheck(spec, judge, onEvent)`      | Check a target file, streaming `ProgressEvent`s   |
 
 `judge` is deliberately not inside `runChecks`: it needs a provider round
 trip, which the host performs with `buildJudgeBody`/`parseJudgements`.
+
+## Streaming drivers
+
+`runFill` and `runCheck` run the demo cut of the pipelines inside wasm
+and forward the core `ProgressEvent` stream from `crates/intl-ai-core`
+(`run_started`, `batch_started`, `batch_finished`, `key_done`, `finding`,
+`locale_finished`, `run_finished`) to a host callback as plain JS objects:
+
+```ts
+runFill(
+  {
+    source, // source locale file text (JSON or YAML)
+    target, // optional existing target file text
+    sourceLocale,
+    targetLocale,
+    model,
+    batchSize, // optional, default 20
+  },
+  translate, // (chatCompletionsBody) => Promise<contentString>
+  onEvent, // (event: {type: string, ...}) => void
+); // -> Promise<{filled, output, failures}>
+
+runCheck(
+  {
+    source,
+    target, // target = file text to check (e.g. fill output)
+    sourceLocale,
+    targetLocale,
+    model,
+    checkIds, // ["icu", "placeholder-parity", "dialect:<locale>"]
+    judgeItems, // optional [{key, locale, source, translation}]
+  },
+  judge, // same transport shape as translate, or null
+  onEvent,
+); // -> Promise<{findings, judgements, errors}>
+```
+
+The transport callbacks keep IO host-side: the host posts the body to
+`{baseUrl}/chat/completions` and resolves `choices[0].message.content`.
+A rejected promise terminal-fails that batch's keys; later batches still
+run, matching the CLI's per-batch failure policy.
 
 ## Differences from the CLI
 
