@@ -5,6 +5,7 @@ use crate::diff::{CheckFinding, effective_origin};
 use crate::error::{Error, ErrorType, Result};
 use crate::flatten::{FlatMap, flatten, set_nested};
 use crate::lockfile::{Entry, Origin, Shard, ShardLock, load_shard, save_shard};
+use crate::progress::{KeyOutcome, Pipeline, Progress, ProgressEvent};
 use crate::selector::KeySelector;
 use crate::stat_cache::StatCache;
 use crate::transport::{TranslateRequest, Translated, TranslationEntry, Transport};
@@ -24,6 +25,9 @@ pub struct FillOptions {
     pub dry_run: bool,
     /// Skip the stat-cache read/write for this run.
     pub no_cache: bool,
+    /// Incremental event sink (progress UI, FFI/WASM forwarding).
+    /// `None` drops every event.
+    pub observer: Option<std::sync::Arc<dyn Progress>>,
 }
 
 #[derive(Debug, Serialize)]
@@ -134,6 +138,13 @@ pub fn fill(
         _ => cfg.config.targets.clone(),
     };
 
+    static NOOP: crate::progress::NoopProgress = crate::progress::NoopProgress;
+    let obs: &dyn Progress = opts.observer.as_deref().unwrap_or(&NOOP);
+    obs.on_event(ProgressEvent::RunStarted {
+        pipeline: Pipeline::Fill,
+        locales: locales.clone(),
+    });
+
     let mut report = FillReport {
         locales: BTreeMap::new(),
         failures: Vec::new(),
@@ -162,10 +173,15 @@ pub fn fill(
             transport,
             opts,
             gate,
+            obs,
         ) {
             Ok((res, failures)) => {
-                report.locales.insert(locale, res);
+                report.locales.insert(locale.clone(), res);
                 report.failures.extend(failures);
+                obs.on_event(ProgressEvent::LocaleFinished {
+                    pipeline: Pipeline::Fill,
+                    locale,
+                });
             }
             Err(e) => {
                 // Corrupt/locked shard, bad locale file, IO failure:
@@ -175,7 +191,7 @@ pub fn fill(
                     return Err(e);
                 }
                 report.failures.push(FillFailure {
-                    locale,
+                    locale: locale.clone(),
                     key: None,
                     kind: match &e {
                         Error::Transport { kind, .. } => *kind,
@@ -183,12 +199,21 @@ pub fn fill(
                     },
                     message: e.to_string(),
                 });
+                obs.on_event(ProgressEvent::LocaleFinished {
+                    pipeline: Pipeline::Fill,
+                    locale,
+                });
             }
         }
     }
     if !opts.dry_run && !opts.no_cache {
         cache.save(&cfg.cache_path());
     }
+    obs.on_event(ProgressEvent::RunFinished {
+        pipeline: Pipeline::Fill,
+        locales: report.locales.len(),
+        failures: report.failures.len(),
+    });
     Ok(report)
 }
 
@@ -202,6 +227,7 @@ fn fill_locale(
     transport: &dyn Transport,
     opts: &FillOptions,
     gate: Option<&Gate>,
+    obs: &dyn Progress,
 ) -> Result<(LocaleFillResult, Vec<FillFailure>)> {
     let mut res = LocaleFillResult::empty();
     let target_path = cfg.locale_path(locale)?;
@@ -296,6 +322,11 @@ fn fill_locale(
         // batchSize applies to the initial pass too (plan 5.3.3).
         let batch_size = cfg.config.batch_size.unwrap_or(usize::MAX).max(1);
         for chunk in wanted.chunks(batch_size) {
+            obs.on_event(ProgressEvent::BatchStarted {
+                locale: locale.to_string(),
+                keys: chunk.len(),
+                attempt: 0,
+            });
             let req = TranslateRequest {
                 source_locale: cfg.config.source.clone(),
                 target_locale: locale.to_string(),
@@ -320,12 +351,24 @@ fn fill_locale(
                         Error::Transport { kind, .. } => *kind,
                         _ => ErrorType::Unknown,
                     };
+                    obs.on_event(ProgressEvent::BatchFinished {
+                        locale: locale.to_string(),
+                        attempt: 0,
+                        answered: 0,
+                        failed: chunk.len(),
+                    });
                     for key in chunk {
+                        let message = e.to_string();
                         failures.push(FillFailure {
                             locale: locale.to_string(),
                             key: Some(key.clone()),
                             kind,
-                            message: e.to_string(),
+                            message: message.clone(),
+                        });
+                        obs.on_event(ProgressEvent::KeyDone {
+                            locale: locale.to_string(),
+                            key: key.clone(),
+                            outcome: KeyOutcome::Failed { kind, message },
                         });
                     }
                     continue;
@@ -341,6 +384,12 @@ fn fill_locale(
                 .filter(|t| chunk_keys.contains(t.key.as_str()))
                 .collect();
             let answered: HashSet<String> = translations.iter().map(|t| t.key.clone()).collect();
+            obs.on_event(ProgressEvent::BatchFinished {
+                locale: locale.to_string(),
+                attempt: 0,
+                answered: answered.len(),
+                failed: chunk.len() - answered.len(),
+            });
             let outcome = gate_rounds(
                 gate,
                 locale,
@@ -352,6 +401,7 @@ fn fill_locale(
                 &mut translations,
                 &mut res,
                 &mut failures,
+                obs,
             );
             for f in outcome.unresolved.values().flatten() {
                 res.unresolved.push(f.clone());
@@ -362,21 +412,30 @@ fn fill_locale(
                     // and it is a failure (output_truncated), not a silent
                     // skip: a provider that drops keys fails the run.
                     res.omitted.push(key.clone());
+                    let message = "provider returned no translation for this key".to_string();
                     failures.push(FillFailure {
                         locale: locale.to_string(),
                         key: Some(key.clone()),
                         kind: ErrorType::OutputTruncated,
-                        message: "provider returned no translation for this key".into(),
+                        message: message.clone(),
+                    });
+                    obs.on_event(ProgressEvent::KeyDone {
+                        locale: locale.to_string(),
+                        key: key.clone(),
+                        outcome: KeyOutcome::Failed {
+                            kind: ErrorType::OutputTruncated,
+                            message,
+                        },
                     });
                 }
             }
             for t in translations {
                 res.translated += 1;
-                if shard
+                let regenerated_human = shard
                     .entries
                     .get(&t.key)
-                    .is_some_and(|e| e.origin == Origin::Human)
-                {
+                    .is_some_and(|e| e.origin == Origin::Human);
+                if regenerated_human {
                     res.regenerated_human += 1;
                 }
                 if !opts.dry_run {
@@ -404,6 +463,16 @@ fn fill_locale(
                     },
                 );
                 res.written += 1;
+                obs.on_event(ProgressEvent::KeyDone {
+                    locale: locale.to_string(),
+                    key: t.key.clone(),
+                    outcome: KeyOutcome::Written {
+                        origin: Origin::Ai,
+                        regenerated_human,
+                        unresolved: outcome.unresolved.get(&t.key).map_or(0, Vec::len),
+                        scores: outcome.scores.get(&t.key).cloned().unwrap_or_default(),
+                    },
+                });
             }
         }
     }
@@ -444,6 +513,7 @@ fn gate_rounds(
     translations: &mut [Translated],
     res: &mut LocaleFillResult,
     failures: &mut Vec<FillFailure>,
+    obs: &dyn Progress,
 ) -> GateOutcome {
     let Some(g) = gate.filter(|g| !g.checks.is_empty()) else {
         return GateOutcome::default();
@@ -536,16 +606,29 @@ fn gate_rounds(
             feedback,
             syntax_hint: Some(hint.to_string()),
         };
+        obs.on_event(ProgressEvent::BatchStarted {
+            locale: locale.to_string(),
+            keys: by_key.len(),
+            attempt: round + 1,
+        });
         match transport.translate(&req) {
             Ok(resp) => {
                 // Adopt corrections only for keys that actually failed —
                 // an over-eager provider must not touch the rest.
+                let mut adopted = 0usize;
                 for t in resp.translations {
                     if let Some(existing) = translations.iter_mut().find(|x| x.key == t.key) {
                         existing.value = t.value;
                         res.refilled += 1;
+                        adopted += 1;
                     }
                 }
+                obs.on_event(ProgressEvent::BatchFinished {
+                    locale: locale.to_string(),
+                    attempt: round + 1,
+                    answered: adopted,
+                    failed: 0,
+                });
             }
             Err(e) => {
                 // The refill itself failed: adopt the rejected values and
@@ -559,6 +642,12 @@ fn gate_rounds(
                     key: None,
                     kind,
                     message: format!("gate refill: {e}"),
+                });
+                obs.on_event(ProgressEvent::BatchFinished {
+                    locale: locale.to_string(),
+                    attempt: round + 1,
+                    answered: 0,
+                    failed: by_key.len(),
                 });
                 outcome.unresolved = by_key;
                 return outcome;

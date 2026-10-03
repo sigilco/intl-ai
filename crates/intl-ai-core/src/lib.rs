@@ -13,6 +13,7 @@ pub mod flatten;
 pub mod hash;
 pub mod lockfile;
 pub mod ops;
+pub mod progress;
 pub mod report;
 pub mod selector;
 pub mod stat_cache;
