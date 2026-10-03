@@ -98,7 +98,7 @@
 <div class="flex h-dvh flex-col bg-base-100 text-base-content">
   <header class="flex items-baseline gap-3 px-4 pt-3">
     <h1 class="text-base font-semibold tracking-tight">intl-ai studio</h1>
-    <span class="font-mono text-xs text-base-content/40">
+    <span class="font-mono text-xs text-base-content/60">
       wasm pipeline · web demo
     </span>
     <span
@@ -110,9 +110,9 @@
     </span>
   </header>
 
-  <div class="px-4 pt-2">
+  <section aria-label="Provider configuration" class="px-4 pt-2">
     <ProviderConfig />
-  </div>
+  </section>
 
   <main
     class="grid min-h-0 flex-1 grid-cols-1 gap-3 px-4 pt-3 pb-2 lg:grid-cols-2"
@@ -140,7 +140,7 @@
   </main>
 
   <footer
-    class="flex items-center border-t border-base-300 px-4 py-1.5 font-mono text-[11px] text-base-content/40"
+    class="flex items-center border-t border-base-300 px-4 py-1.5 font-mono text-[11px] text-base-content/60"
   >
     <span>intl-ai · crates/intl-ai-wasm · {phase}</span>
   </footer>

@@ -105,7 +105,7 @@
 
   <details class="group mx-3 mt-2">
     <summary
-      class="cursor-pointer font-mono text-[11px] text-base-content/40 select-none hover:text-base-content/70"
+      class="cursor-pointer font-mono text-[11px] text-base-content/60 select-none hover:text-base-content/70"
     >
       existing translations + instruction (optional)
     </summary>
@@ -136,7 +136,7 @@
   <div class="m-3 min-h-0 flex-1 overflow-y-auto rounded-field border border-base-300 bg-base-100">
     {#if rows.length === 0}
       <div
-        class="flex h-full flex-col items-center justify-center gap-1 text-center text-base-content/40"
+        class="flex h-full flex-col items-center justify-center gap-1 text-center text-base-content/60"
       >
         <p class="text-sm">Nothing generated yet</p>
         <p class="text-xs">
@@ -169,7 +169,7 @@
             </button>
             {#if expanded[row.key]}
               <div class="space-y-1 px-3 pb-2 text-xs">
-                <p class="text-base-content/50">
+                <p class="text-base-content/60">
                   source: <span class="font-mono">{row.source}</span>
                 </p>
                 {#if row.judge}
@@ -188,7 +188,7 @@
                   </p>
                 {/each}
                 {#if !row.judge && row.findings.length === 0}
-                  <p class="text-base-content/40">no findings</p>
+                  <p class="text-base-content/60">no findings</p>
                 {/if}
               </div>
             {/if}
@@ -206,7 +206,7 @@
     >
       {copied ? "copied" : "copy"}
     </button>
-    <span class="truncate font-mono text-xs text-base-content/40">
+    <span class="truncate font-mono text-xs text-base-content/60">
       {statusLine}{progress.total > 0 && phase === "fill" ? ` ${pct}%` : ""}
     </span>
   </div>
