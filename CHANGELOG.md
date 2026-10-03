@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- package svelte studio as the /demo/ page (#105)
 - add jvm and android packages (#94)
 - SwiftPM package + async fill/check to develop (#98)
 - add intl-ai-wasm crate and browser demo (#91)
@@ -16,9 +17,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - pipeline progress observer hook (#95)
 - pluggable locale formats via exec plugins (#92)
 
+### Removed
+
+- drop migrate subcommand; migrations are docs-only (#104)
+
 ### Documentation
 
+- migrate site references to intl-ai.illo.fyi (#103)
+- point backlog at org project board (#100)
 - 0.4.x to 1.x migration guide (#89)
+
+### Maintenance
+
+- v0.7.0 release hygiene (changelog, docs, release notes) (#101)
 
 ## [0.6.0] - 2026-09-30
 
