@@ -110,27 +110,40 @@ pub fn serialize(shard: &Shard) -> Result<String> {
 /// Missing shard -> empty v1 shard. Corrupt/unreadable -> hard error
 /// (origin data is unrecoverable, never silently regenerate).
 pub fn load_shard(locale_dir: &Path, locale: &str) -> Result<Shard> {
-    let path = shard_path(locale_dir, locale);
-    match fs::read_to_string(&path) {
+    load_shard_at(&shard_path(locale_dir, locale))
+}
+
+/// Path-based variant of `load_shard` for per-document shards
+/// (`intl-ai-docs` keeps one shard per document under its own
+/// `intl-ai-docs.lock.d/` tree).
+pub fn load_shard_at(path: &Path) -> Result<Shard> {
+    match fs::read_to_string(path) {
         Ok(text) => {
             toml::from_str(&text).map_err(|e| Error::Lockfile(format!("{}: {e}", path.display())))
         }
         Err(e) if e.kind() == std::io::ErrorKind::NotFound => Ok(Shard::default()),
-        Err(source) => Err(Error::Io { path, source }),
+        Err(source) => Err(Error::Io {
+            path: path.to_path_buf(),
+            source,
+        }),
     }
 }
 
 /// Idempotent write: skips when serialized bytes already match on-disk.
 /// Returns whether the file was (re)written.
 pub fn save_shard(locale_dir: &Path, locale: &str, shard: &Shard) -> Result<bool> {
-    let path = shard_path(locale_dir, locale);
+    save_shard_at(&shard_path(locale_dir, locale), shard)
+}
+
+/// Path-based variant of `save_shard`; same idempotent-write semantics.
+pub fn save_shard_at(path: &Path, shard: &Shard) -> Result<bool> {
     let body = serialize(shard)?;
-    if let Ok(existing) = fs::read_to_string(&path) {
+    if let Ok(existing) = fs::read_to_string(path) {
         if existing == body {
             return Ok(false);
         }
     }
-    write_atomic(&path, body.as_bytes()).map_err(Error::Format)?;
+    write_atomic(path, body.as_bytes()).map_err(Error::Format)?;
     Ok(true)
 }
 

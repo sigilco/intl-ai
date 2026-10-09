@@ -447,7 +447,7 @@ pub fn json_schema() -> serde_json::Value {
         .expect("schema serialization is infallible")
 }
 
-fn resolve(base: &Path, p: &Path) -> PathBuf {
+pub fn resolve(base: &Path, p: &Path) -> PathBuf {
     if p.is_absolute() {
         p.to_path_buf()
     } else {
@@ -945,7 +945,7 @@ fn validate(config: &IntlAiConfig) -> Result<()> {
 /// `${env:VAR}` / `${env:VAR:-default}` / `${env:VAR:?}` / `${file:PATH}` /
 /// `${VAR}` inside string values. Bare `$VAR` is deliberately unsupported
 /// (dollar signs are common in translated text).
-fn interpolate(v: &mut Value, base_dir: &Path) -> Result<()> {
+pub fn interpolate(v: &mut Value, base_dir: &Path) -> Result<()> {
     match v {
         Value::String(s) => {
             *s = interpolate_str(s, base_dir)?;
@@ -965,7 +965,7 @@ fn interpolate(v: &mut Value, base_dir: &Path) -> Result<()> {
     Ok(())
 }
 
-fn interpolate_str(s: &str, base_dir: &Path) -> Result<String> {
+pub fn interpolate_str(s: &str, base_dir: &Path) -> Result<String> {
     let mut out = String::with_capacity(s.len());
     let mut rest = s;
     while let Some(start) = rest.find("${") {

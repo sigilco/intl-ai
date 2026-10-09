@@ -19,17 +19,30 @@ pub const BUILTINS: &[&str] = &["icu", "placeholder-parity", "judge"];
 
 /// Build every configured `[[checks]]` entry.
 pub fn build(cfg: &ResolvedConfig) -> Result<Vec<Box<dyn Check>>> {
-    cfg.config
-        .checks
+    build_from(&cfg.config.checks, &cfg.config_dir)
+}
+
+/// `build` for pipelines with their own config (`intl-ai-docs`): the
+/// entry list plus the directory spec/exec paths resolve against.
+pub fn build_from(
+    entries: &[CheckEntry],
+    config_dir: &std::path::Path,
+) -> Result<Vec<Box<dyn Check>>> {
+    entries
         .iter()
-        .map(|entry| build_entry(cfg, entry))
+        .map(|entry| build_entry_at(config_dir, entry))
         .collect()
 }
 
 pub fn build_entry(cfg: &ResolvedConfig, entry: &CheckEntry) -> Result<Box<dyn Check>> {
-    // `cfg` only feeds the spec/exec filesystem branches below.
+    build_entry_at(&cfg.config_dir, entry)
+}
+
+/// Check-entry resolution given only the filesystem base directory.
+pub fn build_entry_at(config_dir: &std::path::Path, entry: &CheckEntry) -> Result<Box<dyn Check>> {
+    // `config_dir` only feeds the spec/exec filesystem branches below.
     #[cfg(not(any(feature = "spec", feature = "exec")))]
-    let _ = cfg;
+    let _ = config_dir;
     let weight = entry.weight.unwrap_or(1.0);
     if let Some(id) = &entry.id {
         return builtin_tuned(id, entry.threshold, weight);
@@ -40,7 +53,7 @@ pub fn build_entry(cfg: &ResolvedConfig, entry: &CheckEntry) -> Result<Box<dyn C
             let path = if spec_path.is_absolute() {
                 spec_path.clone()
             } else {
-                cfg.config_dir.join(spec_path)
+                config_dir.join(spec_path)
             };
             let mut c = spec::SpecCheck::load(&path)?;
             c.weight = weight;
@@ -63,7 +76,7 @@ pub fn build_entry(cfg: &ResolvedConfig, entry: &CheckEntry) -> Result<Box<dyn C
                     if p.is_absolute() {
                         p.clone()
                     } else {
-                        cfg.config_dir.join(p)
+                        config_dir.join(p)
                     }
                 }),
                 entry.timeout_ms,

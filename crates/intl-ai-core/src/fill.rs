@@ -217,29 +217,44 @@ pub fn fill(
     Ok(report)
 }
 
+/// Inputs the engine needs that a config normally resolves: kept as a
+/// plain struct so non-corpus pipelines (intl-ai-docs) can drive
+/// `fill_flat` without a `ResolvedConfig`.
+#[derive(Debug, Clone)]
+pub struct FlatCtx {
+    pub source_locale: String,
+    /// Style/dialect instruction resolved for the target locale.
+    pub instruction: Option<String>,
+    /// Fixed term -> translation pairs injected into the prompt.
+    pub glossary: BTreeMap<String, String>,
+    /// Max entries per translate request (`usize::MAX` = one request).
+    pub batch_size: usize,
+    /// Placeholder contract hint sent to the model.
+    pub syntax_hint: String,
+}
+
+/// The FlatMap engine shared by the catalog pipeline (`fill` on corpus
+/// files) and document pipelines (`intl-ai-docs` on document segments):
+/// reconciliation, adoption, GC, selection, batching, gate rounds, and
+/// lockfile mutation all live here; the caller owns file IO — reads the
+/// current `target` flat map, supplies `adopt` (which writes one adopted
+/// value into its own store and reports a destroyed path for the clobber
+/// list), and saves `shard` afterward.
 #[allow(clippy::too_many_arguments)]
-fn fill_locale(
-    cfg: &ResolvedConfig,
-    locale_dir: &Path,
+pub fn fill_flat(
     source: &FlatMap,
     src_hashes: &BTreeMap<String, String>,
+    target: &FlatMap,
+    adopt: &mut dyn FnMut(&str, &str) -> Option<String>,
+    shard: &mut Shard,
+    opts: &FillOptions,
+    cx: &FlatCtx,
     locale: &str,
     transport: &dyn Transport,
-    opts: &FillOptions,
     gate: Option<&Gate>,
     obs: &dyn Progress,
 ) -> Result<(LocaleFillResult, Vec<FillFailure>)> {
     let mut res = LocaleFillResult::empty();
-    let target_path = cfg.locale_path(locale)?;
-    let mut target_value = cfg
-        .format_registry()
-        .read(&target_path)?
-        .unwrap_or_else(|| Value::Object(Map::new()));
-    let target = flatten(&target_value);
-    // Hold the per-locale lock across load -> modify -> save so a second
-    // process cannot interleave a write into this read-modify-write cycle.
-    let _lock = ShardLock::acquire(&cfg.config_dir, locale)?;
-    let mut shard = load_shard(locale_dir, locale)?;
     let mut written_this_run = HashSet::new();
 
     // Positional reconciliation (plan 5.6): a recorded-AI value that no
@@ -266,7 +281,7 @@ fn fill_locale(
     }
 
     // Adoption: file keys with no entry are human-authored.
-    for (key, val) in &target {
+    for (key, val) in target {
         if source.contains_key(key) && !shard.entries.contains_key(key) {
             shard.entries.insert(
                 key.clone(),
@@ -295,7 +310,7 @@ fn fill_locale(
     let wanted: Vec<String> = source
         .keys()
         .filter(|k| opts.selector.matches(k))
-        .filter(|k| needs_translation(k, source, src_hashes, &target, &shard, opts))
+        .filter(|k| needs_translation(k, source, src_hashes, target, shard, opts))
         .cloned()
         .collect();
     res.requested = wanted.len();
@@ -317,18 +332,17 @@ fn fill_locale(
 
     let mut failures = Vec::new();
     if !wanted.is_empty() {
-        let instruction = cfg.instruction_for(locale);
-        let hint = cfg.syntax_hint().to_string();
+        let instruction = cx.instruction.clone();
+        let hint = cx.syntax_hint.clone();
         // batchSize applies to the initial pass too (plan 5.3.3).
-        let batch_size = cfg.config.batch_size.unwrap_or(usize::MAX).max(1);
-        for chunk in wanted.chunks(batch_size) {
+        for chunk in wanted.chunks(cx.batch_size) {
             obs.on_event(ProgressEvent::BatchStarted {
                 locale: locale.to_string(),
                 keys: chunk.len(),
                 attempt: 0,
             });
             let req = TranslateRequest {
-                source_locale: cfg.config.source.clone(),
+                source_locale: cx.source_locale.clone(),
                 target_locale: locale.to_string(),
                 entries: chunk
                     .iter()
@@ -337,7 +351,7 @@ fn fill_locale(
                         source: source[k].clone(),
                     })
                     .collect(),
-                glossary: cfg.config.glossary.clone(),
+                glossary: cx.glossary.clone(),
                 locale_instruction: instruction.clone(),
                 feedback: Default::default(),
                 syntax_hint: Some(hint.clone()),
@@ -393,7 +407,7 @@ fn fill_locale(
             let outcome = gate_rounds(
                 gate,
                 locale,
-                cfg,
+                cx,
                 source,
                 &instruction,
                 &hint,
@@ -438,12 +452,10 @@ fn fill_locale(
                 if regenerated_human {
                     res.regenerated_human += 1;
                 }
-                if !opts.dry_run {
-                    if let Some(path) =
-                        set_nested(&mut target_value, &t.key, Value::String(t.value.clone()))
-                    {
-                        res.clobbered.push(path);
-                    }
+                if !opts.dry_run
+                    && let Some(path) = adopt(&t.key, &t.value)
+                {
+                    res.clobbered.push(path);
                 }
                 written_this_run.insert(t.key.clone());
                 shard.entries.insert(
@@ -477,6 +489,45 @@ fn fill_locale(
         }
     }
 
+    Ok((res, failures))
+}
+
+#[allow(clippy::too_many_arguments)]
+fn fill_locale(
+    cfg: &ResolvedConfig,
+    locale_dir: &Path,
+    source: &FlatMap,
+    src_hashes: &BTreeMap<String, String>,
+    locale: &str,
+    transport: &dyn Transport,
+    opts: &FillOptions,
+    gate: Option<&Gate>,
+    obs: &dyn Progress,
+) -> Result<(LocaleFillResult, Vec<FillFailure>)> {
+    let target_path = cfg.locale_path(locale)?;
+    let mut target_value = cfg
+        .format_registry()
+        .read(&target_path)?
+        .unwrap_or_else(|| Value::Object(Map::new()));
+    let target = flatten(&target_value);
+    // Hold the per-locale lock across load -> modify -> save so a second
+    // process cannot interleave a write into this read-modify-write cycle.
+    let _lock = ShardLock::acquire(&cfg.config_dir, locale)?;
+    let mut shard = load_shard(locale_dir, locale)?;
+    let cx = FlatCtx {
+        source_locale: cfg.config.source.clone(),
+        instruction: cfg.instruction_for(locale),
+        glossary: cfg.config.glossary.clone(),
+        batch_size: cfg.config.batch_size.unwrap_or(usize::MAX).max(1),
+        syntax_hint: cfg.syntax_hint().to_string(),
+    };
+    let mut adopt = |k: &str, v: &str| -> Option<String> {
+        set_nested(&mut target_value, k, Value::String(v.to_string()))
+    };
+    let (res, failures) = fill_flat(
+        source, src_hashes, &target, &mut adopt, &mut shard, opts, &cx, locale, transport, gate,
+        obs,
+    )?;
     if !opts.dry_run {
         // Shard first, file second: a shard without the file degrades to
         // `missing` (the next fill heals it), while the reverse order
@@ -505,7 +556,7 @@ struct GateOutcome {
 fn gate_rounds(
     gate: Option<&Gate>,
     locale: &str,
-    cfg: &ResolvedConfig,
+    cx: &FlatCtx,
     source: &FlatMap,
     instruction: &Option<String>,
     hint: &str,
@@ -523,7 +574,7 @@ fn gate_rounds(
     }
     let mut outcome = GateOutcome::default();
     let ctx = CheckCtx {
-        source_locale: &cfg.config.source,
+        source_locale: &cx.source_locale,
         target_locale: locale,
         transport: Some(transport),
         locale_instruction: instruction.as_deref(),
@@ -592,7 +643,7 @@ fn gate_rounds(
             feedback.insert(key.clone(), format!("Previous attempt: {prev}\n{notes}"));
         }
         let req = TranslateRequest {
-            source_locale: cfg.config.source.clone(),
+            source_locale: cx.source_locale.clone(),
             target_locale: locale.to_string(),
             entries: by_key
                 .keys()
@@ -601,7 +652,7 @@ fn gate_rounds(
                     source: source[k].clone(),
                 })
                 .collect(),
-            glossary: cfg.config.glossary.clone(),
+            glossary: cx.glossary.clone(),
             locale_instruction: instruction.clone(),
             feedback,
             syntax_hint: Some(hint.to_string()),

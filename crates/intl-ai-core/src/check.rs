@@ -2,7 +2,7 @@ use crate::check_cache::{BATCH_KEY, CheckCache};
 use crate::config::{QualityConfig, ResolvedConfig};
 use crate::diff::{CheckFinding, FindingKind, LocaleDiff, QualityRecord, diff, effective_origin};
 use crate::error::Result;
-use crate::flatten::flatten;
+use crate::flatten::{FlatMap, flatten};
 use crate::hash::fingerprint;
 use crate::lockfile::{Origin, load_shard};
 use crate::progress::{Pipeline, Progress, ProgressEvent};
@@ -241,17 +241,6 @@ pub fn check(
             .map(|v| flatten(&v))
             .unwrap_or_default();
         let shard = load_shard(&locale_dir, &locale)?;
-        let mut d = diff(&source, &src_hashes, &target, &shard, &HashSet::new());
-
-        let items: Vec<CheckItem> = target
-            .iter()
-            .filter(|(key, _)| opts.selector.matches(key))
-            .map(|(key, value)| CheckItem {
-                key: key.clone(),
-                source: source.get(key).cloned(),
-                target: value.clone(),
-            })
-            .collect();
         let instruction = cfg.instruction_for(&locale);
         let ctx = CheckCtx {
             source_locale: &cfg.config.source,
@@ -259,129 +248,26 @@ pub fn check(
             transport,
             locale_instruction: instruction.as_deref(),
         };
-        let outcomes = run_checks(&locale, checks, &ctx, &items, &mut check_cache, &mut report);
-        for o in &outcomes {
-            d.invalid.extend(o.findings.iter().cloned());
-        }
-        if let Some(q) = &cfg.config.quality {
-            apply_quality(q, &outcomes, &items, &mut d);
-        }
-        if opts.selector.is_any() {
-            let live: std::collections::BTreeSet<String> =
-                items.iter().map(|i| i.key.clone()).collect();
-            check_cache.prune_locale(&locale, &live);
-        }
-
-        if let Some(origin) = opts.origin_filter {
-            // Keys with no lockfile entry are file-resident values the tool
-            // never wrote: effectively human.
-            let keep = |key: &String| {
-                shard
-                    .entries
-                    .get(key)
-                    .map(|e| effective_origin(e, target.get(key), &HashSet::new(), key))
-                    .unwrap_or(Origin::Human)
-                    == origin
-            };
-            d.stale.retain(&keep);
-            d.modified.retain(&keep);
-            d.invalid.retain(|f| keep(&f.key));
-            if origin == Origin::Ai {
-                d.unreviewed = shard
-                    .entries
-                    .iter()
-                    .filter(|(k, e)| {
-                        target.contains_key(*k)
-                            && !e.reviewed
-                            && effective_origin(e, target.get(*k), &HashSet::new(), k) == Origin::Ai
-                    })
-                    .map(|(k, _)| k.clone())
-                    .collect();
-            } else {
-                d.unreviewed = shard
-                    .entries
-                    .iter()
-                    .filter(|(k, e)| {
-                        target.contains_key(*k)
-                            && effective_origin(e, target.get(*k), &HashSet::new(), k)
-                                == Origin::Human
-                            && (!e.reviewed
-                                || (e.origin == Origin::Human && target.get(*k) != Some(&e.value)))
-                    })
-                    .map(|(k, _)| k.clone())
-                    .collect();
-            }
-        }
-
-        // `check --keys`: scope every finding bucket, not just the item
-        // batch the checks ran on.
-        d.missing.retain(|k| opts.selector.matches(k));
-        d.stale.retain(|k| opts.selector.matches(k));
-        d.modified.retain(|k| opts.selector.matches(k));
-        d.extra.retain(|k| opts.selector.matches(k));
-        d.unreviewed.retain(|k| opts.selector.matches(k));
-        d.unreviewed.sort();
-        d.unreviewed.dedup();
-        d.invalid.retain(|f| opts.selector.matches(&f.key));
-        d.quality.retain(|k, _| opts.selector.matches(k));
-
-        if !d.missing.is_empty()
-            || !d.stale.is_empty()
-            || !d.modified.is_empty()
-            || !d.extra.is_empty()
-            || !d.unreviewed.is_empty()
-            || !d.invalid.is_empty()
-        {
-            report.has_findings = true;
-        }
-
-        for (kind, keys) in [
-            (FindingKind::Missing, &d.missing),
-            (FindingKind::Stale, &d.stale),
-            (FindingKind::Modified, &d.modified),
-            (FindingKind::Extra, &d.extra),
-            (FindingKind::Unreviewed, &d.unreviewed),
-        ] {
-            for key in keys {
-                obs.on_event(ProgressEvent::Finding {
-                    locale: locale.clone(),
-                    kind,
-                    key: key.clone(),
-                    check: String::new(),
-                    message: String::new(),
-                    cached: false,
-                });
-            }
-        }
-        for f in &d.invalid {
-            obs.on_event(ProgressEvent::Finding {
-                locale: locale.clone(),
-                kind: FindingKind::Invalid,
-                key: f.key.clone(),
-                check: f.check.clone(),
-                message: f.message.clone(),
-                cached: f.cached,
-            });
-        }
-        obs.on_event(ProgressEvent::LocaleFinished {
-            pipeline: Pipeline::Check,
-            locale: locale.clone(),
-        });
-
-        for kind in fail_on {
-            let hit = match kind {
-                FindingKind::Missing => !d.missing.is_empty(),
-                FindingKind::Stale => !d.stale.is_empty(),
-                FindingKind::Invalid => !d.invalid.is_empty(),
-                FindingKind::Modified => !d.modified.is_empty(),
-                FindingKind::Extra => !d.extra.is_empty(),
-                FindingKind::Unreviewed => !d.unreviewed.is_empty(),
-            };
-            if hit {
-                report.has_issues = true;
-            }
-        }
-        report.locales.insert(locale, d);
+        let out = check_flat(
+            &locale,
+            &locale,
+            &source,
+            &src_hashes,
+            &target,
+            &shard,
+            &opts.selector,
+            opts.origin_filter,
+            fail_on,
+            checks,
+            &ctx,
+            cfg.config.quality.as_ref(),
+            &mut check_cache,
+            obs,
+        );
+        report.errors.extend(out.errors);
+        report.has_findings |= out.has_findings;
+        report.has_issues |= out.has_issues;
+        report.locales.insert(locale, out.diff);
     }
     if !report.errors.is_empty() {
         report.has_issues = true;
@@ -401,6 +287,186 @@ pub fn check(
     Ok(report)
 }
 
+/// One FlatMap unit's check outcome: the diff buckets, check-level
+/// errors, and the two gate flags the report ORs together.
+pub struct FlatCheckOutcome {
+    pub diff: LocaleDiff,
+    pub errors: Vec<String>,
+    pub has_findings: bool,
+    pub has_issues: bool,
+}
+
+/// Diff + checks for one (source, target, shard) triple, shared by the
+/// catalog `check` and document pipelines (`intl-ai-docs` runs it once
+/// per document per locale). IO-free: callers own file reads, shard
+/// loading, and cache persistence. `cache_scope` namespaces the
+/// incremental check cache (locale for catalogs, `locale/relpath` for
+/// documents).
+#[allow(clippy::too_many_arguments)]
+pub fn check_flat(
+    locale: &str,
+    cache_scope: &str,
+    source: &FlatMap,
+    src_hashes: &BTreeMap<String, String>,
+    target: &FlatMap,
+    shard: &crate::lockfile::Shard,
+    selector: &KeySelector,
+    origin_filter: Option<Origin>,
+    fail_on: &[FindingKind],
+    checks: &[Box<dyn Check>],
+    ctx: &CheckCtx,
+    quality: Option<&QualityConfig>,
+    check_cache: &mut CheckCache,
+    obs: &dyn Progress,
+) -> FlatCheckOutcome {
+    let mut out = FlatCheckOutcome {
+        diff: diff(source, src_hashes, target, shard, &HashSet::new()),
+        errors: Vec::new(),
+        has_findings: false,
+        has_issues: false,
+    };
+    let d = &mut out.diff;
+
+    let items: Vec<CheckItem> = target
+        .iter()
+        .filter(|(key, _)| selector.matches(key))
+        .map(|(key, value)| CheckItem {
+            key: key.clone(),
+            source: source.get(key).cloned(),
+            target: value.clone(),
+        })
+        .collect();
+    let outcomes = run_checks(
+        cache_scope,
+        checks,
+        ctx,
+        &items,
+        check_cache,
+        &mut out.errors,
+    );
+    for o in &outcomes {
+        d.invalid.extend(o.findings.iter().cloned());
+    }
+    if let Some(q) = quality {
+        apply_quality(q, &outcomes, &items, d);
+    }
+    if selector.is_any() {
+        let live: std::collections::BTreeSet<String> =
+            items.iter().map(|i| i.key.clone()).collect();
+        check_cache.prune_locale(cache_scope, &live);
+    }
+
+    if let Some(origin) = origin_filter {
+        // Keys with no lockfile entry are file-resident values the tool
+        // never wrote: effectively human.
+        let keep = |key: &String| {
+            shard
+                .entries
+                .get(key)
+                .map(|e| effective_origin(e, target.get(key), &HashSet::new(), key))
+                .unwrap_or(Origin::Human)
+                == origin
+        };
+        d.stale.retain(&keep);
+        d.modified.retain(&keep);
+        d.invalid.retain(|f| keep(&f.key));
+        if origin == Origin::Ai {
+            d.unreviewed = shard
+                .entries
+                .iter()
+                .filter(|(k, e)| {
+                    target.contains_key(*k)
+                        && !e.reviewed
+                        && effective_origin(e, target.get(*k), &HashSet::new(), k) == Origin::Ai
+                })
+                .map(|(k, _)| k.clone())
+                .collect();
+        } else {
+            d.unreviewed = shard
+                .entries
+                .iter()
+                .filter(|(k, e)| {
+                    target.contains_key(*k)
+                        && effective_origin(e, target.get(*k), &HashSet::new(), k) == Origin::Human
+                        && (!e.reviewed
+                            || (e.origin == Origin::Human && target.get(*k) != Some(&e.value)))
+                })
+                .map(|(k, _)| k.clone())
+                .collect();
+        }
+    }
+
+    // Scope every finding bucket, not just the item batch the checks
+    // ran on (`check --keys` / docs `--files` + `--keys`).
+    d.missing.retain(|k| selector.matches(k));
+    d.stale.retain(|k| selector.matches(k));
+    d.modified.retain(|k| selector.matches(k));
+    d.extra.retain(|k| selector.matches(k));
+    d.unreviewed.retain(|k| selector.matches(k));
+    d.unreviewed.sort();
+    d.unreviewed.dedup();
+    d.invalid.retain(|f| selector.matches(&f.key));
+    d.quality.retain(|k, _| selector.matches(k));
+
+    if !d.missing.is_empty()
+        || !d.stale.is_empty()
+        || !d.modified.is_empty()
+        || !d.extra.is_empty()
+        || !d.unreviewed.is_empty()
+        || !d.invalid.is_empty()
+    {
+        out.has_findings = true;
+    }
+
+    for (kind, keys) in [
+        (FindingKind::Missing, &d.missing),
+        (FindingKind::Stale, &d.stale),
+        (FindingKind::Modified, &d.modified),
+        (FindingKind::Extra, &d.extra),
+        (FindingKind::Unreviewed, &d.unreviewed),
+    ] {
+        for key in keys {
+            obs.on_event(ProgressEvent::Finding {
+                locale: locale.to_string(),
+                kind,
+                key: key.clone(),
+                check: String::new(),
+                message: String::new(),
+                cached: false,
+            });
+        }
+    }
+    for f in &d.invalid {
+        obs.on_event(ProgressEvent::Finding {
+            locale: locale.to_string(),
+            kind: FindingKind::Invalid,
+            key: f.key.clone(),
+            check: f.check.clone(),
+            message: f.message.clone(),
+            cached: f.cached,
+        });
+    }
+    obs.on_event(ProgressEvent::LocaleFinished {
+        pipeline: Pipeline::Check,
+        locale: locale.to_string(),
+    });
+
+    for kind in fail_on {
+        let hit = match kind {
+            FindingKind::Missing => !d.missing.is_empty(),
+            FindingKind::Stale => !d.stale.is_empty(),
+            FindingKind::Invalid => !d.invalid.is_empty(),
+            FindingKind::Modified => !d.modified.is_empty(),
+            FindingKind::Extra => !d.extra.is_empty(),
+            FindingKind::Unreviewed => !d.unreviewed.is_empty(),
+        };
+        if hit {
+            out.has_issues = true;
+        }
+    }
+    out
+}
+
 /// One check's outcome for the batch: replayed or fresh findings, any
 /// emitted scores, and the metadata `[quality]` aggregation needs
 /// (weight + whether the check scores at all).
@@ -417,12 +483,12 @@ struct CheckOutcome {
 /// exclude the check from quality aggregation entirely — an errored
 /// check never counts as coverage.
 fn run_checks(
-    locale: &str,
+    scope: &str,
     checks: &[Box<dyn Check>],
     ctx: &CheckCtx,
     items: &[CheckItem],
     cache: &mut CheckCache,
-    report: &mut CheckReport,
+    errors: &mut Vec<String>,
 ) -> Vec<CheckOutcome> {
     let mut outcomes = Vec::with_capacity(checks.len());
     for c in checks {
@@ -452,7 +518,7 @@ fn run_checks(
                     parts.extend([i.key.as_str(), i.source.as_deref().unwrap_or(""), &i.target]);
                 }
                 let fp = fingerprint(&parts);
-                if let Some(hit) = cache.get(locale, BATCH_KEY, c.id())
+                if let Some(hit) = cache.get(scope, BATCH_KEY, c.id())
                     && hit.fingerprint == fp
                 {
                     outcome.findings = hit.findings.iter().cloned().map(mark_cached).collect();
@@ -464,10 +530,10 @@ fn run_checks(
                     Ok(out) => {
                         outcome.findings.clone_from(&out.findings);
                         outcome.scores.clone_from(&out.scores);
-                        cache.put(locale, BATCH_KEY, c.id(), fp, out);
+                        cache.put(scope, BATCH_KEY, c.id(), fp, out);
                         outcomes.push(outcome);
                     }
-                    Err(e) => report.errors.push(format!("{locale}/{}: {e}", c.id())),
+                    Err(e) => errors.push(format!("{scope}/{}: {e}", c.id())),
                 }
             }
             CheckGranularity::PerKey => {
@@ -481,7 +547,7 @@ fn run_checks(
                         &item.target,
                     ]);
                     let fp = fingerprint(&parts);
-                    if let Some(hit) = cache.get(locale, &item.key, c.id())
+                    if let Some(hit) = cache.get(scope, &item.key, c.id())
                         && hit.fingerprint == fp
                     {
                         outcome
@@ -522,14 +588,14 @@ fn run_checks(
                                         .map(|s| BTreeMap::from([(key.clone(), *s)]))
                                         .unwrap_or_default(),
                                 };
-                                cache.put(locale, &key, c.id(), fp, single);
+                                cache.put(scope, &key, c.id(), fp, single);
                             }
                         }
                         Err(e) => {
                             // Fresh-run error: cached hits stay (they are
                             // still valid replays), the errored slice just
                             // contributes nothing this run.
-                            report.errors.push(format!("{locale}/{}: {e}", c.id()));
+                            errors.push(format!("{scope}/{}: {e}", c.id()));
                         }
                     }
                 }
