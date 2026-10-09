@@ -1,0 +1,225 @@
+version = 1
+
+[entries."h:0342483c8d9e"]
+value = "Carga de configuración (`intl-ai.toml`/`.json`/`.yaml`), interpolación, fragmentos de lockfile (`intl-ai.lock.d/`), procedencia."
+source_hash = "0342483c8d9e6a5f12ccd478c348f67b8d5467f3"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:29:03Z"
+
+[entries."h:078b11495ce1"]
+value = "Marco de validación: `icu`, `placeholder-parity`, `dialect`, `judge`, especificaciones declarativas, `exec` comprobaciones, la caché de hallazgos incrementales."
+source_hash = "078b11495ce1edfbafdf96463ce9132c2e890192"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:29:03Z"
+
+[entries."h:162e82b996b0"]
+value = "El contrato de configuración se genera a partir de los tipos de Rust y se confirma en `docs/public/schema/intl-ai.schema.json`; `docs/public/schema/v1.json` es la copia publicada. CI falla ante la deriva, así que edita los tipos y vuelve a generar con `intl-ai config schema`."
+source_hash = "162e82b996b00a368914b5b9552ad9d3fe147d80"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:29:03Z"
+
+[entries."h:17d77d5a3375"]
+value = "`crates/intl-ai-cli`"
+source_hash = "17d77d5a33756175f22a949b417ddcf2208fe4c5"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:29:03Z"
+
+[entries."h:1e03c94ffac7"]
+value = "`cargo dist` genera el flujo de trabajo de lanzamiento: la etiqueta `vX.Y.Z` produce los tarballs de plataforma, `intl-ai-installer.sh`/`.ps1`, una fórmula de Homebrew, la publicación del wrapper de npm, y las attestaciones de GitHub. Consulte [Versioning in AGENTS.md](https://github.com/sigilco/intl-ai/blob/develop/AGENTS.md#versioning)."
+source_hash = "1e03c94ffac74040340e06a72390c48aba8f32d6"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:29:03Z"
+
+[entries."h:1ea96492e0a2"]
+value = "Distribución del espacio de trabajo"
+source_hash = "1ea96492e0a2a5aedc1b63aa01d15b1f0961a466"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:29:03Z"
+
+[entries."h:231eb994783f"]
+value = "Formatos de archivo de configuración regional: JSON y YAML, aplanar/desaplanar, caché de estadísticas."
+source_hash = "231eb994783fb9a69afca80aab85b1f7971c86ec"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:29:03Z"
+
+[entries."h:24e400fffcbd"]
+value = "`packages/next` (`@intl-ai/next`)"
+source_hash = "24e400fffcbd99373e68cf3f5c6cc69a8dabf3b0"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:29:03Z"
+
+[entries."h:25b02b6fb619"]
+value = "`packages/unplugin` (`@intl-ai/unplugin`)"
+source_hash = "25b02b6fb6192b3298a7a837ab47878320533aaf"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:29:03Z"
+
+[entries."h:25e29230f235"]
+value = "`crates/intl-ai-formats`"
+source_hash = "25e29230f235fa758de2c61ba0981642bc018fb3"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:29:03Z"
+
+[entries."h:359dde20bb08"]
+value = "Transportes: `http` (compatible con OpenAI), `command` (agentes locales), `replay` (cintas). Contrato de prompt + reintentos."
+source_hash = "359dde20bb081b3149db9c790dd743796439c2c2"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:29:03Z"
+
+[entries."h:3b1cc2e93d97"]
+value = "Cómo está estructurado intl-ai. Los crates núcleo de Rust, el binario y los shims de npm."
+source_hash = "3b1cc2e93d9728139cda315420287e25db627c92"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:29:03Z"
+
+[entries."h:4719895991d1"]
+value = "Esquema de configuración"
+source_hash = "4719895991d161115eaa92299ff5190275f42cf7"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:29:03Z"
+
+[entries."h:4a22fd4a0ee7"]
+value = "`crates/intl-ai-providers`"
+source_hash = "4a22fd4a0ee76dc9b3f3e609ada140c7bab47082"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:29:03Z"
+
+[entries."h:58320b5bd6da"]
+value = "`withIntlAi()` envoltorio de configuración. Ejecuta la canalización durante la evaluación de `next.config`, antes de webpack o Turbopack."
+source_hash = "58320b5bd6da7db1c883aa227572497ba6a59845"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:29:03Z"
+
+[entries."h:609ebd77433d"]
+value = "Entrega del binario: la instalación posterior descarga el tarball de la plataforma desde GitHub Releases. Los shims lo resuelven mediante `createRequire`."
+source_hash = "609ebd77433d6bbe043cca87dcf4d983ce5b44ba"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:29:03Z"
+
+[entries."h:653edb0bfdb6"]
+value = "Internos"
+source_hash = "653edb0bfdb6bd20dfe7affb5776bc7d271237c7"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:29:03Z"
+
+[entries."h:6fc65090d7a2"]
+value = "Shim de empaquetador (vite, webpack, rollup, esbuild, rspack, rolldown, farm, bun). Ejecuta la canalización en `buildStart`."
+source_hash = "6fc65090d7a278b864d7aaab8aaafe423a8ad197"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:29:03Z"
+
+[entries."h:7431e3df243c"]
+value = "Paquete"
+source_hash = "7431e3df243c5be33cffa0b28ca2a76b93f0538c"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:29:03Z"
+
+[entries."h:82ebf9dc886f"]
+value = "`intl-ai` (npm)"
+source_hash = "82ebf9dc886ffe7a0adcdaeacce6d5b7a169eee5"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:29:03Z"
+
+[entries."h:8606394dc106"]
+value = "`crates/intl-ai-checks`"
+source_hash = "8606394dc106bf8ffdca37c3d9581b5f86d761b7"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:29:13Z"
+
+[entries."h:90d6493bb6a4"]
+value = "Plugin de configuración de Expo. Ejecuta el pipeline durante `expo prebuild`/`eas build`."
+source_hash = "90d6493bb6a4e9ab0f27162d6ba9a28da3c48ca1"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:29:13Z"
+
+[entries."h:95446c2bad97"]
+value = "El motor de traducción es un workspace de Rust; los paquetes de npm son shims delgados que generan el binario."
+source_hash = "95446c2bad97a2cab1ccbf5f4735bbf66a14d367"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:29:13Z"
+
+[entries."h:99fa41d6c0a6"]
+value = "`crates/intl-ai-core`"
+source_hash = "99fa41d6c0a693dbb9bc5df5257f7a885987544c"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:29:13Z"
+
+[entries."h:a0fb821bdaf9"]
+value = "Propósito"
+source_hash = "a0fb821bdaf93ed9a1f1e920acfb2840eff5b153"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:29:13Z"
+
+[entries."h:bbe161c41556"]
+value = "El binario `intl-ai`: `fill`, `check`, `mark`, `review`, `status`, `lockfile`, `config`."
+source_hash = "bbe161c41556b9692fb7977fb0fba197412b9d75"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:29:13Z"
+
+[entries."h:d228333cb192"]
+value = "`packages/expo` (`@intl-ai/expo`)"
+source_hash = "d228333cb1923ec0d7bc6603694a5f4a6594c3ed"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:29:13Z"
+
+[entries."h:f75e644913a0"]
+value = "Canalización de lanzamiento"
+source_hash = "f75e644913a07c972fc72fa7e4b0a5a09ec5a507"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:29:13Z"

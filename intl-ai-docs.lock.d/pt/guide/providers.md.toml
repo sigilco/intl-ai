@@ -1,0 +1,329 @@
+version = 1
+
+[entries."h:00452cdfc613"]
+value = "`base_url`"
+source_hash = "00452cdfc613eda7feb50fe6accaa89685e93570"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T18:27:39Z"
+
+[entries."h:078c12ee1348"]
+value = "Um cassino JSON de traduções predefinidas, para testes e demonstrações. Sem rede, sem credenciais, saída determinística."
+source_hash = "078c12ee13488cfc8a5ad8e6a43d97cb01c7c60c"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T18:27:39Z"
+
+[entries."h:0f33a36e5fc5"]
+value = "`cwd`"
+source_hash = "0f33a36e5fc5d969b0a44d783191cf25a43da4eb"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T18:27:39Z"
+
+[entries."h:111d2e097ce4"]
+value = "O contrato do prompt"
+source_hash = "111d2e097ce45c1beddf921c5be415e1c249620f"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T18:27:39Z"
+
+[entries."h:126962a83dbe"]
+value = "Referência do fornecedor intl-ai. Transportes HTTP (compatível com OpenAI), comandos (agentes CLI locais) e transportes de reprodução."
+source_hash = "126962a83dbef5e16938eb3b808fc6b6de2f6f14"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T18:27:39Z"
+
+[entries."h:226bc6db348c"]
+value = 'Cada transporte responde ao mesmo prompt: as chaves planas da localidade de origem mais instruções, termos do glossário e o contrato de marcadores de posição (`processor = "icu"` exige ICU MessageFormat). A resposta deve ser um objeto JSON de traduções. `fill` analisa-o rigorosamente; a verificação `judge` avalia a qualidade através do mesmo transporte.'
+source_hash = "226bc6db348c598eefa6125c76e1eabaed216054"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T18:27:39Z"
+
+[entries."h:239523dd3ef8"]
+value = "Orçamento de relógio de parede antes do SIGTERM, depois do SIGKILL (predefinição 300000)."
+source_hash = "239523dd3ef8ed61a3c9d136c7ac0821390317fa"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T18:27:39Z"
+
+[entries."h:2571f7259af0"]
+value = "`model_params`"
+source_hash = "2571f7259af006ad38e2df1c9afd7d6176ea922c"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T18:27:39Z"
+
+[entries."h:293b69d2fc7b"]
+value = "Consulte [Configuração](/guide/configuration/) para o esquema completo."
+source_hash = "293b69d2fc7ba567836fb7fbdce2e4769b253598"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T18:27:39Z"
+
+[entries."h:2c0efb9a2e78"]
+value = "`prompt_via`"
+source_hash = "2c0efb9a2e789403c0b1df3fd179fda44582a180"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T18:27:39Z"
+
+[entries."h:35db0fde53f2"]
+value = "intl-ai traduz chaves de localidade chamando um modelo de IA. O bloco `[provider]` em `intl-ai.toml` seleciona o transporte; tudo o resto (contrato do prompt, agrupamento, tentativas, o juiz) é partilhado."
+source_hash = "35db0fde53f25b04703701a35569cb6781445095"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T18:27:39Z"
+
+[entries."h:3fa089811cce"]
+value = "Nome predefinido da forma de transmissão; predefinição como `openai`."
+source_hash = "3fa089811ccee51932aaa8c0985cf646203d01cb"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T18:27:39Z"
+
+[entries."h:48c1540191d1"]
+value = "Um ponto final de conclusões de chat compatível com OpenAI. A superfície mais ampla: OpenAI, OpenRouter, LM Studio, Ollama, vLLM, Azure OpenAI e a maioria dos fornecedores alojados expõem esta forma."
+source_hash = "48c1540191d1dee2103fd4cd0715189640d194eb"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T18:27:39Z"
+
+[entries."h:4bc3c913ee85"]
+value = '`kind = "replay"`'
+source_hash = "4bc3c913ee85fbe35eea1c6a24e6f6178e161c4c"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T18:27:39Z"
+
+[entries."h:4e9eb188ed9b"]
+value = "Executa um agente CLI local e lê as traduções de volta a partir do seu stdout. Utilize isto para fornecedores com uma forma de transmissão diferente, agentes CLI que já possui (um predefinição `agent` nomeia um conhecido), ou ferramentas personalizadas."
+source_hash = "4e9eb188ed9b9123b6595a831384141a96e4592a"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T18:27:39Z"
+
+[entries."h:55f8ebc805e6"]
+value = "Descrição"
+source_hash = "55f8ebc805e65b5b71ddafdae390e3be2bcd69af"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T18:27:39Z"
+
+[entries."h:640b65cd97d8"]
+value = "Nome predefinido da tabela interna de agentes (kebab-case)."
+source_hash = "640b65cd97d8b0e569e21de38bf330379348eaae"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T18:27:39Z"
+
+[entries."h:67df9c734f75"]
+value = "`agent`"
+source_hash = "67df9c734f7510e522ea1c0e2bcdbb9cd96354bd"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T18:27:39Z"
+
+[entries."h:6c40cb29392f"]
+value = "`stdin` (predefinição) ou `argv`."
+source_hash = "6c40cb29392f945c64fb8bf4ca235cc737948fbf"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T18:27:39Z"
+
+[entries."h:6daa8c50436d"]
+value = "`command`"
+source_hash = "6daa8c50436df9440146df346db2369dd4c83e8e"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T18:27:39Z"
+
+[entries."h:70ebb55ec47a"]
+value = "Identificador do modelo enviado no corpo da requisição."
+source_hash = "70ebb55ec47ad9230dc24c3500cd6210ce37d752"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T18:28:01Z"
+
+[entries."h:726e01cad8c1"]
+value = "Diretório de trabalho, resolvido em relação ao diretório do arquivo de configuração."
+source_hash = "726e01cad8c1f2ee9c490873caf29bd2d13ee417"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T18:28:01Z"
+
+[entries."h:7da17a6b7096"]
+value = "`api_key`"
+source_hash = "7da17a6b7096e806a80e8216501d858ebb4db7a9"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T18:28:01Z"
+
+[entries."h:7ef262ad7753"]
+value = "`provider`"
+source_hash = "7ef262ad7753eaf0de295a12cfe96a13687f690e"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T18:28:01Z"
+
+[entries."h:87b7c08baed1"]
+value = "Fornecedores"
+source_hash = "87b7c08baed1c8e93db95b79bcdca55b631dd7bb"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T18:28:01Z"
+
+[entries."h:8ec2753d082a"]
+value = "Substituição de endpoint; padrão para o URL canónico do provedor."
+source_hash = "8ec2753d082ad5d119036c21e7bbbfbb9f950e89"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T18:28:01Z"
+
+[entries."h:989e4726e12d"]
+value = "Parâmetros extra do corpo da requisição, espalhados por último para que prevaleçam."
+source_hash = "989e4726e12da152918c1b1d54105f7ab359e730"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T18:28:01Z"
+
+[entries."h:98bb20a7abe3"]
+value = "`max_stdout_bytes`"
+source_hash = "98bb20a7abe3e8554f68840cfb885d7455bf25ec"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T18:28:01Z"
+
+[entries."h:b12bf8d1cfe9"]
+value = "Porque `command` pode gerar programas arbitrários, é recusado em arquivos de configuração `extends`-ed: dados de uma dependência não devem executar código."
+source_hash = "b12bf8d1cfe9471e4d8aaa03dd0ac960b9454a25"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T18:28:01Z"
+
+[entries."h:b44f37d6e95a"]
+value = "`args`"
+source_hash = "b44f37d6e95ab93c70a5a934889ab07822393804"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T18:28:01Z"
+
+[entries."h:beef9c7cb95f"]
+value = '`kind = "http"`'
+source_hash = "beef9c7cb95f800aad7c7c52f8af2f0bef8431ce"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T18:28:01Z"
+
+[entries."h:c1b226958e89"]
+value = "`timeout_ms`"
+source_hash = "c1b226958e89cedd3461f6f25a8b6a6a81cafc25"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T18:28:01Z"
+
+[entries."h:c326a4660b67"]
+value = "Campo"
+source_hash = "c326a4660b674d2f6ea82687a1e1abae2337541f"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T18:28:01Z"
+
+[entries."h:dc734ed0c003"]
+value = "Enviado como `Authorization: Bearer <key>`. Suporta interpolação `${env:VAR}` e `${file:PATH}`."
+source_hash = "dc734ed0c003992a7ea955bd90fc4a8c9aa4ce47"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T18:28:01Z"
+
+[entries."h:edbbe7db2755"]
+value = "Linha de comando livre. Apenas configuração raiz, nunca via `extends`."
+source_hash = "edbbe7db27550fb02688ee739bc370cc9bf518a4"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T18:28:01Z"
+
+[entries."h:ee684473f627"]
+value = "Argumentos extras passados ao comando."
+source_hash = "ee684473f627d41ff8d8f19554af540337083e06"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T18:28:01Z"
+
+[entries."h:f50789a1156d"]
+value = 'O cassete mapeia `{ "<locale>": { "<source value>": "<translation>" } }` e é resolvido em relação ao diretório do arquivo de configuração.'
+source_hash = "f50789a1156d06e0f32af2d42e49fabb36ecb5a4"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T18:28:01Z"
+
+[entries."h:fa60d604cd1b"]
+value = "`model`"
+source_hash = "fa60d604cd1b0beb69dcacc219e26da91948274d"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T18:28:01Z"
+
+[entries."h:fba02debfe49"]
+value = '`kind = "command"`'
+source_hash = "fba02debfe4952b13ceb47976b2e9929275e7e2b"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T18:28:01Z"
+
+[entries."h:fba36c5ceb7c"]
+value = "Os pedidos são repetidos com retardo exponencial até `max_retries` (padrão 3)."
+source_hash = "fba36c5ceb7c40bd04f3a389af1ce33ff39a76e3"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T18:28:01Z"
+
+[entries."h:ffe3d9820f41"]
+value = "Capacidade de stdout bufferizado."
+source_hash = "ffe3d9820f419a7e3cee0632c38ea27c18324909"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T18:28:07Z"

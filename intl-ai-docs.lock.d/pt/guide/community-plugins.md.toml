@@ -1,0 +1,231 @@
+version = 1
+
+[entries."h:12c6080a9253"]
+value = "Expo / React Native"
+source_hash = "12c6080a9253ace36de7fea1dae2eac3c3c07fe9"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T17:23:35Z"
+
+[entries."h:1a072c0195a3"]
+value = "Integrações comunitárias"
+source_hash = "1a072c0195a38d15a1607c7d88d504b725ec2eb3"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T17:23:35Z"
+
+[entries."h:231306a45759"]
+value = "plugin de configuração, executa durante o prebuild"
+source_hash = "231306a457594b0f5f0be2af2d270fb474c805ae"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T17:23:35Z"
+
+[entries."h:304d3ae5363f"]
+value = "o próprio binário"
+source_hash = "304d3ae5363f5441e59a247e996a2e6d9e8a9882"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T17:23:35Z"
+
+[entries."h:3382bb05788c"]
+value = "**Spawn no ciclo de vida correto.** `intl-ai fill` onde as traduções devem existir (início da construção, pré-construção, pipeline de assets), mais `intl-ai check --fail-on <kinds>` se o shim atuar como uma barreira de construção."
+source_hash = "3382bb05788c1673ac15e14e6bbc7889825167aa"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T17:23:35Z"
+
+[entries."h:33835b4bef20"]
+value = "`@intl-ai/expo`"
+source_hash = "33835b4bef201aae0602c16b1eb8d2ade5191ca0"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T17:23:35Z"
+
+[entries."h:37ce06fe5b59"]
+value = "Construir um shim"
+source_hash = "37ce06fe5b595960d610cbde9b7cf7da2334e824"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T17:23:35Z"
+
+[entries."h:413916538a98"]
+value = "**Exponha os controles de qualidade.** Mapeie a superfície de qualidade da CLI para as convenções da sua plataforma: a porta `[fill].validate`, limite de `judge` via `--judge-threshold`, severidades `--fail-on` e uma opção de desenvolvedor para desativar. Não reimplante a validação no shim; sempre delegue para o binário."
+source_hash = "413916538a989203b864f4a7b7c566ffc9d4b5e5"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T17:23:35Z"
+
+[entries."h:531562e29e52"]
+value = "Os shims de Tier-1 recebem correções lançadas e a mesma superfície de opções (`fill`, `failOn`, `validate`, `judgeThreshold`, `dev`, `strict`, `config`, `cwd`, `bin`, `args`)."
+source_hash = "531562e29e52215deb868e89cc159c61a37fef12"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T17:23:35Z"
+
+[entries."h:57e0db592f87"]
+value = "`@intl-ai/unplugin`"
+source_hash = "57e0db592f8717a6668878187bbcccdecfc8d7f5"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T17:23:35Z"
+
+[entries."h:5bee0eeb7ac1"]
+value = "Um bom shim faz três coisas:"
+source_hash = "5bee0eeb7ac15884008b560b2d61b03a3262c1cd"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T17:23:35Z"
+
+[entries."h:5d6558b5c795"]
+value = "`@intl-ai/next`"
+source_hash = "5d6558b5c7955ac958cd326ce738686e268b1d9c"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T17:23:35Z"
+
+[entries."h:61730dce4017"]
+value = "Prefere traduzir formatos outros que JSON/YAML (ARB, `.strings`, `.xml`, PO)? Registe um plugin de formato de execução via `[[formats]]` em `intl-ai.toml`, sem Rust necessário (veja [Format plugins](/guide/format-plugins/)). Para distribuir um plugin reutilizável para a comunidade de um formato, abra um issue ou PR para o linkar aqui."
+source_hash = "61730dce40179f99130503b3426b16b29a1332ed"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T17:23:35Z"
+
+[entries."h:83e5a0d3d2ef"]
+value = "Stack"
+source_hash = "83e5a0d3d2ef19df258412a4d3ef3f9533b0c0c1"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T17:23:35Z"
+
+[entries."h:87c35574abd1"]
+value = "`withIntlAi()` wrapper do `next.config`"
+source_hash = "87c35574abd1fde2f81bb60ccc28ec428f932e34"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T17:23:35Z"
+
+[entries."h:899e5920ef13"]
+value = "Integração"
+source_hash = "899e5920ef1372292f1f4f69d3125e5a5f5a1dfb"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T17:23:35Z"
+
+[entries."h:91696837c39d"]
+value = "Níveis de suporte"
+source_hash = "91696837c39ddfc565ec2bab5cacc5dc4e983c13"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T17:23:35Z"
+
+[entries."h:986558ff5c26"]
+value = "adaptador unplugin, executa no `buildStart`"
+source_hash = "986558ff5c26e2c4c7be10cc456c5ac447baa22d"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T17:23:35Z"
+
+[entries."h:995cf1a1ab1a"]
+value = "**Tier 1, mantido neste repositório** e versionado em conjunto com o binário:"
+source_hash = "995cf1a1ab1a1f2df491bb91c360b8decc16139a"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T17:23:35Z"
+
+[entries."h:9b1dc986c571"]
+value = "Next.js (webpack e Turbopack)"
+source_hash = "9b1dc986c5710f71868e1b3b88198282bb399324"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T17:23:35Z"
+
+[entries."h:a1cd672a1d39"]
+value = "Vite, Webpack, Rollup, esbuild, Rspack, Farm"
+source_hash = "a1cd672a1d3945ab3990088616853b29bb7d7cd3"
+origin = "human"
+reviewed = false
+updated_at = "2026-10-09T19:08:03Z"
+
+[entries."h:c3c5b5dd64e5"]
+value = "`intl-ai`"
+source_hash = "c3c5b5dd64e525a687403de8c22a1430697928fc"
+origin = "human"
+reviewed = false
+updated_at = "2026-10-09T19:08:03Z"
+
+[entries."h:c42f1915461a"]
+value = "Tier-1 supported shims versus community-supported plugins, and how to build your own."
+source_hash = "c42f1915461a00e20ece40cab8cbafae478d7651"
+origin = "human"
+reviewed = false
+updated_at = "2026-10-09T19:08:03Z"
+
+[entries."h:c5fe0200d1c7"]
+value = "any"
+source_hash = "c5fe0200d1c7a5139bd18fd22268c4ca8bf45e90"
+origin = "human"
+reviewed = false
+updated_at = "2026-10-09T19:08:03Z"
+
+[entries."h:cd6387b549d6"]
+value = "**Locate the binary.** For npm packages, depend on the `intl-ai` package (it installs the platform binary on postinstall) and resolve it like [`@intl-ai/unplugin` does](https://github.com/sigilco/intl-ai/blob/develop/packages/unplugin/src/run.ts): `bin` option, `INTL_AI_BIN` env, the npm package, then `PATH`. Outside npm, document the install channels (install script, brew, mise) and resolve the binary the same way."
+source_hash = "cd6387b549d6b1defbc97880e571c21480af95a5"
+origin = "human"
+reviewed = false
+updated_at = "2026-10-09T19:08:03Z"
+
+[entries."h:e0164389b1b0"]
+value = "**Community-supported**: everything else, maintained by its author. A Flutter `intl_ai` package on pub.dev, a Gradle task, an Xcode build-phase script, a WordPress or Rails plugin, a Metro wrapper: all are welcome. We review and link them here and in the README, but they are owned by their authors for fixes and releases."
+source_hash = "e0164389b1b00915e0a91837e1015d56ba80462e"
+origin = "human"
+reviewed = false
+updated_at = "2026-10-09T19:08:03Z"
+
+[entries."h:ea161a0fd230"]
+value = "Getting listed"
+source_hash = "ea161a0fd2308f28f2bb1fe654a3bf5c0b3c730b"
+origin = "human"
+reviewed = false
+updated_at = "2026-10-09T19:08:03Z"
+
+[entries."h:ea5c1a20b7cf"]
+value = "Shape"
+source_hash = "ea5c1a20b7cfcfec8a35fb4c6a419a1314233755"
+origin = "human"
+reviewed = false
+updated_at = "2026-10-09T19:08:03Z"
+
+[entries."h:f4fd2167dc42"]
+value = "Open a PR that adds your integration to this page and the README's community section, with a one-line description, install command, and repo link. Requirements: open source, maintained (recent commits), and the shim delegates to the `intl-ai` binary rather than reimplementing fill or checks."
+source_hash = "f4fd2167dc425616a0e78efa8d249e18e8966db7"
+origin = "human"
+reviewed = false
+updated_at = "2026-10-09T19:08:03Z"
+
+[entries."h:feb4aa862b8c"]
+value = "intl-ai's contract is small: a stack runs `intl-ai fill` at the lifecycle point where translations should exist, and optionally `intl-ai check --fail-on` as a gate. Everything else (which build tool, which i18n library, which language) is interchangeable. That makes community-maintained integrations a natural fit."
+source_hash = "feb4aa862b8c895b8f36885c3f95429e3fd78e7b"
+origin = "human"
+reviewed = false
+updated_at = "2026-10-09T19:08:03Z"

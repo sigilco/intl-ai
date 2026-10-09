@@ -1,0 +1,297 @@
+version = 1
+
+[entries."h:0bd179bda198"]
+value = "Executa verificações como telemetria personalizada"
+source_hash = "0bd179bda198a07e6d49b7ed051c83e9ab07affe"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T21:40:57Z"
+
+[entries."h:0e1f8d60b231"]
+value = "`invalid`"
+source_hash = "0e1f8d60b23181069faa76e4e73608b698ed139f"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T21:40:57Z"
+
+[entries."h:18339c530a5e"]
+value = "Cada comando aceita `--format json`:"
+source_hash = "18339c530a5ed30c7e92eda8af796b1fd825f8f6"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T21:40:57Z"
+
+[entries."h:19cd7d185cfd"]
+value = "Significado"
+source_hash = "19cd7d185cfd95a703e62d43597e9ae28e0646e5"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T21:40:57Z"
+
+[entries."h:2161c48bca25"]
+value = "`0`: sucesso (ou apenas descobertas abaixo dos tipos `--fail-on`)."
+source_hash = "2161c48bca256d83972852f204cf9b16851c5e55"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T21:40:57Z"
+
+[entries."h:2a3b994a43be"]
+value = "`fill` regista o que produziu nos fragmentos `intl-ai.lock.d/`. Por chave:"
+source_hash = "2a3b994a43be7176a5b70f8e3cb70323829b5a88"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T21:40:57Z"
+
+[entries."h:2bbb0b8439fb"]
+value = "`reviewed`: reposto para `false` automaticamente quando um humano edita o ficheiro."
+source_hash = "2bbb0b8439fb91fc5b24a780b0913a2bba520c95"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T21:40:57Z"
+
+[entries."h:31d0301008fa"]
+value = "`stale`"
+source_hash = "31d0301008fa62974e73f12b733af3d2e2350a83"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T21:40:57Z"
+
+[entries."h:3cbb76c2216f"]
+value = "`quality.scores`: pontuações normalizadas por verificação a partir da última execução de preenchimento."
+source_hash = "3cbb76c2216fe479d399acf5b1a7b648fbbe3ba9"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T21:42:21Z"
+
+[entries."h:3d9e3366b2bb"]
+value = 'Erros em stderr têm o mesmo formato: `{"error": {"message": ..., "code": ...}}`.'
+source_hash = "3d9e3366b2bb1e46d5acf1e853a99f62684b5634"
+origin = "human"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T21:42:21Z"
+
+[entries."h:3f461b152b36"]
+value = "Chave nunca marcada como `reviewed` (ou re-sinalizada por `[quality]`)."
+source_hash = "3f461b152b36fb555c303d252647877308cc2028"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T21:42:21Z"
+
+[entries."h:43fe530f4eca"]
+value = "Valor de propriedade humana cuja fonte mudou desde a revisão."
+source_hash = "43fe530f4eca08dee7bc0c3f4c8687cf477270b1"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T21:42:21Z"
+
+[entries."h:47b9175f29d7"]
+value = "Códigos de saída"
+source_hash = "47b9175f29d7419410db948750dd943d836ebc95"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T21:42:21Z"
+
+[entries."h:4ee1464eb1bd"]
+value = "`missing`"
+source_hash = "4ee1464eb1bd04bc67eef7dc44fc59b77a50be3a"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T21:42:21Z"
+
+[entries."h:512b8011b597"]
+value = "Valor de propriedade de IA cuja fonte mudou desde o preenchimento."
+source_hash = "512b8011b597ee8200a066660f172f511bec45af"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T21:42:21Z"
+
+[entries."h:54596127e37d"]
+value = "`modified`"
+source_hash = "54596127e37d7b90fb04d4da6fae43a699131e17"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T21:42:21Z"
+
+[entries."h:699c956ca0d6"]
+value = "Relatórios JSON"
+source_hash = "699c956ca0d672c415e5ec2a85e883aef1f44f1a"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T21:42:33Z"
+
+[entries."h:763a2f5ee778"]
+value = "Chave presente em um arquivo alvo, mas não na fonte."
+source_hash = "763a2f5ee77853ac1992f9fd719dd1f8af9222e4"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T21:42:33Z"
+
+[entries."h:781f3aea9b27"]
+value = "`extra`"
+source_hash = "781f3aea9b27e00ec6b57b5d65ee7b854a969c70"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T21:42:33Z"
+
+[entries."h:7b312d6ae84d"]
+value = "Rastreie a cobertura de revisão no CI com `intl-ai status --format json` e faça o merge das gates no `intl-ai check --fail-on`."
+source_hash = "7b312d6ae84d594b91032a5fb05df1f2830898e0"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T21:42:33Z"
+
+[entries."h:8f29d9df1f3d"]
+value = "`1`: uma kind `--fail-on` foi encontrada, uma gate configurada falhou ou ocorreu um erro duro. No CI, não-zero sempre significa agir."
+source_hash = "8f29d9df1f3d4aa343a3f0949ea06b0a62740a8c"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T21:42:33Z"
+
+[entries."h:926558fdfeed"]
+value = "Monitore o pipeline intl-ai. Relatórios JSON, tipos de descoberta, pontuações de qualidade e verificações exec como hooks personalizados."
+source_hash = "926558fdfeedd4d1ba40a8718271047e6ac8cd27"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T21:42:33Z"
+
+[entries."h:9784a69529fe"]
+value = "Chave ausente de um arquivo de localização alvo."
+source_hash = "9784a69529fe40d60bb8bdc3a076d37ebf64e2be"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T21:42:33Z"
+
+[entries."h:a21badb46a19"]
+value = "Uma entrada `[[checks]]` rejeitou o valor (icu, parity, judge, spec, exec, ou `fail_below`)."
+source_hash = "a21badb46a19832e36fd21d8b968d6188a1d25b8"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T21:42:33Z"
+
+[entries."h:a7e9779e81dc"]
+value = 'Falhas de nível de verificação (uma especificação que não carrega, um exec que não inicia, um erro de fornecedor) aparecem no array `errors` do relatório e sempre falham a execução. Reproduzir uma descoberta da cache incremental marca-a como `"cached": true` na saída JSON.'
+source_hash = "a7e9779e81dcde285b60514d1f87eaee4654047c"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T21:43:20Z"
+
+[entries."h:af071541af64"]
+value = "Pontuações de qualidade no lockfile"
+source_hash = "af071541af6400fab0e7918b18ac8b3451a19895"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T21:43:20Z"
+
+[entries."h:b2ab7a45de20"]
+value = "`origin`: `ai` ou `human`."
+source_hash = "b2ab7a45de202b678638cde78f062b83cd5d4ed7"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T21:43:20Z"
+
+[entries."h:c7d94176284a"]
+value = "`intl-ai check` relata descobertas por chave. Tipos:"
+source_hash = "c7d94176284a78e06aeee1306753950f59fc3b38"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T21:43:20Z"
+
+[entries."h:ca9b7e7e1f0d"]
+value = "Descobertas"
+source_hash = "ca9b7e7e1f0de006274c76d88ed2eb52be2fdbd6"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T21:43:20Z"
+
+[entries."h:defe119100dc"]
+value = "`quality.unresolved`: chaves que falharam no gate `[fill].validate` e foram adotadas mesmo assim."
+source_hash = "defe119100dc5c23a419e0997b1c93ee3f5d0762"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T21:43:20Z"
+
+[entries."h:e00ac23f2ac2"]
+value = "Tipo"
+source_hash = "e00ac23f2ac2ff73ad4f3c4b263d6c5bbfb80190"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T21:43:20Z"
+
+[entries."h:e2397377af6d"]
+value = "Observabilidade"
+source_hash = "e2397377af6d698b0fb66f53c47349a85bd2cb00"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T21:43:20Z"
+
+[entries."h:e89bef062888"]
+value = "Veja [Configuração](/guide/configuration/) for `[[checks]]`, `[check]`, `[fill]` e `[quality]`."
+source_hash = "e89bef06288881b26c0bd6316512745561b244fd"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T21:43:43Z"
+
+[entries."h:efe09090c35f"]
+value = "Veja `examples/checks/` para o protocolo."
+source_hash = "efe09090c35f575407b89efc84a9678e0ac570a9"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T21:43:43Z"
+
+[entries."h:f1039ef78706"]
+value = "O binário `intl-ai` emite saída legível por máquina em cada comando. Não há uma API de callback para configurar: pipe `--format json` para o que você usar para telemetria, ou adicione um `exec` check para instrumentação personalizada."
+source_hash = "f1039ef787065c59a4ae95ad18e750aebba4ad8f"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T21:43:43Z"
+
+[entries."h:f7e75e04c9f9"]
+value = "`unreviewed`"
+source_hash = "f7e75e04c9f93a996551c731c66949c7debade1e"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T21:43:43Z"
+
+[entries."h:f8219387216c"]
+value = 'Precisa de instrumentação por execução dentro do pipeline (postar no Sentry, emitir uma métrica, acrescentar a um log)? Escreva um `exec` check: o binário envia um pedido JSONL por lote de chaves e espera uma resposta JSONL com os resultados. É uma costura natural para "chamar isso em cada execução da verificação" sem fazer fork do pipeline.'
+source_hash = "f8219387216c36d837babb5c35b7480e04adec6d"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T21:43:43Z"

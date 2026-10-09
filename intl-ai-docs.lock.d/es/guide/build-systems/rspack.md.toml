@@ -1,0 +1,49 @@
+version = 1
+
+[entries."h:44d3a22a36c5"]
+value = "Combínalla con una biblioteca i18n de [i18n libraries](/guide/i18n-libraries/)."
+source_hash = "44d3a22a36c5808540ddadb840358122d31d8d8f"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:38:03Z"
+
+[entries."h:5c8ff5c31b54"]
+value = "Crea un `intl-ai.toml` en la raíz de tu proyecto. Consulta [Configuration](/guide/configuration) para ver el esquema completo."
+source_hash = "5c8ff5c31b548271b1a961d117411898bc5c10a7"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:38:03Z"
+
+[entries."h:754164850f38"]
+value = "Configuración"
+source_hash = "754164850f38c1ecdaf6b8ed894cb192bc36c5f4"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:38:03Z"
+
+[entries."h:b6a1229d1fc7"]
+value = "Traduce con IA los archivos de locale i18n de Rspack en tiempo de compilación. Sin runtime, cualquier modelo de IA."
+source_hash = "b6a1229d1fc7953426b22a99263798b574855525"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:38:03Z"
+
+[entries."h:bea1fc41988c"]
+value = "Rspack"
+source_hash = "bea1fc41988c441a4f7c2f8398337106cf5f86cf"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:38:03Z"
+
+[entries."h:c81b79df3c64"]
+value = "Instalación"
+source_hash = "c81b79df3c6448eae7c4f80428b54cd5692a17d7"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:38:03Z"

@@ -1,0 +1,89 @@
+version = 1
+
+[entries."h:14b450a8cfb0"]
+value = "Las opciones de traducción van en el segundo argumento y reflejan las opciones de [`@intl-ai/unplugin`](/guide/build-systems/):"
+source_hash = "14b450a8cfb0c93b4f0724dec8bed25fd25418a5"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:36:56Z"
+
+[entries."h:1dbd49cb57ec"]
+value = "Traducción con IA en tiempo de compilación para i18n de Next.js. Sin sobrecarga en tiempo de ejecución, cualquier modelo de IA."
+source_hash = "1dbd49cb57ec5125bfda1911dfb99b66bfa2e9ee"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:36:56Z"
+
+[entries."h:23feb3d160f6"]
+value = "Alternativa: adaptador de unplugin"
+source_hash = "23feb3d160f63dd0eb34cabb49a3f2acf73dfda5"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:36:56Z"
+
+[entries."h:27088ac76acc"]
+value = "No se requieren cambios en el código de tu aplicación. `intl-ai fill` se ejecuta mientras Next.js evalúa la configuración, antes de que el empaquetador comience, por lo que las traducciones se obtienen en tiempo de compilación sin sobrecarga en tiempo de ejecución."
+source_hash = "27088ac76acc451790ae3e804f07084b367195d7"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:36:56Z"
+
+[entries."h:3a76e0e94395"]
+value = "`@intl-ai/next` envuelve tu `next.config` para que el binario `intl-ai` ejecute `fill` antes de que comience la compilación. Funciona con ambos empaquetadores de Next.js, webpack y Turbopack; consulta la [documentación de Next.js sobre Turbopack](https://nextjs.org/docs/app/api-reference/config/next-config-js/turbopack) para saber cuál usa tu versión. Versión mínima compatible: Next.js 14+."
+source_hash = "3a76e0e94395188b0cd0178c799fb0d97665e9a0"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:36:56Z"
+
+[entries."h:44d3a22a36c5"]
+value = "Combínalo con una biblioteca de i18n de [bibliotecas i18n](/guide/i18n-libraries/)."
+source_hash = "44d3a22a36c5808540ddadb840358122d31d8d8f"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:36:56Z"
+
+[entries."h:5c8ff5c31b54"]
+value = "Crea un `intl-ai.toml` en la raíz de tu proyecto. Consulta [Configuración](/guide/configuration) para ver el esquema completo."
+source_hash = "5c8ff5c31b548271b1a961d117411898bc5c10a7"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:36:56Z"
+
+[entries."h:694fd7bdca2f"]
+value = "Next.js"
+source_hash = "694fd7bdca2fabcac6a912607368e98378b0b39b"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:36:56Z"
+
+[entries."h:754164850f38"]
+value = "Configuración"
+source_hash = "754164850f38c1ecdaf6b8ed894cb192bc36c5f4"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:36:56Z"
+
+[entries."h:bff64dd79531"]
+value = "Si prefieres el hook del empaquetador en lugar del envoltorio de configuración (o no quieres la dependencia), usa `@intl-ai/unplugin/webpack` directamente en tu callback de webpack:"
+source_hash = "bff64dd79531a88edb247e5e3befa3a6fc71e4be"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:36:56Z"
+
+[entries."h:c81b79df3c64"]
+value = "Instalación"
+source_hash = "c81b79df3c6448eae7c4f80428b54cd5692a17d7"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:36:56Z"

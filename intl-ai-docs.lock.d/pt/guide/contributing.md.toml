@@ -1,0 +1,513 @@
+version = 1
+
+[entries."h:0e497e9c54c3"]
+value = "**Títulos:** Use `#` para o título da página, `##` para seções, `###` para subseções"
+source_hash = "0e497e9c54c36c68bcb6c61ed001a811cf705e8f"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:32:03Z"
+
+[entries."h:0e74b426dd39"]
+value = "Antes de enviar alterações na documentação"
+source_hash = "0e74b426dd398551de6502015c3d1f9752409806"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:32:03Z"
+
+[entries."h:0fb5b0cc99f5"]
+value = "**Blocos de código:** Especifique a linguagem para realce de sintaxe (` ```bash `, ` ```typescript `, etc.)"
+source_hash = "0fb5b0cc99f5affc742adda3ab6a2ef084466e52"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:32:03Z"
+
+[entries."h:10f110d814ca"]
+value = "**Comprimento da linha:** Mantenha as linhas com menos de 100 caracteres"
+source_hash = "10f110d814ca116cd4bd33fa745849a75bc01dff"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:32:03Z"
+
+[entries."h:1303e006e153"]
+value = "Executando documentação localmente"
+source_hash = "1303e006e153346bdbc7eb901744f68782c147e8"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:32:03Z"
+
+[entries."h:1eef642e58a3"]
+value = "Node.js 22+ e pnpm 11+"
+source_hash = "1eef642e58a3a75e6639e1803a7da3959290e99a"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:32:03Z"
+
+[entries."h:2d82a4b27a4b"]
+value = "Contribuição"
+source_hash = "2d82a4b27a4b305690d5ac612046a955778a9fa5"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:32:03Z"
+
+[entries."h:327a55f82dc6"]
+value = "Implantação"
+source_hash = "327a55f82dc6818877a68e37b722bb7f2360b633"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:32:03Z"
+
+[entries."h:3631a9fb6d32"]
+value = "Diretrizes de escrita de documentação"
+source_hash = "3631a9fb6d323d156fc86e403822e052a6939742"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:32:09Z"
+
+[entries."h:37a77cd1d133"]
+value = "Implanta a saída para Cloudflare Pages"
+source_hash = "37a77cd1d13351bd9e559e2e20b5b619933cb5b2"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:32:09Z"
+
+[entries."h:381875c2469a"]
+value = "**Links:** Use caminhos relativos à raiz para links internos, por exemplo `[link text](/guide/getting-started/)`"
+source_hash = "381875c2469a72e6bc677e31807d760168456529"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:32:09Z"
+
+[entries."h:38ef04bcb85f"]
+value = "O processo de implantação:"
+source_hash = "38ef04bcb85fcb392e940249036bb9671b3638b8"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:32:09Z"
+
+[entries."h:40d74b41ee05"]
+value = "Inicie o servidor de desenvolvimento para pré-visualizar suas alterações em tempo real:"
+source_hash = "40d74b41ee05f2ce7b46ad7a449d02a5e9cdfbd1"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:32:09Z"
+
+[entries."h:45179c7f559e"]
+value = "Contribua para a documentação do intl-ai. Edite qualquer página de documentação no GitHub e abra um pull request."
+source_hash = "45179c7f559e91a2b7202a4d66d07ef844c12220"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:32:09Z"
+
+[entries."h:49415878931e"]
+value = "Frontmatter"
+source_hash = "49415878931e5edbbf6d49465647a990f04b12ae"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:32:09Z"
+
+[entries."h:4d84de19037e"]
+value = "Execute `pnpm docs:dev` e verifique se todas as páginas são renderizadas corretamente"
+source_hash = "4d84de19037ea34fd004c5a4119763be1a57a0d8"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:32:09Z"
+
+[entries."h:4e5bc674035d"]
+value = "Familiaridade básica com Markdown"
+source_hash = "4e5bc674035d05f58c068b1f58c38feb42364a98"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:32:17Z"
+
+[entries."h:533dc317cc35"]
+value = "[Abrir uma questão](https://github.com/sigilco/intl-ai/issues) para erros de documentação ou sugestões"
+source_hash = "533dc317cc354bdd2234bb9223aadc3535ed14a8"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:32:17Z"
+
+[entries."h:53a40b742496"]
+value = "Perguntas ou questões?"
+source_hash = "53a40b742496bb9cc3d3917edb928f86a6b4a805"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:32:17Z"
+
+[entries."h:54b21af46afa"]
+value = '**Abas:** Use `::: tabs` contentores com `== tab "Label"` entradas para instruções alternativas (por exemplo, comandos do gestor de pacotes)'
+source_hash = "54b21af46afa90fd2bdd01eef1e07c5629abe6e7"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:32:17Z"
+
+[entries."h:57ec94388282"]
+value = "A documentação é criada com [docmd](https://docmd.io/), um gerador de sites estáticos Markdown-first."
+source_hash = "57ec94388282f28607d75881531b9d49d4e7e00c"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:32:17Z"
+
+[entries."h:5cbf930df9c3"]
+value = "Isso inicia um servidor de desenvolvimento local (normalmente em `http://localhost:3000`) com recarregamento ao vivo para atualizações instantâneas de pré-visualização."
+source_hash = "5cbf930df9c30826089e8cf40a33198aceaa9f55"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:32:17Z"
+
+[entries."h:5ecde462bc2b"]
+value = "Depois de construir, sirva o diretório de saída com qualquer servidor de arquivos estáticos para verificar a saída de produção."
+source_hash = "5ecde462bc2b0c472f4cf99cb2c766be5813c76a"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:32:17Z"
+
+[entries."h:61330808b5f8"]
+value = "Adicionar novas páginas de guia"
+source_hash = "61330808b5f85b9e487fce5bccd9bcb698df53ec"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:32:17Z"
+
+[entries."h:652f72a75693"]
+value = "Obrigado pelo seu interesse em melhorar a documentação do intl-ai. Este guia cobre tudo o que precisa saber sobre contribuir para a documentação."
+source_hash = "652f72a75693abc327dad8f81175561fd0e7dd14"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:32:28Z"
+
+[entries."h:6777c52ce67a"]
+value = "Não são necessários passos de implementação manual."
+source_hash = "6777c52ce67ad775c780bfc690317b210956e546"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:32:28Z"
+
+[entries."h:69946dbc861f"]
+value = "Por favor, leia e siga o nosso [Code of Conduct](https://github.com/sigilco/intl-ai/blob/main/CODE_OF_CONDUCT.md)."
+source_hash = "69946dbc861fa5074314fb28108af0f4d3802501"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:32:28Z"
+
+[entries."h:789e45a28178"]
+value = "`pnpm docs:build`"
+source_hash = "789e45a28178d81660e753907a992bce4108950f"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:32:28Z"
+
+[entries."h:78ca1b54133d"]
+value = "Execute `pnpm docs:dev` e verifique se a sua página aparece e é renderizada corretamente."
+source_hash = "78ca1b54133dd8b9fd61fedce49f5e632402455d"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:32:28Z"
+
+[entries."h:7bfd6775ecfe"]
+value = "Compilação para produção"
+source_hash = "7bfd6775ecfe873ad1d226b3eee9234c45eb9da4"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:32:28Z"
+
+[entries."h:7d9a6b3faf22"]
+value = "Convenções do Markdown"
+source_hash = "7d9a6b3faf224144e8c7c3bd0cea00f047b4d785"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:32:28Z"
+
+[entries."h:7fbc82cfb286"]
+value = "[Start a discussion](https://github.com/sigilco/intl-ai/discussions) para perguntas"
+source_hash = "7fbc82cfb2868f37288b1090128fa00ba5f11b4a"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:32:28Z"
+
+[entries."h:810644bdf254"]
+value = "Iniciar o servidor de desenvolvimento local com recarga ao vivo"
+source_hash = "810644bdf254a0551d7bb3fabcbaa8c741f716bb"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:32:52Z"
+
+[entries."h:859ac621e831"]
+value = "Execute `pnpm docs:validate` para verificar links quebrados"
+source_hash = "859ac621e83115fb1370221fd675b193f83110ed"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:32:52Z"
+
+[entries."h:8901895fb1b1"]
+value = "Comando"
+source_hash = "8901895fb1b1d4c4ea2fec368c25176bf73e2f7e"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:32:52Z"
+
+[entries."h:8bcd272fc0ce"]
+value = "Referência de comandos de documentação"
+source_hash = "8bcd272fc0ce460fae138dd0483d9dcced0062dc"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:32:52Z"
+
+[entries."h:909d817e2a1d"]
+value = "Criar um novo ficheiro `.md` em `docs/guide/` (ou o subdiretório correspondente)."
+source_hash = "909d817e2a1df095e9ed57c4027ded9e2e07d39e"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:32:52Z"
+
+[entries."h:923f181a21b4"]
+value = "Um editor de texto (VS Code recomendado)"
+source_hash = "923f181a21b45079548a74f0a0fbbd33db926c3b"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:32:52Z"
+
+[entries."h:95bbf2dcf8e6"]
+value = "Código de conduta"
+source_hash = "95bbf2dcf8e638da8f3ec0da173f22c4ce47b0cd"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:32:52Z"
+
+[entries."h:9940a26f3bd8"]
+value = "Verificar que todos os exemplos de código estão completos e testados"
+source_hash = "9940a26f3bd89c943c5c963593d5b4b28f26f43e"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:32:52Z"
+
+[entries."h:9aab41c369b6"]
+value = "Estrutura de ficheiros"
+source_hash = "9aab41c369b66a38c7edcdbad5d791f674f181d9"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:33:49Z"
+
+[entries."h:a0fb821bdaf9"]
+value = "Objetivo"
+source_hash = "a0fb821bdaf93ed9a1f1e920acfb2840eff5b153"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:33:49Z"
+
+[entries."h:a520e439ba7e"]
+value = "Adicione o frontmatter YAML obrigatório com um campo `title`."
+source_hash = "a520e439ba7e17e399de29d2c3f711eaae5333f2"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:33:49Z"
+
+[entries."h:a55d1cca21f2"]
+value = "Executa `pnpm docs:build` para gerar ficheiros estáticos"
+source_hash = "a55d1cca21f24cf9dcec78aa4196ef3c866e23a4"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:33:49Z"
+
+[entries."h:aee56435e744"]
+value = "A documentação é implementada no Cloudflare Pages em `https://intl-ai.illo.fyi/` quando as alterações são fundidas no ramo `main`."
+source_hash = "aee56435e74422a5bfb21bb8b643be48922ab38c"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:33:49Z"
+
+[entries."h:b8ca1f4949e4"]
+value = "`pnpm docs:validate`"
+source_hash = "b8ca1f4949e498dd4884a0a70c46c700a465cd3e"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:33:49Z"
+
+[entries."h:be9c68a5b8cc"]
+value = "Verifique todas as ligações internas para destinos quebrados"
+source_hash = "be9c68a5b8ccb31457fe643743ff93df667abb1d"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:33:49Z"
+
+[entries."h:c01e80377048"]
+value = "Submeta um pull request seguindo o [Guia de Contribuição principal](https://github.com/sigilco/intl-ai/blob/main/CONTRIBUTING.md)."
+source_hash = "c01e803770487b8cac9d6b7ca030f002e83f479d"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:33:49Z"
+
+[entries."h:c1b6ada33621"]
+value = "Para diretrizes gerais de contribuição, fluxos de ramificação, convenções de commit e todo o processo de desenvolvimento, veja nosso [Guia de Contribuição Principal](https://github.com/sigilco/intl-ai/blob/main/CONTRIBUTING.md)."
+source_hash = "c1b6ada33621608be32988511f72c0e233a25984"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:33:57Z"
+
+[entries."h:c33b1ce6f063"]
+value = "Contribuir com a documentação"
+source_hash = "c33b1ce6f06399250f8888ffc1f1e2e2443a0642"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:33:57Z"
+
+[entries."h:c6784f64fd89"]
+value = "Isso gera arquivos estáticos otimizados no diretório `docs/.vitepress/dist/` e copia os ativos de `docs/public/` para a raiz do site."
+source_hash = "c6784f64fd891dcee3ca6ad1f4d232977a6eebf5"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:33:57Z"
+
+[entries."h:c81b79df3c64"]
+value = "Instalação"
+source_hash = "c81b79df3c6448eae7c4f80428b54cd5692a17d7"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:33:57Z"
+
+[entries."h:cfbd5fe098fb"]
+value = "Visualizando a construção de produção"
+source_hash = "cfbd5fe098fb2be6ca1a42046b8c02e799b8f09a"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:33:57Z"
+
+[entries."h:d8c422bf4eb6"]
+value = "Configuração da documentação"
+source_hash = "d8c422bf4eb66c7093b5089c102eea5266c65e2c"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:33:57Z"
+
+[entries."h:d97fcdff4b36"]
+value = "Links internos"
+source_hash = "d97fcdff4b36109e68262fdbc11e3b1f78d0516c"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:33:57Z"
+
+[entries."h:dc96fc9f1df7"]
+value = "Links externos abrem em uma nova aba automaticamente."
+source_hash = "dc96fc9f1df7b54af1c0b179a6705f8bd0c4bbea"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:33:57Z"
+
+[entries."h:ec194ac748fc"]
+value = "Siga as regras de estilo de escrita em `AGENTS.md` (sentence case, sem travessões, sem emoji)"
+source_hash = "ec194ac748fc1b3c09b9092f7ee6aaae3f32ab4e"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:34:14Z"
+
+[entries."h:ec8c816d256e"]
+value = "Construa ficheiros estáticos prontos para produção"
+source_hash = "ec8c816d256e1623a147db40a0b16ccec881ec20"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:34:14Z"
+
+[entries."h:eed036e414a3"]
+value = "Pré-requisitos"
+source_hash = "eed036e414a34a0c245858652e6d88f14c3faefb"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:34:14Z"
+
+[entries."h:eef72daa50d5"]
+value = "Cada página de documentação deve incluir frontmatter YAML no topo:"
+source_hash = "eef72daa50d59b7fa6498f85b1a680edd83c22ec"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:34:14Z"
+
+[entries."h:f63abf74cc88"]
+value = "`pnpm docs:dev`"
+source_hash = "f63abf74cc883fad8e77475f99dee93442121360"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:34:14Z"
+
+[entries."h:f7154da05c74"]
+value = "Deteta alterações no diretório `docs/`"
+source_hash = "f7154da05c741379723eb5280f87fa0288cabfe1"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:34:14Z"
+
+[entries."h:f92e601eb8d6"]
+value = "Ligações externas"
+source_hash = "f92e601eb8d663033dca3851ad6f1616d1966aa7"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:34:14Z"
+
+[entries."h:fac4f1c96441"]
+value = "Adicione a página ao array `navigation` em `docmd.config.js`."
+source_hash = "fac4f1c9644111980576a02548f2f38c06fb0bef"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:34:14Z"

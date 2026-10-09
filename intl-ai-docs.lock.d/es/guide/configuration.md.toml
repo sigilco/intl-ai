@@ -1,0 +1,417 @@
+version = 1
+
+[entries."h:054dc2f50b36"]
+value = "Validación de CI"
+source_hash = "054dc2f50b36245cb348a45c8f18b5515db5edae"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:05:17Z"
+
+[entries."h:05a8de35c33b"]
+value = "Pares fijos de término-traducción inyectados en cada solicitud de traducción."
+source_hash = "05a8de35c33bc2aad89c7d50880af556c7eb52b8"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:05:17Z"
+
+[entries."h:08d691aa2446"]
+value = "Campos opcionales"
+source_hash = "08d691aa2446c1c4d41d5eb8505a8bade71f653b"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:05:17Z"
+
+[entries."h:0b07edbb8e70"]
+value = "`[[formats]]`"
+source_hash = "0b07edbb8e7041bc562f17341b5aefff24be76c6"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:05:17Z"
+
+[entries."h:0c461158f50c"]
+value = "`processor`"
+source_hash = "0c461158f50cdb71b883da4acdf16607777a6b68"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:05:17Z"
+
+[entries."h:0cd0918f1ff4"]
+value = "Referencia del archivo de configuración intl-ai. intl-ai.toml, .json, o .yaml, validado contra un esquema publicado."
+source_hash = "0cd0918f1ff4aa08da8bc666048c51e79a7e5e18"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:05:17Z"
+
+[entries."h:1619be3da307"]
+value = "`fail_on` lista los tipos de hallazgos que fallan `intl-ai check`. `cache` alterna la caché incremental de hallazgos (`.intl-ai/check-cache.json`)."
+source_hash = "1619be3da30709190bdaa7fd2d2b1a8c9ab43c24"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:05:17Z"
+
+[entries."h:1d10deaaaae7"]
+value = "Comprobaciones y puertas de calidad"
+source_hash = "1d10deaaaae7c9afbd2407648ca07152611852b0"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:05:17Z"
+
+[entries."h:1d310c6ea1d3"]
+value = "`locale_instructions`"
+source_hash = "1d310c6ea1d31d2945b6983e9d8ee8d6e73424bc"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:05:38Z"
+
+[entries."h:2059c56e1767"]
+value = "`targets`"
+source_hash = "2059c56e1767e51a12cfc8fc5dc7bb5ca983c105"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:05:38Z"
+
+[entries."h:20e882dfdeda"]
+value = "IntelliSense del editor"
+source_hash = "20e882dfdedabfb88b334e060299a60c75426fc6"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:05:38Z"
+
+[entries."h:2494c55cdc98"]
+value = "`[quality]`"
+source_hash = "2494c55cdc98d6063ff9963809454783aa466cf2"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:05:38Z"
+
+[entries."h:2efe401f9c8b"]
+value = "Máximo de entradas de origen por solicitud de traducción. El valor predeterminado es ilimitado (todas las claves en un lote). Reduzca para modelos con ventanas de contexto más pequeños o fallas más granulares por clave."
+source_hash = "2efe401f9c8b3d90da8c3dcd964e6df750bb43bc"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:05:38Z"
+
+[entries."h:390bf48e410e"]
+value = "`[[checks]]`"
+source_hash = "390bf48e410e988bdc3936f95e17e14fa02b8e71"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:05:38Z"
+
+[entries."h:44c589b70c7d"]
+value = "`extends`"
+source_hash = "44c589b70c7da4227c2cdc2545cad3ed1e886cca"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:05:38Z"
+
+[entries."h:44e080083583"]
+value = "`glossary`"
+source_hash = "44e080083583df89ba0c078351f496d4b23cd353"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:05:38Z"
+
+[entries."h:45374ff55dc9"]
+value = "El contrato se valida frente a un esquema JSON publicado disponible en `https://intl-ai.illo.fyi/schema/v1.json` (`intl-ai config schema` imprime el mismo esquema)."
+source_hash = "45374ff55dc99b7fda5aab7450019a5a9abe3791"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:06:09Z"
+
+[entries."h:454f86753c3e"]
+value = "El formato del archivo local para nuevos archivos es: `json` (predeterminado), `yaml`, o un nombre de `[[formats]]`. La extensión propia de un archivo existente siempre prevalece, por lo que los directorios mixtos funcionan. Los nombres desconocidos no superan la validación."
+source_hash = "454f86753c3e1b59cd2ffce49e2ac1c290962027"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:06:09Z"
+
+[entries."h:4796d5840817"]
+value = "Configurar configuraciones: una configuración raíz puede extender una base (lista o ruta única). Los archivos extendidos no pueden definir `provider.command`, comprobaciones de `exec` o formatos de `exec`: los archivos de datos de una dependencia no deben iniciar programas."
+source_hash = "4796d5840817fb6ad3e93d5d0a623644d2e9e56c"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:06:09Z"
+
+[entries."h:49e718049444"]
+value = "La puerta de entrada shift-left: estas comprobaciones se ejecutan dentro de `fill` entre la traducción y la adopción. Solo las comprobaciones que permiten comentarios son válidas (`icu`, `placeholder-parity`, `judge`). Las claves que no superan la comprobación obtienen una ronda de corrección; las claves no resueltas se adoptan de todos modos, se registran en `quality.unresolved` en el archivo de bloqueo y `check` sigue marcándolas. Anula por ejecución con `--validate`/`--no-validate`."
+source_hash = "49e718049444b472a01f3bf0534dc0eaab1b39c6"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:06:09Z"
+
+[entries."h:4b5afba84f7b"]
+value = "Instrucciones de estilo o dialecto libres por localización, enviadas al modelo y a la comprobación del juez. Orden de resolución: localización exacta (`en-GB`), luego subtipo de idioma (`en`), luego `*` como opción general."
+source_hash = "4b5afba84f7bdc20e52775ea22cacb18672110ba"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:06:09Z"
+
+[entries."h:4c79c005e1d5"]
+value = 'Añade `"$schema": "https://intl-ai.illo.fyi/schema/v1.json"` a una configuración JSON para autocompletado y validación.'
+source_hash = "4c79c005e1d57830402dcd3736c87c272419ce37"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:06:09Z"
+
+[entries."h:514043c32f44"]
+value = "Configuración mínima"
+source_hash = "514043c32f4434ddff909eed48dd108670fe8827"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:06:09Z"
+
+[entries."h:51ba21eea1cf"]
+value = "`batch_size`"
+source_hash = "51ba21eea1cf3031a43750cd5bee99658815c80a"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:06:09Z"
+
+[entries."h:572254a4df82"]
+value = "Puntuación ponderada por clave sobre las comprobaciones configuradas (comprobaciones binarias puntuación 1.0/0.0, el juez puntuación real 0..1). Por debajo de `fail_below` es un hallazgo `invalid`; por debajo de `review_below` marca la clave como no revisada."
+source_hash = "572254a4df823353683854e2583d4a60ed74d35c"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:06:43Z"
+
+[entries."h:5ab53f17fb34"]
+value = "`locale_dir`"
+source_hash = "5ab53f17fb342e8e17b31960794bbbea30bdfb3d"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:06:43Z"
+
+[entries."h:63de1112be4b"]
+value = "Pista de contrato de marcador de posición enviada al modelo. `icu` selecciona ICU MessageFormat; el predeterminado es passthrough."
+source_hash = "63de1112be4b757321026525a0063e6fa748d3a0"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:06:43Z"
+
+[entries."h:6cb876f86074"]
+value = "Comprobaciones de validación ejecutadas por `intl-ai check` y el fill gate."
+source_hash = "6cb876f8607499b7647e9c6c1bdb5bbe9203f369"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:06:43Z"
+
+[entries."h:746d70d1a004"]
+value = 'Código de locale de origen, por ejemplo, `"en"`.'
+source_hash = "746d70d1a004810d60906a57219157e97d1572b4"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:06:43Z"
+
+[entries."h:754164850f38"]
+value = "Configuración"
+source_hash = "754164850f38c1ecdaf6b8ed894cb192bc36c5f4"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:06:43Z"
+
+[entries."h:773ad2c5c27e"]
+value = "`max_retries`"
+source_hash = "773ad2c5c27e160f48789739d24b622788350dd1"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:06:43Z"
+
+[entries."h:779d7eb2c142"]
+value = 'IDs integrados: `icu`, `placeholder-parity`, `dialect:<locale>`, `judge`. Una entrada de comprobación también puede apuntar a una especificación YAML declarativa (`spec = "checks/brand.yaml"`) o a un comando externo (`exec = "./my-check"` con `args`/`cwd`/`timeout_ms`/`max_stdout_bytes`, solo config raíz). `threshold` es solo para el juez (puntuación por debajo de él se convierte en un hallazgo `invalid`, por defecto `0.8`); `weight` alimenta el agregado `[quality]`.'
+source_hash = "779d7eb2c142edcdc4c1c9a257efd9dfe4f49843"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:06:43Z"
+
+[entries."h:90c3acd3fe2f"]
+value = "`[provider]`"
+source_hash = "90c3acd3fe2f357492f9236a06474ba5f5402d5a"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:07:05Z"
+
+[entries."h:9924cb07a46c"]
+value = "Códigos de locale objetivo a completar y verificar."
+source_hash = "9924cb07a46c03aba831b58811d837a3388ddd24"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:07:05Z"
+
+[entries."h:9f3887ced60f"]
+value = "Cómo se producen las traducciones. Tres tipos:"
+source_hash = "9f3887ced60f2949e8ace15ed10232fb852182aa"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:07:05Z"
+
+[entries."h:ac898a55d56c"]
+value = '`kind = "http"`: un punto de extremo de completaciones de chat compatible con OpenAI (`provider`/`model`/`api_key`/`base_url`/`model_params`). Consulte [Providers](/guide/providers/).'
+source_hash = "ac898a55d56c3995f4ce31c876e55fde159b95c5"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:07:05Z"
+
+[entries."h:b9cf309f0567"]
+value = "Directorio que contiene los archivos de locale, resuelto contra el directorio del archivo de configuración. Un archivo por locale: `${locale_dir}/${locale}.json` (o `.yaml`)."
+source_hash = "b9cf309f0567356299e6daa836f648ceddd325e8"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:07:05Z"
+
+[entries."h:bef6255ca5b3"]
+value = "`format`"
+source_hash = "bef6255ca5b30cab3165c0155cfa872369203174"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:07:05Z"
+
+[entries."h:c04a1e19919a"]
+value = "Consulte [Providers](/guide/providers/) para los tipos de proveedor y [AI model setup](/guide/ai-model/) para la selección de endpoints."
+source_hash = "c04a1e19919a177331b80220bd3691ab14537774"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:07:05Z"
+
+[entries."h:c88caf69e44b"]
+value = "intl-ai lee un único archivo de configuración, `intl-ai.toml`, `intl-ai.json`, `intl-ai.yaml`, o `intl-ai.yml`, descubierto en la raíz de tu proyecto (la primera coincidencia gana). Pasa `--config <path>` para elegir uno explícitamente, o `--config -` para leer TOML desde stdin."
+source_hash = "c88caf69e44b6a0532fa9073dabd8e1f135186b6"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:07:05Z"
+
+[entries."h:cb9c1f582b1f"]
+value = "Campos requeridos"
+source_hash = "cb9c1f582b1f8ce00db9e611da402c763353d02a"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:07:59Z"
+
+[entries."h:d20105ffce56"]
+value = "Los secretos se interpolan al cargar: `${env:VAR}` lee una variable de entorno, `${file:PATH}` lee un archivo. `config validate` los imprime enmascarados."
+source_hash = "d20105ffce56821b2209a3ecefb71ff3330c2565"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:07:59Z"
+
+[entries."h:d28853d63656"]
+value = "Cambiar una instrucción no retraduce las entradas existentes. Retraduzca una configuración regional con `intl-ai fill --locale en-GB --regenerate`."
+source_hash = "d28853d6365649c5b051b67cc3cc88b125e6afc7"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:07:59Z"
+
+[entries."h:d4c1213c6eea"]
+value = "`source`"
+source_hash = "d4c1213c6eeaa08cef5ab789ff08baac26527947"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:07:59Z"
+
+[entries."h:d62b7fd860f9"]
+value = "Intentos de transporte por solicitud antes de que falle el lote. Predeterminado `3`, máximo `10`."
+source_hash = "d62b7fd860f91cc90298392ef147128573a3e450"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:07:59Z"
+
+[entries."h:e9dab60548a0"]
+value = "Formatos personalizados"
+source_hash = "e9dab60548a00adfd0a1c5f11874b3615eaca38a"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:07:59Z"
+
+[entries."h:eaf46a9b8c58"]
+value = "`[fill]`"
+source_hash = "eaf46a9b8c58705e9b420865894efa2dcf063d04"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:07:59Z"
+
+[entries."h:eb9b625ab130"]
+value = '`kind = "command"`: un agente CLI local (`command`/`args`/`agent`/`prompt_via`/`cwd`/`timeout_ms`). Solo permitido en el archivo de configuración raíz, nunca mediante `extends`.'
+source_hash = "eb9b625ab130a43fddf599f475695eb4083ddb98"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:07:59Z"
+
+[entries."h:ef5d8e979182"]
+value = "`api_key` interpolación"
+source_hash = "ef5d8e979182172f72e8673485e22351cb549adc"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:09:16Z"
+
+[entries."h:efb10aa6d55d"]
+value = "Formatos de locale externos registrados junto con los integrados. Consulte [Format plugins](/guide/format-plugins/) para el protocolo y una implementación de referencia."
+source_hash = "efb10aa6d55d2c698142b8bf1fdb00f957ae7012"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:09:16Z"
+
+[entries."h:fd9e45099520"]
+value = "`[check]`"
+source_hash = "fd9e45099520aa9c75807c36af9c24d289994591"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:09:16Z"
+
+[entries."h:ff976b5d69fa"]
+value = '`kind = "replay"`: un archivo JSON de cassette de traducciones predefinidas, para pruebas y demos.'
+source_hash = "ff976b5d69fa27b4ca85fff8e24f5b264ed2bc90"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:09:16Z"

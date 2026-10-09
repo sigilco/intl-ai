@@ -1,0 +1,169 @@
+version = 1
+
+[entries."h:0b413f01fe31"]
+value = "Añadir una fase de script de compilación:"
+source_hash = "0b413f01fe31823c4fc1140ba9fcaba642f37a8c"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:47:22Z"
+
+[entries."h:15d6ffede9fe"]
+value = "Rust y Xcode para ejecutar `build-xcframework.sh` (no es necesario una vez que el objetivo binario se distribuya como un activo de lanzamiento)."
+source_hash = "15d6ffede9fe80794f76302c37eca7ad5dd85be3"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:47:22Z"
+
+[entries."h:19bae5c61d9f"]
+value = 'Abre **Fases de compilación** y añade una nueva fase **Ejecutar script** con el nombre **"Traducir locales"**.'
+source_hash = "19bae5c61d9fbe7e9e52188bca0501d1154160f5"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:47:22Z"
+
+[entries."h:2097edc31a84"]
+value = "Almacena los archivos de locale fuente en un directorio de proyecto, ejecuta `intl-ai fill` como una fase de compilación y copia las traducciones generadas en tu bundle de la aplicación:"
+source_hash = "2097edc31a84b353d919efcdab99aa29eb76ddfb"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:47:22Z"
+
+[entries."h:21ca4c417cfc"]
+value = "Úsalo desde Swift:"
+source_hash = "21ca4c417cfc38e31eda17b5d45c2c97639ed3e8"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:47:22Z"
+
+[entries."h:274dc1e364ff"]
+value = "Consulte el [README del paquete](https://github.com/sigilco/intl-ai/tree/develop/swift/IntlAi) para ver la superficie API completa."
+source_hash = "274dc1e364ffa725bf6ffb41a223dafc2d731383"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:47:22Z"
+
+[entries."h:475ffa14014b"]
+value = "Requisitos:"
+source_hash = "475ffa14014bb463965306813410e4afd01a7039"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:47:22Z"
+
+[entries."h:478f41860724"]
+value = "Puedes integrar `intl-ai` en un proyecto SwiftUI de dos formas. El paquete SwiftPM `IntlAi` incrusta el motor para que el código de la aplicación o de herramientas pueda llamar a `fill`, `check` y `status` en el proceso, mientras que la CLI se ejecuta como una fase de compilación de Xcode para una traducción pura en tiempo de compilación sin API en tiempo de ejecución."
+source_hash = "478f41860724bdeb0e896bf15e21ea64e1446e98"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:47:22Z"
+
+[entries."h:519281f310d4"]
+value = "SwiftUI"
+source_hash = "519281f310d492b473408a42b30861f7d091b01b"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:47:22Z"
+
+[entries."h:58e96a7f16bd"]
+value = "iOS 13.0+ o macOS 11.0+."
+source_hash = "58e96a7f16bd0a6f9f821b04d9fc25b38fbd473f"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:47:22Z"
+
+[entries."h:6138a65550d9"]
+value = "`intl-ai.toml` en la raíz del proyecto."
+source_hash = "6138a65550d91baf26c91546872b88842e03381a"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:47:22Z"
+
+[entries."h:9cdb57e8c9f8"]
+value = "El paquete `IntlAi` se encuentra en `swift/IntlAi` en el repositorio intl-ai y envuelve el motor Rust en un XCFramework estático para iOS y macOS. Hasta que se publique el activo de lanzamiento v0.7.0, construya el XCFramework una vez y dependa del paquete por la ruta local:"
+source_hash = "9cdb57e8c9f89bd36d3e51e16eda681bfe11609e"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:47:22Z"
+
+[entries."h:9f0af17d7b75"]
+value = "Arrastra la fase **Traducir locales** antes de **Copiar recursos del bundle**."
+source_hash = "9f0af17d7b75d0b994b8912a99edcea6569e0770"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:47:22Z"
+
+[entries."h:c18914ab48b5"]
+value = "Pega el siguiente script:"
+source_hash = "c18914ab48b55edeab1acac7e47ca54fc408e62a"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:47:22Z"
+
+[entries."h:ca1ef74283bc"]
+value = "O con una configuración en línea en lugar de un archivo:"
+source_hash = "ca1ef74283bccacaa4b7507265404807239162ec"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:47:22Z"
+
+[entries."h:cdfbe0aaa0d3"]
+value = "Seleciona tu objetivo de aplicación en Xcode."
+source_hash = "cdfbe0aaa0d34f28b391509f4c682e32bc545cdb"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:47:22Z"
+
+[entries."h:d44dcbb39ac0"]
+value = "Añade `swift/IntlAi` como un paquete local en Xcode (**Archivo > Agregar dependencias de paquetes > Agregar local**), o desde otro manifiesto de paquete:"
+source_hash = "d44dcbb39ac04e89672d120457143da6c502a444"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:47:22Z"
+
+[entries."h:d602053f1b70"]
+value = "Carga las traducciones en tiempo de ejecución con `Bundle.main.url(forResource:withExtension:)` o un helper `Bundle.main.decode(_:)`:"
+source_hash = "d602053f1b7067ab2c3d0981e3a8123403f09b9b"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:47:22Z"
+
+[entries."h:f0d9bb64f013"]
+value = "Cada llamada es síncrona y bloqueante: `fill` realiza E/S del proveedor. Envía las llamadas fuera del hilo principal (un `Task.detached`, una `DispatchQueue` en segundo plano o un actor dedicado). Los errores aparecen como `IntlAiError` con un `kind` que coincide con la taxonomía de errores de la CLI."
+source_hash = "f0d9bb64f01319a61f91c3fc2f1e5f29bfdb2d08"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:47:22Z"
+
+[entries."h:f61c0f8b9896"]
+value = "Traducción de IA para i18n de SwiftUI a través del paquete SwiftPM IntlAi o de una fase de compilación de Xcode. Las traducciones ocurren en tiempo de compilación."
+source_hash = "f61c0f8b9896ba3e4494e1df3d60d42aa01f131b"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:47:22Z"
+
+[entries."h:ffa9aa77d352"]
+value = "`intl-ai` instalado en tu `PATH` (ver [Installation](/guide/getting-started#installation))."
+source_hash = "ffa9aa77d352a99a66153e13dc9e2c1c4a6e1bd6"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:47:33Z"

@@ -1,0 +1,153 @@
+version = 1
+
+[entries."h:000312d69b12"]
+value = "Este guia cobre o consumo do vue-i18n. Para configuração do bundler, veja [Sistemas de Build](/guide/build-systems/)."
+source_hash = "000312d69b127612d838f98066f1da05e35b4407"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T17:47:09Z"
+
+[entries."h:0532119311e9"]
+value = "O intl-ai gera arquivos JSON como:"
+source_hash = "0532119311e906f7908acd4e5ea3e8b38a107232"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T17:47:09Z"
+
+[entries."h:0a7b28d5787f"]
+value = "Na API de Composição:"
+source_hash = "0a7b28d5787f7e86dfa2e72a0493feb51a87b39a"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T17:47:09Z"
+
+[entries."h:0efc2e6be4c2"]
+value = "Visão Geral"
+source_hash = "0efc2e6be4c23b9a513d7ce0dcff8ed80e8912e7"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T17:47:09Z"
+
+[entries."h:3a75d9d065ed"]
+value = "Configuração da Aplicação Vue"
+source_hash = "3a75d9d065ed023860033b9d27cd461f336b34dd"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T17:47:09Z"
+
+[entries."h:3c00c495cad7"]
+value = "Criar Instância i18n"
+source_hash = "3c00c495cad75ce0f87e04ce1ac5cd13549d16a6"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T17:47:09Z"
+
+[entries."h:4363e6f2dde4"]
+value = "Nota do Processador"
+source_hash = "4363e6f2dde4f52e6ac7a2eed5e2d5a935efb0c3"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T17:47:09Z"
+
+[entries."h:562a53f57b10"]
+value = "Instale o intl-ai e o vue-i18n:"
+source_hash = "562a53f57b10c27d51b3355876e63dbac1c540a2"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T17:47:09Z"
+
+[entries."h:5b9775684852"]
+value = "Usando Traduções"
+source_hash = "5b97756848528b856e6ecfa4293da85b8cd2b5cd"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T17:47:09Z"
+
+[entries."h:5c8ff5c31b54"]
+value = "Crie um `intl-ai.toml` na raiz do seu projeto. Veja [Configuração](/guide/configuration) para o esquema completo."
+source_hash = "5c8ff5c31b548271b1a961d117411898bc5c10a7"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T17:47:09Z"
+
+[entries."h:618be935c784"]
+value = "Vue (vue-i18n)"
+source_hash = "618be935c7845e656f5f13707c10149f6af85966"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T17:47:09Z"
+
+[entries."h:652a70a23850"]
+value = 'O vue-i18n suporta ICU MessageFormat. Defina `processor = "icu"` em `intl-ai.toml` para que as traduções geradas por IA preservem corretamente os placeholders do ICU.'
+source_hash = "652a70a23850053135e82991c204549d5dddf276"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T17:47:09Z"
+
+[entries."h:754164850f38"]
+value = "Configuração"
+source_hash = "754164850f38c1ecdaf6b8ed894cb192bc36c5f4"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T17:47:09Z"
+
+[entries."h:7f0df58cff89"]
+value = "O intl-ai gera arquivos JSON de tradução no tempo de construção. O vue-i18n consome esses arquivos em tempo de execução na sua aplicação Vue. Este guia mostra como configurar ambas as ferramentas juntas."
+source_hash = "7f0df58cff896462b94bd6997c9908d0fbc4ee71"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T17:47:09Z"
+
+[entries."h:830012e5d94f"]
+value = "Traduza localmente o vue-i18n no tempo de construção. Funciona com qualquer modelo de IA, custo zero em tempo de execução."
+source_hash = "830012e5d94f244e028f5d6839bb4fe4673cbf49"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T17:47:09Z"
+
+[entries."h:b4d766d1da49"]
+value = "Estrutura dos Arquivos de Localização"
+source_hash = "b4d766d1da49c22d44e032e0c0b547377b97cf1d"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T17:47:09Z"
+
+[entries."h:c81b79df3c64"]
+value = "Instalação"
+source_hash = "c81b79df3c6448eae7c4f80428b54cd5692a17d7"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T17:47:09Z"
+
+[entries."h:dea9a1e3ce94"]
+value = "Você só precisa de `@intl-ai/unplugin`. Ele executa o binário `intl-ai`, que o pacote npm `intl-ai` instala automaticamente."
+source_hash = "dea9a1e3ce949c5ef222584a94645d5fa91bc22c"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T17:47:09Z"
+
+[entries."h:f2b817a822b6"]
+value = "Nas plantas Vue:"
+source_hash = "f2b817a822b6457b161fd4f877d22811b6f7d996"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T17:47:09Z"

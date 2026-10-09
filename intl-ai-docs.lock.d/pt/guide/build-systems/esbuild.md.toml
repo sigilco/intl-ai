@@ -1,0 +1,49 @@
+version = 1
+
+[entries."h:44d3a22a36c5"]
+value = "Integre com uma biblioteca i18n de [bibliotecas i18n](/guide/i18n-libraries/)."
+source_hash = "44d3a22a36c5808540ddadb840358122d31d8d8f"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T17:13:01Z"
+
+[entries."h:5c8ff5c31b54"]
+value = "Crie um `intl-ai.toml` na raiz do seu projeto. Consulte [Configuração](/guide/configuration) para o esquema completo."
+source_hash = "5c8ff5c31b548271b1a961d117411898bc5c10a7"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T17:13:01Z"
+
+[entries."h:5d98dd13f8fe"]
+value = "esbuild"
+source_hash = "5d98dd13f8fe762de8d89a24a4aa213532cce9d0"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T17:13:01Z"
+
+[entries."h:754164850f38"]
+value = "Configuração"
+source_hash = "754164850f38c1ecdaf6b8ed894cb192bc36c5f4"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T17:13:01Z"
+
+[entries."h:c777837dbb85"]
+value = "Traduz com IA os ficheiros de locale i18n do esbuild na hora da construção. Zero em tempo de execução, qualquer modelo de IA."
+source_hash = "c777837dbb85bff56485f394ffef8c1b3ba3651e"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T17:13:01Z"
+
+[entries."h:c81b79df3c64"]
+value = "Instalação"
+source_hash = "c81b79df3c6448eae7c4f80428b54cd5692a17d7"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T17:13:01Z"

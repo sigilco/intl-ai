@@ -1,0 +1,49 @@
+version = 1
+
+[entries."h:44d3a22a36c5"]
+value = "Combine com uma biblioteca i18n a partir de [i18n libraries](/guide/i18n-libraries/)."
+source_hash = "44d3a22a36c5808540ddadb840358122d31d8d8f"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T17:14:13Z"
+
+[entries."h:5c8ff5c31b54"]
+value = "Crie um `intl-ai.toml` na raiz do seu projeto. Consulte [Configuration](/guide/configuration) para o esquema completo."
+source_hash = "5c8ff5c31b548271b1a961d117411898bc5c10a7"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T17:14:13Z"
+
+[entries."h:754164850f38"]
+value = "Configuração"
+source_hash = "754164850f38c1ecdaf6b8ed894cb192bc36c5f4"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T17:14:13Z"
+
+[entries."h:94fafc4a1f0e"]
+value = "Traduzir com IA os arquivos de localização i18n do Rollup no momento da compilação. Zero tempo de execução, qualquer modelo de IA."
+source_hash = "94fafc4a1f0e6505c77208db3863dc3e51c62a14"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T17:14:13Z"
+
+[entries."h:c81b79df3c64"]
+value = "Instalação"
+source_hash = "c81b79df3c6448eae7c4f80428b54cd5692a17d7"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T17:14:13Z"
+
+[entries."h:cee656e4e4fb"]
+value = "Rollup"
+source_hash = "cee656e4e4fb4012f85e12695536c23a5e0e62c3"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T17:14:13Z"

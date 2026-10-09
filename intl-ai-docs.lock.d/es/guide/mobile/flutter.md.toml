@@ -1,0 +1,297 @@
+version = 1
+
+[entries."h:00cfbfacb6a0"]
+value = "Copiar el builder"
+source_hash = "00cfbfacb6a03299d64d4d2bc168132504cb62b8"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:44:47Z"
+
+[entries."h:07bc2d01fb2b"]
+value = "Flutter"
+source_hash = "07bc2d01fb2b7c3a7da84292592d758aba77f140"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:44:47Z"
+
+[entries."h:09a428f93ec0"]
+value = "Requisitos"
+source_hash = "09a428f93ec07a73d726f8bd037ecacfaaf8b044"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:44:47Z"
+
+[entries."h:0f01ed56a1e3"]
+value = "Ejemplo"
+source_hash = "0f01ed56a1e32a05e5ef96e4d779f34784af9a96"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:44:47Z"
+
+[entries."h:1565f189fcf1"]
+value = "La integración de Flutter se proporciona como un constructor autoconteniendo [`build_runner`](https://pub.dev/packages/build_runner) en [`examples/flutter/plugin`](https://github.com/sigilco/intl-ai/tree/main/examples/flutter/plugin). Ejecuta `intl-ai fill` durante `flutter pub run build_runner build` y tiene una sobrecarga de tiempo de ejecución cero porque todas las traducciones se escriben en disco antes de que la aplicación Flutter sea empaquetada."
+source_hash = "1565f189fcf1cf9ebf309c5b31a90a0617ab4741"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:44:47Z"
+
+[entries."h:17ead36712eb"]
+value = "El constructor se registra en el activo `$package$` y escribe un archivo marcador `intl-ai.done`. Cuando `build_runner` se ejecuta, invoca la CLI de `intl-ai` una vez por paquete. Agrega `intl-ai.done` a tu `.gitignore`; solo se utiliza para realizar el seguimiento de la finalización de la compilación."
+source_hash = "17ead36712ebcc184b015021464d113f3be5f0c1"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:44:47Z"
+
+[entries."h:1dd6a17cb403"]
+value = "Cómo funciona"
+source_hash = "1dd6a17cb4033f4f74df1bb6912b8a28a8074084"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:44:47Z"
+
+[entries."h:1e6b5ac070fa"]
+value = "Carga los archivos JSON generados con tu biblioteca i18n preferida (`easy_localization`, `i18n_extension`, `flutter_gen`, etc.). El constructor solo escribe traducciones; no impone una API de tiempo de ejecución."
+source_hash = "1e6b5ac070fab142cd15ad5815e5bfa6ad4a6b34"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:44:47Z"
+
+[entries."h:23d2c69d7b53"]
+value = "`false`"
+source_hash = "23d2c69d7b530e4487aabfc13956cf820786ec4e"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:44:47Z"
+
+[entries."h:250d858670eb"]
+value = "`configPath`"
+source_hash = "250d858670eb75f1345d5372a7ac8d80acefa93e"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:44:47Z"
+
+[entries."h:25a046cd8fc9"]
+value = "`String`"
+source_hash = "25a046cd8fc934e70e39caafb623905a31932714"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:44:47Z"
+
+[entries."h:3460bf920e13"]
+value = "Un archivo `intl-ai.toml` y un directorio de locale"
+source_hash = "3460bf920e1310229d688eb015ffc0aacfb57a21"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:44:47Z"
+
+[entries."h:3b08d700100f"]
+value = "Opciones del constructor"
+source_hash = "3b08d700100f26111b1d4e73d904c5256f0e6c13"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:44:47Z"
+
+[entries."h:3deb74565196"]
+value = "Tipo"
+source_hash = "3deb7456519697ecf4eefc455516c969a3681bae"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:44:47Z"
+
+[entries."h:3fc319cfc1e0"]
+value = "Actualiza la ruta de `import` en `build.yaml` para que coincida con donde copiaste el constructor, por ejemplo:"
+source_hash = "3fc319cfc1e0f2b4942d7fbe6eb8f5c7688559de"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:44:47Z"
+
+[entries."h:4b1d2f516fe9"]
+value = "Traducción con IA para Flutter i18n en tiempo de compilación. Las traducciones ocurren durante la compilación, con tiempo de ejecución cero."
+source_hash = "4b1d2f516fe9b5a09f3d170b6cf6196ac7d78f7f"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:44:47Z"
+
+[entries."h:4b876826d2a8"]
+value = "`executable`"
+source_hash = "4b876826d2a88edea6aac1b606273ba7b5494d88"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:44:47Z"
+
+[entries."h:515f8f5fa29a"]
+value = "Uso en tiempo de ejecución"
+source_hash = "515f8f5fa29a636234e837f3548a2918507e964d"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:44:47Z"
+
+[entries."h:55f8ebc805e6"]
+value = "Descripción"
+source_hash = "55f8ebc805e65b5b71ddafdae390e3be2bcd69af"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:44:47Z"
+
+[entries."h:63d1dbd0d369"]
+value = "`intl-ai.toml`"
+source_hash = "63d1dbd0d369be859b95c931a301bcf8d577cd28"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:44:47Z"
+
+[entries."h:6d6ea3d1ab27"]
+value = "`verbose`"
+source_hash = "6d6ea3d1ab27ad4143c5afda275992c7cc30a8d7"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:45:29Z"
+
+[entries."h:7f17ecb03a11"]
+value = "Ruta al archivo de configuración, relativa a la raíz del paquete."
+source_hash = "7f17ecb03a11877dc5b2b97d6805009985966321"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:45:29Z"
+
+[entries."h:7f682116b007"]
+value = "Configurar `build.yaml`"
+source_hash = "7f682116b007b7f85f4a041fad2b163121b1e045"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:45:29Z"
+
+[entries."h:808d7dca8a74"]
+value = "Predeterminado"
+source_hash = "808d7dca8a74d84af27a2d6602c3d786de45fe1e"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:45:29Z"
+
+[entries."h:906acc7268b0"]
+value = "Véase [`examples/flutter`](https://github.com/sigilco/intl-ai/tree/main/examples/flutter) para una aplicación completa y funcional."
+source_hash = "906acc7268b0267d6aaf54a8027d9dc193a1fd63"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:45:29Z"
+
+[entries."h:91e3ab1e92dc"]
+value = "Copie `examples/flutter/plugin/` en su proyecto Flutter (por ejemplo, en `./tools/intl_ai_builder/`). El builder no se publica como un paquete, por lo que usted lo posee y puede personalizar el código."
+source_hash = "91e3ab1e92dcad335dc01d085649326be49092c8"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:45:29Z"
+
+[entries."h:9df2f4d5c940"]
+value = "Reenviar la salida de la CLI al registro del ejecutor de compilación."
+source_hash = "9df2f4d5c94016175e3c0e2efb67ec4988200512"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:45:29Z"
+
+[entries."h:a9d63ab38b6e"]
+value = "Agregue el builder al `build.yaml` de su app:"
+source_hash = "a9d63ab38b6e7ab6cbac70ead9ff1935e5dab497"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:45:29Z"
+
+[entries."h:ac69b4d37327"]
+value = "Ejecutar build_runner"
+source_hash = "ac69b4d373271447f45e0ed8cb32e2fc64da57f7"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:45:29Z"
+
+[entries."h:ad56cccf22e7"]
+value = "Crear `intl-ai.toml`"
+source_hash = "ad56cccf22e7339c20b2334937678b654c87b992"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:45:29Z"
+
+[entries."h:c3c5b5dd64e5"]
+value = "`intl-ai`"
+source_hash = "c3c5b5dd64e525a687403de8c22a1430697928fc"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:45:29Z"
+
+[entries."h:e31d972229de"]
+value = "Opción"
+source_hash = "e31d972229de381b461860014dd710856361917a"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:45:29Z"
+
+[entries."h:e84ea3673c91"]
+value = "Comando utilizado para invocar la CLI. Use `npx intl-ai` o `bunx intl-ai` si no desea una instalación global."
+source_hash = "e84ea3673c9127ad6f7ca7b673462772d2b028d0"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:45:29Z"
+
+[entries."h:edaa655c310c"]
+value = "El builder invoca:"
+source_hash = "edaa655c310c2a38146353348cd76b6c1ec0d98d"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:45:29Z"
+
+[entries."h:f3e07bac78af"]
+value = "`bool`"
+source_hash = "f3e07bac78afae12228cb139f16f615cb092ee14"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:45:29Z"
+
+[entries."h:f94412e1a1a4"]
+value = "Dart SDK 3.0+"
+source_hash = "f94412e1a1a471fa63f00d1eed3af99d67b6ad4a"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:45:29Z"
+
+[entries."h:fa7c89468792"]
+value = "`intl-ai` CLI en `PATH`"
+source_hash = "fa7c89468792ad882a33d4d6b215c452371beda4"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:45:29Z"
