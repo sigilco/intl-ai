@@ -1,0 +1,29 @@
+[package]
+name = "intl-ai-docs-cli"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+repository = "https://github.com/sigilco/intl-ai"
+description = "AI-powered document localization CLI (experimental)"
+homepage = "https://intl-ai.illo.fyi"
+
+[dependencies]
+intl-ai-checks = { path = "../intl-ai-checks" }
+intl-ai-core = { path = "../intl-ai-core" }
+intl-ai-docs = { path = "../intl-ai-docs" }
+intl-ai-providers = { path = "../intl-ai-providers" }
+anyhow.workspace = true
+clap.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+
+[dev-dependencies]
+assert_cmd.workspace = true
+predicates = "3"
+tempfile.workspace = true
+toml.workspace = true
+
+[[bin]]
+name = "intl-ai-docs"
+path = "src/main.rs"
