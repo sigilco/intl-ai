@@ -8,14 +8,6 @@ reviewed = false
 model = "openrouter/free"
 updated_at = "2026-10-09T16:26:46Z"
 
-[entries."h:049838873358"]
-value = "`rosetta`"
-source_hash = "0498388733586f60dbd124ab1b02989df84b064c"
-origin = "ai"
-reviewed = false
-model = "openrouter/free"
-updated_at = "2026-10-09T16:26:46Z"
-
 [entries."h:06173f30ba03"]
 value = "Componentes web"
 source_hash = "06173f30ba037cccb9d203c2dee575ebeb29f9ea"
@@ -159,14 +151,6 @@ origin = "ai"
 reviewed = false
 model = "openrouter/free"
 updated_at = "2026-10-09T16:26:46Z"
-
-[entries."h:65278ab85d39"]
-value = "`react-intl`"
-source_hash = "65278ab85d3944f525fb23c73e76481d01344561"
-origin = "ai"
-reviewed = false
-model = "openrouter/free"
-updated_at = "2026-10-09T16:27:00Z"
 
 [entries."h:65de2e2a3bcb"]
 value = "Parcial"

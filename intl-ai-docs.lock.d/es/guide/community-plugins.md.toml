@@ -40,14 +40,6 @@ reviewed = false
 model = "openrouter/free"
 updated_at = "2026-10-09T16:09:55Z"
 
-[entries."h:33835b4bef20"]
-value = "`@intl-ai/expo`"
-source_hash = "33835b4bef201aae0602c16b1eb8d2ade5191ca0"
-origin = "ai"
-reviewed = false
-model = "openrouter/free"
-updated_at = "2026-10-09T16:09:55Z"
-
 [entries."h:37ce06fe5b59"]
 value = "Construir un shim"
 source_hash = "37ce06fe5b595960d610cbde9b7cf7da2334e824"
@@ -72,25 +64,9 @@ reviewed = false
 model = "openrouter/free"
 updated_at = "2026-10-09T16:09:55Z"
 
-[entries."h:57e0db592f87"]
-value = "`@intl-ai/unplugin`"
-source_hash = "57e0db592f8717a6668878187bbcccdecfc8d7f5"
-origin = "ai"
-reviewed = false
-model = "openrouter/free"
-updated_at = "2026-10-09T16:09:55Z"
-
 [entries."h:5bee0eeb7ac1"]
 value = "Un buen shim hace tres cosas:"
 source_hash = "5bee0eeb7ac15884008b560b2d61b03a3262c1cd"
-origin = "ai"
-reviewed = false
-model = "openrouter/free"
-updated_at = "2026-10-09T16:09:55Z"
-
-[entries."h:5d6558b5c795"]
-value = "`@intl-ai/next`"
-source_hash = "5d6558b5c7955ac958cd326ce738686e268b1d9c"
 origin = "ai"
 reviewed = false
 model = "openrouter/free"
@@ -163,14 +139,6 @@ updated_at = "2026-10-09T16:09:55Z"
 [entries."h:a1cd672a1d39"]
 value = "Vite, Webpack, Rollup, esbuild, Rspack, Farm"
 source_hash = "a1cd672a1d3945ab3990088616853b29bb7d7cd3"
-origin = "ai"
-reviewed = false
-model = "openrouter/free"
-updated_at = "2026-10-09T16:15:35Z"
-
-[entries."h:c3c5b5dd64e5"]
-value = "`intl-ai`"
-source_hash = "c3c5b5dd64e525a687403de8c22a1430697928fc"
 origin = "ai"
 reviewed = false
 model = "openrouter/free"

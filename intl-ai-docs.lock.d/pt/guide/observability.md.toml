@@ -8,14 +8,6 @@ reviewed = false
 model = "openrouter/free"
 updated_at = "2026-10-09T21:40:57Z"
 
-[entries."h:0e1f8d60b231"]
-value = "`invalid`"
-source_hash = "0e1f8d60b23181069faa76e4e73608b698ed139f"
-origin = "ai"
-reviewed = false
-model = "openrouter/free"
-updated_at = "2026-10-09T21:40:57Z"
-
 [entries."h:18339c530a5e"]
 value = "Cada comando aceita `--format json`:"
 source_hash = "18339c530a5ed30c7e92eda8af796b1fd825f8f6"
@@ -51,14 +43,6 @@ updated_at = "2026-10-09T21:40:57Z"
 [entries."h:2bbb0b8439fb"]
 value = "`reviewed`: reposto para `false` automaticamente quando um humano edita o ficheiro."
 source_hash = "2bbb0b8439fb91fc5b24a780b0913a2bba520c95"
-origin = "ai"
-reviewed = false
-model = "openrouter/free"
-updated_at = "2026-10-09T21:40:57Z"
-
-[entries."h:31d0301008fa"]
-value = "`stale`"
-source_hash = "31d0301008fa62974e73f12b733af3d2e2350a83"
 origin = "ai"
 reviewed = false
 model = "openrouter/free"
@@ -104,25 +88,9 @@ reviewed = false
 model = "openrouter/free"
 updated_at = "2026-10-09T21:42:21Z"
 
-[entries."h:4ee1464eb1bd"]
-value = "`missing`"
-source_hash = "4ee1464eb1bd04bc67eef7dc44fc59b77a50be3a"
-origin = "ai"
-reviewed = false
-model = "openrouter/free"
-updated_at = "2026-10-09T21:42:21Z"
-
 [entries."h:512b8011b597"]
 value = "Valor de propriedade de IA cuja fonte mudou desde o preenchimento."
 source_hash = "512b8011b597ee8200a066660f172f511bec45af"
-origin = "ai"
-reviewed = false
-model = "openrouter/free"
-updated_at = "2026-10-09T21:42:21Z"
-
-[entries."h:54596127e37d"]
-value = "`modified`"
-source_hash = "54596127e37d7b90fb04d4da6fae43a699131e17"
 origin = "ai"
 reviewed = false
 model = "openrouter/free"
@@ -139,14 +107,6 @@ updated_at = "2026-10-09T21:42:33Z"
 [entries."h:763a2f5ee778"]
 value = "Chave presente em um arquivo alvo, mas não na fonte."
 source_hash = "763a2f5ee77853ac1992f9fd719dd1f8af9222e4"
-origin = "ai"
-reviewed = false
-model = "openrouter/free"
-updated_at = "2026-10-09T21:42:33Z"
-
-[entries."h:781f3aea9b27"]
-value = "`extra`"
-source_hash = "781f3aea9b27e00ec6b57b5d65ee7b854a969c70"
 origin = "ai"
 reviewed = false
 model = "openrouter/free"
@@ -275,14 +235,6 @@ updated_at = "2026-10-09T21:43:43Z"
 [entries."h:f1039ef78706"]
 value = "O binário `intl-ai` emite saída legível por máquina em cada comando. Não há uma API de callback para configurar: pipe `--format json` para o que você usar para telemetria, ou adicione um `exec` check para instrumentação personalizada."
 source_hash = "f1039ef787065c59a4ae95ad18e750aebba4ad8f"
-origin = "ai"
-reviewed = false
-model = "openrouter/free"
-updated_at = "2026-10-09T21:43:43Z"
-
-[entries."h:f7e75e04c9f9"]
-value = "`unreviewed`"
-source_hash = "f7e75e04c9f93a996551c731c66949c7debade1e"
 origin = "ai"
 reviewed = false
 model = "openrouter/free"

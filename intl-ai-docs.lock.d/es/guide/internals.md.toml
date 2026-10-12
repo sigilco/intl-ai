@@ -24,14 +24,6 @@ reviewed = false
 model = "openrouter/free"
 updated_at = "2026-10-09T16:29:03Z"
 
-[entries."h:17d77d5a3375"]
-value = "`crates/intl-ai-cli`"
-source_hash = "17d77d5a33756175f22a949b417ddcf2208fe4c5"
-origin = "ai"
-reviewed = false
-model = "openrouter/free"
-updated_at = "2026-10-09T16:29:03Z"
-
 [entries."h:1e03c94ffac7"]
 value = "`cargo dist` genera el flujo de trabajo de lanzamiento: la etiqueta `vX.Y.Z` produce los tarballs de plataforma, `intl-ai-installer.sh`/`.ps1`, una fórmula de Homebrew, la publicación del wrapper de npm, y las attestaciones de GitHub. Consulte [Versioning in AGENTS.md](https://github.com/sigilco/intl-ai/blob/develop/AGENTS.md#versioning)."
 source_hash = "1e03c94ffac74040340e06a72390c48aba8f32d6"
@@ -72,14 +64,6 @@ reviewed = false
 model = "openrouter/free"
 updated_at = "2026-10-09T16:29:03Z"
 
-[entries."h:25e29230f235"]
-value = "`crates/intl-ai-formats`"
-source_hash = "25e29230f235fa758de2c61ba0981642bc018fb3"
-origin = "ai"
-reviewed = false
-model = "openrouter/free"
-updated_at = "2026-10-09T16:29:03Z"
-
 [entries."h:359dde20bb08"]
 value = "Transportes: `http` (compatible con OpenAI), `command` (agentes locales), `replay` (cintas). Contrato de prompt + reintentos."
 source_hash = "359dde20bb081b3149db9c790dd743796439c2c2"
@@ -99,14 +83,6 @@ updated_at = "2026-10-09T16:29:03Z"
 [entries."h:4719895991d1"]
 value = "Esquema de configuración"
 source_hash = "4719895991d161115eaa92299ff5190275f42cf7"
-origin = "ai"
-reviewed = false
-model = "openrouter/free"
-updated_at = "2026-10-09T16:29:03Z"
-
-[entries."h:4a22fd4a0ee7"]
-value = "`crates/intl-ai-providers`"
-source_hash = "4a22fd4a0ee76dc9b3f3e609ada140c7bab47082"
 origin = "ai"
 reviewed = false
 model = "openrouter/free"
@@ -160,14 +136,6 @@ reviewed = false
 model = "openrouter/free"
 updated_at = "2026-10-09T16:29:03Z"
 
-[entries."h:8606394dc106"]
-value = "`crates/intl-ai-checks`"
-source_hash = "8606394dc106bf8ffdca37c3d9581b5f86d761b7"
-origin = "ai"
-reviewed = false
-model = "openrouter/free"
-updated_at = "2026-10-09T16:29:13Z"
-
 [entries."h:90d6493bb6a4"]
 value = "Plugin de configuración de Expo. Ejecuta el pipeline durante `expo prebuild`/`eas build`."
 source_hash = "90d6493bb6a4e9ab0f27162d6ba9a28da3c48ca1"
@@ -179,14 +147,6 @@ updated_at = "2026-10-09T16:29:13Z"
 [entries."h:95446c2bad97"]
 value = "El motor de traducción es un workspace de Rust; los paquetes de npm son shims delgados que generan el binario."
 source_hash = "95446c2bad97a2cab1ccbf5f4735bbf66a14d367"
-origin = "ai"
-reviewed = false
-model = "openrouter/free"
-updated_at = "2026-10-09T16:29:13Z"
-
-[entries."h:99fa41d6c0a6"]
-value = "`crates/intl-ai-core`"
-source_hash = "99fa41d6c0a693dbb9bc5df5257f7a885987544c"
 origin = "ai"
 reviewed = false
 model = "openrouter/free"

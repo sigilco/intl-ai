@@ -62,6 +62,15 @@
     ]
   },
   {
+    "title": "Localizar documentos",
+    "icon": "book",
+    "collapsible": true,
+    "children": [
+      { "title": "Resumen", "path": "/guide/documents/" },
+      { "title": "Configuración", "path": "/guide/documents/configuration/" }
+    ]
+  },
+  {
     "title": "Referencia",
     "icon": "book-open",
     "collapsible": true,

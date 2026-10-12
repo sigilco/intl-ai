@@ -64,30 +64,6 @@ reviewed = false
 model = "openrouter/free"
 updated_at = "2026-10-09T19:19:32Z"
 
-[entries."h:23d2c69d7b53"]
-value = "`false`"
-source_hash = "23d2c69d7b530e4487aabfc13956cf820786ec4e"
-origin = "ai"
-reviewed = false
-model = "openrouter/free"
-updated_at = "2026-10-09T19:19:32Z"
-
-[entries."h:250d858670eb"]
-value = "`configPath`"
-source_hash = "250d858670eb75f1345d5372a7ac8d80acefa93e"
-origin = "ai"
-reviewed = false
-model = "openrouter/free"
-updated_at = "2026-10-09T19:19:32Z"
-
-[entries."h:25a046cd8fc9"]
-value = "`String`"
-source_hash = "25a046cd8fc934e70e39caafb623905a31932714"
-origin = "ai"
-reviewed = false
-model = "openrouter/free"
-updated_at = "2026-10-09T19:19:32Z"
-
 [entries."h:3460bf920e13"]
 value = "Um arquivo `intl-ai.toml` e um diretório de locale"
 source_hash = "3460bf920e1310229d688eb015ffc0aacfb57a21"
@@ -128,14 +104,6 @@ reviewed = false
 model = "openrouter/free"
 updated_at = "2026-10-09T19:19:32Z"
 
-[entries."h:4b876826d2a8"]
-value = "`executable`"
-source_hash = "4b876826d2a88edea6aac1b606273ba7b5494d88"
-origin = "ai"
-reviewed = false
-model = "openrouter/free"
-updated_at = "2026-10-09T19:19:32Z"
-
 [entries."h:515f8f5fa29a"]
 value = "Uso em tempo de execução"
 source_hash = "515f8f5fa29a636234e837f3548a2918507e964d"
@@ -151,22 +119,6 @@ origin = "ai"
 reviewed = false
 model = "openrouter/free"
 updated_at = "2026-10-09T19:19:32Z"
-
-[entries."h:63d1dbd0d369"]
-value = "`intl-ai.toml`"
-source_hash = "63d1dbd0d369be859b95c931a301bcf8d577cd28"
-origin = "ai"
-reviewed = false
-model = "openrouter/free"
-updated_at = "2026-10-09T19:19:32Z"
-
-[entries."h:6d6ea3d1ab27"]
-value = "`verbose`"
-source_hash = "6d6ea3d1ab27ad4143c5afda275992c7cc30a8d7"
-origin = "ai"
-reviewed = false
-model = "openrouter/free"
-updated_at = "2026-10-09T19:24:51Z"
 
 [entries."h:7f17ecb03a11"]
 value = "Caminho para o seu ficheiro de configuração, relativo à raiz do pacote."
@@ -240,14 +192,6 @@ reviewed = false
 model = "openrouter/free"
 updated_at = "2026-10-09T19:24:51Z"
 
-[entries."h:c3c5b5dd64e5"]
-value = "`intl-ai`"
-source_hash = "c3c5b5dd64e525a687403de8c22a1430697928fc"
-origin = "ai"
-reviewed = false
-model = "openrouter/free"
-updated_at = "2026-10-09T19:24:51Z"
-
 [entries."h:e31d972229de"]
 value = "Opção"
 source_hash = "e31d972229de381b461860014dd710856361917a"
@@ -267,14 +211,6 @@ updated_at = "2026-10-09T19:24:51Z"
 [entries."h:edaa655c310c"]
 value = "O builder invoca:"
 source_hash = "edaa655c310c2a38146353348cd76b6c1ec0d98d"
-origin = "ai"
-reviewed = false
-model = "openrouter/free"
-updated_at = "2026-10-09T19:24:51Z"
-
-[entries."h:f3e07bac78af"]
-value = "`bool`"
-source_hash = "f3e07bac78afae12228cb139f16f615cb092ee14"
 origin = "ai"
 reviewed = false
 model = "openrouter/free"

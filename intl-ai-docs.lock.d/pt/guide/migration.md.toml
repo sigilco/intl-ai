@@ -1,48 +1,8 @@
 version = 1
 
-[entries."h:00452cdfc613"]
-value = "`base_url`"
-source_hash = "00452cdfc613eda7feb50fe6accaa89685e93570"
-origin = "ai"
-reviewed = false
-model = "openrouter/free"
-updated_at = "2026-10-09T17:48:29Z"
-
 [entries."h:0a999012ffb8"]
 value = "Pacotes"
 source_hash = "0a999012ffb87b3edac99adbdfc498b12831a1e2"
-origin = "ai"
-reviewed = false
-model = "openrouter/free"
-updated_at = "2026-10-09T17:48:29Z"
-
-[entries."h:0b42536caf48"]
-value = "`apiKey`"
-source_hash = "0b42536caf48de52336c9de537b18dc84a45a487"
-origin = "ai"
-reviewed = false
-model = "openrouter/free"
-updated_at = "2026-10-09T17:48:29Z"
-
-[entries."h:0c461158f50c"]
-value = "`processor`"
-source_hash = "0c461158f50cdb71b883da4acdf16607777a6b68"
-origin = "ai"
-reviewed = false
-model = "openrouter/free"
-updated_at = "2026-10-09T17:48:29Z"
-
-[entries."h:0c6deb6da05f"]
-value = "`maxRetries`"
-source_hash = "0c6deb6da05ffb8c88532a62235ab4ad6cc5d135"
-origin = "ai"
-reviewed = false
-model = "openrouter/free"
-updated_at = "2026-10-09T17:48:29Z"
-
-[entries."h:0d6f68d1e59e"]
-value = "`defaultLocale`"
-source_hash = "0d6f68d1e59e2fa8190abd223004ac1f0313e4c9"
 origin = "ai"
 reviewed = false
 model = "openrouter/free"
@@ -72,22 +32,6 @@ reviewed = false
 model = "openrouter/free"
 updated_at = "2026-10-09T17:48:29Z"
 
-[entries."h:1d310c6ea1d3"]
-value = "`locale_instructions`"
-source_hash = "1d310c6ea1d31d2945b6983e9d8ee8d6e73424bc"
-origin = "ai"
-reviewed = false
-model = "openrouter/free"
-updated_at = "2026-10-09T17:48:29Z"
-
-[entries."h:2059c56e1767"]
-value = "`targets`"
-source_hash = "2059c56e1767e51a12cfc8fc5dc7bb5ca983c105"
-origin = "ai"
-reviewed = false
-model = "openrouter/free"
-updated_at = "2026-10-09T17:48:29Z"
-
 [entries."h:2331de92c1c8"]
 value = "O intl-ai 1.x substitui os pacotes TypeScript por um único binário Rust. Instale-o através do Homebrew, mise, do script de instalação ou do wrapper npm `intl-ai`; não é necessário Node.js para o executar. Os pacotes `@intl-ai/*` são apenas adaptadores (shims) que localizam e lançam o binário dentro da sua ferramenta de compilação."
 source_hash = "2331de92c1c814415f72065844d663ee005334eb"
@@ -99,14 +43,6 @@ updated_at = "2026-10-09T17:48:29Z"
 [entries."h:23e6301599f7"]
 value = "`intl-ai fill --regenerate` / `--include-human`"
 source_hash = "23e6301599f7fc9395e7c770e1adf4571043a65a"
-origin = "ai"
-reviewed = false
-model = "openrouter/free"
-updated_at = "2026-10-09T17:48:29Z"
-
-[entries."h:2571f7259af0"]
-value = "`model_params`"
-source_hash = "2571f7259af006ad38e2df1c9afd7d6176ea922c"
 origin = "ai"
 reviewed = false
 model = "openrouter/free"
@@ -136,25 +72,9 @@ reviewed = false
 model = "openrouter/free"
 updated_at = "2026-10-09T17:48:29Z"
 
-[entries."h:30868b039209"]
-value = "`modelParams`"
-source_hash = "30868b039209e93436904287c90db4dd237eb863"
-origin = "ai"
-reviewed = false
-model = "openrouter/free"
-updated_at = "2026-10-09T17:48:29Z"
-
 [entries."h:31b43924cd26"]
 value = "Todos os adaptadores (shims) declaram `intl-ai` como dependência para que o binário se resolva dentro de projetos instalados via npm."
 source_hash = "31b43924cd26b6ad8909907653ad0c496bb3e4c3"
-origin = "ai"
-reviewed = false
-model = "openrouter/free"
-updated_at = "2026-10-09T17:48:29Z"
-
-[entries."h:32f0f5b5f56d"]
-value = "`quality.threshold`"
-source_hash = "32f0f5b5f56de64728eb100dc42b2453e8468982"
 origin = "ai"
 reviewed = false
 model = "openrouter/free"
@@ -184,14 +104,6 @@ reviewed = false
 model = "openrouter/free"
 updated_at = "2026-10-09T17:50:02Z"
 
-[entries."h:3acf038a28fb"]
-value = "`localeInstructions`"
-source_hash = "3acf038a28fb962b153aa8015ffc3b99db456308"
-origin = "ai"
-reviewed = false
-model = "openrouter/free"
-updated_at = "2026-10-09T17:50:02Z"
-
 [entries."h:3b115f489472"]
 value = "`@intl-ai/next` shim (`withIntlAi()` executa o binário na avaliação da configuração)"
 source_hash = "3b115f4894726ca9ee72ce20613ff11479ae4f71"
@@ -203,22 +115,6 @@ updated_at = "2026-10-09T17:50:02Z"
 [entries."h:3d88c133c53d"]
 value = "`intl-ai` binário (brew, mise, install.sh, or npm wrapper)"
 source_hash = "3d88c133c53daccbf3b3d96fcdbcccc56b1b3124"
-origin = "ai"
-reviewed = false
-model = "openrouter/free"
-updated_at = "2026-10-09T17:50:02Z"
-
-[entries."h:44335b9b1c69"]
-value = "`@intl-ai/cli`"
-source_hash = "44335b9b1c691fdb24d8d4b8535f8f9bb0535622"
-origin = "ai"
-reviewed = false
-model = "openrouter/free"
-updated_at = "2026-10-09T17:50:02Z"
-
-[entries."h:44e080083583"]
-value = "`glossary`"
-source_hash = "44e080083583df89ba0c078351f496d4b23cd353"
 origin = "ai"
 reviewed = false
 model = "openrouter/free"
@@ -248,14 +144,6 @@ reviewed = false
 model = "openrouter/free"
 updated_at = "2026-10-09T17:50:02Z"
 
-[entries."h:51ba21eea1cf"]
-value = "`batch_size`"
-source_hash = "51ba21eea1cf3031a43750cd5bee99658815c80a"
-origin = "ai"
-reviewed = false
-model = "openrouter/free"
-updated_at = "2026-10-09T17:50:02Z"
-
 [entries."h:56639154a866"]
 value = "0.4.x:"
 source_hash = "56639154a86652ecfda943199dadf25697542e58"
@@ -264,33 +152,9 @@ reviewed = false
 model = "openrouter/free"
 updated_at = "2026-10-09T17:50:02Z"
 
-[entries."h:57e0db592f87"]
-value = "`@intl-ai/unplugin`"
-source_hash = "57e0db592f8717a6668878187bbcccdecfc8d7f5"
-origin = "ai"
-reviewed = false
-model = "openrouter/free"
-updated_at = "2026-10-09T17:50:02Z"
-
-[entries."h:5ab53f17fb34"]
-value = "`locale_dir`"
-source_hash = "5ab53f17fb342e8e17b31960794bbbea30bdfb3d"
-origin = "ai"
-reviewed = false
-model = "openrouter/free"
-updated_at = "2026-10-09T17:50:02Z"
-
 [entries."h:5c422fb51023"]
 value = "`provider`, `model`"
 source_hash = "5c422fb51023952b32f28f3381e9ff4488dc728d"
-origin = "ai"
-reviewed = false
-model = "openrouter/free"
-updated_at = "2026-10-09T17:50:02Z"
-
-[entries."h:5d6558b5c795"]
-value = "`@intl-ai/next`"
-source_hash = "5d6558b5c7955ac958cd326ce738686e268b1d9c"
 origin = "ai"
 reviewed = false
 model = "openrouter/free"
@@ -336,14 +200,6 @@ reviewed = false
 model = "openrouter/free"
 updated_at = "2026-10-09T17:51:07Z"
 
-[entries."h:773ad2c5c27e"]
-value = "`max_retries`"
-source_hash = "773ad2c5c27e160f48789739d24b622788350dd1"
-origin = "ai"
-reviewed = false
-model = "openrouter/free"
-updated_at = "2026-10-09T17:51:07Z"
-
 [entries."h:8474e9bb5764"]
 value = "Se ligou o intl-ai a um bundler, os pacotes shim mudaram de forma:"
 source_hash = "8474e9bb57645125a5744a33c54652f7b68d7c1b"
@@ -360,22 +216,6 @@ reviewed = false
 model = "openrouter/free"
 updated_at = "2026-10-09T17:51:07Z"
 
-[entries."h:89de7ebd2b5b"]
-value = "`intl-ai check`"
-source_hash = "89de7ebd2b5b7dde84c26daa04e610d753f381b9"
-origin = "ai"
-reviewed = false
-model = "openrouter/free"
-updated_at = "2026-10-09T17:51:07Z"
-
-[entries."h:8f56f6cc0b8b"]
-value = "`localeDir`"
-source_hash = "8f56f6cc0b8b013b58b6dae3e142ca733722cc65"
-origin = "ai"
-reviewed = false
-model = "openrouter/free"
-updated_at = "2026-10-09T17:51:07Z"
-
 [entries."h:919135718ed9"]
 value = "`@intl-ai/expo`: plugin de configuração que executa o binário durante `prebuild`."
 source_hash = "919135718ed951a76d707aafff8e3afb1491f7fe"
@@ -387,14 +227,6 @@ updated_at = "2026-10-09T17:51:07Z"
 [entries."h:91f8b32a2f3d"]
 value = "Apague `intl-ai.lock.json`."
 source_hash = "91f8b32a2f3d67c6d3f2e71bcaac046e290ed3fd"
-origin = "ai"
-reviewed = false
-model = "openrouter/free"
-updated_at = "2026-10-09T17:51:07Z"
-
-[entries."h:93d0ff2aa4d2"]
-value = "`intl-ai fill`"
-source_hash = "93d0ff2aa4d2a0e27cd39900290389440d22fc06"
 origin = "ai"
 reviewed = false
 model = "openrouter/free"
@@ -448,25 +280,9 @@ reviewed = false
 model = "openrouter/free"
 updated_at = "2026-10-09T17:51:07Z"
 
-[entries."h:b8c0b85f852a"]
-value = "`batchSize`"
-source_hash = "b8c0b85f852ad4b31a37b33d2abb9fcdd85fa9f3"
-origin = "ai"
-reviewed = false
-model = "openrouter/free"
-updated_at = "2026-10-09T17:51:07Z"
-
 [entries."h:bc8693ae9a10"]
 value = "Instale o binário e traduza sua configuração como acima."
 source_hash = "bc8693ae9a10bd54e0e6b5f7a1a339398961a84c"
-origin = "ai"
-reviewed = false
-model = "openrouter/free"
-updated_at = "2026-10-09T17:51:07Z"
-
-[entries."h:bef6255ca5b3"]
-value = "`format`"
-source_hash = "bef6255ca5b30cab3165c0155cfa872369203174"
 origin = "ai"
 reviewed = false
 model = "openrouter/free"
@@ -480,41 +296,9 @@ reviewed = false
 model = "openrouter/free"
 updated_at = "2026-10-09T17:51:07Z"
 
-[entries."h:c7552622c0d4"]
-value = "`intl-ai fill --force`"
-source_hash = "c7552622c0d4771d136a7afd801924c4d77f018b"
-origin = "ai"
-reviewed = false
-model = "openrouter/free"
-updated_at = "2026-10-09T17:51:14Z"
-
-[entries."h:d2841e5ecb7a"]
-value = "`baseURL`"
-source_hash = "d2841e5ecb7a17d8d5bc0e5a8c83b683f74b054b"
-origin = "ai"
-reviewed = false
-model = "openrouter/free"
-updated_at = "2026-10-09T17:51:14Z"
-
-[entries."h:d39b86c86f74"]
-value = "`@intl-ai/api`"
-source_hash = "d39b86c86f74c9e84c51946af2667741b5751d3c"
-origin = "ai"
-reviewed = false
-model = "openrouter/free"
-updated_at = "2026-10-09T17:51:14Z"
-
 [entries."h:d43d12eeff10"]
 value = "Não cole chaves de API no `intl-ai.toml`. Use interpolação `${env:VAR}` ou `${file:PATH}`; `config validate` imprime segredos mascarados."
 source_hash = "d43d12eeff10343496f5d49ae7a7c51c8466c5c2"
-origin = "ai"
-reviewed = false
-model = "openrouter/free"
-updated_at = "2026-10-09T17:51:14Z"
-
-[entries."h:d4c1213c6eea"]
-value = "`source`"
-source_hash = "d4c1213c6eeaa08cef5ab789ff08baac26527947"
 origin = "ai"
 reviewed = false
 model = "openrouter/free"

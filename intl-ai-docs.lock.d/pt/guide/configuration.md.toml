@@ -24,22 +24,6 @@ reviewed = false
 model = "openrouter/free"
 updated_at = "2026-10-09T19:09:14Z"
 
-[entries."h:0b07edbb8e70"]
-value = "`[[formats]]`"
-source_hash = "0b07edbb8e7041bc562f17341b5aefff24be76c6"
-origin = "ai"
-reviewed = false
-model = "openrouter/free"
-updated_at = "2026-10-09T19:09:14Z"
-
-[entries."h:0c461158f50c"]
-value = "`processor`"
-source_hash = "0c461158f50cdb71b883da4acdf16607777a6b68"
-origin = "ai"
-reviewed = false
-model = "openrouter/free"
-updated_at = "2026-10-09T19:09:14Z"
-
 [entries."h:0cd0918f1ff4"]
 value = "Referência do ficheiro de configuração intl-ai. intl-ai.toml, .json ou .yaml, validado contra um esquema publicado."
 source_hash = "0cd0918f1ff4aa08da8bc666048c51e79a7e5e18"
@@ -64,22 +48,6 @@ reviewed = false
 model = "openrouter/free"
 updated_at = "2026-10-09T19:09:14Z"
 
-[entries."h:1d310c6ea1d3"]
-value = "`locale_instructions`"
-source_hash = "1d310c6ea1d31d2945b6983e9d8ee8d6e73424bc"
-origin = "ai"
-reviewed = false
-model = "openrouter/free"
-updated_at = "2026-10-09T19:09:14Z"
-
-[entries."h:2059c56e1767"]
-value = "`targets`"
-source_hash = "2059c56e1767e51a12cfc8fc5dc7bb5ca983c105"
-origin = "ai"
-reviewed = false
-model = "openrouter/free"
-updated_at = "2026-10-09T19:09:14Z"
-
 [entries."h:20e882dfdeda"]
 value = "Intellisense do editor"
 source_hash = "20e882dfdedabfb88b334e060299a60c75426fc6"
@@ -88,41 +56,9 @@ reviewed = false
 model = "openrouter/free"
 updated_at = "2026-10-09T19:09:14Z"
 
-[entries."h:2494c55cdc98"]
-value = "`[quality]`"
-source_hash = "2494c55cdc98d6063ff9963809454783aa466cf2"
-origin = "ai"
-reviewed = false
-model = "openrouter/free"
-updated_at = "2026-10-09T19:09:14Z"
-
 [entries."h:2efe401f9c8b"]
 value = "Entradas máximas de origem por pedido de tradução. Por defeito é ilimitado (todas as chaves em um lote). Reduza para modelos com janelas de contexto menores ou falhas mais granulares por chave."
 source_hash = "2efe401f9c8b3d90da8c3dcd964e6df750bb43bc"
-origin = "ai"
-reviewed = false
-model = "openrouter/free"
-updated_at = "2026-10-09T19:09:14Z"
-
-[entries."h:390bf48e410e"]
-value = "`[[checks]]`"
-source_hash = "390bf48e410e988bdc3936f95e17e14fa02b8e71"
-origin = "ai"
-reviewed = false
-model = "openrouter/free"
-updated_at = "2026-10-09T19:09:14Z"
-
-[entries."h:44c589b70c7d"]
-value = "`extends`"
-source_hash = "44c589b70c7da4227c2cdc2545cad3ed1e886cca"
-origin = "ai"
-reviewed = false
-model = "openrouter/free"
-updated_at = "2026-10-09T19:09:14Z"
-
-[entries."h:44e080083583"]
-value = "`glossary`"
-source_hash = "44e080083583df89ba0c078351f496d4b23cd353"
 origin = "ai"
 reviewed = false
 model = "openrouter/free"
@@ -184,25 +120,9 @@ reviewed = false
 model = "openrouter/free"
 updated_at = "2026-10-09T19:11:16Z"
 
-[entries."h:51ba21eea1cf"]
-value = "`batch_size`"
-source_hash = "51ba21eea1cf3031a43750cd5bee99658815c80a"
-origin = "ai"
-reviewed = false
-model = "openrouter/free"
-updated_at = "2026-10-09T19:11:16Z"
-
 [entries."h:572254a4df82"]
 value = "Pontuação ponderada por chave sobre as verificações configuradas (verificações binárias pontuam 1.0/0.0, o juiz pontua seu valor real 0..1). Abaixo de `fail_below` há uma descoberta `invalid`; abaixo de `review_below` marca a chave como não revisada."
 source_hash = "572254a4df823353683854e2583d4a60ed74d35c"
-origin = "ai"
-reviewed = false
-model = "openrouter/free"
-updated_at = "2026-10-09T19:11:16Z"
-
-[entries."h:5ab53f17fb34"]
-value = "`locale_dir`"
-source_hash = "5ab53f17fb342e8e17b31960794bbbea30bdfb3d"
 origin = "ai"
 reviewed = false
 model = "openrouter/free"
@@ -240,25 +160,9 @@ reviewed = false
 model = "openrouter/free"
 updated_at = "2026-10-09T19:11:16Z"
 
-[entries."h:773ad2c5c27e"]
-value = "`max_retries`"
-source_hash = "773ad2c5c27e160f48789739d24b622788350dd1"
-origin = "ai"
-reviewed = false
-model = "openrouter/free"
-updated_at = "2026-10-09T19:11:16Z"
-
 [entries."h:779d7eb2c142"]
 value = 'Builtin ids: `icu`, `placeholder-parity`, `dialect:<locale>`, `judge`. Uma entrada de verificação também pode apontar para uma especificação YAML declarativa (`spec = "checks/brand.yaml"`) ou para um comando externo (`exec = "./my-check"` com `args`/`cwd`/`timeout_ms`/`max_stdout_bytes`, apenas config raiz). `threshold` é apenas do juiz (pontuação abaixo dele se torna uma descoberta `invalid`, padrão `0.8`); `weight` alimenta o agregado `[quality]`.'
 source_hash = "779d7eb2c142edcdc4c1c9a257efd9dfe4f49843"
-origin = "ai"
-reviewed = false
-model = "openrouter/free"
-updated_at = "2026-10-09T19:11:16Z"
-
-[entries."h:90c3acd3fe2f"]
-value = "`[provider]`"
-source_hash = "90c3acd3fe2f357492f9236a06474ba5f5402d5a"
 origin = "ai"
 reviewed = false
 model = "openrouter/free"
@@ -291,14 +195,6 @@ updated_at = "2026-10-09T19:11:16Z"
 [entries."h:b9cf309f0567"]
 value = "Diretório contendo os arquivos de localidade, resolvido em relação ao diretório do arquivo de configuração. Um arquivo por localidade: `${locale_dir}/${locale}.json` (ou `.yaml`)."
 source_hash = "b9cf309f0567356299e6daa836f648ceddd325e8"
-origin = "ai"
-reviewed = false
-model = "openrouter/free"
-updated_at = "2026-10-09T19:11:16Z"
-
-[entries."h:bef6255ca5b3"]
-value = "`format`"
-source_hash = "bef6255ca5b30cab3165c0155cfa872369203174"
 origin = "ai"
 reviewed = false
 model = "openrouter/free"
@@ -344,14 +240,6 @@ reviewed = false
 model = "openrouter/free"
 updated_at = "2026-10-09T19:11:55Z"
 
-[entries."h:d4c1213c6eea"]
-value = "`source`"
-source_hash = "d4c1213c6eeaa08cef5ab789ff08baac26527947"
-origin = "ai"
-reviewed = false
-model = "openrouter/free"
-updated_at = "2026-10-09T19:11:55Z"
-
 [entries."h:d62b7fd860f9"]
 value = "Tentativas de transporte por pedido antes de o lote falhar. Predefinido `3`, limitado a `10`."
 source_hash = "d62b7fd860f91cc90298392ef147128573a3e450"
@@ -363,14 +251,6 @@ updated_at = "2026-10-09T19:11:55Z"
 [entries."h:e9dab60548a0"]
 value = "Formatos personalizados"
 source_hash = "e9dab60548a00adfd0a1c5f11874b3615eaca38a"
-origin = "ai"
-reviewed = false
-model = "openrouter/free"
-updated_at = "2026-10-09T19:11:55Z"
-
-[entries."h:eaf46a9b8c58"]
-value = "`[fill]`"
-source_hash = "eaf46a9b8c58705e9b420865894efa2dcf063d04"
 origin = "ai"
 reviewed = false
 model = "openrouter/free"
@@ -395,14 +275,6 @@ updated_at = "2026-10-09T19:11:55Z"
 [entries."h:efb10aa6d55d"]
 value = "Formatos de locale externos registados ao lado dos incorporados. Consulte [Format plugins](/guide/format-plugins/) para o protocolo e uma implementação de referência."
 source_hash = "efb10aa6d55d2c698142b8bf1fdb00f957ae7012"
-origin = "ai"
-reviewed = false
-model = "openrouter/free"
-updated_at = "2026-10-09T19:11:55Z"
-
-[entries."h:fd9e45099520"]
-value = "`[check]`"
-source_hash = "fd9e45099520aa9c75807c36af9c24d289994591"
 origin = "ai"
 reviewed = false
 model = "openrouter/free"

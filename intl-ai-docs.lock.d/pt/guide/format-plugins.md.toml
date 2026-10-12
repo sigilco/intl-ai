@@ -1,13 +1,5 @@
 version = 1
 
-[entries."h:0d26693b06c9"]
-value = "`exec`"
-source_hash = "0d26693b06c960111c27a88f3ca123057f64d84f"
-origin = "ai"
-reviewed = false
-model = "openrouter/free"
-updated_at = "2026-10-09T19:15:24Z"
-
 [entries."h:0d2adb81393d"]
 value = "Mantenha `v: 1` em cada resposta."
 source_hash = "0d2adb81393daa3070c797b958b845b3af2ec4f4"
@@ -32,14 +24,6 @@ reviewed = false
 model = "openrouter/free"
 updated_at = "2026-10-09T19:15:24Z"
 
-[entries."h:0f33a36e5fc5"]
-value = "`cwd`"
-source_hash = "0f33a36e5fc5d969b0a44d783191cf25a43da4eb"
-origin = "ai"
-reviewed = false
-model = "openrouter/free"
-updated_at = "2026-10-09T19:15:24Z"
-
 [entries."h:0fd1d31e7c82"]
 value = "`error` é texto livre; prefixá-lo com um código estável (`parse:`, `write:`) é a convenção. Uma saída não zero, um timeout ou uma linha de resposta mal formada ou ausente significa que o plugin despenhou e falha a operação da mesma forma, com o final do stderr anexado."
 source_hash = "0fd1d31e7c829543dc111753cbe52740a4743417"
@@ -51,14 +35,6 @@ updated_at = "2026-10-09T19:15:24Z"
 [entries."h:16dfd011e633"]
 value = 'Nome do registo; `format = "<name>"` seleciona-o. Não deve ser `json`/`yaml`'
 source_hash = "16dfd011e633a7ff43850e009cdd56a607bfd0d3"
-origin = "ai"
-reviewed = false
-model = "openrouter/free"
-updated_at = "2026-10-09T19:15:24Z"
-
-[entries."h:184e466f5764"]
-value = "`extensions`"
-source_hash = "184e466f5764d4df8cd7de32d6ae53ef3d288fb8"
 origin = "ai"
 reviewed = false
 model = "openrouter/free"
@@ -216,14 +192,6 @@ reviewed = false
 model = "openrouter/free"
 updated_at = "2026-10-09T19:15:36Z"
 
-[entries."h:98bb20a7abe3"]
-value = "`max_stdout_bytes`"
-source_hash = "98bb20a7abe3e8554f68840cfb885d7455bf25ec"
-origin = "ai"
-reviewed = false
-model = "openrouter/free"
-updated_at = "2026-10-09T19:15:36Z"
-
 [entries."h:a0fb821bdaf9"]
 value = "Propósito"
 source_hash = "a0fb821bdaf93ed9a1f1e920acfb2840eff5b153"
@@ -264,14 +232,6 @@ reviewed = false
 model = "openrouter/free"
 updated_at = "2026-10-09T19:15:36Z"
 
-[entries."h:b44f37d6e95a"]
-value = "`args`"
-source_hash = "b44f37d6e95ab93c70a5a934889ab07822393804"
-origin = "ai"
-reviewed = false
-model = "openrouter/free"
-updated_at = "2026-10-09T19:15:36Z"
-
 [entries."h:b5a286c79ae0"]
 value = "Plugins de formato"
 source_hash = "b5a286c79ae0f8f9049dfee66a907d5ac449b840"
@@ -299,22 +259,6 @@ updated_at = "2026-10-09T19:15:36Z"
 [entries."h:c10d78d186b8"]
 value = 'Relate falhas de formato como `{"v": 1, "error": "..."}` com saída 0; reserve saídas não-nulas para crashes.'
 source_hash = "c10d78d186b87f21500af7596a6e54d89a0211c9"
-origin = "ai"
-reviewed = false
-model = "openrouter/free"
-updated_at = "2026-10-09T19:15:36Z"
-
-[entries."h:c1b226958e89"]
-value = "`timeout_ms`"
-source_hash = "c1b226958e89cedd3461f6f25a8b6a6a81cafc25"
-origin = "ai"
-reviewed = false
-model = "openrouter/free"
-updated_at = "2026-10-09T19:15:36Z"
-
-[entries."h:c5df83f2e0d8"]
-value = "`extension`"
-source_hash = "c5df83f2e0d829b4d0ead4c09f1e93ce1bd01809"
 origin = "ai"
 reviewed = false
 model = "openrouter/free"
@@ -371,14 +315,6 @@ updated_at = "2026-10-09T19:16:09Z"
 [entries."h:eed6bfb41051"]
 value = "Obrigatório"
 source_hash = "eed6bfb41051ed5b74447340f3c2e29d11e99a7c"
-origin = "ai"
-reviewed = false
-model = "openrouter/free"
-updated_at = "2026-10-09T19:16:09Z"
-
-[entries."h:f97279e76d95"]
-value = "`name`"
-source_hash = "f97279e76d95d98f7433ff400fab94e189ee6052"
 origin = "ai"
 reviewed = false
 model = "openrouter/free"

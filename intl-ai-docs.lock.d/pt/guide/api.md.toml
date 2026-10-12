@@ -1,13 +1,5 @@
 version = 1
 
-[entries."h:1060975ab82b"]
-value = "`--config <path>`"
-source_hash = "1060975ab82bb8b2157ce8808291455501e00ebc"
-origin = "ai"
-reviewed = false
-model = "openrouter/free"
-updated_at = "2026-10-09T17:11:46Z"
-
 [entries."h:1f33af6608a0"]
 value = "Manutenção do lockfile sobre os fragmentos `intl-ai.lock.d/`."
 source_hash = "1f33af6608a0ad5d81861f28a3661cfb23a5268b"
@@ -19,14 +11,6 @@ updated_at = "2026-10-09T17:11:46Z"
 [entries."h:2a5eea716efe"]
 value = "Referência de comandos do intl-ai: fill, check, mark, review, lockfile, config, status."
 source_hash = "2a5eea716efed9eed5b2fcbb6fa796c2c4eae022"
-origin = "ai"
-reviewed = false
-model = "openrouter/free"
-updated_at = "2026-10-09T17:11:46Z"
-
-[entries."h:323794679285"]
-value = "`--format json`"
-source_hash = "3237946792856fd63fa9e8b8166b7628278fb7cd"
 origin = "ai"
 reviewed = false
 model = "openrouter/free"
@@ -48,14 +32,6 @@ reviewed = false
 model = "openrouter/free"
 updated_at = "2026-10-09T17:11:46Z"
 
-[entries."h:446b6fc88456"]
-value = "`intl-ai status`"
-source_hash = "446b6fc884568b1cc9d23432a7786ecc7bd19a64"
-origin = "ai"
-reviewed = false
-model = "openrouter/free"
-updated_at = "2026-10-09T17:11:46Z"
-
 [entries."h:51c93919058e"]
 value = "As descobertas são armazenadas em cache incrementalmente em `.intl-ai/check-cache.json`: as chaves inalteradas reproduzem os resultados anteriores (`cached: true` na saída JSON) em vez de volver a executar a verificação."
 source_hash = "51c93919058e958e84c75d8dbf217fa580e9024d"
@@ -67,22 +43,6 @@ updated_at = "2026-10-09T17:11:46Z"
 [entries."h:55f8ebc805e6"]
 value = "Descrição"
 source_hash = "55f8ebc805e65b5b71ddafdae390e3be2bcd69af"
-origin = "ai"
-reviewed = false
-model = "openrouter/free"
-updated_at = "2026-10-09T17:11:46Z"
-
-[entries."h:59853b9acf02"]
-value = "`intl-ai config`"
-source_hash = "59853b9acf026a4b8e62a3a1b0c384825f51b2f1"
-origin = "ai"
-reviewed = false
-model = "openrouter/free"
-updated_at = "2026-10-09T17:11:46Z"
-
-[entries."h:6a28cb075e6a"]
-value = "`intl-ai lockfile`"
-source_hash = "6a28cb075e6a274d57eaf8dc5e950953022d21b3"
 origin = "ai"
 reviewed = false
 model = "openrouter/free"
@@ -144,33 +104,9 @@ reviewed = false
 model = "openrouter/free"
 updated_at = "2026-10-09T17:11:46Z"
 
-[entries."h:89de7ebd2b5b"]
-value = "`intl-ai check`"
-source_hash = "89de7ebd2b5b7dde84c26daa04e610d753f381b9"
-origin = "ai"
-reviewed = false
-model = "openrouter/free"
-updated_at = "2026-10-09T17:11:46Z"
-
-[entries."h:93d0ff2aa4d2"]
-value = "`intl-ai fill`"
-source_hash = "93d0ff2aa4d2a0e27cd39900290389440d22fc06"
-origin = "ai"
-reviewed = false
-model = "openrouter/free"
-updated_at = "2026-10-09T17:11:46Z"
-
 [entries."h:a774409a00c2"]
 value = "Sinalizador"
 source_hash = "a774409a00c21de377cf8ed5c6a56b8547973042"
-origin = "ai"
-reviewed = false
-model = "openrouter/free"
-updated_at = "2026-10-09T17:12:40Z"
-
-[entries."h:b1d21dcf588b"]
-value = "`intl-ai init`"
-source_hash = "b1d21dcf588b72c44909e8c91df7a8e870f0624b"
 origin = "ai"
 reviewed = false
 model = "openrouter/free"
@@ -211,14 +147,6 @@ updated_at = "2026-10-09T17:12:40Z"
 [entries."h:d24f0b6fb975"]
 value = "O schema comprometido encontra-se em `docs/public/schema/intl-ai.schema.json` e é servido em `https://intl-ai.illo.fyi/schema/v1.json`."
 source_hash = "d24f0b6fb97527f1da0735a2f23e4eefc1cb2325"
-origin = "ai"
-reviewed = false
-model = "openrouter/free"
-updated_at = "2026-10-09T17:12:40Z"
-
-[entries."h:e051d0b3cae6"]
-value = "`intl-ai mark`"
-source_hash = "e051d0b3cae6b08fe353af514f6745d5a256ae18"
 origin = "ai"
 reviewed = false
 model = "openrouter/free"

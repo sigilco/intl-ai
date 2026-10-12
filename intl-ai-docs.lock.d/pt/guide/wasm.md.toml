@@ -24,14 +24,6 @@ reviewed = false
 model = "openrouter/free"
 updated_at = "2026-10-09T22:00:30Z"
 
-[entries."h:0d8e7db38e0b"]
-value = "`flatten(sourceJson)`"
-source_hash = "0d8e7db38e0b5780c33ee85866405a04eb497c99"
-origin = "ai"
-reviewed = false
-model = "openrouter/free"
-updated_at = "2026-10-09T22:00:30Z"
-
 [entries."h:10f9eab92bda"]
 value = "Chaves de origem ausentes no destino, ordenadas"
 source_hash = "10f9eab92bda1e8a110e4799c286950a9e0bef77"
@@ -137,49 +129,9 @@ origin = "human"
 reviewed = false
 updated_at = "2026-10-09T22:13:20Z"
 
-[entries."h:56018c319109"]
-value = "`buildJudgeBody(req)`"
-source_hash = "56018c3191091d349a5b33efd30c2ebfe124c005"
-origin = "ai"
-reviewed = false
-model = "openrouter/free"
-updated_at = "2026-10-09T22:11:37Z"
-
 [entries."h:5bba6325d7ec"]
 value = "`api.illo.fyi` apenas responde a pedidos CORS de subdomínios `_.illo.fyi`, e¬no seu `access-control-allow-headers` não inclui `authorization`.¬Uma página servida localmente deve apontar o campo URL base para um¬endpoint compatível com OpenAI diferente (`demo/wasm/mock-provider.mjs` inclui um pequeno¬mock local para desenvolvimento).¬Uma chave de API só é enviada quando o campo está preenchido."
 source_hash = "5bba6325d7ec3d078b34e948f9dca038fb16a718"
-origin = "ai"
-reviewed = false
-model = "openrouter/free"
-updated_at = "2026-10-09T22:11:37Z"
-
-[entries."h:5c6365e535a9"]
-value = "`unflatten(targetJson, map)`"
-source_hash = "5c6365e535a98ab70301e32b4e12bb70dd77a76a"
-origin = "ai"
-reviewed = false
-model = "openrouter/free"
-updated_at = "2026-10-09T22:11:37Z"
-
-[entries."h:5f07316469ff"]
-value = "`missingKeys(sourceFlat, targetFlat)`"
-source_hash = "5f07316469ff3bd775c69f2782bb596aa37b1c58"
-origin = "ai"
-reviewed = false
-model = "openrouter/free"
-updated_at = "2026-10-09T22:11:37Z"
-
-[entries."h:5fcc7a38a368"]
-value = "`runFill(spec, translate, onEvent)`"
-source_hash = "5fcc7a38a368c8c835ae055d43970fa475df58ba"
-origin = "ai"
-reviewed = false
-model = "openrouter/free"
-updated_at = "2026-10-09T22:11:37Z"
-
-[entries."h:69d5ece9295b"]
-value = "`runCheck(spec, judge, onEvent)`"
-source_hash = "69d5ece9295b4ca55af135241b6e620febf4a525"
 origin = "ai"
 reviewed = false
 model = "openrouter/free"
@@ -224,14 +176,6 @@ updated_at = "2026-10-09T22:12:43Z"
 [entries."h:9aa66024296d"]
 value = "Texto do ficheiro de locale (JSON ou YAML) para um mapa plano"
 source_hash = "9aa66024296d16fdd5d3770d2205cee19815233a"
-origin = "ai"
-reviewed = false
-model = "openrouter/free"
-updated_at = "2026-10-09T22:12:43Z"
-
-[entries."h:9e4db2b00c97"]
-value = "`parseTranslations(content)`"
-source_hash = "9e4db2b00c976a97ff4bd3d61842795fc50c0df9"
 origin = "ai"
 reviewed = false
 model = "openrouter/free"
@@ -310,22 +254,6 @@ reviewed = false
 model = "openrouter/free"
 updated_at = "2026-10-09T22:12:57Z"
 
-[entries."h:b6fecbcd8760"]
-value = "`parseJudgements(content)`"
-source_hash = "b6fecbcd87608811d264efbf7f4d10cc53996ea3"
-origin = "ai"
-reviewed = false
-model = "openrouter/free"
-updated_at = "2026-10-09T22:12:57Z"
-
-[entries."h:ba9d5ee7fe9b"]
-value = "`buildTranslateBody(req)`"
-source_hash = "ba9d5ee7fe9ba4dcabbf10ace6ada5ad73b383e5"
-origin = "ai"
-reviewed = false
-model = "openrouter/free"
-updated_at = "2026-10-09T22:12:57Z"
-
 [entries."h:bdd14283343f"]
 value = "Diferenças em relação ao CLI"
 source_hash = "bdd14283343f92e4891cab727848d7b63ce1624a"
@@ -382,14 +310,6 @@ updated_at = "2026-10-09T22:13:07Z"
 [entries."h:f1e410ad1472"]
 value = "Função"
 source_hash = "f1e410ad1472b42cb42cc98962428637290b6706"
-origin = "ai"
-reviewed = false
-model = "openrouter/free"
-updated_at = "2026-10-09T22:13:07Z"
-
-[entries."h:fcdff0fd7101"]
-value = "`runChecks(items, checkIds, ctx)`"
-source_hash = "fcdff0fd7101947497567f03647a8dcc36a5a187"
 origin = "ai"
 reviewed = false
 model = "openrouter/free"

@@ -119,6 +119,15 @@ export default {
       ],
     },
     {
+      title: "Localize documents",
+      icon: "book",
+      collapsible: true,
+      children: [
+        { title: "Overview", path: "/guide/documents/" },
+        { title: "Configuration", path: "/guide/documents/configuration/" },
+      ],
+    },
+    {
       title: "Reference",
       icon: "book-open",
       collapsible: true,

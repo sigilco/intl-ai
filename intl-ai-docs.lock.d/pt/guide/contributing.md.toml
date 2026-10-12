@@ -216,14 +216,6 @@ reviewed = false
 model = "openrouter/free"
 updated_at = "2026-10-09T20:32:28Z"
 
-[entries."h:789e45a28178"]
-value = "`pnpm docs:build`"
-source_hash = "789e45a28178d81660e753907a992bce4108950f"
-origin = "ai"
-reviewed = false
-model = "openrouter/free"
-updated_at = "2026-10-09T20:32:28Z"
-
 [entries."h:78ca1b54133d"]
 value = "Execute `pnpm docs:dev` e verifique se a sua página aparece e é renderizada corretamente."
 source_hash = "78ca1b54133dd8b9fd61fedce49f5e632402455d"
@@ -360,14 +352,6 @@ reviewed = false
 model = "openrouter/free"
 updated_at = "2026-10-09T20:33:49Z"
 
-[entries."h:b8ca1f4949e4"]
-value = "`pnpm docs:validate`"
-source_hash = "b8ca1f4949e498dd4884a0a70c46c700a465cd3e"
-origin = "ai"
-reviewed = false
-model = "openrouter/free"
-updated_at = "2026-10-09T20:33:49Z"
-
 [entries."h:be9c68a5b8cc"]
 value = "Verifique todas as ligações internas para destinos quebrados"
 source_hash = "be9c68a5b8ccb31457fe643743ff93df667abb1d"
@@ -475,14 +459,6 @@ updated_at = "2026-10-09T20:34:14Z"
 [entries."h:eef72daa50d5"]
 value = "Cada página de documentação deve incluir frontmatter YAML no topo:"
 source_hash = "eef72daa50d59b7fa6498f85b1a680edd83c22ec"
-origin = "ai"
-reviewed = false
-model = "openrouter/free"
-updated_at = "2026-10-09T20:34:14Z"
-
-[entries."h:f63abf74cc88"]
-value = "`pnpm docs:dev`"
-source_hash = "f63abf74cc883fad8e77475f99dee93442121360"
 origin = "ai"
 reviewed = false
 model = "openrouter/free"

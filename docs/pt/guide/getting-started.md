@@ -5,7 +5,7 @@ description: Configure intl-ai em minutos. Instale o binário, configure o seu p
 
 # Início
 
-intl-ai é um único binário que traduz os arquivos de localização que sua biblioteca i18n já lê. Este guia coloca‑o em funcionamento em minutos.
+intl-ai é um único binário que traduz os ficheiros de locale que a sua biblioteca i18n já lê. Este guia coloca-o a funcionar em minutos. (Para árvores de documentos completos, consulte [Localize documents](/pt/guide/documents/).)
 
 ## Instalar o binário
 
@@ -28,7 +28,7 @@ brew install sigilco/tap-intl-ai/intl-ai
 == tab "mise"
 
 ```sh
-mise use npm:intl-ai@latest
+mise use github:sigilco/intl-ai@latest
 ```
 
 == tab "npm"
@@ -46,6 +46,8 @@ irm https://github.com/sigilco/intl-ai/releases/latest/download/intl-ai-installe
 ```
 
 Ou execute‑o sem instalação global via `npx intl-ai` / `bunx intl-ai`. Verifique com `intl-ai --help`.
+
+Cada canal instala ambos os binários: `intl-ai` para catálogos de locale, e `intl-ai-docs` para árvores de documentos (experimental, consulte [Localizar documentos](/pt/guide/documents/)).
 
 ## 1. Inicializar
 

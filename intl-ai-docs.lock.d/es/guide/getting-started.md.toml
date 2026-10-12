@@ -96,13 +96,13 @@ reviewed = false
 model = "openrouter/free"
 updated_at = "2026-10-09T15:58:50Z"
 
-[entries."h:78247a9f6c85"]
-value = "intl-ai es un solo binario que traduce los archivos de localización que tu biblioteca i18n ya lee. Esta guía lo pone en marcha en minutos."
-source_hash = "78247a9f6c85250bd634fc27a141909da0ca93f7"
+[entries."h:766b52bff5de"]
+value = "Cada canal instala ambos binarios: `intl-ai` para los catálogos de configuración regional, y `intl-ai-docs` para los árboles de documentos (experimental, consulte [Localizar documentos](/guide/documents/).)"
+source_hash = "766b52bff5de1ca6616bea3e36784e288e51e96e"
 origin = "ai"
 reviewed = false
 model = "openrouter/free"
-updated_at = "2026-10-09T15:58:50Z"
+updated_at = "2026-10-12T17:44:06Z"
 
 [entries."h:85c54a2ec292"]
 value = "Apunta `locale_dir` al directorio que tu biblioteca i18n lee, por ejemplo `locales/`, `messages/` o `public/locales/`."
@@ -135,6 +135,14 @@ origin = "ai"
 reviewed = false
 model = "openrouter/free"
 updated_at = "2026-10-09T15:58:50Z"
+
+[entries."h:a95ad04da7ee"]
+value = "intl-ai es un binario único que traduce los archivos de configuración regional que su biblioteca i18n ya lee. Esta guía lo pone en marcha en minutos. (Para árboles de documentos completos, consulte [Localizar documentos](/guide/documents/).)"
+source_hash = "a95ad04da7ee1f8d944eb62a6a6b7a194fb1eef7"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-12T17:44:06Z"
 
 [entries."h:b3850a447fd9"]
 value = "Integraciones de herramientas y frameworks de construcción"
