@@ -11,11 +11,11 @@ Esta página mapeia cada conceito da versão 0.4.x para o seu equivalente na 1.x
 
 ## Pacotes
 
-| 0.4.x               | 1.x                                                                  |
-| ------------------- | -------------------------------------------------------------------- |
-| `@intl-ai/cli`      | `intl-ai` binário (brew, mise, install.sh, or npm wrapper)            |
-| `@intl-ai/api`      | Removido; o binário é toda a superfície da API                         |
-| `@intl-ai/unplugin` | `@intl-ai/unplugin` shim (iniciar o binário em `buildStart`)          |
+| 0.4.x               | 1.x                                                                                  |
+| ------------------- | ------------------------------------------------------------------------------------ |
+| `@intl-ai/cli`      | `intl-ai` binário (brew, mise, install.sh, or npm wrapper)                           |
+| `@intl-ai/api`      | Removido; o binário é toda a superfície da API                                       |
+| `@intl-ai/unplugin` | `@intl-ai/unplugin` shim (iniciar o binário em `buildStart`)                         |
 | `@intl-ai/next`     | `@intl-ai/next` shim (`withIntlAi()` executa o binário na avaliação da configuração) |
 
 `@intl-ai/cli` e `@intl-ai/api` permanecem no npm, descontinuados nas últimas versões 0.x. Se usou `@intl-ai/api` programaticamente em TypeScript, migre para executar o binário (`intl-ai fill`, `intl-ai check`) ou para configurações de provedor `kind = "command"`.
@@ -36,23 +36,23 @@ npm install -D intl-ai
 
 ### Mapeamento de campos
 
-| 0.4.x                         | 1.x                                                       |
-| ----------------------------- | --------------------------------------------------------- |
-| `defaultLocale`               | `source`                                                  |
+| 0.4.x                       | 1.x                                                       |
+| --------------------------- | --------------------------------------------------------- |
+| `defaultLocale`             | `source`                                                  |
 | `locales` (exceto o padrão) | `targets`                                                 |
-| `localeDir`                   | `locale_dir`                                              |
-| `glossary`                    | `glossary`                                                |
-| `localeInstructions`          | `locale_instructions`                                     |
-| `maxRetries`                  | `max_retries`                                             |
-| `batchSize`                   | `batch_size`                                              |
-| `processor`                   | `processor` (padrão `passthrough`, `icu`)                |
-| `format`                      | `format` (`json` padrão, `yaml`)                         |
-| `provider`, `model`           | `[provider]` `provider`, `model`                          |
-| `apiKey`                      | `api_key` (interpolar segredos, veja abaixo)                |
-| `baseURL`                     | `base_url`                                                |
-| `modelParams`                 | `model_params`                                            |
-| `kind = "agent"` + `agent`    | `[provider]` `kind = "command"` + `agent`                 |
-| `quality.threshold`           | `[[checks]] id = "judge"` `threshold` + `[quality]` bands |
+| `localeDir`                 | `locale_dir`                                              |
+| `glossary`                  | `glossary`                                                |
+| `localeInstructions`        | `locale_instructions`                                     |
+| `maxRetries`                | `max_retries`                                             |
+| `batchSize`                 | `batch_size`                                              |
+| `processor`                 | `processor` (padrão `passthrough`, `icu`)                 |
+| `format`                    | `format` (`json` padrão, `yaml`)                          |
+| `provider`, `model`         | `[provider]` `provider`, `model`                          |
+| `apiKey`                    | `api_key` (interpolar segredos, veja abaixo)              |
+| `baseURL`                   | `base_url`                                                |
+| `modelParams`               | `model_params`                                            |
+| `kind = "agent"` + `agent`  | `[provider]` `kind = "command"` + `agent`                 |
+| `quality.threshold`         | `[[checks]] id = "judge"` `threshold` + `[quality]` bands |
 
 ### Exemplo
 
@@ -98,12 +98,12 @@ Se você confiou anteriormente no rastreamento de origem de IA para re‑traduzi
 
 ## Comandos
 
-| 0.4.x                  | 1.x                                              |
-| ---------------------- | ------------------------------------------------ |
-| `intl-ai fill`         | `intl-ai fill` (`--dry-run` préviews)            |
-| `intl-ai fill --force` | `intl-ai fill --regenerate` / `--include-human`  |
+| 0.4.x                  | 1.x                                                     |
+| ---------------------- | ------------------------------------------------------- |
+| `intl-ai fill`         | `intl-ai fill` (`--dry-run` préviews)                   |
+| `intl-ai fill --force` | `intl-ai fill --regenerate` / `--include-human`         |
 | `intl-ai check`        | `intl-ai check` (`--fail-on` para limites de gravidade) |
-| —                      | `intl-ai init`, `status`, `config validate`      |
+| —                      | `intl-ai init`, `status`, `config validate`             |
 
 ## Validação e qualidade
 

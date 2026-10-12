@@ -23,13 +23,13 @@ api_key = "${env:OPENAI_API_KEY}"
 temperature = 0.2                   # extra request-body params, spread last
 ```
 
-| Campo          | Descripción                                                                                    |
-| -------------- | ---------------------------------------------------------------------------------------------- |
-| `provider`     | Nombre de la plantilla de cable; por defecto `openai`.                                                  |
-| `model`        | Identificador del modelo enviado en el cuerpo de la solicitud.                                                     |
+| Campo          | Descripción                                                                                            |
+| -------------- | ------------------------------------------------------------------------------------------------------ |
+| `provider`     | Nombre de la plantilla de cable; por defecto `openai`.                                                 |
+| `model`        | Identificador del modelo enviado en el cuerpo de la solicitud.                                         |
 | `api_key`      | Enviado como `Authorization: Bearer <key>`. Soporta la interpolación de `${env:VAR}` y `${file:PATH}`. |
-| `base_url`     | Anulación del punto de conexión; por defecto, se utiliza la URL canónica del proveedor.                                   |
-| `model_params` | Parámetros adicionales del cuerpo de la solicitud, colocados al final para que tengan prioridad.                                            |
+| `base_url`     | Anulación del punto de conexión; por defecto, se utiliza la URL canónica del proveedor.                |
+| `model_params` | Parámetros adicionales del cuerpo de la solicitud, colocados al final para que tengan prioridad.       |
 
 Los reintentos de las solicitudes se hacen con retroceso hasta `max_retries` (valor predeterminado 3).
 
@@ -47,15 +47,15 @@ cwd = "."
 timeout_ms = 300000
 ```
 
-| Campo              | Descripción                                                      |
-| ------------------ | ---------------------------------------------------------------- |
-| `command`          | Línea de comandos de formato libre. Solo configuración raíz, nunca mediante `extends`.   |
-| `agent`            | Nombre de la plantilla desde la tabla de agentes incorporados (kebab-case).          |
-| `args`             | Argumentos adicionales pasados al comando.                           |
-| `prompt_via`       | `stdin` (por defecto) o `argv`.                                     |
-| `cwd`              | Directorio de trabajo, resuelto contra el directorio del archivo de configuración. |
-| `timeout_ms`       | Presupuesto de tiempo real antes de SIGTERM, luego SIGKILL (por defecto 300000). |
-| `max_stdout_bytes` | Límite de búfer de stdout                                             |
+| Campo              | Descripción                                                                            |
+| ------------------ | -------------------------------------------------------------------------------------- |
+| `command`          | Línea de comandos de formato libre. Solo configuración raíz, nunca mediante `extends`. |
+| `agent`            | Nombre de la plantilla desde la tabla de agentes incorporados (kebab-case).            |
+| `args`             | Argumentos adicionales pasados al comando.                                             |
+| `prompt_via`       | `stdin` (por defecto) o `argv`.                                                        |
+| `cwd`              | Directorio de trabajo, resuelto contra el directorio del archivo de configuración.     |
+| `timeout_ms`       | Presupuesto de tiempo real antes de SIGTERM, luego SIGKILL (por defecto 300000).       |
+| `max_stdout_bytes` | Límite de búfer de stdout                                                              |
 
 Dado que `command` puede ejecutar programas arbitrarios, se rechaza en archivos de configuración con `extends`: los datos de una dependencia no deben ejecutar código.
 

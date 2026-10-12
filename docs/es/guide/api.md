@@ -107,7 +107,7 @@ El esquema confirmado reside en `docs/public/schema/intl-ai.schema.json` y se si
 
 ## Indicadores globales
 
-| Bandera              | Descripción                                          |
-| ----------------- | ---------------------------------------------------- |
-| `--config <path>` | Ruta del archivo de configuración. `-` lee TOML desde la entrada estándar.         |
-| `--format json`   | Salida legible por máquina (también `human`, el valor predeterminado). |
+| Bandera           | Descripción                                                                |
+| ----------------- | -------------------------------------------------------------------------- |
+| `--config <path>` | Ruta del archivo de configuración. `-` lee TOML desde la entrada estándar. |
+| `--format json`   | Salida legible por máquina (también `human`, el valor predeterminado).     |

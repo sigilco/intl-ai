@@ -70,24 +70,24 @@ project uses.
 su`access-control-allow-headers`no incluye`authorization`.
 Una página servida localmente debe apuntar el campo URL base a un
 endpoint OpenAI-compatible diferente (`demo/wasm/mock-provider.mjs`
- incluye un mock local pequeño para desarrollo).
+incluye un mock local pequeño para desarrollo).
 Una clave API solo se envía cuando el campo está lleno.
 :::
 
 ## Qué expone la API de wasm
 
-| Función                              | Purpose                                           |
-| ------------------------------------- | ------------------------------------------------- |
-| `flatten(sourceJson)`                 | Locale file text (JSON or YAML) to a flat map     |
-| `missingKeys(sourceFlat, targetFlat)` | Claves fuente ausentes del objetivo, ordenadas        |
+| Función                               | Purpose                                                         |
+| ------------------------------------- | --------------------------------------------------------------- |
+| `flatten(sourceJson)`                 | Locale file text (JSON or YAML) to a flat map                   |
+| `missingKeys(sourceFlat, targetFlat)` | Claves fuente ausentes del objetivo, ordenadas                  |
 | `buildTranslateBody(req)`             | Cuerpo de completaciones de chat para un lote de traducción     |
-| `parseTranslations(content)`          | Contenido de respuesta a un mapa `key -> translated`     |
-| `buildJudgeBody(req)`                 | Cuerpo del lote de calidad adversarial                    |
-| `parseJudgements(content)`            | Puntuaciones, razones y listas de errores por clave          |
-| `runChecks(items, checkIds, ctx)`     | `icu`, `placeholder-parity`, `dialect:*` findings |
-| `unflatten(targetJson, map)`          | Merge flat keys into the target and serialize it  |
-| `runFill(spec, translate, onEvent)`   | Rellenar claves faltantes, `ProgressEvent`s en streaming     |
-| `runCheck(spec, judge, onEvent)`      | Comprobar un archivo de destino, transmitiendo `ProgressEvent`s   |
+| `parseTranslations(content)`          | Contenido de respuesta a un mapa `key -> translated`            |
+| `buildJudgeBody(req)`                 | Cuerpo del lote de calidad adversarial                          |
+| `parseJudgements(content)`            | Puntuaciones, razones y listas de errores por clave             |
+| `runChecks(items, checkIds, ctx)`     | `icu`, `placeholder-parity`, `dialect:*` findings               |
+| `unflatten(targetJson, map)`          | Merge flat keys into the target and serialize it                |
+| `runFill(spec, translate, onEvent)`   | Rellenar claves faltantes, `ProgressEvent`s en streaming        |
+| `runCheck(spec, judge, onEvent)`      | Comprobar un archivo de destino, transmitiendo `ProgressEvent`s |
 
 `judge` is deliberately not inside `runChecks`: it needs a provider round
 trip, which the host performs with `buildJudgeBody`/`parseJudgements`.

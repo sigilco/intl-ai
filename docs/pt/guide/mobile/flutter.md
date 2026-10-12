@@ -64,11 +64,11 @@ intl-ai fill --config intl-ai.toml
 
 ## Opções do construtor
 
-| Opção       | Tipo     | Predefinido        | Descrição                                                                                              |
-| ------------ | -------- | -------------- | -------------------------------------------------------------------------------------------------------- |
-| `configPath` | `String` | `intl-ai.toml` | Caminho para o seu ficheiro de configuração, relativo à raiz do pacote.                                                  |
+| Opção        | Tipo     | Predefinido    | Descrição                                                                                                  |
+| ------------ | -------- | -------------- | ---------------------------------------------------------------------------------------------------------- |
+| `configPath` | `String` | `intl-ai.toml` | Caminho para o seu ficheiro de configuração, relativo à raiz do pacote.                                    |
 | `executable` | `String` | `intl-ai`      | Comando usado para invocar o CLI. Use `npx intl-ai` ou `bunx intl-ai` se não quiser uma instalação global. |
-| `verbose`    | `bool`   | `false`        | Encaminhe a saída do CLI para o registo do build runner.                                                              |
+| `verbose`    | `bool`   | `false`        | Encaminhe a saída do CLI para o registo do build runner.                                                   |
 
 ## Como funciona
 

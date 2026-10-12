@@ -110,11 +110,11 @@ Links externos abrem em uma nova aba automaticamente.
 
 ## Referência de comandos de documentação
 
-| Comando              | Objetivo                                         |
-| -------------------- | ----------------------------------------------- |
+| Comando              | Objetivo                                                        |
+| -------------------- | --------------------------------------------------------------- |
 | `pnpm docs:dev`      | Iniciar o servidor de desenvolvimento local com recarga ao vivo |
-| `pnpm docs:build`    | Construa ficheiros estáticos prontos para produção             |
-| `pnpm docs:validate` | Verifique todas as ligações internas para destinos quebrados     |
+| `pnpm docs:build`    | Construa ficheiros estáticos prontos para produção              |
+| `pnpm docs:validate` | Verifique todas as ligações internas para destinos quebrados    |
 
 ## Implantação
 

@@ -23,13 +23,13 @@ api_key = "${env:OPENAI_API_KEY}"
 temperature = 0.2                   # extra request-body params, spread last
 ```
 
-| Campo          | Descrição                                                                                    |
-| -------------- | ---------------------------------------------------------------------------------------------- |
-| `provider`     | Nome predefinido da forma de transmissão; predefinição como `openai`.                                                  |
-| `model`        | Identificador do modelo enviado no corpo da requisição.                                                     |
+| Campo          | Descrição                                                                                       |
+| -------------- | ----------------------------------------------------------------------------------------------- |
+| `provider`     | Nome predefinido da forma de transmissão; predefinição como `openai`.                           |
+| `model`        | Identificador do modelo enviado no corpo da requisição.                                         |
 | `api_key`      | Enviado como `Authorization: Bearer <key>`. Suporta interpolação `${env:VAR}` e `${file:PATH}`. |
-| `base_url`     | Substituição de endpoint; padrão para o URL canónico do provedor.                                   |
-| `model_params` | Parâmetros extra do corpo da requisição, espalhados por último para que prevaleçam.                                            |
+| `base_url`     | Substituição de endpoint; padrão para o URL canónico do provedor.                               |
+| `model_params` | Parâmetros extra do corpo da requisição, espalhados por último para que prevaleçam.             |
 
 Os pedidos são repetidos com retardo exponencial até `max_retries` (padrão 3).
 
@@ -47,15 +47,15 @@ cwd = "."
 timeout_ms = 300000
 ```
 
-| Campo              | Descrição                                                      |
-| ------------------ | ---------------------------------------------------------------- |
-| `command`          | Linha de comando livre. Apenas configuração raiz, nunca via `extends`.   |
-| `agent`            | Nome predefinido da tabela interna de agentes (kebab-case).          |
-| `args`             | Argumentos extras passados ao comando.                           |
-| `prompt_via`       | `stdin` (predefinição) ou `argv`.                                     |
-| `cwd`              | Diretório de trabalho, resolvido em relação ao diretório do arquivo de configuração. |
+| Campo              | Descrição                                                                                 |
+| ------------------ | ----------------------------------------------------------------------------------------- |
+| `command`          | Linha de comando livre. Apenas configuração raiz, nunca via `extends`.                    |
+| `agent`            | Nome predefinido da tabela interna de agentes (kebab-case).                               |
+| `args`             | Argumentos extras passados ao comando.                                                    |
+| `prompt_via`       | `stdin` (predefinição) ou `argv`.                                                         |
+| `cwd`              | Diretório de trabalho, resolvido em relação ao diretório do arquivo de configuração.      |
 | `timeout_ms`       | Orçamento de relógio de parede antes do SIGTERM, depois do SIGKILL (predefinição 300000). |
-| `max_stdout_bytes` | Capacidade de stdout bufferizado.                                             |
+| `max_stdout_bytes` | Capacidade de stdout bufferizado.                                                         |
 
 Porque `command` pode gerar programas arbitrários, é recusado em arquivos de configuração `extends`-ed: dados de uma dependência não devem executar código.
 

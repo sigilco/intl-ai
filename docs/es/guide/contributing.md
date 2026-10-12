@@ -110,11 +110,11 @@ Los enlaces externos se abren automáticamente en una nueva pestaña.
 
 ## Referencia de comandos de documentación
 
-| Comando              | Propósito                                         |
-| -------------------- | ----------------------------------------------- |
-| `pnpm docs:dev`      | Iniciar el servidor de desarrollo local con recarga en vivo |
-| `pnpm docs:build`    | Construir archivos estáticos listos para producción             |
-| `pnpm docs:validate` | Verificar todos los enlaces internos en busca de objetivos rotos     |
+| Comando              | Propósito                                                        |
+| -------------------- | ---------------------------------------------------------------- |
+| `pnpm docs:dev`      | Iniciar el servidor de desarrollo local con recarga en vivo      |
+| `pnpm docs:build`    | Construir archivos estáticos listos para producción              |
+| `pnpm docs:validate` | Verificar todos los enlaces internos en busca de objetivos rotos |
 
 ## Despliegue
 

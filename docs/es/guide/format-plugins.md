@@ -19,16 +19,16 @@ args = ["tools/strings_xml.py"]
 extension = "xml"
 ```
 
-| Clave                | Obligatorio | Propósito                                                                  |
-| ------------------ | -------- | ------------------------------------------------------------------------ |
-| `name`             | sí      | Nombre del registro; `format = "<name>"` lo selecciona. No debe ser `json`/`yaml` |
-| `exec`             | sí      | Programa a lanzar (un proceso por operación de lectura/escritura)                         |
-| `args`             | no       | Argumentos pasados a `exec`                                                    |
-| `extension`        | sí      | Extensión canónica emitida para nuevos archivos (`xml` -> `fr.xml`)             |
-| `extensions`       | no       | Extensiones adicionales que el formato reclama en disco                               |
-| `cwd`              | no       | Directorio de trabajo del plugin (por defecto: el directorio del archivo de configuración)          |
-| `timeout_ms`       | no       | Presupuesto de tiempo de pared por operación (por defecto `60000`)                               |
-| `max_stdout_bytes` | no       | Límite de stdout almacenado en búfer (por defecto 10 MiB; las respuestas incluyen archivos completos)        |
+| Clave              | Obligatorio | Propósito                                                                                             |
+| ------------------ | ----------- | ----------------------------------------------------------------------------------------------------- |
+| `name`             | sí          | Nombre del registro; `format = "<name>"` lo selecciona. No debe ser `json`/`yaml`                     |
+| `exec`             | sí          | Programa a lanzar (un proceso por operación de lectura/escritura)                                     |
+| `args`             | no          | Argumentos pasados a `exec`                                                                           |
+| `extension`        | sí          | Extensión canónica emitida para nuevos archivos (`xml` -> `fr.xml`)                                   |
+| `extensions`       | no          | Extensiones adicionales que el formato reclama en disco                                               |
+| `cwd`              | no          | Directorio de trabajo del plugin (por defecto: el directorio del archivo de configuración)            |
+| `timeout_ms`       | no          | Presupuesto de tiempo de pared por operación (por defecto `60000`)                                    |
+| `max_stdout_bytes` | no          | Límite de stdout almacenado en búfer (por defecto 10 MiB; las respuestas incluyen archivos completos) |
 
 `format` acepta nombres integrados (`json`, `yaml`) o un nombre registrado `[[formats]]`. Un nombre desconocido falla la validación de configuración con la lista de nombres conocidos.
 

@@ -11,20 +11,20 @@ Todo lo que en `intl-ai.toml` no tiene forma de documento (archivos de locale, s
 
 ## Nivel superior
 
-| Key                    | Type       | Default       | Description                                                                                                                              |
-| ---------------------- | ---------- | ------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| `experimental`         | bool       | `false`       | Obligatorio. Todos los comandos se niegan a ejecutarse hasta que sea `true`.                                                                             |
-| `layout`               | string     | `"flat"`      | Disposición del árbol: `locale-dirs` coloca la fuente en `source_dir/<source>`; `flat` coloca los archivos fuente directamente bajo `source_dir`.            |
-| `source_dir`           | path       | `"docs"`      | Raíz de documentos, resuelta relativa al archivo de configuración.                                                                                     |
-| `source`               | string     | `"en"`        | Id de la locale fuente.                                                                                                                         |
-| `targets`              | list       | required      | Locales destino; cada una escribe en `source_dir/<locale>`.                                                                                    |
-| `format`               | string     | `"mdx"`       | Nombre del DocFormat. `"mdx"` (markdown incluido) es el único formato publicado; `"markdown"` es un alias.                                          |
-| `batch_size`           | int        | engine        | Segmentos por petición de traducción. Manténlo pequeño para documentos largos y no superar los límites de salida del proveedor.                                         |
-| `max_retries`          | int        | `3`           | Reintentos de proveedor en fallos reintentables.                                                                                                   |
-| `glossary`             | map        | `{}`          | Términos fijados, con la misma semántica que el glosario de corpus.                                                                                          |
-| `locale_instructions`  | map        | `{}`          | Notas de estilo/dialecto por locale; se resuelven por locale exacta, subetiqueta de idioma y luego `*`.                                                                |
-| `exclude`              | list       | `[]`          | Globs extra (relativos al documento) a omitir, además de directorios ocultos, `node_modules` y los directorios de locales destino.                                   |
-| `version`              | int        | —             | Versión del esquema de configuración; solo se entiende `1`.                                                                                            |
+| Key                   | Type   | Default  | Description                                                                                                                                       |
+| --------------------- | ------ | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `experimental`        | bool   | `false`  | Obligatorio. Todos los comandos se niegan a ejecutarse hasta que sea `true`.                                                                      |
+| `layout`              | string | `"flat"` | Disposición del árbol: `locale-dirs` coloca la fuente en `source_dir/<source>`; `flat` coloca los archivos fuente directamente bajo `source_dir`. |
+| `source_dir`          | path   | `"docs"` | Raíz de documentos, resuelta relativa al archivo de configuración.                                                                                |
+| `source`              | string | `"en"`   | Id de la locale fuente.                                                                                                                           |
+| `targets`             | list   | required | Locales destino; cada una escribe en `source_dir/<locale>`.                                                                                       |
+| `format`              | string | `"mdx"`  | Nombre del DocFormat. `"mdx"` (markdown incluido) es el único formato publicado; `"markdown"` es un alias.                                        |
+| `batch_size`          | int    | engine   | Segmentos por petición de traducción. Manténlo pequeño para documentos largos y no superar los límites de salida del proveedor.                   |
+| `max_retries`         | int    | `3`      | Reintentos de proveedor en fallos reintentables.                                                                                                  |
+| `glossary`            | map    | `{}`     | Términos fijados, con la misma semántica que el glosario de corpus.                                                                               |
+| `locale_instructions` | map    | `{}`     | Notas de estilo/dialecto por locale; se resuelven por locale exacta, subetiqueta de idioma y luego `*`.                                           |
+| `exclude`             | list   | `[]`     | Globs extra (relativos al documento) a omitir, además de directorios ocultos, `node_modules` y los directorios de locales destino.                |
+| `version`             | int    | —        | Versión del esquema de configuración; solo se entiende `1`.                                                                                       |
 
 ## `[provider]`
 
@@ -32,24 +32,24 @@ Misma forma que `intl-ai.toml`: `kind = "http" | "command" | "replay"`, más los
 
 ## `[links]`
 
-| Key       | Type   | Default        | Description                                                            |
-| --------- | ------ | -------------- | ---------------------------------------------------------------------- |
-| `rewrite` | bool   | `true`         | Inserta el prefijo de locale en los destinos de enlace con raíz `/`.            |
-| `prefix`  | string | `"/{locale}"`  | Plantilla de prefijo; `{locale}` se sustituye por cada destino.                    |
+| Key       | Type   | Default       | Description                                                          |
+| --------- | ------ | ------------- | -------------------------------------------------------------------- |
+| `rewrite` | bool   | `true`        | Inserta el prefijo de locale en los destinos de enlace con raíz `/`. |
+| `prefix`  | string | `"/{locale}"` | Plantilla de prefijo; `{locale}` se sustituye por cada destino.      |
 
 Los enlaces se reescriben solo en el merge; los shards guardan la forma sin prefijo, así que cambiar `prefix` más tarde reescribe los destinos limpiamente en el próximo fill.
 
 ## `[frontmatter]`
 
-| Key    | Type | Default                     | Description                                          |
-| ------ | ---- | --------------------------- | ---------------------------------------------------- |
-| `keys` | list | `["title", "description"]`  | Rutas de frontmatter (con puntos) cuyos valores escalares se traducen. |
+| Key    | Type | Default                    | Description                                                            |
+| ------ | ---- | -------------------------- | ---------------------------------------------------------------------- |
+| `keys` | list | `["title", "description"]` | Rutas de frontmatter (con puntos) cuyos valores escalares se traducen. |
 
 ## `[fill]`
 
-| Key        | Type | Default | Description                                                                                    |
-| ---------- | ---- | ------- | ---------------------------------------------------------------------------------------------- |
-| `validate` | list | `[]`    | Checks de documento ejecutados como puerta shift-left por lote: `doc:protected` y `doc:corruption`.           |
+| Key        | Type | Default | Description                                                                                         |
+| ---------- | ---- | ------- | --------------------------------------------------------------------------------------------------- |
+| `validate` | list | `[]`    | Checks de documento ejecutados como puerta shift-left por lote: `doc:protected` y `doc:corruption`. |
 
 ## `[check]` y `[[checks]]`
 

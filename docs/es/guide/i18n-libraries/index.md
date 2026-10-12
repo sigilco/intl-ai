@@ -15,19 +15,19 @@ La principal excepción es i18next, que utiliza interpolación con `{{var}}` y s
 
 ## Compatibilidad de la biblioteca
 
-| Librería                       | ICU nativo                | Configuración                    | Mejor para                               |
-| ----------------------------- | ------------------------- | ------------------------ | -------------------------------------- |
-| react-intl                    | Sí                       | Ninguno                     | Aplicaciones de React que necesitan ICU               |
-| @formatjs/intl                | Sí                       | Ninguno                     | Tiempo de ejecución ICU agnóstico al framework         |
-| lingui                        | Sí                       | Macro de compilación              | Seguridad en tiempo de compilación, cualquier framework     |
-| i18next-icu                   | Sí (a través de plugin)          | Instala `i18next-icu`    | Aplicaciones existentes de i18next que migran a ICU |
-| vue-i18n + intl-messageformat | Sí (vía compilador personalizado) | Personalizado `messageCompiler` | Apps de Vue que necesitan ICU                 |
-| svelte-i18n                   | Parcial                   | Llamadas manuales al formateador   | Apps de Svelte                            |
-| @cookbook/solid-intl          | Sí                       | Ninguno                     | Aplicaciones sólidas que necesitan ICU               |
-| @lit/localize                 | Parcial                   | Solución alternativa de la comunidad     | Componentes web                         |
-| typesafe-i18n                 | No                        | N/A                      | i18n seguro de tipos sin ICU             |
-| rosetta                       | No                        | N/A                      | Huella pequeña (298 bytes)             |
-| @solid-primitives/i18n        | No                        | N/A                      | i18n mínimo de Solid                     |
+| Librería                      | ICU nativo                        | Configuración                        | Mejor para                                              |
+| ----------------------------- | --------------------------------- | ------------------------------------ | ------------------------------------------------------- |
+| react-intl                    | Sí                                | Ninguno                              | Aplicaciones de React que necesitan ICU                 |
+| @formatjs/intl                | Sí                                | Ninguno                              | Tiempo de ejecución ICU agnóstico al framework          |
+| lingui                        | Sí                                | Macro de compilación                 | Seguridad en tiempo de compilación, cualquier framework |
+| i18next-icu                   | Sí (a través de plugin)           | Instala `i18next-icu`                | Aplicaciones existentes de i18next que migran a ICU     |
+| vue-i18n + intl-messageformat | Sí (vía compilador personalizado) | Personalizado `messageCompiler`      | Apps de Vue que necesitan ICU                           |
+| svelte-i18n                   | Parcial                           | Llamadas manuales al formateador     | Apps de Svelte                                          |
+| @cookbook/solid-intl          | Sí                                | Ninguno                              | Aplicaciones sólidas que necesitan ICU                  |
+| @lit/localize                 | Parcial                           | Solución alternativa de la comunidad | Componentes web                                         |
+| typesafe-i18n                 | No                                | N/A                                  | i18n seguro de tipos sin ICU                            |
+| rosetta                       | No                                | N/A                                  | Huella pequeña (298 bytes)                              |
+| @solid-primitives/i18n        | No                                | N/A                                  | i18n mínimo de Solid                                    |
 
 ## Configuración
 
@@ -50,10 +50,10 @@ processor = "icu"   # recommended for most libraries
 
 ## Elegir una biblioteca
 
-| Necesidad                     | Usar                                           |
-| ------------------------ | --------------------------------------------- |
-| React + ICU              | `react-intl`                                  |
-| Vue + ICU                | `vue-i18n` con el compilador `intl-messageformat` |
-| sintaxis i18next (sin ICU)  | `i18next` + `react-i18next`                   |
-| Seguridad de tipos en tiempo de compilación | `lingui` o `typesafe-i18n`                   |
-| El bundle más pequeño          | `rosetta`                                     |
+| Necesidad                                   | Usar                                              |
+| ------------------------------------------- | ------------------------------------------------- |
+| React + ICU                                 | `react-intl`                                      |
+| Vue + ICU                                   | `vue-i18n` con el compilador `intl-messageformat` |
+| sintaxis i18next (sin ICU)                  | `i18next` + `react-i18next`                       |
+| Seguridad de tipos en tiempo de compilación | `lingui` o `typesafe-i18n`                        |
+| El bundle más pequeño                       | `rosetta`                                         |

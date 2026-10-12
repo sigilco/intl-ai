@@ -23,13 +23,13 @@ Errores en stderr tienen la misma estructura: `{"error": {"message": ..., "code"
 
 `intl-ai check` reporta hallazgos por clave. Tipos:
 
-| Kind         | Significado                                                                                    |
+| Kind         | Significado                                                                                |
 | ------------ | ------------------------------------------------------------------------------------------ |
-| `missing`    | Clave ausente en un archivo de configuración regional de destino.                                                      |
-| `stale`      | Valor propio de IA cuyo origen cambió desde el llenado.                                            |
-| `modified`   | Valor propiedad de humanos cuyo origen cambió desde la revisión.                                       |
-| `unreviewed` | La clave nunca marcada como `reviewed` (o re-etiquetada por `[quality]`).                                |
-| `extra`      | Clave presente en un archivo de destino pero no en el origen.                                        |
+| `missing`    | Clave ausente en un archivo de configuración regional de destino.                          |
+| `stale`      | Valor propio de IA cuyo origen cambió desde el llenado.                                    |
+| `modified`   | Valor propiedad de humanos cuyo origen cambió desde la revisión.                           |
+| `unreviewed` | La clave nunca marcada como `reviewed` (o re-etiquetada por `[quality]`).                  |
+| `extra`      | Clave presente en un archivo de destino pero no en el origen.                              |
 | `invalid`    | Una entrada `[[checks]]` rechazó el valor (icu, parity, judge, spec, exec o `fail_below`). |
 
 Fallas a nivel de chequeo (una especificación que no cargará, un ejecutable que no se iniciará, un error de proveedor) van al arreglo `errors` del informe y siempre fallan la ejecución. Rejugar un hallazgo desde el caché incremental lo marca como `"cached": true` en la salida JSON.
