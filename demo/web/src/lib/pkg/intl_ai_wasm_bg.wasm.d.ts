@@ -3,6 +3,8 @@
 export const memory: WebAssembly.Memory;
 export const buildJudgeBody: (a: any) => [number, number, number];
 export const buildTranslateBody: (a: any) => [number, number, number];
+export const docExtract: (a: number, b: number, c: any) => [number, number, number];
+export const docMerge: (a: number, b: number, c: any, d: number, e: number, f: any) => [number, number, number];
 export const flatten: (a: number, b: number) => [number, number, number];
 export const init: () => void;
 export const missingKeys: (a: any, b: any) => [number, number, number];

@@ -37,6 +37,55 @@ export function buildTranslateBody(req) {
 }
 
 /**
+ * Split a markdown/MDX document into its translatable segment FlatMap.
+ * Code fences, directives, frontmatter delimiters and markup stay in
+ * the skeleton and never reach the model.
+ *
+ * `docExtract(markdownText, frontmatterKeys?):
+ *   { segments: Record<segId, string>, order: string[],
+ *     kinds: Record<segId, "heading"|"paragraph"|"cell"|"frontmatter">,
+ *     warnings: string[] }`
+ * @param {string} text
+ * @param {any} frontmatter_keys
+ * @returns {any}
+ */
+export function docExtract(text, frontmatter_keys) {
+    const ptr0 = passStringToWasm0(text, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+    const len0 = WASM_VECTOR_LEN;
+    const ret = wasm.docExtract(ptr0, len0, frontmatter_keys);
+    if (ret[2]) {
+        throw takeFromExternrefTable0(ret[1]);
+    }
+    return takeFromExternrefTable0(ret[0]);
+}
+
+/**
+ * Splice a translated segment map back into the document skeleton.
+ * Segments with no target value keep the source text (po4a-style
+ * fallback). `linkPrefix` (e.g. `/es`) is prepended to `/`-rooted
+ * link destinations; empty disables rewriting.
+ *
+ * `docMerge(markdownText, targetMap, linkPrefix?, frontmatterKeys?):
+ *   { output: string, fellBack: string[] }`
+ * @param {string} text
+ * @param {any} target
+ * @param {string | null | undefined} link_prefix
+ * @param {any} frontmatter_keys
+ * @returns {any}
+ */
+export function docMerge(text, target, link_prefix, frontmatter_keys) {
+    const ptr0 = passStringToWasm0(text, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+    const len0 = WASM_VECTOR_LEN;
+    var ptr1 = isLikeNone(link_prefix) ? 0 : passStringToWasm0(link_prefix, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+    var len1 = WASM_VECTOR_LEN;
+    const ret = wasm.docMerge(ptr0, len0, target, ptr1, len1, frontmatter_keys);
+    if (ret[2]) {
+        throw takeFromExternrefTable0(ret[1]);
+    }
+    return takeFromExternrefTable0(ret[0]);
+}
+
+/**
  * Flatten a locale file's contents (JSON or YAML text) into a flat
  * `key -> string` map.
  *
@@ -495,7 +544,7 @@ function __wbg_get_imports() {
             return ret;
         },
         __wbindgen_generic_0000000000000001: function(arg0, arg1) {
-            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [Externref], shim_idx: 81, ret: Result(Unit), inner_ret: Some(Result(Unit)) }, mutable: true }) -> Externref`.
+            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [Externref], shim_idx: 83, ret: Result(Unit), inner_ret: Some(Result(Unit)) }, mutable: true }) -> Externref`.
             const ret = makeMutClosure(arg0, arg1, wasm_bindgen_f7f1c3b9929b6523___convert__closures_____invoke___wasm_bindgen_f7f1c3b9929b6523___JsValue__core_9b3796e30d99ddb7___result__Result_____wasm_bindgen_f7f1c3b9929b6523___JsError___true_);
             return ret;
         },

@@ -1271,6 +1271,7 @@ dependencies = [
  "console_error_panic_hook",
  "intl-ai-checks",
  "intl-ai-core",
+ "intl-ai-docs",
  "intl-ai-formats",
  "intl-ai-providers",
  "js-sys",

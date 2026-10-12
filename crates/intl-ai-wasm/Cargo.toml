@@ -13,6 +13,7 @@ crate-type = ["cdylib", "rlib"]
 [dependencies]
 intl-ai-checks = { path = "../intl-ai-checks", default-features = false }
 intl-ai-core = { path = "../intl-ai-core" }
+intl-ai-docs = { path = "../intl-ai-docs" }
 intl-ai-formats = { path = "../intl-ai-formats" }
 intl-ai-providers = { path = "../intl-ai-providers", default-features = false }
 console_error_panic_hook = "0.1"

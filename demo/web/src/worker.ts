@@ -17,6 +17,8 @@ const fns: WasmFns = {
   parseJudgements: wasmModule.parseJudgements,
   runChecks: wasmModule.runChecks,
   unflatten: wasmModule.unflatten,
+  docExtract: wasmModule.docExtract,
+  docMerge: wasmModule.docMerge,
 };
 
 self.onmessage = (event: MessageEvent) => {

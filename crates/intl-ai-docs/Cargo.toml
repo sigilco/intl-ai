@@ -9,7 +9,8 @@ rust-version.workspace = true
 intl-ai-checks = { path = "../intl-ai-checks" }
 intl-ai-core = { path = "../intl-ai-core" }
 intl-ai-formats = { path = "../intl-ai-formats" }
-intl-ai-providers = { path = "../intl-ai-providers" }
+# Transports are native-only; docs only shares the FlatMap engine.
+intl-ai-providers = { path = "../intl-ai-providers", default-features = false }
 config.workspace = true
 globset.workspace = true
 pulldown-cmark = { version = "0.13", default-features = false }

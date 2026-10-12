@@ -29,4 +29,25 @@ export type ProviderConfig = {
   stream: boolean;
 };
 
-export type Phase = "idle" | "flatten" | "fill" | "check" | "judge" | "done" | "error";
+export type Phase =
+  | "idle"
+  | "flatten"
+  | "extract"
+  | "fill"
+  | "check"
+  | "judge"
+  | "merge"
+  | "done"
+  | "error";
+
+export interface DocExtractResult {
+  segments: Record<string, string>;
+  order: string[];
+  kinds: Record<string, string>;
+  warnings: string[];
+}
+
+export interface DocMergeResult {
+  output: string;
+  fellBack: string[];
+}

@@ -2,8 +2,11 @@
 
 Svelte SPA demo for `crates/intl-ai-wasm`: drop or paste a source locale
 file, pick an OpenAI-compatible provider, and watch the fill, check, and
-judge pipeline run in the browser. All wasm work happens in a Web Worker
-so the page never blocks.
+judge pipeline run in the browser. The **documents** tab runs the
+`intl-ai-docs` flow: extract a markdown/MDX document's translatable
+segments, fill them through the same provider, and preview the merged
+document with links rewritten to the target locale prefix. All wasm work
+happens in a Web Worker so the page never blocks.
 
 ## Stack
 

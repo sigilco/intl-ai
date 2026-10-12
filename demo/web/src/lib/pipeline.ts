@@ -34,12 +34,12 @@ function promptParts(messages: Message[]) {
   };
 }
 
-type ChatBody = {
+export interface ChatBody {
   model: string;
   messages: Message[];
   response_format: { json_schema: { name: string; schema: unknown } };
   temperature: number;
-};
+}
 
 export type RunResult = {
   rows: GenRow[];
@@ -63,7 +63,7 @@ function providerOf(cfg: ProviderConfig) {
 }
 
 /** Structured call: stream partial objects when enabled, else one shot. */
-async function complete(
+export async function complete(
   cfg: ProviderConfig,
   body: ChatBody,
   onPartial?: (translations: Record<string, string>) => void,
@@ -119,7 +119,7 @@ async function judge(cfg: ProviderConfig, body: ChatBody): Promise<Judgement[]> 
   return object.judgements;
 }
 
-function checkIdsFor(targetLocale: string): string[] {
+export function checkIdsFor(targetLocale: string): string[] {
   const ids = ["icu", "placeholder-parity"];
   if (/^en-(us|gb|uk)$/i.test(targetLocale)) ids.push(`dialect:${targetLocale.toLowerCase()}`);
   return ids;
