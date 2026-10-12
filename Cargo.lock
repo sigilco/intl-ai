@@ -1157,6 +1157,7 @@ dependencies = [
  "config",
  "intl-ai-checks",
  "intl-ai-core",
+ "intl-ai-docs",
  "intl-ai-providers",
  "predicates",
  "serde",
@@ -1187,6 +1188,26 @@ dependencies = [
  "globset",
  "intl-ai-formats",
  "jiff",
+ "schemars",
+ "serde",
+ "serde_json",
+ "sha1",
+ "tempfile",
+ "thiserror",
+ "toml 0.9.12+spec-1.1.0",
+]
+
+[[package]]
+name = "intl-ai-docs"
+version = "0.7.0"
+dependencies = [
+ "config",
+ "globset",
+ "intl-ai-checks",
+ "intl-ai-core",
+ "intl-ai-formats",
+ "intl-ai-providers",
+ "pulldown-cmark",
  "schemars",
  "serde",
  "serde_json",
@@ -1557,6 +1578,17 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "985e7ec9bb745e6ce6535b544d84d6cd6f7ad8bd711c398938ae983b91a766d9"
 dependencies = [
  "unicode-ident",
+]
+
+[[package]]
+name = "pulldown-cmark"
+version = "0.13.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e9f068eba8e7071c5f9511831b44f32c740d5adf574e990f946ddb53db2f314e"
+dependencies = [
+ "bitflags 2.13.2",
+ "memchr",
+ "unicase",
 ]
 
 [[package]]
@@ -2111,6 +2143,12 @@ name = "typenum"
 version = "1.20.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b6f5e870be6c3b371b77fe0ee0bafb859fa4964b4404c27de1d380043c4dda20"
+
+[[package]]
+name = "unicase"
+version = "2.10.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "357cc3acc6a036009fd6c973ed009037c732d60d0b4f6c673e9041497482a28f"
 
 [[package]]
 name = "unicode-ident"

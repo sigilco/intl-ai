@@ -5,7 +5,7 @@ description: Set up intl-ai in minutes. Install the binary, configure your provi
 
 # Getting Started
 
-intl-ai is a single binary that translates the locale files your i18n library already reads. This guide gets it running in minutes.
+intl-ai is a single binary that translates the locale files your i18n library already reads. This guide gets it running in minutes. (For whole document trees, see [Localize documents](/guide/documents/).)
 
 ## Install the binary
 
@@ -28,7 +28,7 @@ brew install sigilco/tap-intl-ai/intl-ai
 == tab "mise"
 
 ```sh
-mise use npm:intl-ai@latest
+mise use github:sigilco/intl-ai@latest
 ```
 
 == tab "npm"
@@ -46,6 +46,8 @@ irm https://github.com/sigilco/intl-ai/releases/latest/download/intl-ai-installe
 ```
 
 Or run it without a global install via `npx intl-ai` / `bunx intl-ai`. Verify with `intl-ai --help`.
+
+Every channel installs both binaries: `intl-ai` for locale catalogs, and `intl-ai-docs` for document trees (experimental, see [Localize documents](/guide/documents/)).
 
 ## 1. Initialize
 

@@ -1,0 +1,265 @@
+version = 1
+
+[entries."h:06236fc971e6"]
+value = "Configurar `app.json`"
+source_hash = "06236fc971e6f40ad976cf8349b69e41331b9c2c"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T21:12:28Z"
+
+[entries."h:07a07fefcf3f"]
+value = "Executar `intl-ai fill`"
+source_hash = "07a07fefcf3faff7c65b6d0027de325cb619b697"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T21:12:28Z"
+
+[entries."h:07da6dcf43cc"]
+value = "Diretório de trabalho para o binário"
+source_hash = "07da6dcf43cc5ac0d90c453a7ce3e83c60c8b658"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T21:12:28Z"
+
+[entries."h:08d1a6d7b5ad"]
+value = "Tradução de IA em tempo de compilação para Expo i18n. As traduções ocorrem durante o pré-build, sem tempo de execução."
+source_hash = "08d1a6d7b5ad450cabb7a095f1df43b587c09475"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T21:12:28Z"
+
+[entries."h:0f01ed56a1e3"]
+value = "Exemplo"
+source_hash = "0f01ed56a1e32a05e5ef96e4d779f34784af9a96"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T21:12:28Z"
+
+[entries."h:1b93795b9768"]
+value = "—"
+source_hash = "1b93795b9768a163eed85c20387244b0ce76679a"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T21:13:41Z"
+
+[entries."h:20786020f591"]
+value = "Argumentos adicionais adicionados a `intl-ai fill`"
+source_hash = "20786020f5913a71562b5b8786d1975a809ee151"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T21:13:41Z"
+
+[entries."h:21d1523523f9"]
+value = '`false` pula quando `NODE_ENV !== "production"`'
+source_hash = "21d1523523f93f37b13300c9a2cfb8df6a024746"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T21:13:41Z"
+
+[entries."h:293b69d2fc7b"]
+value = "Veja [Configuration](/guide/configuration/) para o esquema completo."
+source_hash = "293b69d2fc7ba567836fb7fbdce2e4769b253598"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T21:13:41Z"
+
+[entries."h:31fc4f3d705f"]
+value = "O pacote npm `intl-ai` vem como dependência e baixa o binário da plataforma na instalação. Para usar um binário que você instalou de outra forma (brew, mise, script de instalação), defina `INTL_AI_BIN` ou passe `bin`."
+source_hash = "31fc4f3d705f929727950962cee6c0d45c2f4b39"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T21:13:41Z"
+
+[entries."h:3deb74565196"]
+value = "Tipo"
+source_hash = "3deb7456519697ecf4eefc455516c969a3681bae"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T21:13:41Z"
+
+[entries."h:476b14cc0c5d"]
+value = "Caminho para `intl-ai.toml`/`.json`/`.yaml`"
+source_hash = "476b14cc0c5d9b496b1b11b5928fa6ccef032e34"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T21:13:41Z"
+
+[entries."h:515f8f5fa29a"]
+value = "Utilização em tempo de execução"
+source_hash = "515f8f5fa29a636234e837f3548a2918507e964d"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T21:15:35Z"
+
+[entries."h:55f8ebc805e6"]
+value = "Descrição"
+source_hash = "55f8ebc805e65b5b71ddafdae390e3be2bcd69af"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T21:15:35Z"
+
+[entries."h:62b1ad9082ea"]
+value = "Executar pré-build"
+source_hash = "62b1ad9082ea56820df9a1b1c0ad9574f8d89480"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T21:15:35Z"
+
+[entries."h:69a200db7e36"]
+value = "Limiar de pontuação do juiz dentro da porta de preenchimento"
+source_hash = "69a200db7e3681ff83768723a41672ed87ebacda"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T21:15:35Z"
+
+[entries."h:6bf5da9c080b"]
+value = "Opções"
+source_hash = "6bf5da9c080bee3a8142586c412aa39971137eee"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T21:16:18Z"
+
+[entries."h:6bf60a08d100"]
+value = "Com opções:"
+source_hash = "6bf60a08d100412a557c9ec4468e26a3fc8d3190"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T21:16:18Z"
+
+[entries."h:6fe6f54e022e"]
+value = "Ordem de resolução binária: opção `bin` → variável de ambiente `INTL_AI_BIN` → o pacote npm `intl-ai` → `PATH`."
+source_hash = "6fe6f54e022e7c3ac9f1a930de0a6f923ff1f38a"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T21:16:18Z"
+
+[entries."h:7f684714d531"]
+value = "Caminho explícito para o binário `intl-ai`"
+source_hash = "7f684714d5311b1fc0ce39c6977418eca137d483"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T21:16:18Z"
+
+[entries."h:808d7dca8a74"]
+value = "Padrão"
+source_hash = "808d7dca8a74d84af27a2d6602c3d786de45fe1e"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T21:16:18Z"
+
+[entries."h:854d6e736de4"]
+value = "raiz do app"
+source_hash = "854d6e736de49d1967abc545f932ac93506126fa"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T21:16:18Z"
+
+[entries."h:8c118a695551"]
+value = "O plugin regista em ambas as plataformas ios e android e executa o pipeline uma vez, com a raiz do app como diretório de trabalho."
+source_hash = "8c118a695551a592f4b2cff7ace5798d425a2002"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T21:16:18Z"
+
+[entries."h:948060e45d8c"]
+value = "Carregue os arquivos JSON gerados diretamente com a sua biblioteca i18n preferida (`i18next`, `react-intl`, etc.). O plugin apenas escreve traduções; não impõe uma API de runtime."
+source_hash = "948060e45d8c33c73656e0a9d505842b64f0fce4"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T21:16:37Z"
+
+[entries."h:a24c44fc6fd4"]
+value = "Execute `intl-ai check --fail-on <kinds>` depois de fill"
+source_hash = "a24c44fc6fd4a6f9d573cc666ce6d9d9e5df1ee6"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T21:16:37Z"
+
+[entries."h:ad56cccf22e7"]
+value = "Crie `intl-ai.toml`"
+source_hash = "ad56cccf22e7339c20b2334937678b654c87b992"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T21:16:37Z"
+
+[entries."h:c275355dc46a"]
+value = "Expo"
+source_hash = "c275355dc46ac171633935033d113e3872d595e5"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T21:16:37Z"
+
+[entries."h:d31e815d4322"]
+value = "`false` avisa em vez de falhar o pré-build"
+source_hash = "d31e815d4322ee155b53a7c237d369fcfde9309e"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T21:17:34Z"
+
+[entries."h:daa9c3cdd55e"]
+value = "Gate de validação do tempo de preenchimento"
+source_hash = "daa9c3cdd55e7ed9e9bff3d1f2e26eaeb2c162ce"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T21:17:34Z"
+
+[entries."h:de419f526cfc"]
+value = "Veja [`examples/expo`](https://github.com/sigilco/intl-ai/tree/main/examples/expo) para uma aplicação de trabalho completa."
+source_hash = "de419f526cfc639bc67f36d80c3fe46e65260377"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T21:17:34Z"
+
+[entries."h:e31d972229de"]
+value = "Opção"
+source_hash = "e31d972229de381b461860014dd710856361917a"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T21:17:34Z"
+
+[entries."h:fd6c3ebf7bef"]
+value = "Instale"
+source_hash = "fd6c3ebf7befca9f8208f86c76e4d4180303745c"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T21:17:41Z"
+
+[entries."h:fe201d481d35"]
+value = "`@intl-ai/expo` é um plugin de configuração que executa o binário `intl-ai` enquanto o Expo avalia plugins de configuração durante `expo prebuild`, `eas build` e `expo run:*`. As traduções são escritas em disco antes do Metro empacotar a sua aplicação, portanto não há sobrecarga em tempo de execução."
+source_hash = "fe201d481d35ee8038310d23212ad675333e8a3d"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T21:17:41Z"

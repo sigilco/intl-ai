@@ -1,0 +1,29 @@
+# intl-ai-docs configuration — AI localization for the docmd tree.
+# Experimental: document support is opt-in. See docs/guide/internals.md.
+experimental = true
+layout = "locale-dirs" # docmd i18n: docs/<locale>/ per locale
+source_dir = "docs"
+source = "en"
+targets = ["es", "pt"]
+# Small batches keep responses well under provider output limits;
+# big files would otherwise hit truncation retries.
+batch_size = 8
+
+# Shift-left gate: batches that break protected-span parity or leak
+# escapes get one corrective round with the findings as reviewer notes.
+[fill]
+validate = ["doc:protected", "doc:corruption"]
+
+# Provider: OpenAI-compatible endpoint, credentials via env. Any
+# provider preset from docs/guide/providers.md works here.
+[provider]
+kind = "http"
+provider = "openai"
+base_url = "${env:AI_BASE_URL}"
+model = "${env:AI_MODEL_ID}"
+api_key = "${env:AI_API_KEY}"
+
+# Keep code identifiers and commands in English; translate prose only.
+[locale_instructions]
+es = "Translate to Spanish (es). Never translate text inside backticks `...`: it is code and must stay byte-identical. Keep code blocks, commands, flags, URLs, and identifiers verbatim. Never use typographic quotes."
+pt = "Translate to European Portuguese (pt-PT). Never translate text inside backticks `...`: it is code and must stay byte-identical. Keep code blocks, commands, flags, URLs, and identifiers verbatim. Never use typographic quotes."

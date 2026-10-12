@@ -8,6 +8,14 @@ export default {
   out: "docs/.vitepress/dist",
   base: "/",
   engine: "js",
+  i18n: {
+    default: "en",
+    locales: [
+      { id: "en", label: "English" },
+      { id: "es", label: "Español" },
+      { id: "pt", label: "Português" },
+    ],
+  },
   logo: {
     light: "assets/logo.svg",
     dark: "assets/logo.svg",
@@ -108,6 +116,15 @@ export default {
         { title: "Browser demo", path: "/guide/wasm/" },
         { title: "Format plugins", path: "/guide/format-plugins/" },
         { title: "Community integrations", path: "/guide/community-plugins/" },
+      ],
+    },
+    {
+      title: "Localize documents",
+      icon: "book",
+      collapsible: true,
+      children: [
+        { title: "Overview", path: "/guide/documents/" },
+        { title: "Configuration", path: "/guide/documents/configuration/" },
       ],
     },
     {

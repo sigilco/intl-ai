@@ -1,0 +1,113 @@
+version = 1
+
+[entries."h:0efc2e6be4c2"]
+value = "Resumen"
+source_hash = "0efc2e6be4c23b9a513d7ce0dcff8ed80e8912e7"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:00:30Z"
+
+[entries."h:17704d3b28fb"]
+value = "Omitir `processor` (el predeterminado passthrough) para que los marcadores de posición `{{var}}` de i18next permanezcan sin cambios."
+source_hash = "17704d3b28fb6dfc61d6942c2f4dca07700b14c4"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:00:30Z"
+
+[entries."h:320731288448"]
+value = "intl-ai genera archivos de traducción JSON en tiempo de compilación. i18next consume estos archivos en tiempo de ejecución. Esta guía muestra cómo integrar ambas herramientas."
+source_hash = "3207312884481cfa3d654b2ca1b2e26c1266e877"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:00:30Z"
+
+[entries."h:5b9775684852"]
+value = "Uso de traducciones"
+source_hash = "5b97756848528b856e6ecfa4293da85b8cd2b5cd"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:00:30Z"
+
+[entries."h:5c8ff5c31b54"]
+value = "Crear un `intl-ai.toml` en la raíz de tu proyecto. Ver [Configuration](/guide/configuration) para el esquema completo."
+source_hash = "5c8ff5c31b548271b1a961d117411898bc5c10a7"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:00:30Z"
+
+[entries."h:6310df8e7d4b"]
+value = "Uso de la aplicación React"
+source_hash = "6310df8e7d4b6b6178cdb57467eb21ffbe67bc3e"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:00:30Z"
+
+[entries."h:754164850f38"]
+value = "Configuración"
+source_hash = "754164850f38c1ecdaf6b8ed894cb192bc36c5f4"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:00:30Z"
+
+[entries."h:761f51532c87"]
+value = "i18next"
+source_hash = "761f51532c873cb2b3435d261adba3ee12e97543"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:00:30Z"
+
+[entries."h:ab2142dae571"]
+value = "Esta guía cubre el consumo de i18next. Para la configuración del bundler, consulte [Build systems](/guide/build-systems/)."
+source_hash = "ab2142dae571503a425833b2bcef4ead03fefb16"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:00:30Z"
+
+[entries."h:be18d6693ae4"]
+value = "Nota de sintaxis de i18next"
+source_hash = "be18d6693ae4f35acebd340be498d8d3e217cd11"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:00:30Z"
+
+[entries."h:c81b79df3c64"]
+value = "Instalación"
+source_hash = "c81b79df3c6448eae7c4f80428b54cd5692a17d7"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:00:30Z"
+
+[entries."h:dea9a1e3ce94"]
+value = "Solo necesitas `@intl-ai/unplugin`. Ejecuta el binario `intl-ai`, que el paquete npm `intl-ai` instala automáticamente."
+source_hash = "dea9a1e3ce949c5ef222584a94645d5fa91bc22c"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:00:30Z"
+
+[entries."h:e6eb35554490"]
+value = "AI-translate traduce los archivos de locale de i18next en tiempo de compilación. Funciona con cualquier modelo de IA, sin costo de tiempo de ejecución."
+source_hash = "e6eb35554490294ea8c24450aaa166af0b5e15e2"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:00:30Z"
+
+[entries."h:edc1326db735"]
+value = "i18next usa `{{variable}}` para la interpolación (no ICU `{variable}`). Por ejemplo:"
+source_hash = "edc1326db7354e000626c19026647ea3084b579c"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:00:30Z"

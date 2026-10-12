@@ -1,0 +1,288 @@
+version = 1
+
+[entries."h:0a764f6548ff"]
+value = "Checks de documento executados como porta shift-left por lote: `doc:protected` e `doc:corruption`."
+source_hash = "0a764f6548ffec0769d33c7912d7d9e6cdc9f608"
+origin = "human"
+reviewed = false
+updated_at = "2026-10-12T18:41:59Z"
+
+[entries."h:0b80c8dc7b85"]
+value = "Notas de estilo/dialeto por locale; resolvidas por locale exata, subtag de idioma e depois `*`."
+source_hash = "0b80c8dc7b853830a52d1d5208acef21a3f33fbf"
+origin = "human"
+reviewed = false
+updated_at = "2026-10-12T18:41:59Z"
+
+[entries."h:1837eb00162f"]
+value = "Modelo de prefixo; `{locale}` é substituído por cada destino."
+source_hash = "1837eb00162f819377c6e7093b799f574f3b0551"
+origin = "human"
+reviewed = false
+updated_at = "2026-10-12T18:41:59Z"
+
+[entries."h:1a77d416224c"]
+value = "required"
+source_hash = "1a77d416224cbbe77a439cfd6c198030cb522872"
+origin = "human"
+reviewed = false
+updated_at = "2026-10-12T18:41:59Z"
+
+[entries."h:1b93795b9768"]
+value = "—"
+source_hash = "1b93795b9768a163eed85c20387244b0ce76679a"
+origin = "human"
+reviewed = false
+updated_at = "2026-10-12T18:41:59Z"
+
+[entries."h:1c2f3389aaf3"]
+value = "Id da locale fonte."
+source_hash = "1c2f3389aaf35ec527b004f3799e8b46ed5ea49c"
+origin = "human"
+reviewed = false
+updated_at = "2026-10-12T18:41:59Z"
+
+[entries."h:1efc64969034"]
+value = "Nível superior"
+source_hash = "1efc64969034db22019d036cd5b2332c86b7dc65"
+origin = "human"
+reviewed = false
+updated_at = "2026-10-12T18:41:59Z"
+
+[entries."h:261f0613f941"]
+value = "O `intl-ai-docs` lê o seu próprio ficheiro de configuração, `intl-ai-docs.toml` (ou `.json`/`.yaml`), descoberto percorrendo para cima a partir do diretório de trabalho. Coloca-o junto da árvore de documentos que gere; está deliberadamente separado do `intl-ai.toml` para que os pipelines de catálogos e de documentos nunca partilhem definições."
+source_hash = "261f0613f941df9229043d4ad527af3c3ad8b250"
+origin = "human"
+reviewed = false
+updated_at = "2026-10-12T18:41:59Z"
+
+[entries."h:308cc377f588"]
+value = "Termos fixados, com a mesma semântica do glossário de corpus."
+source_hash = "308cc377f5889d973f5407b8757f64ee071f341a"
+origin = "human"
+reviewed = false
+updated_at = "2026-10-12T18:41:59Z"
+
+[entries."h:3150ecd5e029"]
+value = "path"
+source_hash = "3150ecd5e0294534a81ae047ddac559de481d774"
+origin = "human"
+reviewed = false
+updated_at = "2026-10-12T18:41:59Z"
+
+[entries."h:3157d259c179"]
+value = "`intl-ai-docs.lock.d/` fica junto do ficheiro de configuração. Cada documento traduzido tem um shard em `intl-ai-docs.lock.d/<locale>/<relpath>.toml` com `sourceHash`, `origin` (`ai` ou `human`), `reviewed` e `quality` por segmento. Também vive lá um `check-cache.json` incremental; adiciona-o ao gitignore."
+source_hash = "3157d259c179c6e63752878dae325b6a2673a51d"
+origin = "human"
+reviewed = false
+updated_at = "2026-10-12T18:41:59Z"
+
+[entries."h:37745ed7a0f0"]
+value = "map"
+source_hash = "37745ed7a0f005fb14522c5cc7c1ba3d9e0df579"
+origin = "human"
+reviewed = false
+updated_at = "2026-10-12T18:41:59Z"
+
+[entries."h:38b62be4bdda"]
+value = "list"
+source_hash = "38b62be4bddaa5661c7d6b8e36e28159314df5c7"
+origin = "human"
+reviewed = false
+updated_at = "2026-10-12T18:41:59Z"
+
+[entries."h:3deb74565196"]
+value = "Type"
+source_hash = "3deb7456519697ecf4eefc455516c969a3681bae"
+origin = "human"
+reviewed = false
+updated_at = "2026-10-12T18:41:59Z"
+
+[entries."h:408c0f8fc58b"]
+value = "Segmentos por pedido de tradução. Mantém pequeno para documentos longos para não exceder os limites de saída do fornecedor."
+source_hash = "408c0f8fc58b0b829a5fb82d217e692ec0f17bf1"
+origin = "human"
+reviewed = false
+updated_at = "2026-10-12T18:41:59Z"
+
+[entries."h:46f8ab7c0cff"]
+value = "int"
+source_hash = "46f8ab7c0cff9df7cd124852e26022a6bf89e315"
+origin = "human"
+reviewed = false
+updated_at = "2026-10-12T18:41:59Z"
+
+[entries."h:5039d155a71c"]
+value = "bool"
+source_hash = "5039d155a71c0a5f7a2b2654ad49cb7ee47a8980"
+origin = "human"
+reviewed = false
+updated_at = "2026-10-12T18:41:59Z"
+
+[entries."h:55f8ebc805e6"]
+value = "Description"
+source_hash = "55f8ebc805e65b5b71ddafdae390e3be2bcd69af"
+origin = "human"
+reviewed = false
+updated_at = "2026-10-12T18:41:59Z"
+
+[entries."h:5751fbc9ed8e"]
+value = "`[check]` leva as mesmas opções do check de corpus: `fail_on` (tipos de achado que saem com código diferente de zero, por defeito `missing`, `stale`, `invalid`) e `cache` (cache incremental de achados, por defeito `true`). `[[checks]]` acrescenta entradas estilo corpus spec/exec/judge além dos builtins de documento sempre ativos, que verificam a paridade do esqueleto, as regiões protegidas, os prefixos de ligações e a consistência do rekey."
+source_hash = "5751fbc9ed8e62d44703157bc0978d7f87eee9e0"
+origin = "human"
+reviewed = false
+updated_at = "2026-10-12T18:41:59Z"
+
+[entries."h:5f856ae6dfb5"]
+value = "Caminhos de frontmatter (com pontos) cujos valores escalares se traduzem."
+source_hash = "5f856ae6dfb5b4989ad96f5ca2c8efd35140ff5b"
+origin = "human"
+reviewed = false
+updated_at = "2026-10-12T18:41:59Z"
+
+[entries."h:724852964f63"]
+value = "`[check]` e `[[checks]]`"
+source_hash = "724852964f6397430670aacd0f0dba3e94de9cf2"
+origin = "human"
+reviewed = false
+updated_at = "2026-10-12T18:41:59Z"
+
+[entries."h:79511cd2cb9a"]
+value = "Raiz dos documentos, resolvida em relação ao ficheiro de configuração."
+source_hash = "79511cd2cb9ad5f74f6e16b1db39e9329481e01f"
+origin = "human"
+reviewed = false
+updated_at = "2026-10-12T18:41:59Z"
+
+[entries."h:7e3565dcc8c4"]
+value = "Obrigatório. Todos os comandos recusam executar até ser `true`."
+source_hash = "7e3565dcc8c4dd63e8aeb51d94f01de81bf5bee0"
+origin = "human"
+reviewed = false
+updated_at = "2026-10-12T18:41:59Z"
+
+[entries."h:808d7dca8a74"]
+value = "Default"
+source_hash = "808d7dca8a74d84af27a2d6602c3d786de45fe1e"
+origin = "human"
+reviewed = false
+updated_at = "2026-10-12T18:41:59Z"
+
+[entries."h:88454919efa5"]
+value = "Configuração de documentos"
+source_hash = "88454919efa5e0384f433371040c846b8e127a38"
+origin = "human"
+reviewed = false
+updated_at = "2026-10-12T18:41:59Z"
+
+[entries."h:8950fd381fe7"]
+value = "Globs extra (relativos ao documento) a ignorar, além de diretórios ocultos, `node_modules` e os diretórios das locales de destino."
+source_hash = "8950fd381fe78e411cf121e6bcb0def907e7fc18"
+origin = "human"
+reviewed = false
+updated_at = "2026-10-12T18:41:59Z"
+
+[entries."h:9c60dce031ac"]
+value = "Tudo o que no `intl-ai.toml` não tem forma de documento (ficheiros de locale, shims, checks de corpus) fica lá. Os arms de fornecedor são idênticos aos da configuração de corpus: qualquer coisa de [Fornecedores](/guide/providers/) funciona tal como está no `intl-ai-docs.toml`."
+source_hash = "9c60dce031ac893a6c97add62d6d73d3598f8bd2"
+origin = "human"
+reviewed = false
+updated_at = "2026-10-12T18:41:59Z"
+
+[entries."h:a2e00190fb6a"]
+value = "As ligações são reescritas apenas no merge; os shards guardam a forma sem prefixo, por isso mudar `prefix` mais tarde reescreve os destinos de forma limpa no próximo fill."
+source_hash = "a2e00190fb6a65ed5fffeedcb7cafce89e5d5089"
+origin = "human"
+reviewed = false
+updated_at = "2026-10-12T18:41:59Z"
+
+[entries."h:a3f421095d65"]
+value = "Locales de destino; cada uma escreve em `source_dir/<locale>`."
+source_hash = "a3f421095d65b706e680ecabaeeda8127a6b9598"
+origin = "human"
+reviewed = false
+updated_at = "2026-10-12T18:41:59Z"
+
+[entries."h:a44c75b7cd7e"]
+value = "Tentativas do fornecedor em falhas repetíveis."
+source_hash = "a44c75b7cd7e0890c3ccc14ff58c7ac50e4079f3"
+origin = "human"
+reviewed = false
+updated_at = "2026-10-12T18:41:59Z"
+
+[entries."h:a5f2e60fd61f"]
+value = 'Mesma forma que `intl-ai.toml`: `kind = "http" | "command" | "replay"`, mais os campos específicos do fornecedor. `api_key` aceita a interpolação `${env:VAR}` e `${file:PATH}`.'
+source_hash = "a5f2e60fd61f84c89eb1518e89809d723ef8683c"
+origin = "human"
+reviewed = false
+updated_at = "2026-10-12T18:41:59Z"
+
+[entries."h:b606d8f065c2"]
+value = "Disposição da árvore: `locale-dirs` coloca a fonte em `source_dir/<source>`; `flat` coloca os ficheiros fonte diretamente sob `source_dir`."
+source_hash = "b606d8f065c283b965fcfea2cdd6a1bcac9c9c18"
+origin = "human"
+reviewed = false
+updated_at = "2026-10-12T18:41:59Z"
+
+[entries."h:c64033672f5c"]
+value = "engine"
+source_hash = "c64033672f5ca984dfe962909671961e8012f0c5"
+origin = "human"
+reviewed = false
+updated_at = "2026-10-12T18:41:59Z"
+
+[entries."h:c67dd20ee842"]
+value = "Key"
+source_hash = "c67dd20ee842986086a0a915ddc2a279490130ed"
+origin = "human"
+reviewed = false
+updated_at = "2026-10-12T18:41:59Z"
+
+[entries."h:cf56d1bfef13"]
+value = "Insere o prefixo da locale nos destinos de ligação com raiz `/`."
+source_hash = "cf56d1bfef13109bd08d6ba9b97b63ce9ad88341"
+origin = "human"
+reviewed = false
+updated_at = "2026-10-12T18:41:59Z"
+
+[entries."h:d398cf87b197"]
+value = "Referência de intl-ai-docs.toml. Experimental."
+source_hash = "d398cf87b197ed03f97c8ae745a41bb6482c2bb8"
+origin = "human"
+reviewed = false
+updated_at = "2026-10-12T18:41:59Z"
+
+[entries."h:e4ba4ca6ec1f"]
+value = "Lockfile"
+source_hash = "e4ba4ca6ec1fec0aeb640f2f2439bb9cfa02f597"
+origin = "human"
+reviewed = false
+updated_at = "2026-10-12T18:41:59Z"
+
+[entries."h:e9ee66da32cf"]
+value = "Versão do esquema de configuração; apenas `1` é compreendido."
+source_hash = "e9ee66da32cf9d9e00dc531c9ee090d34eee2b22"
+origin = "human"
+reviewed = false
+updated_at = "2026-10-12T18:41:59Z"
+
+[entries."h:ecb252044b5e"]
+value = "string"
+source_hash = "ecb252044b5ea0f679ee78ec1a12904739e2904d"
+origin = "human"
+reviewed = false
+updated_at = "2026-10-12T18:41:59Z"
+
+[entries."h:f2310310b224"]
+value = 'Nome do DocFormat. `"mdx"` (markdown incluído) é o único formato publicado; `"markdown"` é um alias.'
+source_hash = "f2310310b2244cf69bc5c3c3c233022af29273a7"
+origin = "human"
+reviewed = false
+updated_at = "2026-10-12T18:41:59Z"
+
+[entries."h:faca51617f3f"]
+value = "Mesmo bloco de LLM-as-a-judge que `intl-ai.toml` (`enabled`, `provider`, limiares). As pontuações ficam nos shards do lockfile sob `quality`."
+source_hash = "faca51617f3f73535cd60efac85af9204cfce79c"
+origin = "human"
+reviewed = false
+updated_at = "2026-10-12T18:41:59Z"

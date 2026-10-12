@@ -1,0 +1,104 @@
+[
+  { "title": "Início", "path": "/", "icon": "house" },
+  {
+    "title": "Primeiros passos",
+    "icon": "rocket",
+    "collapsible": true,
+    "children": [
+      { "title": "Início", "path": "/guide/getting-started/" },
+      { "title": "Configuração do modelo de IA", "path": "/guide/ai-model/" },
+      { "title": "Configuração", "path": "/guide/configuration/" },
+      { "title": "Fornecedores", "path": "/guide/providers/" },
+      { "title": "Observabilidade", "path": "/guide/observability/" },
+      { "title": "Migração a partir de 0.4.x", "path": "/guide/migration/" }
+    ]
+  },
+  {
+    "title": "Sistemas de compilação",
+    "icon": "hammer",
+    "collapsible": true,
+    "children": [
+      { "title": "Visão geral", "path": "/guide/build-systems/" },
+      { "title": "Vite", "path": "/guide/build-systems/vite/" },
+      { "title": "Webpack", "path": "/guide/build-systems/webpack/" },
+      { "title": "Rollup", "path": "/guide/build-systems/rollup/" },
+      { "title": "esbuild", "path": "/guide/build-systems/esbuild/" },
+      { "title": "Rspack", "path": "/guide/build-systems/rspack/" },
+      { "title": "Rolldown", "path": "/guide/build-systems/rolldown/" },
+      { "title": "Farm", "path": "/guide/build-systems/farm/" },
+      { "title": "Next.js", "path": "/guide/build-systems/next-js/" }
+    ]
+  },
+  {
+    "title": "Bibliotecas de i18n",
+    "icon": "languages",
+    "collapsible": true,
+    "children": [
+      { "title": "Visão geral", "path": "/guide/i18n-libraries/" },
+      { "title": "Vue (vue-i18n)", "path": "/guide/i18n-libraries/vue-i18n/" },
+      { "title": "i18next", "path": "/guide/i18n-libraries/i18next/" }
+    ]
+  },
+  {
+    "title": "Móvel e desktop",
+    "icon": "smartphone",
+    "collapsible": true,
+    "children": [
+      { "title": "Expo", "path": "/guide/mobile/expo/" },
+      { "title": "Flutter", "path": "/guide/mobile/flutter/" },
+      { "title": "SwiftUI", "path": "/guide/mobile/swiftui/" },
+      { "title": "Android Jetpack", "path": "/guide/mobile/jetpack/" },
+      { "title": ".NET", "path": "/guide/desktop/dotnet/" }
+    ]
+  },
+  {
+    "title": "Ecossistema",
+    "icon": "puzzle",
+    "collapsible": true,
+    "children": [
+      { "title": "Demonstração no navegador", "path": "/guide/wasm/" },
+      { "title": "Plugins de formato", "path": "/guide/format-plugins/" },
+      { "title": "Integrações da comunidade", "path": "/guide/community-plugins/" }
+    ]
+  },
+  {
+    "title": "Localizar documentos",
+    "icon": "book",
+    "collapsible": true,
+    "children": [
+      { "title": "Visão geral", "path": "/guide/documents/" },
+      { "title": "Configuração", "path": "/guide/documents/configuration/" }
+    ]
+  },
+  {
+    "title": "Referência",
+    "icon": "book-open",
+    "collapsible": true,
+    "children": [
+      { "title": "Referência da CLI", "path": "/guide/api/" },
+      { "title": "Funcionamento interno", "path": "/guide/internals/" },
+      { "title": "Contribuir", "path": "/guide/contributing/" }
+    ]
+  },
+  {
+    "title": "LLMs",
+    "icon": "file-text",
+    "collapsible": true,
+    "children": [
+      { "title": "llms.txt", "path": "/llms.txt", "external": true },
+      { "title": "llms-full.txt", "path": "/llms-full.txt", "external": true }
+    ]
+  },
+  {
+    "title": "Patrocinar",
+    "path": "https://buy.polar.sh/polar_cl_Mv1gdlG7bw3I70EC9IHtfeSHJj4PEKvA7JAUz23CFhj",
+    "icon": "heart",
+    "external": true
+  },
+  {
+    "title": "GitHub",
+    "path": "https://github.com/sigilco/intl-ai",
+    "icon": "github",
+    "external": true
+  }
+]

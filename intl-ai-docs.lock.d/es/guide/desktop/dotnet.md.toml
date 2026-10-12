@@ -1,0 +1,121 @@
+version = 1
+
+[entries."h:09a428f93ec0"]
+value = "Requisitos"
+source_hash = "09a428f93ec07a73d726f8bd037ecacfaaf8b044"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:50:58Z"
+
+[entries."h:0f01ed56a1e3"]
+value = "Ejemplo"
+source_hash = "0f01ed56a1e32a05e5ef96e4d779f34784af9a96"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:50:58Z"
+
+[entries."h:298f36f93622"]
+value = "Agregue el siguiente destino a su archivo `.csproj`:"
+source_hash = "298f36f936227b62ca2ba15efa17614fd52205e0"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:50:58Z"
+
+[entries."h:47279263ece6"]
+value = "Puede integrar `intl-ai` en un proyecto .NET agregando un destino de MSBuild que ejecute la CLI antes de la compilación. Todas las traducciones ocurren en tiempo de compilación, por lo que no hay sobrecarga en tiempo de ejecución."
+source_hash = "47279263ece6d4fe0d1c5410416c13e921630dd5"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:50:58Z"
+
+[entries."h:4cfa4a4e5af2"]
+value = "Utilice `System.Text.Json` para cargar los archivos de configuración regional desde el directorio de salida:"
+source_hash = "4cfa4a4e5af24d65a1b5cbabc42b513a241d07b9"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:50:58Z"
+
+[entries."h:6814799770fa"]
+value = "Agregue un destino de MSBuild"
+source_hash = "6814799770fa317ffb7d18695a73251df36b4026"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:50:58Z"
+
+[entries."h:6f9b871970ea"]
+value = "Almacene los archivos de configuración regional de origen en `Resources/`, ejecute `intl-ai fill` como un destino de MSBuild e incruste o copie los archivos en el directorio de salida."
+source_hash = "6f9b871970eaae570ba3889e3a6f3c79daf35621"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:50:58Z"
+
+[entries."h:7243b4e7e5a4"]
+value = "`intl-ai.toml` junto a su archivo `.csproj`. Ajuste `locale_dir` para que apunte a `Resources`."
+source_hash = "7243b4e7e5a4ed8eb23437bd7cad33f459f0230a"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:50:58Z"
+
+[entries."h:7d63c4617a7d"]
+value = "Cargue las traducciones en tiempo de ejecución"
+source_hash = "7d63c4617a7df9a5a4ab470f6475ec095f608c6a"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:50:58Z"
+
+[entries."h:876be2057067"]
+value = "Utilice la disposición del proyecto anterior y adapte la a su propia aplicación WPF, WinUI, ASP.NET o de consola. `intl-ai` solo escribe traducciones; no impone una API en tiempo de ejecución."
+source_hash = "876be2057067021a096d902b57dc44e9e15cab64"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:50:58Z"
+
+[entries."h:a1e28ec5153e"]
+value = "Disposición del proyecto"
+source_hash = "a1e28ec5153e6bea89209b2d4776a690b90e1175"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:50:58Z"
+
+[entries."h:d6bc6bd91b9a"]
+value = "Traducción con IA en tiempo de compilación para i18n de .NET mediante MSBuild. Traducciones en tiempo de compilación, cero en tiempo de ejecución."
+source_hash = "d6bc6bd91b9a16ebcfef59e5d34b54482614eeab"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:50:58Z"
+
+[entries."h:f214e10c922e"]
+value = 'El destino `IntlAiFill` se ejecuta antes de cada compilación, invocando la CLI para rellenar las traducciones faltantes. Debido a que los elementos `Resources\*.json` usan `CopyToOutputDirectory=PreserveNewest`, los archivos generados se copian automáticamente a la carpeta de salida.'
+source_hash = "f214e10c922ec2f39a74a34a4b9695964625776b"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:50:58Z"
+
+[entries."h:f6cc12380895"]
+value = ".NET / C#"
+source_hash = "f6cc123808953c95a7e8bfd8b7b8108d96ddd88c"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:50:58Z"
+
+[entries."h:ffa9aa77d352"]
+value = "`intl-ai` instalado en su `PATH` (see [Installation](/guide/getting-started#installation))."
+source_hash = "ffa9aa77d352a99a66153e13dc9e2c1c4a6e1bd6"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:50:58Z"

@@ -1,0 +1,233 @@
+version = 1
+
+[entries."h:0c2073e7baa7"]
+value = "O que permanece em inglês"
+source_hash = "0c2073e7baa764e9fab8740281a2ff8013c5af68"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-12T17:59:02Z"
+
+[entries."h:1dd6a17cb403"]
+value = "Como funciona"
+source_hash = "1dd6a17cb4033f4f74df1bb6912b8a28a8074084"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-12T17:59:02Z"
+
+[entries."h:2363dd1dfe42"]
+value = "Documentos traduzidos ficam em `docs/<locale>/` espelhando a árvore de origem. A proveniência vive em `intl-ai-docs.lock.d/<locale>/<doc>.toml` shards com os mesmos campos do lockfile do corpus (`origin`, `sourceHash`, `reviewed`, `quality`). Faça commit tanto as árvores quanto os shards."
+source_hash = "2363dd1dfe42c60028e46b0acfcd326420888d39"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-12T17:59:02Z"
+
+[entries."h:24954a358e3b"]
+value = "Veja [Configuração](/guide/documents/configuration/) para a referência completa do `intl-ai-docs.toml`."
+source_hash = "24954a358e3b36e7b79a4fcd17c88b83a4bff030"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-12T17:59:02Z"
+
+[entries."h:28e6f54e33a1"]
+value = "Layouts"
+source_hash = "28e6f54e33a1151bfd4c7cc4affd14df3525f2db"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-12T17:59:02Z"
+
+[entries."h:313c49deab8a"]
+value = "Localize documentos"
+source_hash = "313c49deab8abe1caa131c1cd6085a368f042439"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-12T17:59:02Z"
+
+[entries."h:3cda8b98e4e5"]
+value = "**Preencher**: os segmentos são traduzidos em lotes pelo seu provedor, exatamente como `intl-ai fill` trata chaves de catálogo."
+source_hash = "3cda8b98e4e56b8ecbe326155d3e38adb782e7f8"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-12T17:59:02Z"
+
+[entries."h:417b9a58a2b9"]
+value = "Os links são reescritos por local por padrão: destinos com prefixo `/` recebem o prefixo do alvo (`/es/guide/...`) para que páginas traduzidas se liguem dentro da sua própria árvore. Ajuste ou desative com `[links]`."
+source_hash = "417b9a58a2b9c7481f06422f910c385b686d9384"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-12T17:59:02Z"
+
+[entries."h:45dc349e87e3"]
+value = "Já o tem. O script de instalação, a fórmula do Homebrew, o pacote npm e o mise instalam ambos o `intl-ai` e o `intl-ai-docs`. Verifique com `intl-ai-docs --help`."
+source_hash = "45dc349e87e3870e0cc94151bfb3f649abc5fc02"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-12T17:59:59Z"
+
+[entries."h:4c9363a22f75"]
+value = "O suporte a documentos é opcional. Todos os comandos `intl-ai-docs` recusam-se a executar a menos que a sua configuração defina `experimental = true`. O leitor MDX processa as construções que os sites de documentação reais usam (frontmatter, cercas de código, callouts, blocos JSX), mas o formato é novo: execute `intl-ai-docs check` no CI antes de publicar."
+source_hash = "4c9363a22f75191594732577378d1f4f75464fe8"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-12T17:59:59Z"
+
+[entries."h:51cbdf783343"]
+value = "Depois preencha e verifique:"
+source_hash = "51cbdf783343726d14a243e783850154d99fb1c8"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-12T17:59:59Z"
+
+[entries."h:540344415576"]
+value = "As regiões protegidas (blocos de código, código inline, comandos, URLs) não podem ser corrompidas por construção: o modelo nunca as vê como texto traduzível, e o portão de escrita verifica a paridade antes de qualquer coisa ser escrita."
+source_hash = "540344415576b0c781a1abf9af1b99cd1ed294e4"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-12T17:59:59Z"
+
+[entries."h:5ff558149aa2"]
+value = "Chaves de frontmatter diferentes das listadas em `frontmatter.keys` (padrão `title`, `description`)."
+source_hash = "5ff558149aa2f9c4c1176dfa57c4c75ac4da34bb"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-12T17:59:59Z"
+
+[entries."h:607a896bcbda"]
+value = "`flat`: os ficheiros de origem ficam diretamente sob `source_dir`, e as árvores de destino são escritas em `source_dir/<locale>`. Use isto quando os seus ficheiros de origem não podem residir num diretório de locale."
+source_hash = "607a896bcbda5895e8d013c8fbea0bf4b45b73af"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-12T17:59:59Z"
+
+[entries."h:67aa5cdbc3f5"]
+value = "Cercas de código, código inline, comandos, flags, caminhos de ficheiros e URLs."
+source_hash = "67aa5cdbc3f5b557a027a8b3aa1d99c0f047a52c"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-12T17:59:59Z"
+
+[entries."h:6c0f964e878c"]
+value = "Crie `intl-ai-docs.toml` ao lado da sua árvore de documentação:"
+source_hash = "6c0f964e878c5e3dfdd34c20ebf43c43e373d911"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-12T17:59:59Z"
+
+[entries."h:6d4bc2ebb6fe"]
+value = "`intl-ai-docs` é um segundo binário que acompanha cada instalação de `intl-ai`. Ele traduz árvores de documentos completas (markdown e MDX) da mesma forma que `intl-ai` traduz ficheiros de locale: uma árvore fonte num único idioma, uma árvore gerada por locale de destino, e um ficheiro de bloqueio que regista de onde veio cada coisa."
+source_hash = "6d4bc2ebb6feee24de0651a238ca5c5435d77e28"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-12T18:00:24Z"
+
+[entries."h:81a023b7412f"]
+value = "Os modelos por vezes traduzem dentro de código inline mesmo não devendo. Escreva-o explicitamente em `locale_instructions`, por exemplo: `Never translate text inside backticks; keep code blocks, commands, and identifiers verbatim.`"
+source_hash = "81a023b7412fca8e3524c9a0c9a594fa92244fe8"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-12T18:00:24Z"
+
+[entries."h:8277c7407fdb"]
+value = "Em vez de chaves e valores, `intl-ai-docs` divide cada documento num **skeleton** e **segments**:"
+source_hash = "8277c7407fdbdeea1d91cd1bb51313becc6ff7de"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-12T18:00:24Z"
+
+[entries."h:82e54313e779"]
+value = "Adicione uma entrada `[locale_instructions]` por locale para orientar terminologia, dialecto e registo; a regra de resolução é a mesma que `intl-ai` (locale exato, subtag de idioma, depois `*`)."
+source_hash = "82e54313e779d505e0cbf89a4ceebab530b5c603"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-12T18:00:24Z"
+
+[entries."h:8d6aff2334da"]
+value = "`layout` controla onde a árvore fonte vive relativamente aos seus alvos:"
+source_hash = "8d6aff2334da573238c5766fe0344ddefb60b63a"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-12T18:00:24Z"
+
+[entries."h:afe3daa00ff6"]
+value = "Rótulos da barra lateral: a navegação vive na configuração do site, não nos documentos. Para docmd, coloque um `navigation.json` em cada directório de locale."
+source_hash = "afe3daa00ff6df00ad64769dbd2beb7775c47951"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-12T18:00:24Z"
+
+[entries."h:b3f337f35c16"]
+value = "**Extracção**: o analisador MDX percorre o documento e emite um skeleton (a estrutura do documento com IDs de marcador de posição) mais um segmento por intervalo traduzível: títulos, parágrafos, itens de lista, células de tabela e strings de frontmatter."
+source_hash = "b3f337f35c166bf708d98532ada836bc583f2200"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-12T18:00:24Z"
+
+[entries."h:b76fb37e7432"]
+value = "Componentes MDX/JSX e sintaxe de callout delimitada; apenas os seus filhos de prosa traduzem."
+source_hash = "b76fb37e7432f2ad23196966f0afb6bc0b6e72e1"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-12T18:00:24Z"
+
+[entries."h:c10bf5f3175a"]
+value = "**Fundir**: segmentos traduzidos são inseridos no esqueleto por intervalo de bytes. Estrutura, comentários, cercas de código, código inline e componentes MDX são preservados byte a byte porque nunca estiveram dentro de um segmento."
+source_hash = "c10bf5f3175a2f5b46617c4ba7d65b63b6a641aa"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-12T18:03:28Z"
+
+[entries."h:d07133c8504b"]
+value = "Início rápido"
+source_hash = "d07133c8504b6a0e98371a1b9afe2ca2855a7270"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-12T18:03:28Z"
+
+[entries."h:d2e044fdf926"]
+value = "Traduzir markdown e MDX árvores de documentos com intl-ai-docs. Experimental."
+source_hash = "d2e044fdf926949c02e2dfdaf9d516b9f32397f8"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-12T18:03:28Z"
+
+[entries."h:f1e7ad69ae62"]
+value = "`locale-dirs`: cada locale é um diretório irmão, incluindo a origem (`docs/en`, `docs/es`, `docs/pt`). Isto corresponde ao docmd i18n e a maioria dos frameworks de documentos que querem um diretório por locale."
+source_hash = "f1e7ad69ae62e28d08f4749e4e86ff11a09bc3a4"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-12T18:03:28Z"
+
+[entries."h:fd6c3ebf7bef"]
+value = "Instalar"
+source_hash = "fd6c3ebf7befca9f8208f86c76e4d4180303745c"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-12T18:03:28Z"

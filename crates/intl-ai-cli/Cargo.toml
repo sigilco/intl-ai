@@ -11,6 +11,7 @@ homepage = "https://intl-ai.illo.fyi"
 [dependencies]
 intl-ai-checks = { path = "../intl-ai-checks" }
 intl-ai-core = { path = "../intl-ai-core" }
+intl-ai-docs = { path = "../intl-ai-docs" }
 intl-ai-providers = { path = "../intl-ai-providers" }
 anyhow.workspace = true
 clap.workspace = true
@@ -28,3 +29,7 @@ toml.workspace = true
 [[bin]]
 name = "intl-ai"
 path = "src/main.rs"
+
+[[bin]]
+name = "intl-ai-docs"
+path = "src/bin/intl-ai-docs.rs"

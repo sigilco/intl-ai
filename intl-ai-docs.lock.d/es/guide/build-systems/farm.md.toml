@@ -1,0 +1,49 @@
+version = 1
+
+[entries."h:44d3a22a36c5"]
+value = "Combina con una biblioteca i18n desde [bibliotecas i18n](/guide/i18n-libraries/)."
+source_hash = "44d3a22a36c5808540ddadb840358122d31d8d8f"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:36:05Z"
+
+[entries."h:5b702f532e63"]
+value = "Traduce con IA los archivos de localización i18n de Farm en tiempo de compilación. Sin tiempo de ejecución, cualquier modelo de IA."
+source_hash = "5b702f532e63e82bc77a2c344b849403a005688d"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:36:05Z"
+
+[entries."h:5c8ff5c31b54"]
+value = "Crea un `intl-ai.toml` en la raíz de tu proyecto. Consulta [Configuración](/guide/configuration) para ver el esquema completo."
+source_hash = "5c8ff5c31b548271b1a961d117411898bc5c10a7"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:36:05Z"
+
+[entries."h:754164850f38"]
+value = "Configuración"
+source_hash = "754164850f38c1ecdaf6b8ed894cb192bc36c5f4"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:36:05Z"
+
+[entries."h:c3215b790917"]
+value = "Farm"
+source_hash = "c3215b7909174e4aa063c9112cd41b6860fc72b8"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:36:05Z"
+
+[entries."h:c81b79df3c64"]
+value = "Instalación"
+source_hash = "c81b79df3c6448eae7c4f80428b54cd5692a17d7"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:36:05Z"

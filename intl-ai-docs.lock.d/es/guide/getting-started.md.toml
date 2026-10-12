@@ -1,0 +1,193 @@
+version = 1
+
+[entries."h:010b85ad56b3"]
+value = "Comenzar"
+source_hash = "010b85ad56b34c34c7c2a3b2436c740e30428ed5"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:58:50Z"
+
+[entries."h:05e8c132194e"]
+value = "Instalar el binario"
+source_hash = "05e8c132194e129fa249f1d0bf842c09262b137c"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:58:50Z"
+
+[entries."h:0c934a224149"]
+value = "`intl-ai.toml` necesita un brazo de proveedor."
+source_hash = "0c934a22414932a227337c5bd20b06d0d8bb5e55"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:58:50Z"
+
+[entries."h:1a36ac82e42f"]
+value = "Ve a [Build systems](/guide/build-systems/) y las guías por biblioteca bajo [i18n libraries](/guide/i18n-libraries/) para recetas concretas."
+source_hash = "1a36ac82e42f39a2f5ca15653512b4db22eee7b4"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:58:50Z"
+
+[entries."h:1d34bb8d6475"]
+value = "Fill es aditivo por defecto: escribe solo las claves faltantes y nunca toca los valores existentes, ya sean escritos a mano o generados previamente. Los archivos de localización objetivo aparecen junto a tu fuente, y `intl-ai.lock.d/` registra el origen de cada clave (`ai` o `human`), el hash de origen y el estado de revisión. Commitea ambos."
+source_hash = "1d34bb8d64750c7599421be09bfae92bc3110b9a"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:58:50Z"
+
+[entries."h:25d5541a939f"]
+value = "En Windows, usa el instalador de PowerShell:"
+source_hash = "25d5541a939f8ad1eba1a021712a74df82847b1a"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:58:50Z"
+
+[entries."h:358e1f34fced"]
+value = "Punto final HTTP compatible con OpenAI (cualquier servidor alojado o local que habla completaciones de chat):"
+source_hash = "358e1f34fced60a41bd4c80a0673c81ca2aad70c"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:58:50Z"
+
+[entries."h:45b9ebada59d"]
+value = "O bien ve sin clave con la CLI del agente local:"
+source_hash = "45b9ebada59db97bdd90b8876ec35a0f59e7d4e4"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:58:50Z"
+
+[entries."h:46442f3f7bef"]
+value = "Elige el canal que coincida con tu flujo de trabajo."
+source_hash = "46442f3f7bef13edcf3da0aee794962d70661268"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:58:50Z"
+
+[entries."h:4dcf336de757"]
+value = "2. Configura un proveedor"
+source_hash = "4dcf336de757dc06c57b46758d5744ae77dcc415"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:58:50Z"
+
+[entries."h:52064249d74b"]
+value = "intl-ai solo emite y valida [ICU MessageFormat](https://unicode-org.github.io/icu/userguide/format_parse/messages/) la sintaxis: `{name}` placeholders, `plural`/`select`/`selectordinal` con un brazo `other` requerido, `#` pound. Esta es una restricción dura, no un ajuste: es lo que permite que `check` y la compuerta de validación en tiempo de relleno detecten placeholders mangled. La sintaxis no ICU (printf `%s`, mustache `{{x}}`) está fuera de alcance."
+source_hash = "52064249d74b284ca2064e5470a09ce9a514fd6b"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:58:50Z"
+
+[entries."h:5add26935db3"]
+value = "3. Rellenar traducciones"
+source_hash = "5add26935db3c1c52ee8830a81467bd30160404b"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:58:50Z"
+
+[entries."h:766b52bff5de"]
+value = "Cada canal instala ambos binarios: `intl-ai` para los catálogos de configuración regional, y `intl-ai-docs` para los árboles de documentos (experimental, consulte [Localizar documentos](/guide/documents/).)"
+source_hash = "766b52bff5de1ca6616bea3e36784e288e51e96e"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-12T17:44:06Z"
+
+[entries."h:85c54a2ec292"]
+value = "Apunta `locale_dir` al directorio que tu biblioteca i18n lee, por ejemplo `locales/`, `messages/` o `public/locales/`."
+source_hash = "85c54a2ec2929255722c8628457d1e7e1c54395b"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:58:50Z"
+
+[entries."h:9148e43f74a3"]
+value = "Check es de solo lectura: informa sobre claves faltantes, obsoletas, inválidas, modificadas, extra y sin revisar. Usa `--fail-on missing,stale,invalid` en CI (código de salida 10 en hallazgos) y `--format json` para salida legible por máquina."
+source_hash = "9148e43f74a35694139f75ab267ad75723e472ac"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:58:50Z"
+
+[entries."h:a1f0b62dfcce"]
+value = "1. Inicializar"
+source_hash = "a1f0b62dfcce08e0cc061dc36096ca12e183c034"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:58:50Z"
+
+[entries."h:a645dbc68122"]
+value = "O bien ejecútalo sin instalación global mediante `npx intl-ai` / `bunx intl-ai`. Verifica con `intl-ai --help`."
+source_hash = "a645dbc68122fc851f7025724ff98e992e10f717"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:58:50Z"
+
+[entries."h:a95ad04da7ee"]
+value = "intl-ai es un binario único que traduce los archivos de configuración regional que su biblioteca i18n ya lee. Esta guía lo pone en marcha en minutos. (Para árboles de documentos completos, consulte [Localizar documentos](/guide/documents/).)"
+source_hash = "a95ad04da7ee1f8d944eb62a6a6b7a194fb1eef7"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-12T17:44:06Z"
+
+[entries."h:b3850a447fd9"]
+value = "Integraciones de herramientas y frameworks de construcción"
+source_hash = "b3850a447fd9c83cfef3bb7a2a7e86387b7be1ac"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:58:50Z"
+
+[entries."h:b75ea65baabd"]
+value = "4. Verificar"
+source_hash = "b75ea65baabd4862ab23286e314361faf5656114"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:58:50Z"
+
+[entries."h:b8846ff67a34"]
+value = "intl-ai se asocia con la biblioteca i18n que ya usas en lugar de tu bundler: apunta `locale_dir` al directorio que lee la biblioteca, luego traduce en el gancho de ciclo de vida que tu stack proporciona. Para stacks JS/TS los shims asignados hacen esto por ti: `@intl-ai/unplugin` (Vite, Webpack, Rollup, esbuild, Rspack, Farm), `@intl-ai/next` para Next.js, y `@intl-ai/expo` para React Native/Expo. En otros stacks, ejecuta directamente `intl-ai fill` (un script `prebuild` de npm, una fase de compilación Gradle o Xcode, ordenación `flutter gen-l10n`, y así sucesivamente)."
+source_hash = "b8846ff67a34a5c77bcd757fbfd0255d4417cf83"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:58:50Z"
+
+[entries."h:c582bcfa0c76"]
+value = "Ejecuta `intl-ai init` en la raíz de tu proyecto. Escribe `intl-ai.toml` y un fixture de replay `cassette.json` para que puedas probar `fill` sin proveedor configurado."
+source_hash = "c582bcfa0c76e253957709f9587c996c477f81e2"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:58:50Z"
+
+[entries."h:cbcdddcbf952"]
+value = "Configura intl-ai en minutos. Instala el binario, configura tu proveedor y traduce."
+source_hash = "cbcdddcbf952b6ab1fbd1c60988256308c24b0a2"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:58:50Z"
+
+[entries."h:e6cdb4104559"]
+value = "`api_key` acepta la interpolación `${env:VAR}` y `${file:PATH}`, de modo que los secretos nunca estén en el archivo. Valida con `intl-ai config validate`."
+source_hash = "e6cdb41045597d975ccc19e17a77b55a872fe946"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:58:50Z"

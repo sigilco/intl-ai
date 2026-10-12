@@ -1,0 +1,161 @@
+version = 1
+
+[entries."h:1f33af6608a0"]
+value = "Mantenimiento del archivo de bloqueo sobre los fragmentos `intl-ai.lock.d/`."
+source_hash = "1f33af6608a0ad5d81861f28a3661cfb23a5268b"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:08:39Z"
+
+[entries."h:2a5eea716efe"]
+value = "Referencia de comandos intl-ai: fill, check, mark, review, lockfile, config, status."
+source_hash = "2a5eea716efed9eed5b2fcbb6fa796c2c4eae022"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:08:39Z"
+
+[entries."h:351c34addadc"]
+value = "`--origin ai` requiere una entrada existente; `--origin human` la crea o actualiza. Las claves tombstone son omitidas por `fill` y no se reportan como faltantes por `check`."
+source_hash = "351c34addadc8144325e8e588818512de1f4c806"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:08:39Z"
+
+[entries."h:35cc64a91adc"]
+value = "`intl-ai review` / `intl-ai unreview`"
+source_hash = "35cc64a91adcc791dbed37c9707223aaef0a8934"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:08:39Z"
+
+[entries."h:51c93919058e"]
+value = "Los hallazgos se almacenan en caché de forma incremental en `.intl-ai/check-cache.json`: las claves sin cambios reproducen sus hallazgos anteriores (`cached: true` en la salida JSON) en lugar de volver a ejecutar la comprobación."
+source_hash = "51c93919058e958e84c75d8dbf217fa580e9024d"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:08:39Z"
+
+[entries."h:55f8ebc805e6"]
+value = "Descripción"
+source_hash = "55f8ebc805e65b5b71ddafdae390e3be2bcd69af"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:08:39Z"
+
+[entries."h:6cb5ad28dd09"]
+value = "Referencia de la CLI"
+source_hash = "6cb5ad28dd09a9b0b98d54c55a95fd093362a849"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:08:39Z"
+
+[entries."h:6d4e12eaa6eb"]
+value = "Salida legible por máquina (también `human`, el valor predeterminado)."
+source_hash = "6d4e12eaa6eba4a3dd3b9a800b61158b5dc47dfc"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:08:39Z"
+
+[entries."h:7052812c655f"]
+value = "Recuentos de inventario por configuración regional. Solo lectura y lo suficientemente económico para que los agentes lo llamen antes de decidir qué hacer."
+source_hash = "7052812c655f6765c23b74f3b4839c6a97167532"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:08:39Z"
+
+[entries."h:71ce948c5ed5"]
+value = "Ruta del archivo de configuración. `-` lee TOML desde la entrada estándar."
+source_hash = "71ce948c5ed58347a408f625062331c33abe7f1f"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:08:39Z"
+
+[entries."h:727e357782ad"]
+value = "Indicadores globales"
+source_hash = "727e357782ad49419b37a3eb38660347dfb08e04"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:08:39Z"
+
+[entries."h:815335758595"]
+value = "`intl-ai` es un binario único. Todos los comandos aceptan `--format json` para salida legible por máquina, y `-` como `--config` lee TOML desde la entrada estándar."
+source_hash = "8153357585955a28b431d4bcb8eb2c7d042dfba7"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:08:39Z"
+
+[entries."h:8397ac5821a7"]
+value = "`--regenerate` es destructivo: requiere un alcance `--keys`, `--keys-file` o `--yes` para confirmar una reescritura completa de la configuración regional."
+source_hash = "8397ac5821a7899f491007a23065484ccc7b3cbb"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:08:39Z"
+
+[entries."h:a774409a00c2"]
+value = "Bandera"
+source_hash = "a774409a00c21de377cf8ed5c6a56b8547973042"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:08:59Z"
+
+[entries."h:b83df3ca39f0"]
+value = "Establecer `reviewed` en las entradas del lockfile."
+source_hash = "b83df3ca39f0464185dda87ed171c516149e0566"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:08:59Z"
+
+[entries."h:c1cef68e5d32"]
+value = "Establecer el origen en las entradas del lockfile (la vía de escape para la regla de revisión posicional)."
+source_hash = "c1cef68e5d32c17815d8c9e67c489fd20947d44b"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:08:59Z"
+
+[entries."h:c5faa970c53e"]
+value = "Traducir las claves que faltan. Aditivo por defecto: nunca sobrescribe valores existentes a menos que `--regenerate` o `--stale` lo indiquen."
+source_hash = "c5faa970c53e7ca489f415331aece6f994281c44"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:08:59Z"
+
+[entries."h:cb18ecfd0da3"]
+value = "Crear la estructura base de `intl-ai.toml` para el proyecto actual."
+source_hash = "cb18ecfd0da343e24b4960d637ce700b021c37d9"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:08:59Z"
+
+[entries."h:d24f0b6fb975"]
+value = "El esquema confirmado reside en `docs/public/schema/intl-ai.schema.json` y se sirve en `https://intl-ai.illo.fyi/schema/v1.json`."
+source_hash = "d24f0b6fb97527f1da0735a2f23e4eefc1cb2325"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:08:59Z"
+
+[entries."h:e18fa868aadd"]
+value = "Informar hallazgos sin escribir. El estado de salida sigue `--fail-on`."
+source_hash = "e18fa868aadd97e01e4208bdf7c2425cfb8aede2"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:08:59Z"

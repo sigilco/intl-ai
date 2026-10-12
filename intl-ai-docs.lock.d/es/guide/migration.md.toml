@@ -1,0 +1,393 @@
+version = 1
+
+[entries."h:0a999012ffb8"]
+value = "Paquetes"
+source_hash = "0a999012ffb87b3edac99adbdfc498b12831a1e2"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:30:13Z"
+
+[entries."h:0f01ed56a1e3"]
+value = "Ejemplo"
+source_hash = "0f01ed56a1e32a05e5ef96e4d779f34784af9a96"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:30:13Z"
+
+[entries."h:10651ad2db0b"]
+value = '`[[checks]] id = "judge"` `threshold` + `[quality]` bands'
+source_hash = "10651ad2db0b2fed3ddf06ff0c7a563381a268b4"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:30:13Z"
+
+[entries."h:1b93795b9768"]
+value = "—"
+source_hash = "1b93795b9768a163eed85c20387244b0ce76679a"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:30:13Z"
+
+[entries."h:2331de92c1c8"]
+value = "intl-ai 1.x reemplaza los paquetes de TypeScript con un único binario de Rust. Instálelo desde Homebrew, mise, el script de instalación o el wrapper npm `intl-ai`; no se requiere Node.js para ejecutarlo. Los paquetes `@intl-ai/*` son adaptadores delgados que localizan y ejecutan el binario dentro de su herramienta de compilación."
+source_hash = "2331de92c1c814415f72065844d663ee005334eb"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:30:13Z"
+
+[entries."h:23e6301599f7"]
+value = "`intl-ai fill --regenerate` / `--include-human`"
+source_hash = "23e6301599f7fc9395e7c770e1adf4571043a65a"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:30:13Z"
+
+[entries."h:276a2f2ae3dc"]
+value = "Adaptadores"
+source_hash = "276a2f2ae3dcde94df63a3a7b49370e080e187ec"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:30:13Z"
+
+[entries."h:2a38953aecd4"]
+value = "0.4.x escribió la procedencia en un único `intl-ai.lock.json`. 1.x escribe archivos `intl-ai.lock.d/<locale>.toml` fragmentados. No hay un comando `intl-ai migrate`: las migraciones se envían como documentos que ejecutas manualmente o entregas a un agente. En la primera ejecución, las claves existentes en tus archivos de locale se registran como propiedad humana: nunca se sobrescriben ni se re-traducen. Solo las claves faltantes reciben rellenos de IA. Eso significa que la migración práctica es:"
+source_hash = "2a38953aecd44c0ca0cb84c3ba244a6001982c43"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:30:13Z"
+
+[entries."h:2d3b65c91248"]
+value = "Esta página asigna cada concepto de 0.4.x a su equivalente en 1.x."
+source_hash = "2d3b65c912488514f0735a596ab71e8d0876061c"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:30:13Z"
+
+[entries."h:31b43924cd26"]
+value = "Todos los adaptadores declaran `intl-ai` como una dependencia para que el binario se resuelva dentro de proyectos instalados con npm."
+source_hash = "31b43924cd26b6ad8909907653ad0c496bb3e4c3"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:30:13Z"
+
+[entries."h:356422ad0b92"]
+value = "`intl-ai init`, `status`, `config validate`"
+source_hash = "356422ad0b923c94dade7c38bd39fa90379d4b1d"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:36:38Z"
+
+[entries."h:3915ff2725d4"]
+value = "`@intl-ai/unplugin` shim (ejecutar el binario en `buildStart`)"
+source_hash = "3915ff2725d482da1a7d044ba33e5bcc175e6469"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:36:38Z"
+
+[entries."h:3a09e8297a44"]
+value = '`kind = "agent"` + `agent`'
+source_hash = "3a09e8297a44533a6815f8179d50593f0195a8ce"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:36:38Z"
+
+[entries."h:3b115f489472"]
+value = "`@intl-ai/next` shim (`withIntlAi()` ejecuta el binario en la evaluación de la configuración)"
+source_hash = "3b115f4894726ca9ee72ce20613ff11479ae4f71"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:36:38Z"
+
+[entries."h:3d88c133c53d"]
+value = "`intl-ai` binario (brew, mise, install.sh, o envoltorio npm)"
+source_hash = "3d88c133c53daccbf3b3d96fcdbcccc56b1b3124"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:36:38Z"
+
+[entries."h:45e5f3f72e96"]
+value = "Comandos"
+source_hash = "45e5f3f72e961cb70134ba35f7a27a9620e515f7"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:36:38Z"
+
+[entries."h:481f0530d0cc"]
+value = '`[provider]` `kind = "command"` + `agent`'
+source_hash = "481f0530d0ccefc52c2f4ea4512fdfd4a63b617b"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:36:38Z"
+
+[entries."h:48c7f1e97c7b"]
+value = "Ruta de actualización desde los paquetes TypeScript 0.4.x al binario intl-ai de Rust y los shims @intl-ai/*."
+source_hash = "48c7f1e97c7b782965704a9aefa9d80afd80304a"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:36:38Z"
+
+[entries."h:56639154a866"]
+value = "0.4.x:"
+source_hash = "56639154a86652ecfda943199dadf25697542e58"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:36:38Z"
+
+[entries."h:5c422fb51023"]
+value = "`provider`, `model`"
+source_hash = "5c422fb51023952b32f28f3381e9ff4488dc728d"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:36:38Z"
+
+[entries."h:61ae379167c5"]
+value = "1.x"
+source_hash = "61ae379167c5b6a3d5171464980da55005ccc726"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:36:38Z"
+
+[entries."h:6d69b42aa4fd"]
+value = "La versión 0.4.x `quality.threshold` ahora es un sistema de comprobación de primera clase: `[[checks]]` entradas para `icu`, `placeholder-parity`, `dialect:<locale>`, y `judge` (con `threshold`/`weight` por comprobación), agrupado por `[quality]` `fail_below`/`review_below` rangos en pasar/revisar/fallar por clave. Consulte [Configuration](/guide/configuration/) y [Observability](/guide/observability/)."
+source_hash = "6d69b42aa4fd29f6172f5abe71c9a64e27bf26d3"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:36:38Z"
+
+[entries."h:6e03093ea565"]
+value = "Si anteriormente confiabas en el seguimiento de origen de IA para volver a traducir las fuentes cambiadas (semántica `--stale`), esas claves son de propiedad humana después de la migración; utilice `intl-ai fill --regenerate` o `--include-human` de forma selectiva para volver a traducirlas una vez."
+source_hash = "6e03093ea565c7a6d0fda5d30df3a2e6fcd4ab3f"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:36:38Z"
+
+[entries."h:72a3800f711f"]
+value = "`intl-ai fill` (`--dry-run` previsualizaciones)"
+source_hash = "72a3800f711faeb1fabfea23a92d9a54d93743dd"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:37:06Z"
+
+[entries."h:754164850f38"]
+value = "Configuración"
+source_hash = "754164850f38c1ecdaf6b8ed894cb192bc36c5f4"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:37:06Z"
+
+[entries."h:8474e9bb5764"]
+value = "Si integraste intl-ai en un empaquetador, los paquetes shim cambiaron de forma:"
+source_hash = "8474e9bb57645125a5744a33c54652f7b68d7c1b"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:37:06Z"
+
+[entries."h:84fedb383a12"]
+value = "Ejecuta `intl-ai fill` una vez; escribe nuevos fragmentos de `intl-ai.lock.d/` y completa solo lo que falta."
+source_hash = "84fedb383a12961af9ff8e114113f710f81d6ede"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:37:06Z"
+
+[entries."h:919135718ed9"]
+value = "`@intl-ai/expo`: plugin de configuración que ejecuta el binario durante `prebuild`."
+source_hash = "919135718ed951a76d707aafff8e3afb1491f7fe"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:37:06Z"
+
+[entries."h:91f8b32a2f3d"]
+value = "Elimina `intl-ai.lock.json`."
+source_hash = "91f8b32a2f3d67c6d3f2e71bcaac046e290ed3fd"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:37:06Z"
+
+[entries."h:95991032757e"]
+value = "Migración desde 0.4.x"
+source_hash = "95991032757e89ccb10ca069f39bd753e991df5f"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:37:06Z"
+
+[entries."h:976b2c70aaee"]
+value = "0.4.x leía `intl-ai.config.{ts,js,mjs}` o `.intl-ai.json` con claves camelCase. 1.x lee `intl-ai.toml`, `intl-ai.json`, `intl-ai.yaml`, o `intl-ai.yml` con claves snake_case."
+source_hash = "976b2c70aaeebffecc6da2e759a9b147505ca7ff"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:37:06Z"
+
+[entries."h:9cda30fe948d"]
+value = "`@intl-ai/next`: `withIntlAi(nextConfig, options)` ejecuta el binario durante la evaluación de configuración, por lo que funciona tanto en webpack como en Turbopack."
+source_hash = "9cda30fe948d8a1960dde25480231c46da40ce23"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:37:06Z"
+
+[entries."h:a87076611e0d"]
+value = "`processor` (`passthrough` por defecto, `icu`)"
+source_hash = "a87076611e0d481f072b2bbc07e5c82750c4bcdd"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:37:06Z"
+
+[entries."h:b4a52b9011dc"]
+value = "0.4.x"
+source_hash = "b4a52b9011dc88b6c93580f87669d25d4b00e85a"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:37:06Z"
+
+[entries."h:b8b06d057784"]
+value = "1.x:"
+source_hash = "b8b06d057784b26f6ac34cd7a42208fdf2de1d1f"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:37:06Z"
+
+[entries."h:bc8693ae9a10"]
+value = "Instala el binario y traduce tu configuración como se indicó anteriormente."
+source_hash = "bc8693ae9a10bd54e0e6b5f7a1a339398961a84c"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:37:06Z"
+
+[entries."h:c0436a375e12"]
+value = '`@intl-ai/cli` y `@intl-ai/api` permanecen en npm, descontinuadas en sus últimas versiones 0.x. Si usaste `@intl-ai/api` programáticamente desde TypeScript, migra a ejecutar el binario (`intl-ai fill`, `intl-ai check`) o a configuraciones de proveedor `kind = "command"`.'
+source_hash = "c0436a375e1213beb0ae13d5a692dd7b58036e71"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:37:06Z"
+
+[entries."h:d43d12eeff10"]
+value = "No pegar las claves API en `intl-ai.toml`. Usa la interpolación `${env:VAR}` o `${file:PATH}`; `config validate` imprime los secretos enmascarados."
+source_hash = "d43d12eeff10343496f5d49ae7a7c51c8466c5c2"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:37:53Z"
+
+[entries."h:da962e8ecf73"]
+value = "`locales` (menos el predeterminado)"
+source_hash = "da962e8ecf7369a4f70fd9732038199b5a96f0ca"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:37:53Z"
+
+[entries."h:e376550c1514"]
+value = "`intl-ai check` (`--fail-on` para controles de severidad)"
+source_hash = "e376550c15143ad4b6e64e5d50321fcaf3102220"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:37:53Z"
+
+[entries."h:e4ba4ca6ec1f"]
+value = "Archivo de bloqueo"
+source_hash = "e4ba4ca6ec1fec0aeb640f2f2439bb9cfa02f597"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:37:53Z"
+
+[entries."h:e818f8435bf7"]
+value = "Validación y calidad"
+source_hash = "e818f8435bf7eafc8ddc6413624382785fe174aa"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:37:53Z"
+
+[entries."h:eb217b68ed2b"]
+value = "Mapeo de campos"
+source_hash = "eb217b68ed2b15780f8d423a8a1ad1db98d0435a"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:37:53Z"
+
+[entries."h:fa775891b31c"]
+value = "`[provider]` `provider`, `model`"
+source_hash = "fa775891b31c314baf66ba6eb035eabef35496e9"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:37:53Z"
+
+[entries."h:faa00160c15b"]
+value = "`format` (`json` predeterminado, `yaml`)"
+source_hash = "faa00160c15b4d891fd2bf6c7f50c86c1c2792e5"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:37:53Z"
+
+[entries."h:fc0d87a6c5cb"]
+value = "Eliminado; el binario es toda la superficie de la API"
+source_hash = "fc0d87a6c5cb23c77fd8d26b90d493d664a39331"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:37:53Z"
+
+[entries."h:fce03f62776d"]
+value = "`@intl-ai/unplugin`: mismo nombre, pero las opciones ahora describen el comportamiento del binario (`fill`, `failOn`, `validate`, `judgeThreshold`, `dev`, `strict`, `config`, `cwd`, `bin`, `args`)."
+source_hash = "fce03f62776d3fbfa39c1d85390ee58f8601d3ef"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:37:53Z"
+
+[entries."h:fd6c3ebf7bef"]
+value = "Instalar"
+source_hash = "fd6c3ebf7befca9f8208f86c76e4d4180303745c"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:37:53Z"
+
+[entries."h:fd8958df2837"]
+value = "`api_key` (interpolinar secretos, véase abajo)"
+source_hash = "fd8958df2837658be9bd91b8d48c91737d294383"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:37:53Z"

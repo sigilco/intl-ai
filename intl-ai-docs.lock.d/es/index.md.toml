@@ -1,0 +1,89 @@
+version = 1
+
+[entries."h:158e45660f44"]
+value = "**Multiplataforma**: Integraciones nativas de Expo, Flutter, SwiftUI y .NET. Envía traducciones a cualquier compilación móvil o de escritorio."
+source_hash = "158e45660f4431be09e74f599206a8fb1fe21457"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T19:02:01Z"
+
+[entries."h:1d451e54280b"]
+value = "Traducción i18n de IA en tiempo de compilación. Cero runtime, cualquier empaquetador, cualquier modelo."
+source_hash = "1d451e54280b78f7912db28b6b119a233c425103"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T19:02:01Z"
+
+[entries."h:5020081fa40c"]
+value = "**Cualquier modelo**: OpenAI, Anthropic, Ollama o cualquier API compatible con OpenAI. Configura una vez, traduce en todas partes."
+source_hash = "5020081fa40c0fa1773d4c1a340921e9b649f0c3"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T19:02:01Z"
+
+[entries."h:930a408a7d64"]
+value = "**Cualquier empaquetador**: Vite, Webpack, Rollup, esbuild, Rspack, Rolldown, Farm y Next.js. Un plugin, todas las herramientas de compilación."
+source_hash = "930a408a7d64c9f9338d3b47c2a4bab4bd0b749d"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T19:02:01Z"
+
+[entries."h:9772976b280c"]
+value = "Instalación rápida"
+source_hash = "9772976b280c80fb8a76f8e15b21050b1f0d7134"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T19:02:01Z"
+
+[entries."h:9a7cf3fb0af8"]
+value = 'La <a href="/demo/" data-spa-ignore>demostración en vivo</a> ejecuta el pipeline de llenado en WebAssembly: arrastra un archivo de locale, observa cómo las claves fluyen, no se necesita instalación.'
+source_hash = "9a7cf3fb0af882e172927ba49a2169c0c9c18a3c"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T19:02:01Z"
+
+[entries."h:a4c0947395da"]
+value = "Traducción i18n impulsada por IA en tiempo de compilación. Un binario, cualquier empaquetador, cualquier modelo. Cero dependencias de runtime."
+source_hash = "a4c0947395da40cdd133157e52171c3d83634c85"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T19:02:01Z"
+
+[entries."h:bafcc3482664"]
+value = "**Cero runtime**: Toda la traducción ocurre en tiempo de compilación. Sin SDK de IA en producción, sin latencia, sin bloqueo de proveedor."
+source_hash = "bafcc3482664cfedd3713f232f6b7d304e947fb0"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T19:02:01Z"
+
+[entries."h:bf76f38af64a"]
+value = "Por qué intl-ai"
+source_hash = "bf76f38af64a7ba8f511df51df4667c4635cc997"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T19:02:01Z"
+
+[entries."h:e741ee856174"]
+value = "[Comenzar](/guide/getting-started/) · [GitHub](https://github.com/sigilco/intl-ai) · [Patrocinar](https://buy.polar.sh/polar_cl_Mv1gdlG7bw3I70EC9IHtfeSHJj4PEKvA7JAUz23CFhj)"
+source_hash = "e741ee8561747ecb75fd26c5cc872e9863981683"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T19:02:01Z"
+
+[entries."h:e86a43744c6e"]
+value = "intl-ai"
+source_hash = "e86a43744c6ef977ce44d9d45ae47d126a27f3bb"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T19:02:01Z"

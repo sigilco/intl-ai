@@ -1,0 +1,49 @@
+version = 1
+
+[entries."h:47e69e75f6b5"]
+value = "Vite"
+source_hash = "47e69e75f6b5116df912c06bde68d77a66e8ffd9"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T17:17:33Z"
+
+[entries."h:5c8ff5c31b54"]
+value = "Crie um `intl-ai.toml` na raiz do seu projeto. Consulte [Configuração](/guide/configuration) para o esquema completo."
+source_hash = "5c8ff5c31b548271b1a961d117411898bc5c10a7"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T17:17:33Z"
+
+[entries."h:6064b6b8ecc0"]
+value = "Funciona com qualquer framework baseado em Vite (Vue, React, Svelte, Solid). Associe-se a uma biblioteca i18n de [bibliotecas i18n](/guide/i18n-libraries/)."
+source_hash = "6064b6b8ecc021fa4d89f4c742338b1e3b37dd47"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T17:17:33Z"
+
+[entries."h:754164850f38"]
+value = "Configuração"
+source_hash = "754164850f38c1ecdaf6b8ed894cb192bc36c5f4"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T17:17:33Z"
+
+[entries."h:a4c661e0ca0e"]
+value = "AI-translate ficheiros de locale i18n do Vite em tempo de build. Zero runtime, qualquer modelo de IA."
+source_hash = "a4c661e0ca0ea72bd3927644ce4ab5f108f11caf"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T17:17:33Z"
+
+[entries."h:c81b79df3c64"]
+value = "Instalação"
+source_hash = "c81b79df3c6448eae7c4f80428b54cd5692a17d7"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T17:17:33Z"

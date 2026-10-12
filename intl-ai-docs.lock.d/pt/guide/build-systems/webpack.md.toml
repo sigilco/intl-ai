@@ -1,0 +1,49 @@
+version = 1
+
+[entries."h:5c8ff5c31b54"]
+value = "Crie um `intl-ai.toml` na raiz do seu projeto. Consulte [Configuração](/guide/configuration) para o esquema completo."
+source_hash = "5c8ff5c31b548271b1a961d117411898bc5c10a7"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T17:22:49Z"
+
+[entries."h:642803d03826"]
+value = "Webpack"
+source_hash = "642803d03826095e048310e6f6fdb2336f081224"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T17:22:49Z"
+
+[entries."h:68dc60292bd7"]
+value = "Para o Next.js, consulte [Next.js](/guide/build-systems/next-js). Combine com uma biblioteca i18n de [bibliotecas i18n](/guide/i18n-libraries/)."
+source_hash = "68dc60292bd7a989613e69f6b904a1b88a948465"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T17:22:49Z"
+
+[entries."h:754164850f38"]
+value = "Configuração"
+source_hash = "754164850f38c1ecdaf6b8ed894cb192bc36c5f4"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T17:22:49Z"
+
+[entries."h:c81b79df3c64"]
+value = "Instalação"
+source_hash = "c81b79df3c6448eae7c4f80428b54cd5692a17d7"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T17:22:49Z"
+
+[entries."h:ef3d5dc24e4f"]
+value = "AI-translate ficheiros de locale i18n Webpack em tempo de construção. Zero runtime, qualquer modelo de IA."
+source_hash = "ef3d5dc24e4f24c12da4bc79f2795f71b0874b91"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T17:22:49Z"

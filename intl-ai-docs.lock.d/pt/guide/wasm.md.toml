@@ -1,0 +1,316 @@
+version = 1
+
+[entries."h:008ef4fa551c"]
+value = """
+`runFill` e `runCheck` executam a demonstração de corte dos pipelines dentro do wasm
+e encaminham o fluxo central `ProgressEvent` de `crates/intl-ai-core`
+(`run_started`, `batch_started`, `batch_finished`, `key_done`, `finding`,
+`locale_finished`, `run_finished`) para um callback de host como objetos JS simples:"""
+source_hash = "008ef4fa551c8293550c67be3024ba34386816e9"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T22:00:30Z"
+
+[entries."h:03178c9d2d62"]
+value = """
+Não há verificações `spec` ou `exec`, e nenhum transporte `command`/`replay`/`http`
+  : `std::process` e a pilha TLS não existem em
+  `wasm32-unknown-unknown`, portanto os provedores os expõem atrás de recursos
+  cargo que o crate wasm omite."""
+source_hash = "03178c9d2d626f100bb6df50d3c90e50dad1c9e7"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T22:00:30Z"
+
+[entries."h:10f9eab92bda"]
+value = "Chaves de origem ausentes no destino, ordenadas"
+source_hash = "10f9eab92bda1e8a110e4799c286950a9e0bef77"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T22:00:30Z"
+
+[entries."h:1bba80c05e34"]
+value = "Demonstração no navegador e compilação wasm"
+source_hash = "1bba80c05e3445b6276e34ecb7c3a6dc3d531264"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T22:00:30Z"
+
+[entries."h:20140ea05964"]
+value = """
+O crate `intl-ai-wasm` compila as peças puras do pipeline (flatten,
+construção de prompt, análise de resposta, as verificações de regras incorporadas, unflatten)
+para `wasm32-unknown-unknown` com `wasm-bindgen`.
+O JavaScript do host possui todas as operações de E/S: leitura de arquivos, o loop
+fetch contra um provedor compatível com OpenAI, retentativas e loteamento."""
+source_hash = "20140ea059644c5f6418aa62410f84690f702165"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T22:00:30Z"
+
+[entries."h:28228ffbc813"]
+value = "Pontuações por chave, motivos e listas de erros"
+source_hash = "28228ffbc8135af6de52b46b8b0333865bc72cdf"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T22:00:30Z"
+
+[entries."h:3237adbc0fb6"]
+value = """
+`demo/web/` é uma SPA Svelte mais completa no mesmo crate: um cartão de fornecedor recolhível (predefinições, `/models` pull, botão de teste, `localStorage`
+persistence), seleções de local de origem e destino com deteção automática de nome de ficheiro, preenchimento transmitido que chega linha por linha, um indicador de progresso linear e uma visualização de juiz por chave com motivos e descobertas de verificação expansíveis.
+Consulte `demo/web/README.md` para os comandos (`pnpm dev`,
+`scripts/sync-wasm.sh`)"""
+source_hash = "3237adbc0fb66420ab4956e38816ac177762ed20"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T22:00:30Z"
+
+[entries."h:36b89b20626e"]
+value = "Chat-completions body for a translation batch"
+source_hash = "36b89b20626ee91823e2e397f616e2fcba48cfa2"
+origin = "human"
+reviewed = false
+updated_at = "2026-10-09T22:13:20Z"
+
+[entries."h:3893f5bf4255"]
+value = "Lint the build in CI"
+source_hash = "3893f5bf4255d130c12a7562cb0728b013cef0f1"
+origin = "human"
+reviewed = false
+updated_at = "2026-10-09T22:13:20Z"
+
+[entries."h:38cfaf72c1d2"]
+value = "Try the demo"
+source_hash = "38cfaf72c1d2f39e8f8053cab72bc3f5798a6461"
+origin = "human"
+reviewed = false
+updated_at = "2026-10-09T22:13:20Z"
+
+[entries."h:39c25d6eece0"]
+value = "Response content to a `key -> translated` map"
+source_hash = "39c25d6eece0b05f5c7f2c65ef95d6e560ffb64f"
+origin = "human"
+reviewed = false
+updated_at = "2026-10-09T22:13:20Z"
+
+[entries."h:3d5a88bddfb3"]
+value = "Fill missing keys, streaming `ProgressEvent`s"
+source_hash = "3d5a88bddfb3ced3bc15b08981c556ad388139f7"
+origin = "human"
+reviewed = false
+updated_at = "2026-10-09T22:13:20Z"
+
+[entries."h:43bdd3f2f295"]
+value = "Then serve the directory over http (ES modules do not load from `file://`):"
+source_hash = "43bdd3f2f2955338406aa6585392e7f34edd6818"
+origin = "human"
+reviewed = false
+updated_at = "2026-10-09T22:13:20Z"
+
+[entries."h:4490c76339a1"]
+value = "Streaming drivers"
+source_hash = "4490c76339a135c0a28833a9d53cb06612d3962e"
+origin = "human"
+reviewed = false
+updated_at = "2026-10-09T22:13:20Z"
+
+[entries."h:5053d8f050b3"]
+value = "Studio SPA"
+source_hash = "5053d8f050b3f6f93a29583622fce0a98243f018"
+origin = "human"
+reviewed = false
+updated_at = "2026-10-09T22:13:20Z"
+
+[entries."h:5bba6325d7ec"]
+value = "`api.illo.fyi` apenas responde a pedidos CORS de subdomínios `_.illo.fyi`, e¬no seu `access-control-allow-headers` não inclui `authorization`.¬Uma página servida localmente deve apontar o campo URL base para um¬endpoint compatível com OpenAI diferente (`demo/wasm/mock-provider.mjs` inclui um pequeno¬mock local para desenvolvimento).¬Uma chave de API só é enviada quando o campo está preenchido."
+source_hash = "5bba6325d7ec3d078b34e948f9dca038fb16a718"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T22:11:37Z"
+
+[entries."h:6b86043adfa1"]
+value = "Mesclar chaves planas no destino e serializá-lo"
+source_hash = "6b86043adfa10731148126c15461f805e5ee6f26"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T22:11:37Z"
+
+[entries."h:724aeeb5f4e6"]
+value = "Os callbacks de transporte mantêm a E/S do lado do host: o host envia o corpo para¬`{baseUrl}/chat/completions` e resolve `choices[0].message.content`.¬Uma promise rejeitada faz falhar terminalmente as chaves desse lote; lotes posteriores ainda¬executam, correspondendo à política de falha por lote da CLI."
+source_hash = "724aeeb5f4e6e4cc40d654cf7c6577233a43ada8"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T22:11:37Z"
+
+[entries."h:7a230bf5929d"]
+value = """
+`cargo check -p intl-ai-wasm --target wasm32-unknown-unknown` é executado no CI
+(`.github/workflows/ci.yml`).
+Deteta o uso acidental de sistema de ficheiros ou transporte no grafo wasm em
+tempo de compilação, em vez de como uma armadilha em tempo de execução no navegador."""
+source_hash = "7a230bf5929d0d1ed1666c99ba5c5c0d049d8f32"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T22:12:43Z"
+
+[entries."h:7ceee3f3615a"]
+value = "Fornecedor"
+source_hash = "7ceee3f3615a2bbe4ce0ac5a269a311e4821daf4"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T22:12:43Z"
+
+[entries."h:9aa66024296d"]
+value = "Texto do ficheiro de locale (JSON ou YAML) para um mapa plano"
+source_hash = "9aa66024296d16fdd5d3770d2205cee19815233a"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T22:12:43Z"
+
+[entries."h:a0fb821bdaf9"]
+value = "Objetivo"
+source_hash = "a0fb821bdaf93ed9a1f1e920acfb2840eff5b153"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T22:12:43Z"
+
+[entries."h:a1b69c0d8ddc"]
+value = "A compilação wasm é uma versão de demonstração, não um port de `fill`:"
+source_hash = "a1b69c0d8ddc4454bf3be49a9f9cf4297ce90ca7"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T22:12:43Z"
+
+[entries."h:a1f8524371a3"]
+value = "Execute o pipeline intl-ai no navegador através da compilação wasm, ou incorpore a crate nas suas ferramentas."
+source_hash = "a1f8524371a3085eb6ca1a5b843bb25ed2b9fada"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T22:12:43Z"
+
+[entries."h:a43dc39ae066"]
+value = "Sem descoberta de configuração, caches de stat/check, ou bloqueios de shard: esses são`n  dependentes do sistema de ficheiros e permanecem apenas nativos."
+source_hash = "a43dc39ae06674e70c7ff25d1ec4d4efb98ce80c"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T22:12:43Z"
+
+[entries."h:abce6a095db2"]
+value = """
+O demo publica os corpos de solicitação que a compilação wasm produz em
+`{baseUrl}/chat/completions`, idênticos em bytes ao que o transporte `http` do CLI envia.
+O padrão é `https://api.illo.fyi/v1` com o modelo `illo-demo`, o
+mesmo gateway que o projeto [just-ai-illo](https://github.com/espetro/just-ai-illo)
+utiliza."""
+source_hash = "abce6a095db282f1e05b3bd595df17fe143bc084"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T22:12:57Z"
+
+[entries."h:abe4743ddbfa"]
+value = "Descobertas sobre `icu`, `placeholder-parity`, `dialect:*`"
+source_hash = "abe4743ddbfa9a66aa3663cafe4c433df5c67dd8"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T22:12:57Z"
+
+[entries."h:b4ed147b4b20"]
+value = """
+`judge` não está intencionalmente dentro de `runChecks`: precisa de um ciclo de ida e volta do provedor,
+que o host realiza com `buildJudgeBody`/`parseJudgements`."""
+source_hash = "b4ed147b4b20b3a45df7523be6558a85b26a7515"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T22:12:57Z"
+
+[entries."h:b570b4d008cb"]
+value = """
+Sem fragmentos de lockfile, detecção de desatualização ou proveniência: o demo
+  traduz apenas "chaves ausentes"."""
+source_hash = "b570b4d008cbd194aecb7f3feefdda901507ca7f"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T22:12:57Z"
+
+[entries."h:bdd14283343f"]
+value = "Diferenças em relação ao CLI"
+source_hash = "bdd14283343f92e4891cab727848d7b63ce1624a"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T22:12:57Z"
+
+[entries."h:c678dc6a29fb"]
+value = """
+A lógica de retry/backoff está no JavaScript host, que também gerencia o agrupamento
+  e o progresso."""
+source_hash = "c678dc6a29fb1b0ab0ee9fe4f3fabe7865b01c39"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T22:12:57Z"
+
+[entries."h:cb256cff9c43"]
+value = "Corpo de lote de qualidade adversarial"
+source_hash = "cb256cff9c43c874125d01f16b6942fe7e808668"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T22:13:07Z"
+
+[entries."h:cf6367bd0471"]
+value = "Verifique um arquivo alvo, streamando `ProgressEvent`s"
+source_hash = "cf6367bd0471d8a21df7796e43aa046df38c3110"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T22:13:07Z"
+
+[entries."h:d7b22806cea2"]
+value = "O que a API WASM expõe"
+source_hash = "d7b22806cea2fbc9062e6f8768f4adbf1cff4481"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T22:13:07Z"
+
+[entries."h:d87f21596d46"]
+value = """
+Uma página de demonstração estática está em `demo/wasm/`.
+Descarte ou cole um arquivo de localidade de origem, defina as localidades de origem e destino, e a página preenche as chaves faltantes, executa as verificações e renderiza o arquivo preenchido com um link de download.
+Cada chamada WASM roda dentro do `worker.mjs`, um módulo Web Worker, então o trabalho de parse/verificação nunca bloqueia a página; o loop de fetch, reintentos e batching permanecem na thread principal."""
+source_hash = "d87f21596d4678cec58a2d4a67d5c1ab73db6b2c"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T22:13:07Z"
+
+[entries."h:f1e410ad1472"]
+value = "Função"
+source_hash = "f1e410ad1472b42cb42cc98962428637290b6706"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T22:13:07Z"

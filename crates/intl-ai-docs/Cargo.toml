@@ -1,0 +1,24 @@
+[package]
+name = "intl-ai-docs"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+intl-ai-checks = { path = "../intl-ai-checks" }
+intl-ai-core = { path = "../intl-ai-core" }
+intl-ai-formats = { path = "../intl-ai-formats" }
+intl-ai-providers = { path = "../intl-ai-providers" }
+config.workspace = true
+globset.workspace = true
+pulldown-cmark = { version = "0.13", default-features = false }
+schemars.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+sha1.workspace = true
+thiserror.workspace = true
+toml.workspace = true
+
+[dev-dependencies]
+tempfile.workspace = true

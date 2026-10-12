@@ -1,0 +1,161 @@
+version = 1
+
+[entries."h:05e240d5a1ab"]
+value = "Almacene los archivos de configuración de idioma de origen en `src/main/assets/locales/`, ejecute `intl-ai fill` como una tarea de Gradle y cargue el JSON desde assets en tiempo de ejecución:"
+source_hash = "05e240d5a1aba8b5ee6048e8086f3287e32d39ee"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:46:36Z"
+
+[entries."h:13e24dea1bac"]
+value = "El paquete intlai-android"
+source_hash = "13e24dea1bac93c2b2ca385688a48bb0dda9e694"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:46:36Z"
+
+[entries."h:264d8cc94fb0"]
+value = "Android Jetpack"
+source_hash = "264d8cc94fb02d65299e3f918e280fb80896961b"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:46:36Z"
+
+[entries."h:2c9871b69afa"]
+value = "Consulte `kotlin/README.md` para conocer los requisitos del SDK/NDK de Android y la variante de JVM de escritorio de `intlai`."
+source_hash = "2c9871b69afaa3d0afbb5fc276114d2bd5236ae9"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:46:36Z"
+
+[entries."h:4281632e5d2a"]
+value = "Cada método de `IntlAi` se bloquea en operaciones de E/S de configuración y llamadas HTTP al proveedor. Siempre despache a `Dispatchers.IO` o a otro hilo en segundo plano; nunca llame a `IntlAi` en el hilo principal."
+source_hash = "4281632e5d2a9031fcdfccd9ea46c1c883900f17"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:46:36Z"
+
+[entries."h:50b906ffe420"]
+value = "Traducción de IA para aplicaciones Android a través del paquete intlai-android o la CLI intl-ai."
+source_hash = "50b906ffe42060ab20947d57edc17f2621fa9c98"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:46:36Z"
+
+[entries."h:5f329f57030f"]
+value = "Una tarea de Gradle que ejecuta la CLI `intl-ai` traduce los archivos de configuración de idioma en tiempo de compilación y los incluye como assets, sin sobrecarga en tiempo de ejecución."
+source_hash = "5f329f57030f23df45e57fc01f23b55d98d29d1a"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:46:36Z"
+
+[entries."h:7bd7ace6182a"]
+value = "El paquete `intlai-android` integra el motor de traducción en su aplicación a través de enlaces UniFFI, por lo que `fill`, `check` y `status` se ejecutan en el dispositivo sin necesidad de incluir la CLI."
+source_hash = "7bd7ace6182a673af03ecb89dcdcaba4ffda89cd"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:46:36Z"
+
+[entries."h:7d63c4617a7d"]
+value = "Cargar traducciones en tiempo de ejecución"
+source_hash = "7d63c4617a7df9a5a4ab470f6475ec095f608c6a"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:46:36Z"
+
+[entries."h:858278cda76a"]
+value = "`IntlAi` lee el mismo `intl-ai.toml` que usa la CLI. `fill` escribe los archivos de configuración de idioma traducidos y fragmentos de lockfile, por lo que `locale_dir` debe apuntar a un directorio escribible como `filesDir`; copie la configuración y las configuraciones de idioma de origen allí en el primer lanzamiento. Para ejecuciones de solo lectura de `check` y `status`, los archivos en assets también funcionan. Cuando no incluye un archivo de configuración, `IntlAi.fromConfigString(config, ConfigFormat.TOML, workingDir)` construye una de forma inline."
+source_hash = "858278cda76a745dfd757bbaf53cebc2946bda49"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:46:36Z"
+
+[entries."h:89c615145b7a"]
+value = "Llamar al motor"
+source_hash = "89c615145b7a0f3143a3fdce8b22ef6458dec433"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:46:36Z"
+
+[entries."h:8b276b93fc77"]
+value = "El módulo reside en `kotlin/intlai-android` y compila la cdylib de Rust para las cuatro ABI con `cargo-ndk`:"
+source_hash = "8b276b93fc77457dfe7ab7dff69585a575f06d09"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:46:36Z"
+
+[entries."h:98beba6f87fa"]
+value = "En `app/build.gradle.kts`, registre una tarea que invoque la CLI antes de que se fusionen los recursos:"
+source_hash = "98beba6f87fac325952adc2b0b032a86a5c7b8df"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:46:36Z"
+
+[entries."h:b040ef41744e"]
+value = "Alternativa: ejecutar la CLI en tiempo de compilación"
+source_hash = "b040ef41744ee0f7b5d82a0831270b5e39430a41"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:46:36Z"
+
+[entries."h:b17f8a9529d8"]
+value = "Compilar el paquete"
+source_hash = "b17f8a9529d8cb82e41dd2c6e336c156366fa16b"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:46:36Z"
+
+[entries."h:b83380c276f7"]
+value = "`intl-ai` solo escribe traducciones; no impone una API de tiempo de ejecución para leerlas."
+source_hash = "b83380c276f7b39314617ebfb9ba745a0e49136f"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:46:36Z"
+
+[entries."h:bed779baadee"]
+value = "El AAR `io.github.sigilco:intlai-android` incluye los enlaces UniFFI de Kotlin más `libintl_ai_uniffi.so` para `arm64-v8a`, `armeabi-v7a`, `x86` y `x86_64`. Envuelve la API `uniffi.intl_ai_uniffi`: un objeto `IntlAi` con `fill`, `check`, `status` y variantes `*Json`."
+source_hash = "bed779baadeeb42e0800245ce60334133225eef5"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:46:36Z"
+
+[entries."h:c0909b6ac236"]
+value = "Para Windows, la tarea recurre a `cmd /c` para que el binario pueda encontrarse en `PATH`. Esta ruta necesita que `intl-ai` esté instalado en su `PATH` (consulte [Installation](/guide/getting-started#installation)) y `intl-ai.toml` en `app/` con `locale_dir` apuntando a `src/main/assets/locales`."
+source_hash = "c0909b6ac236792ae926be66b58db4d64dd75a80"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:46:36Z"
+
+[entries."h:d510d10466da"]
+value = "Dos formas de integrar `intl-ai` en un proyecto de Android Jetpack:"
+source_hash = "d510d10466da47ac95ec34b6903bf03c99423783"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:46:36Z"
+
+[entries."h:e82e24e6ec5b"]
+value = "Lea los archivos JSON desde assets y analícelos con la biblioteca JSON de su elección:"
+source_hash = "e82e24e6ec5bcd91c2aab534ba75ceee3a3ac584"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:46:36Z"

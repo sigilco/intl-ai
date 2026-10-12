@@ -1,0 +1,497 @@
+version = 1
+
+[entries."h:0343ace745fb"]
+value = "vue-i18n + intl-messageformat"
+source_hash = "0343ace745fb461278b8a8f6c3358f41cd95d663"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:26:46Z"
+
+[entries."h:06173f30ba03"]
+value = "Componentes web"
+source_hash = "06173f30ba037cccb9d203c2dee575ebeb29f9ea"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:26:46Z"
+
+[entries."h:08d2e98e6754"]
+value = "N/A"
+source_hash = "08d2e98e6754af941484848930ccbaddfefe13d6"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:26:46Z"
+
+[entries."h:0e9049fb1e79"]
+value = "`lingui` o `typesafe-i18n`"
+source_hash = "0e9049fb1e7928bb790133c9964c18d81925e02a"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:26:46Z"
+
+[entries."h:10f160690b5b"]
+value = "intl-ai genera archivos de traducción en tiempo de compilación. Usted elige la biblioteca de i18n en tiempo de ejecución. Esta página enumera las opciones compatibles y su compatibilidad con ICU."
+source_hash = "10f160690b5ba918d9d1faa547a9694c3785304b"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:26:46Z"
+
+[entries."h:11b4cf1aeef0"]
+value = "Sí (a través de plugin)"
+source_hash = "11b4cf1aeef04089a267159b16563c976b58c560"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:26:46Z"
+
+[entries."h:1adec416022e"]
+value = "Personalizado `messageCompiler`"
+source_hash = "1adec416022e07a31d0a875069b82cdea3e68877"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:26:46Z"
+
+[entries."h:1b388959b069"]
+value = "svelte-i18n"
+source_hash = "1b388959b069b2ff914b5619af42a64bc893f38b"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:26:46Z"
+
+[entries."h:1d4d43cc6f3a"]
+value = "Usar"
+source_hash = "1d4d43cc6f3a833e0340a0d1794b6d7b9958657e"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:26:46Z"
+
+[entries."h:1dc104bb489b"]
+value = "@formatjs/intl"
+source_hash = "1dc104bb489b25268ff25368371f43e180558eb3"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:26:46Z"
+
+[entries."h:1e3463320445"]
+value = "sintaxis i18next (sin ICU)"
+source_hash = "1e34633204457dbfe3eb9f757ee392b8cfb38522"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:26:46Z"
+
+[entries."h:246165dbb556"]
+value = "[Vue (vue-i18n)](/guide/i18n-libraries/vue-i18n)"
+source_hash = "246165dbb556df4498c3efe804a6df89f80e14d5"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:26:46Z"
+
+[entries."h:2912e9b2491f"]
+value = "El bundle más pequeño"
+source_hash = "2912e9b2491f1d8fb3f6b0bbf9f73b03b7143f91"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:26:46Z"
+
+[entries."h:3c4f9890e83a"]
+value = "Tiempo de ejecución ICU agnóstico al framework"
+source_hash = "3c4f9890e83adc3eebe027c51e331fa2624c5401"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:26:46Z"
+
+[entries."h:5397e0583f14"]
+value = "Sí"
+source_hash = "5397e0583f14f6c88de06b1ef28f460a1fb5b0ae"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:26:46Z"
+
+[entries."h:54ec83da320b"]
+value = "@lit/localize"
+source_hash = "54ec83da320b66c7222949260a196d713444e94b"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:26:46Z"
+
+[entries."h:5bd2b142439f"]
+value = "`i18next` + `react-i18next`"
+source_hash = "5bd2b142439fc5542a3226f5c88af1828badc239"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:26:46Z"
+
+[entries."h:62a553d59603"]
+value = "Aplicaciones sólidas que necesitan ICU"
+source_hash = "62a553d596031e6baf018ef5b0e5decb1f7ea353"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:26:46Z"
+
+[entries."h:631deb0a1168"]
+value = "Compatibilidad de la biblioteca"
+source_hash = "631deb0a1168389b99377fb15cb31c77ea8b10f7"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:26:46Z"
+
+[entries."h:65de2e2a3bcb"]
+value = "Parcial"
+source_hash = "65de2e2a3bcb36da6b50fd9e19f9ca0b9466de27"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:27:00Z"
+
+[entries."h:6725b21fc7fd"]
+value = "Sí (vía compilador personalizado)"
+source_hash = "6725b21fc7fd68789976dcd33fc2688785f7ed5e"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:27:00Z"
+
+[entries."h:6d7ae87f78a7"]
+value = "Mejor para"
+source_hash = "6d7ae87f78a7a2e95c129bd72c3e4470534ed141"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:27:00Z"
+
+[entries."h:6eef6648406c"]
+value = "Ninguno"
+source_hash = "6eef6648406c333a4035cd5e60d0bf2ecf2606d7"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:27:00Z"
+
+[entries."h:6ef47d139278"]
+value = "Seguridad de tipos en tiempo de compilación"
+source_hash = "6ef47d1392785c5014a29d8540a6240ce1d1f2ef"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:27:00Z"
+
+[entries."h:754164850f38"]
+value = "Configuración"
+source_hash = "754164850f38c1ecdaf6b8ed894cb192bc36c5f4"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:27:00Z"
+
+[entries."h:816c52fd2bdd"]
+value = "No"
+source_hash = "816c52fd2bdd94a63cd0944823a6c0aa9384c103"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:27:00Z"
+
+[entries."h:86c152f8a5d8"]
+value = "Apps de Svelte"
+source_hash = "86c152f8a5d82a34baa35c76f5f9b8ee65c0d100"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:27:00Z"
+
+[entries."h:8addc3a5a2c7"]
+value = "Huella pequeña (298 bytes)"
+source_hash = "8addc3a5a2c7cb519f4bce5bc8a6319fb345a249"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:27:00Z"
+
+[entries."h:8b96b6d868c0"]
+value = "@solid-primitives/i18n"
+source_hash = "8b96b6d868c0671cdf6173168a614cdcda9b58ea"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:27:00Z"
+
+[entries."h:96cd88a68a22"]
+value = "La principal excepción es i18next, que utiliza interpolación con `{{var}}` y sufijos plurales en lugar de sintaxis ICU."
+source_hash = "96cd88a68a22ad26862e29d12f2f0947652a2146"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:27:00Z"
+
+[entries."h:a20efbe56550"]
+value = "i18n mínimo de Solid"
+source_hash = "a20efbe56550ccf30922e05d9f011c47a47dffd7"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:27:00Z"
+
+[entries."h:a2c8cedd401e"]
+value = "intl-ai genera archivos de locale en tiempo de construcción. Úsalo con vue-i18n, i18next o cualquier biblioteca i18n."
+source_hash = "a2c8cedd401e2c4536892bf933ba88a9d0d95092"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:27:00Z"
+
+[entries."h:a8ef6b013b3a"]
+value = "Si usas i18next, omite la configuración del procesador (passthrough preserva su estilo `{{var}}`)."
+source_hash = "a8ef6b013b3af01fdef17e19769ca65ab2d8102e"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:27:00Z"
+
+[entries."h:ae9f731f6ca8"]
+value = "Guías por librería"
+source_hash = "ae9f731f6ca8c75da7e86161c8430e227a02eabd"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:27:00Z"
+
+[entries."h:b25fdb93b33b"]
+value = "[i18next](/guide/i18n-libraries/i18next)"
+source_hash = "b25fdb93b33b0be0672065a6bc8ca04de08c49dd"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:27:00Z"
+
+[entries."h:b8100f5ba8bd"]
+value = "Librería"
+source_hash = "b8100f5ba8bd048a7cf11d116fbbd73130c3c6f5"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:27:00Z"
+
+[entries."h:ba656ec5d204"]
+value = "Apps de Vue que necesitan ICU"
+source_hash = "ba656ec5d20464e0ce83a2487d760be0d769f265"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:27:00Z"
+
+[entries."h:bc8108e51f0c"]
+value = "Instala `i18next-icu`"
+source_hash = "bc8108e51f0c0419628c8cd64d357211523baad0"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:27:00Z"
+
+[entries."h:c2b9b7e15a6c"]
+value = "lingui"
+source_hash = "c2b9b7e15a6c63d943880cc025601182cc747833"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:27:33Z"
+
+[entries."h:c49f930528c4"]
+value = "@cookbook/solid-intl"
+source_hash = "c49f930528c4b7cd755553160057716c55233721"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:27:33Z"
+
+[entries."h:c4d6a01d3b3d"]
+value = "typesafe-i18n"
+source_hash = "c4d6a01d3b3de65dca3690e33bab9768fd613218"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:27:33Z"
+
+[entries."h:c79652b02b47"]
+value = "bibliotecas i18n"
+source_hash = "c79652b02b47430f964dd54b34259ba959895962"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:27:33Z"
+
+[entries."h:cc1e65c690eb"]
+value = "Llamadas manuales al formateador"
+source_hash = "cc1e65c690eb6df96c3b81bd40c9c41aeeb9ea60"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:27:33Z"
+
+[entries."h:cdd7bb2816b7"]
+value = "Configuración"
+source_hash = "cdd7bb2816b7a8f88bce0e47be39943bc369516b"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T20:13:44Z"
+
+[entries."h:cf8e955ba572"]
+value = 'Set `processor = "icu"` in `intl-ai.toml` cuando tu biblioteca de destino use ICU MessageFormat. La mayoría de las bibliotecas modernas lo hacen.'
+source_hash = "cf8e955ba5728be6452fe811bf4c9b18bcacac4e"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:27:33Z"
+
+[entries."h:cfb6301a89b1"]
+value = 'La mayoría de las bibliotecas i18n modernas hablan ICU MessageFormat. Establece `processor = "icu"` en `intl-ai.toml` para que el modelo genere sintaxis ICU; es el contrato que valida la comprobación `icu`.'
+source_hash = "cfb6301a89b18fdfd4f500882eee09e29729673f"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:27:33Z"
+
+[entries."h:d21af7ece046"]
+value = "rosetta"
+source_hash = "d21af7ece046af0e12d3c38472792cd5f081c39f"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:27:33Z"
+
+[entries."h:d93365fddc9b"]
+value = "Seguridad en tiempo de compilación, cualquier framework"
+source_hash = "d93365fddc9bc8dd7076b1366d13d9a15e519d9a"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:27:33Z"
+
+[entries."h:db66c83d313b"]
+value = "i18n seguro de tipos sin ICU"
+source_hash = "db66c83d313ba80b09bedf7e4d3d344dfb3bb916"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:27:33Z"
+
+[entries."h:dd45bb78e69e"]
+value = "Macro de compilación"
+source_hash = "dd45bb78e69ee5253aa1bb52a909d92f0e008120"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:27:33Z"
+
+[entries."h:e224abea4df0"]
+value = "React + ICU"
+source_hash = "e224abea4df06f9cc909feefd711474f3c57aa9d"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:27:33Z"
+
+[entries."h:e4636c7164f2"]
+value = "ICU nativo"
+source_hash = "e4636c7164f2cedf5779d99807afdf8a79dfa795"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:27:33Z"
+
+[entries."h:e4f7df63364b"]
+value = "`vue-i18n` con el compilador `intl-messageformat`"
+source_hash = "e4f7df63364bf3302d7c256ff814c4922b0eec2b"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:27:33Z"
+
+[entries."h:e8bdcc03fbc0"]
+value = "ICU MessageFormat"
+source_hash = "e8bdcc03fbc07f68456d482f273f6bbf37404d7e"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:27:33Z"
+
+[entries."h:ea8a9d6f0f6a"]
+value = "react-intl"
+source_hash = "ea8a9d6f0f6abf84a7a4e9968950f6ebfef786a9"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:27:33Z"
+
+[entries."h:ec200aa179d0"]
+value = "Solución alternativa de la comunidad"
+source_hash = "ec200aa179d060cc5105289d7aa119d6035dacff"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:27:33Z"
+
+[entries."h:ed4855c28d40"]
+value = "Necesidad"
+source_hash = "ed4855c28d40c34ade4db769dd8df9bdeb05835b"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:27:33Z"
+
+[entries."h:ee12b0458593"]
+value = "Elegir una biblioteca"
+source_hash = "ee12b04585936ebdcfd4c25566b7cff1c37a31ec"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:27:33Z"
+
+[entries."h:f10bfff903b4"]
+value = "Aplicaciones existentes de i18next que migran a ICU"
+source_hash = "f10bfff903b4d95c6347cbbf552fdfadad376502"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:27:36Z"
+
+[entries."h:f8ad6331c758"]
+value = "i18next-icu"
+source_hash = "f8ad6331c7580e04d99dd3b12b2209bc0832bfc2"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:27:36Z"
+
+[entries."h:f93a6f8c6efb"]
+value = "Aplicaciones de React que necesitan ICU"
+source_hash = "f93a6f8c6efbdcd4f22301b85645e3a4d89d464e"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:27:36Z"
+
+[entries."h:fd1bf50eb428"]
+value = "Vue + ICU"
+source_hash = "fd1bf50eb42810643b7a9cc686d7a7b3730a00de"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T16:27:36Z"

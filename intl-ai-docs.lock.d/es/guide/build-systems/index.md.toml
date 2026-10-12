@@ -1,0 +1,105 @@
+version = 1
+
+[entries."h:119bd1ed1134"]
+value = "[Next.js](/guide/build-systems/next-js) - Marco de React con puente Turbopack"
+source_hash = "119bd1ed11346a7c365e8ce02beb490af9ef6030"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:36:46Z"
+
+[entries."h:11dd3fcb46a5"]
+value = "Las opciones del plugin reflejan los controles de calidad de la CLI: `validate` (puerta de tiempo de llenado), `judgeThreshold`, `failOn` (`check --fail-on` severidades), `dev`, y `strict`. Consulte el [package README](https://www.npmjs.com/package/@intl-ai/unplugin) para la tabla completa."
+source_hash = "11dd3fcb46a5a2f5a05405091f561dc3f20e81d8"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:36:46Z"
+
+[entries."h:13059764a625"]
+value = "[Vite](/guide/build-systems/vite) - Herramienta de compilación moderna y rápida"
+source_hash = "13059764a625e742f60fed19f32aed9ffd1a2b98"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:36:46Z"
+
+[entries."h:18de05788962"]
+value = "[Rolldown](/guide/build-systems/rolldown) - Empaquetador compatible con Rollup impulsado por Rust"
+source_hash = "18de05788962ecc286b7d04bfca707650de0678c"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:36:46Z"
+
+[entries."h:39d1f866e516"]
+value = "[Rollup](/guide/build-systems/rollup) - Empaquetador de módulos flexible"
+source_hash = "39d1f866e516fe8f32856618d2543419a76481d2"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:36:46Z"
+
+[entries."h:6578fb865474"]
+value = "intl-ai se ejecuta en tiempo de compilación mediante `@intl-ai/unplugin`, un delgado shim que genera el binario `intl-ai` (instalado automáticamente como una dependencia; consulte [Getting started](/guide/getting-started/) para otros canales de instalación y la configuración de `intl-ai.toml`). Admite todos los empaquetadores principales a través de [unjs/unplugin](https://github.com/unjs/unplugin). Elija su empaquetador a continuación."
+source_hash = "6578fb865474c52ec7ae761006dd80f4c34ee606"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:36:46Z"
+
+[entries."h:682b123f5ca8"]
+value = "[esbuild](/guide/build-systems/esbuild) - Empaquetador de JavaScript extremadamente rápido"
+source_hash = "682b123f5ca8bf9904f912b2a1a5b7a953e3be7f"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:36:46Z"
+
+[entries."h:7fd6e979bce8"]
+value = "Si usa un framework, conecte el empaquetador aquí y combínelo con una biblioteca i18n de [i18n libraries](/guide/i18n-libraries/)."
+source_hash = "7fd6e979bce8b3dd8dfa497b4020b6fbec37469f"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:36:46Z"
+
+[entries."h:83b845dc1ff6"]
+value = "intl-ai admite Vite, Webpack, Rollup, esbuild, Rspack, Rolldown y Farm mediante unplugin. Elija su empaquetador."
+source_hash = "83b845dc1ff659bcf1125fe2c1838db78173b78d"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:36:46Z"
+
+[entries."h:a046db113f81"]
+value = "[Farm](/guide/build-systems/farm) - Herramienta de compilación web basada en Rust"
+source_hash = "a046db113f8189df75edb30898608b2a180559a8"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:36:46Z"
+
+[entries."h:dd0e6265fab8"]
+value = "[Rspack](/guide/build-systems/rspack) - Empaquetador compatible con webpack basado en Rust"
+source_hash = "dd0e6265fab88a09b56ff9a9001d68b7f0ce0906"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:36:46Z"
+
+[entries."h:f2824728114e"]
+value = "[Webpack](/guide/build-systems/webpack) - Empaquetador estándar de la industria"
+source_hash = "f2824728114e9c90bf30d3e1ca44d92865a0fa73"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:36:46Z"
+
+[entries."h:f839050c8991"]
+value = "Sistemas de compilación"
+source_hash = "f839050c8991f2b1e047cb2a8bf3282a1e746101"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:36:46Z"

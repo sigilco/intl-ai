@@ -1,0 +1,172 @@
+version = 1
+
+[entries."h:0613864d89d5"]
+value = "Ventana de contexto"
+source_hash = "0613864d89d53d2df04a7ace198bcd353101b9a4"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:34:40Z"
+
+[entries."h:1562b1f07e68"]
+value = "Usa un modelo con una ventana de contexto mínima de 16 000 tokens. Cada proveedor listado anteriormente supera esto."
+source_hash = "1562b1f07e689827b1960e35990ba4a7c090d15f"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:34:40Z"
+
+[entries."h:285ec850c11d"]
+value = "Solución de problemas"
+source_hash = "285ec850c11d78bac10f6bfa31b69a37f1b257c9"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:34:40Z"
+
+[entries."h:2af5b96bb5b1"]
+value = "Agregador: OpenRouter"
+source_hash = "2af5b96bb5b1cf7c0f7a1d382f201adcf70b12b1"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:34:40Z"
+
+[entries."h:2b76e7f1816f"]
+value = "`model_params` agrega campos adicionales al cuerpo de la solicitud al final, de modo que tus parámetros ganan sobre los valores predeterminados:"
+source_hash = "2b76e7f1816f8ca6b72487e7bb96c9a19f5a12d7"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:34:40Z"
+
+[entries."h:2f51a2980b9d"]
+value = "Local: LM Studio u Ollama"
+source_hash = "2f51a2980b9d945a46ad889e772cea58f9c5b302"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:34:40Z"
+
+[entries."h:366206f372b0"]
+value = "La traducción es estructurada y sigue instrucciones. Los modelos de bajo coste la manejan bien, así que no necesitas un modelo de primera línea."
+source_hash = "366206f372b05c225ce99c0f4751853f5118e136"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:34:40Z"
+
+[entries."h:52ec69560c68"]
+value = "Cualquier proveedor con un punto final compatible con OpenAI funciona de la misma manera: configura `base_url`, `model` y `api_key`."
+source_hash = "52ec69560c68ec16eb5e2a97879adbf8f730ab57"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:34:40Z"
+
+[entries."h:76a6ada6561c"]
+value = "Anthropic, Google, Azure OpenAI, Cohere, Mistral y otros exponen superficies compatibles con OpenAI (de primera parte o a través de un proxy). Apunta `base_url` al tuyo y configura `model` en consecuencia. Para una API con una forma de cable diferente, usa el proveedor `command` para ejecutar un agente local en su lugar; consulte [Proveedores](/guide/providers/)."
+source_hash = "76a6ada6561c02fd68516e77f78827f096bd7daa"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:34:40Z"
+
+[entries."h:7e4ac4e64a24"]
+value = """
+[OpenRouter](https://openrouter.ai) te da una clave API para muchos proveedores y un tier gratuito.
+Un modelo gratuito estable en el momento de la escritura es `google/gemini-2.0-flash-exp:free`.
+Si deja de funcionar, consulta la lista de modelos gratuitos de OpenRouter y actualiza esta única referencia."""
+source_hash = "7e4ac4e64a240a6ca95be5e8e4de3b8d5da8a286"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:34:40Z"
+
+[entries."h:977433d2d077"]
+value = "Elige un proveedor"
+source_hash = "977433d2d077f34685d0de71a9732bf9047da907"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:34:40Z"
+
+[entries."h:bac40458198f"]
+value = "El servidor del proveedor es accesible desde tu máquina (`base_url`)."
+source_hash = "bac40458198fb1a481b263d3c3f155f9e41b35ef"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:34:40Z"
+
+[entries."h:bf5ddd99531d"]
+value = "La interpolación de `api_key` se resuelve (`intl-ai config validate` lo muestra enmascarado)."
+source_hash = "bf5ddd99531d0ae5eb39a441b2c76d1de901d24c"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:34:40Z"
+
+[entries."h:c6d043e2519a"]
+value = "Configura cualquier modelo de IA para intl-ai. Cualquier punto final compatible con OpenAI, un agente CLI local o una cassette de reproducción."
+source_hash = "c6d043e2519ad98f67a7a7e1db9624b7bc261152"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:34:40Z"
+
+[entries."h:d314eaf38564"]
+value = "Si la traducción falla, comprueba:"
+source_hash = "d314eaf385642c527f9e97910999cdf60c8a8555"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:34:40Z"
+
+[entries."h:d74c2edcb022"]
+value = "[LM Studio](https://lmstudio.ai) y [Ollama](https://ollama.com) ejecutan modelos localmente y exponen un servidor compatible con OpenAI. Esto es ideal para desarrollo, pruebas y trabajo sensible a la privacidad."
+source_hash = "d74c2edcb0226c4c4f25234683860049ae1d7615"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:34:40Z"
+
+[entries."h:e09a410cec02"]
+value = "Tu identificador `model` coincide con la documentación del proveedor."
+source_hash = "e09a410cec02c523b539c64c5c9825b88e71e1b8"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:34:40Z"
+
+[entries."h:e35701dfbd3f"]
+value = 'Tres caminos funcionan: un servidor local, un punto final en la nube o un aggregador. Los tres usan `kind = "http"` contra una API de completaciones de chat compatible con OpenAI.'
+source_hash = "e35701dfbd3f9555d9e2ce9f1806668cfe2d8a3d"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:34:40Z"
+
+[entries."h:e5a847886b59"]
+value = "Nube: Proveedores compatibles con OpenAI"
+source_hash = "e5a847886b599d6420f79910e0613aa3c773b95b"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:34:40Z"
+
+[entries."h:f16c76b8167c"]
+value = "Configuración del modelo de IA"
+source_hash = "f16c76b8167c3a54e1bfb993804f6dca3b41c6a2"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:34:40Z"
+
+[entries."h:f92891d3e03a"]
+value = "Ajuste de la solicitud"
+source_hash = "f92891d3e03a555ffcc2873bdd15945078bd42cb"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:34:40Z"

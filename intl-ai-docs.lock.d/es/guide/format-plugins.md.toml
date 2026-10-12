@@ -1,0 +1,337 @@
+version = 1
+
+[entries."h:0d2adb81393d"]
+value = "Mantén `v: 1` en cada respuesta."
+source_hash = "0d2adb81393daa3070c797b958b845b3af2ec4f4"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:51:51Z"
+
+[entries."h:0e7096e3fbde"]
+value = "Lee una línea JSON de stdin, escribe una línea JSON a stdout."
+source_hash = "0e7096e3fbde55b79ca5d7363fe403ba08a76f87"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:51:51Z"
+
+[entries."h:0f01ed56a1e3"]
+value = "Ejemplo"
+source_hash = "0f01ed56a1e32a05e5ef96e4d779f34784af9a96"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:51:51Z"
+
+[entries."h:0fd1d31e7c82"]
+value = "`error` es texto libre; anteponerle un código estable (`parse:`, `write:`) es la convención. Una salida distinta de cero, un tiempo de espera agotado o una línea de respuesta malformada/ausente significa que el plugin falló y la operación falla de la misma manera, con el final de stderr adjunto."
+source_hash = "0fd1d31e7c829543dc111753cbe52740a4743417"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:51:51Z"
+
+[entries."h:16dfd011e633"]
+value = 'Nombre del registro; `format = "<name>"` lo selecciona. No debe ser `json`/`yaml`'
+source_hash = "16dfd011e633a7ff43850e009cdd56a607bfd0d3"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:51:51Z"
+
+[entries."h:1eb2a79cc14d"]
+value = "Errores y códigos de salida"
+source_hash = "1eb2a79cc14d7485d6047015fa8ab3b708cf8b59"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:51:51Z"
+
+[entries."h:21315690b002"]
+value = "Extensión canónica emitida para nuevos archivos (`xml` -> `fr.xml`)"
+source_hash = "21315690b002460181fee62c50a4422a1bf61e70"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:51:51Z"
+
+[entries."h:27758b956807"]
+value = "Enseña a intl-ai a leer y escribir cualquier formato de archivo de locale con un plugin externo."
+source_hash = "27758b956807b263ce67aecf290469046fab7b7c"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:51:51Z"
+
+[entries."h:32bcfbf15eb5"]
+value = "El texto del archivo es UTF-8; los formatos binarios están fuera de alcance para v1."
+source_hash = "32bcfbf15eb52c5ef4793db061ca32018c9ef261"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:51:51Z"
+
+[entries."h:3dad29cc6a6d"]
+value = "Argumentos pasados a `exec`"
+source_hash = "3dad29cc6a6d2cca3378f72f8b892eec5c3d1ca1"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:51:51Z"
+
+[entries."h:4a48932789d1"]
+value = "Escribir"
+source_hash = "4a48932789d199bbed709777e2d743ca2bafdc6c"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:51:51Z"
+
+[entries."h:54890ff746d4"]
+value = "Límite de stdout almacenado en búfer (por defecto 10 MiB; las respuestas incluyen archivos completos)"
+source_hash = "54890ff746d419095fe0364c1d81571df1ecd0e4"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:51:51Z"
+
+[entries."h:59ac8a529f76"]
+value = "`format` acepta nombres integrados (`json`, `yaml`) o un nombre registrado `[[formats]]`. Un nombre desconocido falla la validación de configuración con la lista de nombres conocidos."
+source_hash = "59ac8a529f76acfbbbde4b8bd9e676a97ec29ddd"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:51:51Z"
+
+[entries."h:5dd39d1a91d2"]
+value = "Extensiones adicionales que el formato reclama en disco"
+source_hash = "5dd39d1a91d2bfc78a5688a3cce7fb95a7b3132a"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:51:51Z"
+
+[entries."h:5e03a1ed4788"]
+value = "Escribir tu propio"
+source_hash = "5e03a1ed4788149883fbc8f2954297f7f07446f5"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:51:51Z"
+
+[entries."h:5ffb33850418"]
+value = "`[[formats]] exec` solo puede aparecer en el `intl-ai.toml` raíz, nunca en un archivo cargado mediante `extends`. Este es el mismo límite de confianza que `[[checks]] exec`: una configuración base proporcionada por una dependencia no debe registrar programas para ejecutar en tu máquina."
+source_hash = "5ffb33850418806c4b84ae1e34e347b6e6d8fd18"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:51:51Z"
+
+[entries."h:6685500b5ba3"]
+value = "La resolución es inalterada: la extensión propia de un archivo existente gana, y el `format` configurado solo emite nuevos archivos. Un proyecto que mezcle `en.json`, `fr.yaml` y `de.xml` en un solo `locale_dir` lee cada archivo con el formato que reclamó su extensión."
+source_hash = "6685500b5ba332fa47943663289568e9be0286d5"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:51:51Z"
+
+[entries."h:6eb5af0003f9"]
+value = "Directorio de trabajo del plugin (por defecto: el directorio del archivo de configuración)"
+source_hash = "6eb5af0003f901b377084e7429b447476fff059f"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:51:51Z"
+
+[entries."h:712c8d8d2218"]
+value = "Cómo se resuelven los archivos"
+source_hash = "712c8d8d2218e35fef47076bccc332f67e80a97c"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:51:51Z"
+
+[entries."h:743fdab45965"]
+value = "Presupuesto de tiempo de pared por operación (por defecto `60000`)"
+source_hash = "743fdab459651bb5239dbbb49ab2aa8cde5a0624"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:51:51Z"
+
+[entries."h:7ac07c575696"]
+value = "Registrar un formato"
+source_hash = "7ac07c5756966722464d1c4b60f9f4d61552024d"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:51:51Z"
+
+[entries."h:8027c2f652f9"]
+value = '[`examples/formats/strings-xml`](https://github.com/sigilco/intl-ai/tree/develop/examples/formats/strings-xml) es un plugin de referencia: un solo script de la biblioteca estándar de Python que lee y escribe un subconjunto mínimo de `strings.xml` de Android. Dado que las claves de strings.xml son planas, aplana el corpus anidado en nombres con puntos al escribir (`nav.home` -> `<string name="nav.home">`); un plugin puede en cambio devolver objetos anidados para preservar la agrupación.'
+source_hash = "8027c2f652f9215e9fe480f39cd32c935c6260d2"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:51:51Z"
+
+[entries."h:852b438f91ad"]
+value = "Leer"
+source_hash = "852b438f91ad9eb2cdd84419a675a216d543c687"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:51:51Z"
+
+[entries."h:93265d709546"]
+value = "Programa a lanzar (un proceso por operación de lectura/escritura)"
+source_hash = "93265d70954692c13767b78b7f1132d2b2fcca50"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:51:51Z"
+
+[entries."h:a0fb821bdaf9"]
+value = "Propósito"
+source_hash = "a0fb821bdaf93ed9a1f1e920acfb2840eff5b153"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:51:51Z"
+
+[entries."h:a231b35e37f5"]
+value = "Protocolo v1"
+source_hash = "a231b35e37f5b9d09859243ccb6c05c96c99a23e"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:51:51Z"
+
+[entries."h:a501282237d8"]
+value = "Respuesta:"
+source_hash = "a501282237d83ce65c51816c2ab72de3210ecadb"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:51:51Z"
+
+[entries."h:a6b60de29149"]
+value = "`data` debe ser un objeto JSON. `path` es informativo (úsalo en mensajes de error); los plugins no deben abrirlo."
+source_hash = "a6b60de29149d6d2291a8cc22d65aa8f427bb041"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:51:51Z"
+
+[entries."h:b05603cf66fe"]
+value = "Los fallos a nivel de formato (entrada no analizable, construcciones no soportadas) se informan como una respuesta con un campo `error` y código de salida 0:"
+source_hash = "b05603cf66fea5147dac1fd8f4e7cbd79ea5237f"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:51:51Z"
+
+[entries."h:b5a286c79ae0"]
+value = "Plugins de formato"
+source_hash = "b5a286c79ae0f8f9049dfee66a907d5ac449b840"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:51:51Z"
+
+[entries."h:b6cfa8e4bd9e"]
+value = "Nunca leer o escribir `path`; transforma solo `content`/`data`."
+source_hash = "b6cfa8e4bd9e8ec547f8df4afbd152b6ed423375"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:51:51Z"
+
+[entries."h:bd461119abb5"]
+value = "Un proceso hijo por operación. stdin recibe exactamente una línea de solicitud JSONL; stdout debe producir exactamente una línea de respuesta JSONL. Ambas partes son estrictas con `v`: intl-ai envía `v: 1` y exige `v: 1` de vuelta, y un plugin que reciba un `v` que no admite debe responder con una respuesta `error`."
+source_hash = "bd461119abb51d8e543d9e980efe90a440a495fd"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:51:51Z"
+
+[entries."h:c10d78d186b8"]
+value = 'Informa fallos de formato como `{"v": 1, "error": "..."}` con salida 0; reserva las salidas distintas de cero para fallos críticos.'
+source_hash = "c10d78d186b87f21500af7596a6e54d89a0211c9"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:51:51Z"
+
+[entries."h:c67dd20ee842"]
+value = "Clave"
+source_hash = "c67dd20ee842986086a0a915ddc2a279490130ed"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:51:51Z"
+
+[entries."h:d5d1f63e202a"]
+value = "intl-ai incluye formatos de locale JSON y YAML integrados. Una entrada `[[formats]]` registra un formato personalizado respaldado por un programa externo, por lo que cualquier formato de archivo (Android `strings.xml`, ARB, PO, `.strings`) puede funcionar con `intl-ai fill` y `intl-ai check` en cualquier lenguaje de implementación, sin enlazar Rust."
+source_hash = "d5d1f63e202aa5a69ecc355cd535354f11d433bd"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:51:51Z"
+
+[entries."h:e57c3522bec5"]
+value = "Añade la entrada a `intl-ai.toml`, luego verifica con `intl-ai check` (lee todos los archivos de locale) y `intl-ai fill` (emite los que faltan)."
+source_hash = "e57c3522bec5993e0fbcb5253986c4f09b82d38a"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:51:51Z"
+
+[entries."h:e59e0b282d11"]
+value = "`content` es el texto completo del archivo; intl-ai lo escribe literalmente (omitindo la escritura cuando los bytes no cambian)."
+source_hash = "e59e0b282d1106a87a19de5575c02b5b659adc61"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:51:51Z"
+
+[entries."h:eaba18f00a87"]
+value = "El plugin es una transformación pura entre el texto del archivo y el árbol del corpus (un objeto JSON de clave anidada -> cadena). intl-ai posee toda la E/S de archivos: lee el archivo, entrega el texto al plugin y escribe el texto devuelto de forma atómica. El plugin nunca toca el sistema de archivos."
+source_hash = "eaba18f00a8751273c0e332f9f35c0c092b7c769"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:51:51Z"
+
+[entries."h:ec0e7ce9ae95"]
+value = "Solicitud:"
+source_hash = "ec0e7ce9ae95cfb810daec9034953e6593131003"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:51:51Z"
+
+[entries."h:eed6bfb41051"]
+value = "Obligatorio"
+source_hash = "eed6bfb41051ed5b74447340f3c2e29d11e99a7c"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:51:51Z"
+
+[entries."h:fb360f9c09ac"]
+value = "sí"
+source_hash = "fb360f9c09ac8c5edb2f18be5de4e80ea4c430d0"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:51:51Z"
+
+[entries."h:fd1286353570"]
+value = "no"
+source_hash = "fd1286353570c5703799ba76999323b7c7447b06"
+origin = "ai"
+reviewed = false
+model = "openrouter/free"
+updated_at = "2026-10-09T15:51:51Z"
