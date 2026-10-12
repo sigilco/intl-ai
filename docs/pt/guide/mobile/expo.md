@@ -69,18 +69,18 @@ O plugin regista em ambas as plataformas ios e android e executa o pipeline uma 
 
 ## Opções
 
-| Opção           | Tipo                  | Padrão  | Descrição                                      |
-| ---------------- | --------------------- | -------- | ------------------------------------------------ |
-| `fill`           | `boolean`             | `true`   | Executar `intl-ai fill`                               |
-| `failOn`         | `string \| string[]`  | —        | Execute `intl-ai check --fail-on <kinds>` depois de fill |
-| `validate`       | `boolean \| string[]` | `true`   | Gate de validação do tempo de preenchimento                        |
-| `judgeThreshold` | `number`              | —        | Limiar de pontuação do juiz dentro da porta de preenchimento       |
-| `dev`            | `boolean`             | `true`   | `false` pula quando `NODE_ENV !== "production"`   |
-| `strict`         | `boolean`             | `true`   | `false` avisa em vez de falhar o pré-build    |
-| `config`         | `string`              | —        | Caminho para `intl-ai.toml`/`.json`/`.yaml`           |
-| `cwd`            | `string`              | raiz do app | Diretório de trabalho para o binário                 |
-| `bin`            | `string`              | —        | Caminho explícito para o binário `intl-ai`            |
-| `args`           | `string[]`            | —        | Argumentos adicionais adicionados a `intl-ai fill`            |
+| Opção            | Tipo                  | Padrão      | Descrição                                                    |
+| ---------------- | --------------------- | ----------- | ------------------------------------------------------------ |
+| `fill`           | `boolean`             | `true`      | Executar `intl-ai fill`                                      |
+| `failOn`         | `string \| string[]`  | —           | Execute `intl-ai check --fail-on <kinds>` depois de fill     |
+| `validate`       | `boolean \| string[]` | `true`      | Gate de validação do tempo de preenchimento                  |
+| `judgeThreshold` | `number`              | —           | Limiar de pontuação do juiz dentro da porta de preenchimento |
+| `dev`            | `boolean`             | `true`      | `false` pula quando `NODE_ENV !== "production"`              |
+| `strict`         | `boolean`             | `true`      | `false` avisa em vez de falhar o pré-build                   |
+| `config`         | `string`              | —           | Caminho para `intl-ai.toml`/`.json`/`.yaml`                  |
+| `cwd`            | `string`              | raiz do app | Diretório de trabalho para o binário                         |
+| `bin`            | `string`              | —           | Caminho explícito para o binário `intl-ai`                   |
+| `args`           | `string[]`            | —           | Argumentos adicionais adicionados a `intl-ai fill`           |
 
 Ordem de resolução binária: opção `bin` → variável de ambiente `INTL_AI_BIN` → o pacote npm `intl-ai` → `PATH`.
 

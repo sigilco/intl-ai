@@ -107,7 +107,7 @@ O schema comprometido encontra-se em `docs/public/schema/intl-ai.schema.json` e 
 
 ## Flags globais
 
-| Sinalizador              | Descrição                                          |
-| ----------------- | ---------------------------------------------------- |
-| `--config <path>` | Caminho do arquivo de configuração. `-` lê TOML a partir da entrada padrão.         |
-| `--format json`   | Saída legível por máquina (também `human`, o padrão). |
+| Sinalizador       | Descrição                                                                   |
+| ----------------- | --------------------------------------------------------------------------- |
+| `--config <path>` | Caminho do arquivo de configuração. `-` lê TOML a partir da entrada padrão. |
+| `--format json`   | Saída legível por máquina (também `human`, o padrão).                       |

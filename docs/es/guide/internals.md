@@ -9,17 +9,17 @@ description: Cómo está estructurado intl-ai. Los crates núcleo de Rust, el bi
 
 El motor de traducción es un workspace de Rust; los paquetes de npm son shims delgados que generan el binario.
 
-| Paquete                                   | Propósito                                                                                                                                  |
-| ----------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| `crates/intl-ai-core`                     | Carga de configuración (`intl-ai.toml`/`.json`/`.yaml`), interpolación, fragmentos de lockfile (`intl-ai.lock.d/`), procedencia.                         |
-| `crates/intl-ai-formats`                  | Formatos de archivo de configuración regional: JSON y YAML, aplanar/desaplanar, caché de estadísticas.                                                                       |
-| `crates/intl-ai-providers`                | Transportes: `http` (compatible con OpenAI), `command` (agentes locales), `replay` (cintas). Contrato de prompt + reintentos.                       |
+| Paquete                                   | Propósito                                                                                                                                                        |
+| ----------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `crates/intl-ai-core`                     | Carga de configuración (`intl-ai.toml`/`.json`/`.yaml`), interpolación, fragmentos de lockfile (`intl-ai.lock.d/`), procedencia.                                 |
+| `crates/intl-ai-formats`                  | Formatos de archivo de configuración regional: JSON y YAML, aplanar/desaplanar, caché de estadísticas.                                                           |
+| `crates/intl-ai-providers`                | Transportes: `http` (compatible con OpenAI), `command` (agentes locales), `replay` (cintas). Contrato de prompt + reintentos.                                    |
 | `crates/intl-ai-checks`                   | Marco de validación: `icu`, `placeholder-parity`, `dialect`, `judge`, especificaciones declarativas, `exec` comprobaciones, la caché de hallazgos incrementales. |
-| `crates/intl-ai-cli`                      | El binario `intl-ai`: `fill`, `check`, `mark`, `review`, `status`, `lockfile`, `config`.                                                 |
-| `packages/unplugin` (`@intl-ai/unplugin`) | Shim de empaquetador (vite, webpack, rollup, esbuild, rspack, rolldown, farm, bun). Ejecuta la canalización en `buildStart`.                           |
-| `packages/next` (`@intl-ai/next`)         | `withIntlAi()` envoltorio de configuración. Ejecuta la canalización durante la evaluación de `next.config`, antes de webpack o Turbopack.                           |
-| `packages/expo` (`@intl-ai/expo`)         | Plugin de configuración de Expo. Ejecuta el pipeline durante `expo prebuild`/`eas build`.                                                                |
-| `intl-ai` (npm)                           | Entrega del binario: la instalación posterior descarga el tarball de la plataforma desde GitHub Releases. Los shims lo resuelven mediante `createRequire`.              |
+| `crates/intl-ai-cli`                      | El binario `intl-ai`: `fill`, `check`, `mark`, `review`, `status`, `lockfile`, `config`.                                                                         |
+| `packages/unplugin` (`@intl-ai/unplugin`) | Shim de empaquetador (vite, webpack, rollup, esbuild, rspack, rolldown, farm, bun). Ejecuta la canalización en `buildStart`.                                     |
+| `packages/next` (`@intl-ai/next`)         | `withIntlAi()` envoltorio de configuración. Ejecuta la canalización durante la evaluación de `next.config`, antes de webpack o Turbopack.                        |
+| `packages/expo` (`@intl-ai/expo`)         | Plugin de configuración de Expo. Ejecuta el pipeline durante `expo prebuild`/`eas build`.                                                                        |
+| `intl-ai` (npm)                           | Entrega del binario: la instalación posterior descarga el tarball de la plataforma desde GitHub Releases. Los shims lo resuelven mediante `createRequire`.       |
 
 ## Canalización de lanzamiento
 

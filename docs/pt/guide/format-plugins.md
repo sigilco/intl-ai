@@ -19,16 +19,16 @@ args = ["tools/strings_xml.py"]
 extension = "xml"
 ```
 
-| Chave                | Obrigatório | Propósito                                                                  |
-| ------------------ | -------- | ------------------------------------------------------------------------ |
-| `name`             | sim      | Nome do registo; `format = "<name>"` seleciona-o. Não deve ser `json`/`yaml` |
-| `exec`             | sim      | Programa para iniciar (um processo por operação de leitura/escrita)                         |
-| `args`             | não       | Argv passado para `exec`                                                    |
-| `extension`        | sim      | Extensão canónica criada para novos ficheiros (`xml` -> `fr.xml`)             |
-| `extensions`       | não       | Extensões extras que o formato reivindica no disco                               |
-| `cwd`              | não       | Diretório de trabalho do plugin (padrão: o diretório do arquivo de configuração)          |
-| `timeout_ms`       | não       | Orçamento em tempo real por operação (padrão `60000`)                               |
-| `max_stdout_bytes` | não       | Limite do stdout em buffer (padrão 10 MiB; as respostas transportam ficheiros inteiros)        |
+| Chave              | Obrigatório | Propósito                                                                               |
+| ------------------ | ----------- | --------------------------------------------------------------------------------------- |
+| `name`             | sim         | Nome do registo; `format = "<name>"` seleciona-o. Não deve ser `json`/`yaml`            |
+| `exec`             | sim         | Programa para iniciar (um processo por operação de leitura/escrita)                     |
+| `args`             | não         | Argv passado para `exec`                                                                |
+| `extension`        | sim         | Extensão canónica criada para novos ficheiros (`xml` -> `fr.xml`)                       |
+| `extensions`       | não         | Extensões extras que o formato reivindica no disco                                      |
+| `cwd`              | não         | Diretório de trabalho do plugin (padrão: o diretório do arquivo de configuração)        |
+| `timeout_ms`       | não         | Orçamento em tempo real por operação (padrão `60000`)                                   |
+| `max_stdout_bytes` | não         | Limite do stdout em buffer (padrão 10 MiB; as respostas transportam ficheiros inteiros) |
 
 `format` aceita nomes integrados (`json`, `yaml`) ou um nome registado em `[[formats]]`. Um nome desconhecido falha a validação da configuração com a lista de nomes conhecidos.
 

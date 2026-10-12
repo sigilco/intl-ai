@@ -23,13 +23,13 @@ Erros em stderr têm o mesmo formato: `{"error": {"message": ..., "code": ...}}`
 
 `intl-ai check` relata descobertas por chave. Tipos:
 
-| Tipo         | Significado                                                                                    |
-| ------------ | ------------------------------------------------------------------------------------------ |
-| `missing`    | Chave ausente de um arquivo de localização alvo.                                                      |
-| `stale`      | Valor de propriedade de IA cuja fonte mudou desde o preenchimento.                                            |
-| `modified`   | Valor de propriedade humana cuja fonte mudou desde a revisão.                                       |
-| `unreviewed` | Chave nunca marcada como `reviewed` (ou re-sinalizada por `[quality]`).                                |
-| `extra`      | Chave presente em um arquivo alvo, mas não na fonte.                                        |
+| Tipo         | Significado                                                                                  |
+| ------------ | -------------------------------------------------------------------------------------------- |
+| `missing`    | Chave ausente de um arquivo de localização alvo.                                             |
+| `stale`      | Valor de propriedade de IA cuja fonte mudou desde o preenchimento.                           |
+| `modified`   | Valor de propriedade humana cuja fonte mudou desde a revisão.                                |
+| `unreviewed` | Chave nunca marcada como `reviewed` (ou re-sinalizada por `[quality]`).                      |
+| `extra`      | Chave presente em um arquivo alvo, mas não na fonte.                                         |
 | `invalid`    | Uma entrada `[[checks]]` rejeitou o valor (icu, parity, judge, spec, exec, ou `fail_below`). |
 
 Falhas de nível de verificação (uma especificação que não carrega, um exec que não inicia, um erro de fornecedor) aparecem no array `errors` do relatório e sempre falham a execução. Reproduzir uma descoberta da cache incremental marca-a como `"cached": true` na saída JSON.

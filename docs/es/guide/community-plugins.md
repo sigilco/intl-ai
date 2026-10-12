@@ -11,12 +11,12 @@ El contrato de intl-ai es pequeño: una pila ejecuta `intl-ai fill` en el punto 
 
 **Tier 1, mantenido en este repositorio** y versionado al paso con el binario:
 
-| Integración         | Pila                                        | Forma                                  |
-| ------------------- | -------------------------------------------- | -------------------------------------- |
-| `intl-ai`           | cualquiera                                          | el propio binario                      |
-| `@intl-ai/unplugin` | Vite, Webpack, Rollup, esbuild, Rspack, Farm | adaptador unplugin, se ejecuta en `buildStart` |
-| `@intl-ai/next`     | Next.js (webpack y Turbopack)              | `withIntlAi()` wrapper de `next.config`   |
-| `@intl-ai/expo`     | Expo / React Native                          | plugin de configuración, se ejecuta durante prebuild    |
+| Integración         | Pila                                         | Forma                                                |
+| ------------------- | -------------------------------------------- | ---------------------------------------------------- |
+| `intl-ai`           | cualquiera                                   | el propio binario                                    |
+| `@intl-ai/unplugin` | Vite, Webpack, Rollup, esbuild, Rspack, Farm | adaptador unplugin, se ejecuta en `buildStart`       |
+| `@intl-ai/next`     | Next.js (webpack y Turbopack)                | `withIntlAi()` wrapper de `next.config`              |
+| `@intl-ai/expo`     | Expo / React Native                          | plugin de configuración, se ejecuta durante prebuild |
 
 Los shims de Tier-1 reciben correcciones publicadas y la misma superficie de opciones (`fill`, `failOn`, `validate`, `judgeThreshold`, `dev`, `strict`, `config`, `cwd`, `bin`, `args`).
 
