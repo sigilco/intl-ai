@@ -18,7 +18,7 @@ use crate::mdx;
 use pulldown_cmark::{Event, Options, Parser, Tag};
 use std::collections::BTreeMap;
 
-fn parse_options() -> Options {
+pub(crate) fn parse_options() -> Options {
     Options::ENABLE_TABLES
         | Options::ENABLE_FOOTNOTES
         | Options::ENABLE_STRIKETHROUGH
@@ -56,6 +56,23 @@ pub fn protected(text: &str) -> BTreeMap<String, usize> {
         }
     }
     m
+}
+
+/// A segment is translatable only when it carries prose text. A leaf
+/// that is entirely protected content (code spans, math, inline HTML,
+/// a bare link destination) or only punctuation has nothing for the
+/// model to render — merging it back byte-identical is both safer and
+/// cheaper than sending it to a provider that may "translate" the
+/// identifier anyway.
+pub fn translatable(text: &str) -> bool {
+    for ev in Parser::new_ext(text, parse_options()) {
+        if let Event::Text(t) = ev {
+            if !t.trim().is_empty() {
+                return true;
+            }
+        }
+    }
+    false
 }
 
 /// Per-segment lint: translated value vs its source. `src` may differ

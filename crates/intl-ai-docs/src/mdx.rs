@@ -306,7 +306,11 @@ impl DocFormat for Mdx {
         let mut warnings = Vec::new();
         let mut add = |kind: SegKind, range: Range<usize>| {
             let seg_text = &text[range.clone()];
-            if seg_text.trim().is_empty() {
+            if seg_text.trim().is_empty() || !crate::lint::translatable(seg_text) {
+                // Whitespace and fully-protected leafs (bare code spans,
+                // math, inline HTML) carry no prose: no span means merge
+                // and rekey leave these bytes untouched, and fill never
+                // sends the identifier to a provider.
                 return;
             }
             let id = segid(seg_text);

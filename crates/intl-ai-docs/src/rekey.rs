@@ -47,7 +47,7 @@ pub fn rekey(
     }
 
     let mut out = FlatMap::new();
-    let mut unpaired: Vec<String> = Vec::new();
+    let mut unpaired: Vec<(String, String)> = Vec::new();
     let mut taken: BTreeMap<String, usize> = BTreeMap::new();
     for sp in &target_doc.spans {
         let text = links::strip(&target_doc.source[sp.range.clone()], link_prefix);
@@ -58,19 +58,29 @@ pub fn rekey(
                 *i += 1;
                 out.entry(k.to_string()).or_insert(text);
             }
-            None => unpaired.push(text),
+            None => unpaired.push((sp.seg.clone(), text)),
         }
     }
     let open: Vec<&String> = src_order.iter().filter(|s| !out.contains_key(*s)).collect();
-    for (i, text) in unpaired.into_iter().enumerate() {
+    // Positional pairing runs on DISTINCT segments: several spans share
+    // one seg id when a document repeats identical text (table cells
+    // like `list`, `bool`). Letting every span consume an open id
+    // steals slots and scrambles every downstream pair.
+    let mut seen: std::collections::HashSet<String> = Default::default();
+    let mut i = 0;
+    for (seg, text) in unpaired {
+        if !seen.insert(seg) {
+            continue;
+        }
         match open.get(i) {
             Some(k) => {
-                out.entry((*k).clone()).or_insert(text);
+                out.insert((*k).clone(), text);
             }
             None => {
                 out.insert(format!("x:{}", &source_hash(&text)[..8]), text);
             }
         }
+        i += 1;
     }
     out
 }

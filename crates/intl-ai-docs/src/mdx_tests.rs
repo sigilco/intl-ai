@@ -213,3 +213,24 @@ fn lint_document_flags_unprefixed_links() {
     let (_, bd) = docs(src, bad, &m);
     assert_eq!(lint::lint_document(src, &sd, bad, &bd, "/es").len(), 1);
 }
+
+#[test]
+fn fully_protected_leafs_are_not_segments() {
+    let text = "| `layout` | string | `\"flat\"` | Tree arrangement. |\n| `bool` | list | `[]` | Translatable cell. |\n\nbare `code` stays prose\n";
+    let doc = Mdx::new(vec![]).extract(text, Path::new("t.md")).unwrap();
+    let vals = seg_values(&doc);
+    for code in ["`layout`", "string", "`\"flat\"`", "`bool`", "list", "`[]`"] {
+        assert!(
+            !vals.iter().any(|v| v == code),
+            "code-only leaf must not be a segment: {code}"
+        );
+    }
+    assert!(vals.iter().any(|v| v.contains("Tree arrangement")));
+    assert!(vals.iter().any(|v| v.contains("Translatable cell")));
+    assert!(vals.iter().any(|v| v.contains("bare `code` stays prose")));
+    // Merge leaves the protected-only cells byte-identical: they were
+    // never segments, so nothing is spliced over them.
+    let m = Mdx::new(vec![]);
+    let out = m.merge(&doc, &doc.segments, "").unwrap();
+    assert_eq!(String::from_utf8(out.bytes).unwrap(), text);
+}
