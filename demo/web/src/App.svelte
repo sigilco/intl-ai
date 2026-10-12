@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
+  import DocumentsView from "./lib/components/DocumentsView.svelte";
   import GenerationCard from "./lib/components/GenerationCard.svelte";
   import ProviderConfig from "./lib/components/ProviderConfig.svelte";
   import SourceCard from "./lib/components/SourceCard.svelte";
@@ -11,6 +12,7 @@
   import { startWorker } from "./lib/worker";
   import type { GenRow, Phase } from "./lib/types";
 
+  let tab = $state<"locales" | "documents">("locales");
   let wasmStatus = $state("loading wasm…");
   let wasmOk = $state(false);
   let running = $state(false);
@@ -149,30 +151,45 @@
     <ProviderConfig />
   </section>
 
-  <main
-    class="grid min-h-0 flex-1 grid-cols-1 gap-3 px-4 pt-3 pb-2 lg:grid-cols-2"
-  >
-    <SourceCard
-      bind:text={sourceText}
-      bind:locale={sourceLocale}
-      detected={detectedSource}
-      {running}
-      wasmReady={wasmOk}
-      ongenerate={generate}
-      onfile={onSourceFile}
-    />
-    <GenerationCard
-      {rows}
-      bind:targetLocale
-      bind:targetText
-      bind:localeInstruction
-      {phase}
-      {progress}
-      {statusLine}
-      {outText}
-      {running}
-    />
-  </main>
+  <nav class="tabs tabs-border px-4 pt-2" aria-label="demo mode">
+    <button
+      class={`tab ${tab === "locales" ? "tab-active text-base-content" : "text-base-content/70"}`}
+      onclick={() => (tab = "locales")}>locales</button
+    >
+    <button
+      class={`tab ${tab === "documents" ? "tab-active text-base-content" : "text-base-content/70"}`}
+      onclick={() => (tab = "documents")}>documents</button
+    >
+  </nav>
+
+  {#if tab === "locales"}
+    <main
+      class="grid min-h-0 flex-1 grid-cols-1 gap-3 px-4 pt-3 pb-2 lg:grid-cols-2"
+    >
+      <SourceCard
+        bind:text={sourceText}
+        bind:locale={sourceLocale}
+        detected={detectedSource}
+        {running}
+        wasmReady={wasmOk}
+        ongenerate={generate}
+        onfile={onSourceFile}
+      />
+      <GenerationCard
+        {rows}
+        bind:targetLocale
+        bind:targetText
+        bind:localeInstruction
+        {phase}
+        {progress}
+        {statusLine}
+        {outText}
+        {running}
+      />
+    </main>
+  {:else}
+    <DocumentsView wasmReady={wasmOk} />
+  {/if}
 
   <footer
     class="flex items-center border-t border-base-300 px-4 py-1.5 font-mono text-[11px] text-base-content/70"

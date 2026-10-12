@@ -260,9 +260,15 @@ importers:
       '@fontsource/geist-sans':
         specifier: 5.3.0
         version: 5.3.0
+      '@tailwindcss/typography':
+        specifier: 0.5.20
+        version: 0.5.20(tailwindcss@4.3.3)
       ai:
         specifier: 7.0.112
         version: 7.0.112(zod@4.4.3)
+      marked:
+        specifier: 18.1.0
+        version: 18.1.0
       zod:
         specifier: 'catalog:'
         version: 4.4.3
@@ -3676,6 +3682,11 @@ packages:
     resolution: {integrity: sha512-krXjAikiaFSPaK/FkAQT5UTx3VormQaiZ5hBFlJZ9UFQGB/rwg1MZIhHAG9smMQRTdyJxP6Qt5MwMtdyU5FWrA==}
     engines: {node: '>= 20'}
 
+  '@tailwindcss/typography@0.5.20':
+    resolution: {integrity: sha512-hwbzQuNUfcPvbegQFatVPl/MY/tcM9KLl963hQ5laJKPh81TEZ1+dNG9PirGvcaDBkp+BCshExAyKVPW91dozw==}
+    peerDependencies:
+      tailwindcss: '>=3.0.0 || >=4.0.0 || insiders'
+
   '@tailwindcss/vite@4.3.3':
     resolution: {integrity: sha512-yYU8cogLeSh/ms2jh8Fj7jaba/EWa7Ja6GoUqYZaraEuCI5YS6ms6ObZgjjedm+jm6XZjdNRWBpPP6Z86oOxcw==}
     peerDependencies:
@@ -4760,6 +4771,11 @@ packages:
   crypto-random-string@2.0.0:
     resolution: {integrity: sha512-v1plID3y9r/lPhviJ1wrXpLeyUIGAZ2SHNYTEapm7/8A9nLPoyvVp3RK/EPFqn5kEznyWgYZNsRtYYIWbuG8KA==}
     engines: {node: '>=8'}
+
+  cssesc@3.0.0:
+    resolution: {integrity: sha512-/Tb/JcjK111nNScGob5MNtsntNM1aCNUDipB/TkwZFhyDrrE47SOx/18wF2bbjgc3ZzCSKW1T5nt5EbFoAz/Vg==}
+    engines: {node: '>=4'}
+    hasBin: true
 
   csstype@3.2.3:
     resolution: {integrity: sha512-z1HGKcYy2xA8AGQfwrn0PAy+PB7X/GSj3UVJW9qKyn43xWa+gl5nXmU4qqLMRzWVLFC8KusUX8T/0kCiOYpAIQ==}
@@ -6574,6 +6590,11 @@ packages:
     resolution: {integrity: sha512-sHHjZ5fJKlgrG4qns2YwVcdNep35h5fERrfkD2YNsb9UFk0UIHarbiTaHKVMlPuWAoiilyK8Fv/jAm11slsY7Q==}
     hasBin: true
 
+  marked@18.1.0:
+    resolution: {integrity: sha512-PamYXWWWg2nboG3oX5Ffzpy3EFZROqZJK9hSlMmUnekp7TxPs5DcT95vwd46m73/exfKCRVMtgXoPMI4FEJL6w==}
+    engines: {node: '>= 20'}
+    hasBin: true
+
   marky@1.3.0:
     resolution: {integrity: sha512-ocnPZQLNpvbedwTy9kNrQEsknEfgvcLMvOtz3sFeWApDq1MXH1TqkCIx58xlpESsfwQOnuBO9beyQuNGzVvuhQ==}
 
@@ -7190,6 +7211,10 @@ packages:
   possible-typed-array-names@1.1.0:
     resolution: {integrity: sha512-/+5VFTchJDoVj3bhoqi6UeymcD00DAwb1nJwamzPvHEszJ4FpF6SNNbUbOS8yI56qHzdV8eK0qEfOSiodkTdxg==}
     engines: {node: '>= 0.4'}
+
+  postcss-selector-parser@6.0.10:
+    resolution: {integrity: sha512-IQ7TZdoaqbT+LCpShg46jnZVlhWD2w6iQYAcYXfHARZ7X1t/UGhhceQDs5X0cGqKvYlHNOuv7Oa1xmb0oQuA3w==}
+    engines: {node: '>=4'}
 
   postcss@8.4.31:
     resolution: {integrity: sha512-PS08Iboia9mts/2ygV3eLpY5ghnUcfLV/EXTOW1E2qYxJKGGBUtNjN76FYHnMs36RmARn41bC0AZmn+rR0OVpQ==}
@@ -8252,6 +8277,9 @@ packages:
     resolution: {integrity: sha512-fAFDrWaASxlhXOipcOyb5VDD+YONqj6+8O8EcG/J7RBoOUF3A8YahRWLN+mBxYMrlMQB8N6Voqk5X+YC+HSL0A==}
     peerDependencies:
       react: ^17.0.0 || ^18.0.0 || >=19.0.0-rc <19.0.0 || ^19.0.0
+
+  util-deprecate@1.0.2:
+    resolution: {integrity: sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==}
 
   utils-merge@1.0.1:
     resolution: {integrity: sha512-pMZTvIkT1d+TFGvDOqodOclx0QWkkgi6Tdoa8gC8ffGAAqz9pzPTZWAybbsHHoED/ztMtkv/VoYTYyShUn81hA==}
@@ -9650,6 +9678,18 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  '@babel/traverse@7.29.7(supports-color@8.1.1)':
+    dependencies:
+      '@babel/code-frame': 7.29.7
+      '@babel/generator': 7.29.7
+      '@babel/helper-globals': 7.29.7
+      '@babel/parser': 7.29.7
+      '@babel/template': 7.29.7
+      '@babel/types': 7.29.7
+      debug: 4.4.3(supports-color@8.1.1)
+    transitivePeerDependencies:
+      - supports-color
+
   '@babel/types@7.29.0':
     dependencies:
       '@babel/helper-string-parser': 7.27.1
@@ -10537,22 +10577,28 @@ snapshots:
       - bufferutil
       - supports-color
       - utf-8-validate
+    optional: true
 
   '@farmfe/runtime-plugin-hmr@3.5.10':
     dependencies:
       core-js: 3.50.0
+    optional: true
 
   '@farmfe/runtime-plugin-import-meta@0.2.3':
     dependencies:
       core-js: 3.50.0
+    optional: true
 
   '@farmfe/runtime@0.12.10':
     dependencies:
       core-js: 3.50.0
+    optional: true
 
-  '@farmfe/utils@0.0.1': {}
+  '@farmfe/utils@0.0.1':
+    optional: true
 
-  '@farmfe/utils@0.1.0': {}
+  '@farmfe/utils@0.1.0':
+    optional: true
 
   '@fontsource/geist-mono@5.3.0': {}
 
@@ -10804,6 +10850,7 @@ snapshots:
   '@koa/cors@5.0.0':
     dependencies:
       vary: 1.1.2
+    optional: true
 
   '@manypkg/find-root@1.1.0':
     dependencies:
@@ -10821,7 +10868,8 @@ snapshots:
       globby: 11.1.0
       read-yaml-file: 1.1.0
 
-  '@mdn/browser-compat-data@5.7.6': {}
+  '@mdn/browser-compat-data@5.7.6':
+    optional: true
 
   '@napi-rs/wasm-runtime@1.1.4(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)':
     dependencies:
@@ -11624,10 +11672,12 @@ snapshots:
       '@rspack/binding-win32-arm64-msvc': 2.1.1
       '@rspack/binding-win32-ia32-msvc': 2.1.1
       '@rspack/binding-win32-x64-msvc': 2.1.1
+    optional: true
 
   '@rspack/core@2.1.1':
     dependencies:
       '@rspack/binding': 2.1.1
+    optional: true
 
   '@rtsao/scc@1.1.0': {}
 
@@ -11792,6 +11842,11 @@ snapshots:
       '@tailwindcss/oxide-win32-arm64-msvc': 4.3.3
       '@tailwindcss/oxide-win32-x64-msvc': 4.3.3
 
+  '@tailwindcss/typography@0.5.20(tailwindcss@4.3.3)':
+    dependencies:
+      postcss-selector-parser: 6.0.10
+      tailwindcss: 4.3.3
+
   '@tailwindcss/vite@4.3.3(vite@8.3.0(@types/node@22.20.0)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.47.1)(yaml@2.9.0))':
     dependencies:
       '@tailwindcss/node': 4.3.3
@@ -11873,7 +11928,8 @@ snapshots:
       '@types/estree': 1.0.9
       '@types/json-schema': 7.0.15
 
-  '@types/estree@1.0.8': {}
+  '@types/estree@1.0.8':
+    optional: true
 
   '@types/estree@1.0.9': {}
 
@@ -11884,6 +11940,7 @@ snapshots:
   '@types/http-proxy@1.17.17':
     dependencies:
       '@types/node': 22.20.0
+    optional: true
 
   '@types/istanbul-lib-coverage@2.0.6': {}
 
@@ -11911,7 +11968,8 @@ snapshots:
     dependencies:
       undici-types: 6.21.0
 
-  '@types/object-path@0.11.4': {}
+  '@types/object-path@0.11.4':
+    optional: true
 
   '@types/prop-types@15.7.15': {}
 
@@ -11932,11 +11990,13 @@ snapshots:
     dependencies:
       csstype: 3.2.3
 
-  '@types/semver@7.8.0': {}
+  '@types/semver@7.8.0':
+    optional: true
 
   '@types/stack-utils@2.0.3': {}
 
-  '@types/ua-parser-js@0.7.39': {}
+  '@types/ua-parser-js@0.7.39':
+    optional: true
 
   '@types/yargs-parser@21.0.3': {}
 
@@ -12629,7 +12689,8 @@ snapshots:
 
   big-integer@1.6.52: {}
 
-  binary-extensions@2.3.0: {}
+  binary-extensions@2.3.0:
+    optional: true
 
   birpc@4.0.0: {}
 
@@ -12644,6 +12705,7 @@ snapshots:
   bplist-parser@0.2.0:
     dependencies:
       big-integer: 1.6.52
+    optional: true
 
   bplist-parser@0.3.1:
     dependencies:
@@ -12706,10 +12768,12 @@ snapshots:
   bundle-name@3.0.0:
     dependencies:
       run-applescript: 5.0.0
+    optional: true
 
   bytes@3.1.2: {}
 
-  cac@6.7.14: {}
+  cac@6.7.14:
+    optional: true
 
   cac@7.0.0: {}
 
@@ -12732,6 +12796,7 @@ snapshots:
     dependencies:
       mime-types: 2.1.35
       ylru: 1.4.0
+    optional: true
 
   call-bind-apply-helpers@1.0.2:
     dependencies:
@@ -12796,6 +12861,7 @@ snapshots:
       readdirp: 3.6.0
     optionalDependencies:
       fsevents: 2.3.3
+    optional: true
 
   chokidar@4.0.3:
     dependencies:
@@ -12855,7 +12921,8 @@ snapshots:
 
   clsx@2.1.1: {}
 
-  co@4.6.0: {}
+  co@4.6.0:
+    optional: true
 
   color-convert@1.9.3:
     dependencies:
@@ -12919,8 +12986,10 @@ snapshots:
   content-disposition@0.5.4:
     dependencies:
       safe-buffer: 5.2.1
+    optional: true
 
-  content-type@1.0.5: {}
+  content-type@1.0.5:
+    optional: true
 
   convert-source-map@2.0.0: {}
 
@@ -12928,12 +12997,14 @@ snapshots:
     dependencies:
       depd: 2.0.0
       keygrip: 1.1.0
+    optional: true
 
   core-js-compat@3.49.0:
     dependencies:
       browserslist: 4.28.2
 
-  core-js@3.50.0: {}
+  core-js@3.50.0:
+    optional: true
 
   cosmiconfig@5.2.1:
     dependencies:
@@ -12968,6 +13039,8 @@ snapshots:
 
   crypto-random-string@2.0.0: {}
 
+  cssesc@3.0.0: {}
+
   csstype@3.2.3: {}
 
   daisyui@5.7.43: {}
@@ -13000,11 +13073,24 @@ snapshots:
     dependencies:
       ms: 2.1.3
 
+  debug@3.2.7(supports-color@8.1.1):
+    dependencies:
+      ms: 2.1.3
+    optionalDependencies:
+      supports-color: 8.1.1
+
   debug@4.4.3:
     dependencies:
       ms: 2.1.3
 
-  deep-equal@1.0.1: {}
+  debug@4.4.3(supports-color@8.1.1):
+    dependencies:
+      ms: 2.1.3
+    optionalDependencies:
+      supports-color: 8.1.1
+
+  deep-equal@1.0.1:
+    optional: true
 
   deep-extend@0.6.0: {}
 
@@ -13016,6 +13102,7 @@ snapshots:
     dependencies:
       bplist-parser: 0.2.0
       untildify: 4.0.0
+    optional: true
 
   default-browser@4.0.0:
     dependencies:
@@ -13023,6 +13110,7 @@ snapshots:
       default-browser-id: 3.0.0
       execa: 7.2.0
       titleize: 3.0.0
+    optional: true
 
   default-gateway@4.2.0:
     dependencies:
@@ -13041,7 +13129,8 @@ snapshots:
 
   define-lazy-prop@2.0.0: {}
 
-  define-lazy-prop@3.0.0: {}
+  define-lazy-prop@3.0.0:
+    optional: true
 
   define-properties@1.2.1:
     dependencies:
@@ -13064,9 +13153,11 @@ snapshots:
 
   delayed-stream@1.0.0: {}
 
-  delegates@1.0.0: {}
+  delegates@1.0.0:
+    optional: true
 
-  depd@1.1.2: {}
+  depd@1.1.2:
+    optional: true
 
   depd@2.0.0: {}
 
@@ -13300,6 +13391,7 @@ snapshots:
       '@esbuild/win32-arm64': 0.28.0
       '@esbuild/win32-ia32': 0.28.0
       '@esbuild/win32-x64': 0.28.0
+    optional: true
 
   esbuild@0.28.2:
     optionalDependencies:
@@ -13594,7 +13686,8 @@ snapshots:
 
   event-target-shim@5.0.1: {}
 
-  eventemitter3@4.0.7: {}
+  eventemitter3@4.0.7:
+    optional: true
 
   events@3.3.0: {}
 
@@ -13633,6 +13726,7 @@ snapshots:
       onetime: 6.0.0
       signal-exit: 3.0.7
       strip-final-newline: 3.0.0
+    optional: true
 
   expect-type@1.3.0: {}
 
@@ -13738,6 +13832,7 @@ snapshots:
       object-path: 0.11.8
       semver: 7.8.5
       ua-parser-js: 1.0.41
+    optional: true
 
   farm-plugin-replace-dirname-darwin-arm64@0.2.1:
     optional: true
@@ -13783,6 +13878,7 @@ snapshots:
       farm-plugin-replace-dirname-win32-x64-msvc: 0.2.1
     transitivePeerDependencies:
       - '@types/node'
+    optional: true
 
   fast-deep-equal@3.1.3: {}
 
@@ -13901,9 +13997,10 @@ snapshots:
     dependencies:
       flow-estree: 0.321.0
 
-  follow-redirects@1.16.0(debug@4.4.3):
+  follow-redirects@1.16.0(debug@4.4.3(supports-color@8.1.1)):
     optionalDependencies:
-      debug: 4.4.3
+      debug: 4.4.3(supports-color@8.1.1)
+    optional: true
 
   fontfaceobserver@2.3.0: {}
 
@@ -13933,6 +14030,7 @@ snapshots:
       graceful-fs: 4.2.11
       jsonfile: 6.2.1
       universalify: 2.0.1
+    optional: true
 
   fs-extra@7.0.1:
     dependencies:
@@ -14135,6 +14233,7 @@ snapshots:
     dependencies:
       deep-equal: 1.0.1
       http-errors: 1.8.1
+    optional: true
 
   http-errors@1.6.3:
     dependencies:
@@ -14142,6 +14241,7 @@ snapshots:
       inherits: 2.0.3
       setprototypeof: 1.1.0
       statuses: 1.5.0
+    optional: true
 
   http-errors@1.8.1:
     dependencies:
@@ -14150,6 +14250,7 @@ snapshots:
       setprototypeof: 1.2.0
       statuses: 1.5.0
       toidentifier: 1.0.1
+    optional: true
 
   http-errors@2.0.1:
     dependencies:
@@ -14162,27 +14263,30 @@ snapshots:
   http-proxy-middleware@3.0.7:
     dependencies:
       '@types/http-proxy': 1.17.17
-      debug: 4.4.3
-      http-proxy: 1.18.1(debug@4.4.3)
+      debug: 4.4.3(supports-color@8.1.1)
+      http-proxy: 1.18.1(debug@4.4.3(supports-color@8.1.1))
       is-glob: 4.0.3
       is-plain-object: 5.1.0
       micromatch: 4.0.8
     transitivePeerDependencies:
       - supports-color
+    optional: true
 
-  http-proxy@1.18.1(debug@4.4.3):
+  http-proxy@1.18.1(debug@4.4.3(supports-color@8.1.1)):
     dependencies:
       eventemitter3: 4.0.7
-      follow-redirects: 1.16.0(debug@4.4.3)
+      follow-redirects: 1.16.0(debug@4.4.3(supports-color@8.1.1))
       requires-port: 1.0.0
     transitivePeerDependencies:
       - debug
+    optional: true
 
   human-id@4.2.0: {}
 
   human-signals@2.1.0: {}
 
-  human-signals@4.3.1: {}
+  human-signals@4.3.1:
+    optional: true
 
   iconv-lite@0.7.2:
     dependencies:
@@ -14228,7 +14332,8 @@ snapshots:
       once: 1.4.0
       wrappy: 1.0.2
 
-  inherits@2.0.3: {}
+  inherits@2.0.3:
+    optional: true
 
   inherits@2.0.4: {}
 
@@ -14287,6 +14392,7 @@ snapshots:
   is-binary-path@2.1.0:
     dependencies:
       binary-extensions: 2.3.0
+    optional: true
 
   is-boolean-object@1.2.2:
     dependencies:
@@ -14320,7 +14426,8 @@ snapshots:
 
   is-docker@2.2.1: {}
 
-  is-docker@3.0.0: {}
+  is-docker@3.0.0:
+    optional: true
 
   is-document.all@1.0.0:
     dependencies:
@@ -14349,6 +14456,7 @@ snapshots:
   is-inside-container@1.0.0:
     dependencies:
       is-docker: 3.0.0
+    optional: true
 
   is-map@2.0.3: {}
 
@@ -14369,7 +14477,8 @@ snapshots:
     dependencies:
       isobject: 3.0.1
 
-  is-plain-object@5.1.0: {}
+  is-plain-object@5.1.0:
+    optional: true
 
   is-reference@3.0.3:
     dependencies:
@@ -14392,7 +14501,8 @@ snapshots:
 
   is-stream@2.0.1: {}
 
-  is-stream@3.0.0: {}
+  is-stream@3.0.0:
+    optional: true
 
   is-string@1.1.1:
     dependencies:
@@ -14432,7 +14542,8 @@ snapshots:
 
   isarray@2.0.5: {}
 
-  isbot@3.8.0: {}
+  isbot@3.8.0:
+    optional: true
 
   isexe@2.0.0: {}
 
@@ -14646,6 +14757,7 @@ snapshots:
   keygrip@1.1.0:
     dependencies:
       tsscmp: 1.0.6
+    optional: true
 
   keyv@4.5.4:
     dependencies:
@@ -14655,7 +14767,8 @@ snapshots:
 
   kleur@3.0.3: {}
 
-  koa-compose@4.1.0: {}
+  koa-compose@4.1.0:
+    optional: true
 
   koa-compress@5.2.2:
     dependencies:
@@ -14664,30 +14777,36 @@ snapshots:
       http-errors: 2.0.1
       koa-is-json: 1.0.0
       negotiator: 1.0.0
+    optional: true
 
-  koa-connect@2.1.1: {}
+  koa-connect@2.1.1:
+    optional: true
 
   koa-convert@2.0.0:
     dependencies:
       co: 4.6.0
       koa-compose: 4.1.0
+    optional: true
 
-  koa-is-json@1.0.0: {}
+  koa-is-json@1.0.0:
+    optional: true
 
   koa-send@5.0.1:
     dependencies:
-      debug: 4.4.3
+      debug: 4.4.3(supports-color@8.1.1)
       http-errors: 1.8.1
       resolve-path: 1.4.0
     transitivePeerDependencies:
       - supports-color
+    optional: true
 
   koa-static@5.0.0:
     dependencies:
-      debug: 3.2.7
+      debug: 3.2.7(supports-color@8.1.1)
       koa-send: 5.0.1
     transitivePeerDependencies:
       - supports-color
+    optional: true
 
   koa@2.16.4:
     dependencies:
@@ -14696,7 +14815,7 @@ snapshots:
       content-disposition: 0.5.4
       content-type: 1.0.5
       cookies: 0.9.2
-      debug: 4.4.3
+      debug: 4.4.3(supports-color@8.1.1)
       delegates: 1.0.0
       depd: 2.0.0
       destroy: 1.2.0
@@ -14716,6 +14835,7 @@ snapshots:
       vary: 1.1.2
     transitivePeerDependencies:
       - supports-color
+    optional: true
 
   language-subtag-registry@0.3.23: {}
 
@@ -14923,7 +15043,8 @@ snapshots:
     dependencies:
       chalk: 2.4.2
 
-  loglevel@1.9.2: {}
+  loglevel@1.9.2:
+    optional: true
 
   loose-envify@1.4.0:
     dependencies:
@@ -14991,6 +15112,8 @@ snapshots:
       punycode.js: 2.3.1
       uc.micro: 2.1.0
 
+  marked@18.1.0: {}
+
   marky@1.3.0: {}
 
   math-intrinsics@1.1.0: {}
@@ -15007,7 +15130,8 @@ snapshots:
 
   mdurl@2.0.0: {}
 
-  media-typer@0.3.0: {}
+  media-typer@0.3.0:
+    optional: true
 
   memoize-one@5.2.1: {}
 
@@ -15098,16 +15222,29 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  metro-symbolicate@0.81.5:
+  metro-source-map@0.81.5(supports-color@8.1.1):
     dependencies:
+      '@babel/traverse': 7.29.7(supports-color@8.1.1)
+      '@babel/traverse--for-generate-function-map': '@babel/traverse@7.29.7(supports-color@8.1.1)'
+      '@babel/types': 7.29.0
       flow-enums-runtime: 0.0.6
       invariant: 2.2.4
-      metro-source-map: 0.81.5
+      metro-symbolicate: 0.81.5
       nullthrows: 1.1.1
+      ob1: 0.81.5
       source-map: 0.5.7
       vlq: 1.0.1
     transitivePeerDependencies:
       - supports-color
+
+  metro-symbolicate@0.81.5:
+    dependencies:
+      flow-enums-runtime: 0.0.6
+      invariant: 2.2.4
+      metro-source-map: 0.81.5(supports-color@8.1.1)
+      nullthrows: 1.1.1
+      source-map: 0.5.7
+      vlq: 1.0.1
 
   metro-transform-plugins@0.81.5:
     dependencies:
@@ -15206,7 +15343,8 @@ snapshots:
 
   mimic-fn@2.1.0: {}
 
-  mimic-fn@4.0.0: {}
+  mimic-fn@4.0.0:
+    optional: true
 
   minimatch@10.2.5:
     dependencies:
@@ -15413,6 +15551,7 @@ snapshots:
   npm-run-path@5.3.0:
     dependencies:
       path-key: 4.0.0
+    optional: true
 
   nullthrows@1.1.1: {}
 
@@ -15426,7 +15565,8 @@ snapshots:
 
   object-keys@1.1.1: {}
 
-  object-path@0.11.8: {}
+  object-path@0.11.8:
+    optional: true
 
   object.assign@4.1.7:
     dependencies:
@@ -15493,8 +15633,10 @@ snapshots:
   onetime@6.0.0:
     dependencies:
       mimic-fn: 4.0.0
+    optional: true
 
-  only@0.0.2: {}
+  only@0.0.2:
+    optional: true
 
   open@7.4.2:
     dependencies:
@@ -15513,6 +15655,7 @@ snapshots:
       define-lazy-prop: 3.0.0
       is-inside-container: 1.0.0
       is-wsl: 2.2.0
+    optional: true
 
   optionator@0.9.4:
     dependencies:
@@ -15652,7 +15795,8 @@ snapshots:
 
   path-key@3.1.1: {}
 
-  path-key@4.0.0: {}
+  path-key@4.0.0:
+    optional: true
 
   path-parse@1.0.7: {}
 
@@ -15698,6 +15842,11 @@ snapshots:
   po-parser@2.1.1: {}
 
   possible-typed-array-names@1.1.0: {}
+
+  postcss-selector-parser@6.0.10:
+    dependencies:
+      cssesc: 3.0.0
+      util-deprecate: 1.0.2
 
   postcss@8.4.31:
     dependencies:
@@ -15883,6 +16032,7 @@ snapshots:
   readdirp@3.6.0:
     dependencies:
       picomatch: 2.3.2
+    optional: true
 
   readdirp@4.1.2: {}
 
@@ -15954,7 +16104,8 @@ snapshots:
       rc: 1.2.8
       resolve: 1.7.1
 
-  requires-port@1.0.0: {}
+  requires-port@1.0.0:
+    optional: true
 
   resolve-cwd@3.0.0:
     dependencies:
@@ -15970,6 +16121,7 @@ snapshots:
     dependencies:
       http-errors: 1.6.3
       path-is-absolute: 1.0.1
+    optional: true
 
   resolve-pkg-maps@1.0.0: {}
 
@@ -16121,10 +16273,12 @@ snapshots:
       '@rollup/rollup-win32-x64-gnu': 4.60.3
       '@rollup/rollup-win32-x64-msvc': 4.60.3
       fsevents: 2.3.3
+    optional: true
 
   run-applescript@5.0.0:
     dependencies:
       execa: 5.1.1
+    optional: true
 
   run-parallel@1.2.0:
     dependencies:
@@ -16244,7 +16398,8 @@ snapshots:
 
   setimmediate@1.0.5: {}
 
-  setprototypeof@1.1.0: {}
+  setprototypeof@1.1.0:
+    optional: true
 
   setprototypeof@1.2.0: {}
 
@@ -16476,7 +16631,8 @@ snapshots:
 
   strip-final-newline@2.0.0: {}
 
-  strip-final-newline@3.0.0: {}
+  strip-final-newline@3.0.0:
+    optional: true
 
   strip-json-comments@2.0.1: {}
 
@@ -16592,6 +16748,19 @@ snapshots:
       ansi-escapes: 4.3.2
       supports-hyperlinks: 2.3.0
 
+  terser-webpack-plugin@5.6.0(@swc/core@1.15.43)(esbuild@0.28.2)(lightningcss@1.33.0)(postcss@8.5.28)(webpack@5.106.2):
+    dependencies:
+      '@jridgewell/trace-mapping': 0.3.31
+      jest-worker: 27.5.1
+      schema-utils: 4.3.3
+      terser: 5.47.1
+      webpack: 5.106.2(@swc/core@1.15.43)(esbuild@0.28.2)(lightningcss@1.33.0)(postcss@8.5.28)(webpack-cli@7.0.2)
+    optionalDependencies:
+      '@swc/core': 1.15.43
+      esbuild: 0.28.2
+      lightningcss: 1.33.0
+      postcss: 8.5.28
+
   terser-webpack-plugin@5.6.0(@swc/core@1.15.43)(esbuild@0.28.2)(webpack@5.106.2):
     dependencies:
       '@jridgewell/trace-mapping': 0.3.31
@@ -16656,7 +16825,8 @@ snapshots:
 
   tinyrainbow@3.1.0: {}
 
-  titleize@3.0.0: {}
+  titleize@3.0.0:
+    optional: true
 
   tmpl@1.0.5: {}
 
@@ -16684,7 +16854,7 @@ snapshots:
       semver: 7.8.0
       source-map: 0.7.6
       typescript: 6.0.3
-      webpack: 5.106.2(@swc/core@1.15.43)(esbuild@0.28.2)(webpack-cli@7.0.2)
+      webpack: 5.106.2(@swc/core@1.15.43)(esbuild@0.28.2)(lightningcss@1.33.0)(postcss@8.5.28)(webpack-cli@7.0.2)
 
   ts-node@10.9.2(@swc/core@1.15.43)(@types/node@22.20.0)(typescript@6.0.3):
     dependencies:
@@ -16740,7 +16910,8 @@ snapshots:
 
   tslib@2.8.1: {}
 
-  tsscmp@1.0.6: {}
+  tsscmp@1.0.6:
+    optional: true
 
   turbo@2.10.1:
     optionalDependencies:
@@ -16767,6 +16938,7 @@ snapshots:
     dependencies:
       media-typer: 0.3.0
       mime-types: 2.1.35
+    optional: true
 
   typed-array-buffer@1.0.3:
     dependencies:
@@ -16908,7 +17080,8 @@ snapshots:
       '@unrs/resolver-binding-win32-ia32-msvc': 1.12.2
       '@unrs/resolver-binding-win32-x64-msvc': 1.12.2
 
-  untildify@4.0.0: {}
+  untildify@4.0.0:
+    optional: true
 
   update-browserslist-db@1.2.3(browserslist@4.28.2):
     dependencies:
@@ -16935,6 +17108,8 @@ snapshots:
       icu-minify: 4.13.0
       intl-messageformat: 11.2.9
       react: 19.2.6
+
+  util-deprecate@1.0.2: {}
 
   utils-merge@1.0.1: {}
 
@@ -17084,7 +17259,7 @@ snapshots:
       import-local: 3.2.0
       interpret: 3.1.1
       rechoir: 0.8.0
-      webpack: 5.106.2(@swc/core@1.15.43)(esbuild@0.28.2)(webpack-cli@7.0.2)
+      webpack: 5.106.2(@swc/core@1.15.43)(esbuild@0.28.2)(lightningcss@1.33.0)(postcss@8.5.28)(webpack-cli@7.0.2)
       webpack-merge: 6.0.1
 
   webpack-merge@6.0.1:
@@ -17096,6 +17271,48 @@ snapshots:
   webpack-sources@3.4.1: {}
 
   webpack-virtual-modules@0.6.2: {}
+
+  webpack@5.106.2(@swc/core@1.15.43)(esbuild@0.28.2)(lightningcss@1.33.0)(postcss@8.5.28)(webpack-cli@7.0.2):
+    dependencies:
+      '@types/eslint-scope': 3.7.7
+      '@types/estree': 1.0.9
+      '@types/json-schema': 7.0.15
+      '@webassemblyjs/ast': 1.14.1
+      '@webassemblyjs/wasm-edit': 1.14.1
+      '@webassemblyjs/wasm-parser': 1.14.1
+      acorn: 8.16.0
+      acorn-import-phases: 1.0.4(acorn@8.16.0)
+      browserslist: 4.28.2
+      chrome-trace-event: 1.0.4
+      enhanced-resolve: 5.21.2
+      es-module-lexer: 2.1.0
+      eslint-scope: 5.1.1
+      events: 3.3.0
+      glob-to-regexp: 0.4.1
+      graceful-fs: 4.2.11
+      loader-runner: 4.3.2
+      mime-db: 1.54.0
+      neo-async: 2.6.2
+      schema-utils: 4.3.3
+      tapable: 2.3.3
+      terser-webpack-plugin: 5.6.0(@swc/core@1.15.43)(esbuild@0.28.2)(lightningcss@1.33.0)(postcss@8.5.28)(webpack@5.106.2)
+      watchpack: 2.5.1
+      webpack-sources: 3.4.1
+    optionalDependencies:
+      webpack-cli: 7.0.2(webpack@5.106.2)
+    transitivePeerDependencies:
+      - '@minify-html/node'
+      - '@swc/core'
+      - '@swc/css'
+      - '@swc/html'
+      - clean-css
+      - cssnano
+      - csso
+      - esbuild
+      - html-minifier-terser
+      - lightningcss
+      - postcss
+      - uglify-js
 
   webpack@5.106.2(@swc/core@1.15.43)(esbuild@0.28.2)(webpack-cli@7.0.2):
     dependencies:
@@ -17323,7 +17540,8 @@ snapshots:
       y18n: 5.0.8
       yargs-parser: 21.1.1
 
-  ylru@1.4.0: {}
+  ylru@1.4.0:
+    optional: true
 
   yn@3.1.1: {}
 
@@ -17334,6 +17552,7 @@ snapshots:
   zod-validation-error@1.5.0(zod@3.25.76):
     dependencies:
       zod: 3.25.76
+    optional: true
 
   zod-validation-error@4.0.2(zod@4.4.3):
     dependencies:

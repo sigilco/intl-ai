@@ -49,12 +49,22 @@ cd demo/wasm && python3 -m http.server 8080
 
 ## Studio SPA
 
-`demo/web/` is a fuller Svelte SPA on the same crate: a collapsible
-provider card (presets, `/models` pull, test button, `localStorage`
-persistence), source and target locale selects with file-name
-autodetect, streamed fill that lands row by row, a linear progress
-indicator, and a per-key judge view with expandable reasons and check
-findings.
+`demo/web/` is a fuller Svelte SPA on the same crate, served at `/demo`
+on the docs site.
+It offers one tab per binary, so both translation surfaces are
+exercisable in the browser:
+
+- **locales** runs the `intl-ai` collection flow: a collapsible provider
+  card (presets, `/models` pull, test button, `localStorage`
+  persistence), source and target locale selects with file-name
+  autodetect, streamed fill that lands row by row, a linear progress
+  indicator, and a per-key judge view with expandable reasons and check
+  findings.
+- **documents** runs the `intl-ai-docs` document flow: paste a markdown
+  document, watch its segments fill with the same batch/check
+  machinery, then preview the merged file with links rewritten to the
+  target locale prefix.
+
 See `demo/web/README.md` for the commands (`pnpm dev`,
 `scripts/sync-wasm.sh`).
 
@@ -90,9 +100,19 @@ An API key is only sent when the field is filled.
 | `unflatten(targetJson, map)`          | Merge flat keys into the target and serialize it  |
 | `runFill(spec, translate, onEvent)`   | Fill missing keys, streaming `ProgressEvent`s     |
 | `runCheck(spec, judge, onEvent)`      | Check a target file, streaming `ProgressEvent`s   |
+| `docExtract(markdown, fmKeys?)`       | Document to `{segments, order, kinds, warnings}`  |
+| `docMerge(markdown, target, prefix?)` | Splice translated segments back into the skeleton |
 
 `judge` is deliberately not inside `runChecks`: it needs a provider round
 trip, which the host performs with `buildJudgeBody`/`parseJudgements`.
+
+`docExtract`/`docMerge` are the `intl-ai-docs` boundary as pure
+functions: extraction splits a markdown/MDX document into a skeleton
+plus the same segment FlatMap the locale pipeline fills, and merge
+splices translated values back byte-identical.
+`docMerge` re-runs extraction internally so both calls stay stateless.
+The studio's documents tab drives segments through
+`buildTranslateBody`/`runChecks` exactly like a locale file.
 
 ## Streaming drivers
 

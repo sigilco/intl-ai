@@ -17,6 +17,7 @@ use intl_ai_core::flatten::{self, FlatMap};
 use intl_ai_core::lockfile::Origin;
 use intl_ai_core::progress::{KeyOutcome, Pipeline, ProgressEvent};
 use intl_ai_core::transport::{JudgeItem, TranslateRequest, TranslationEntry};
+use intl_ai_docs::DocFormat;
 use intl_ai_formats::FileFormat;
 use intl_ai_providers::chat::{
     self, JUDGE_TEMPERATURE, JUDGEMENTS_SCHEMA, TEMPERATURE, TRANSLATIONS_SCHEMA,
@@ -910,6 +911,95 @@ pub async fn run_check(
         judgements,
         errors,
     })
+}
+
+// ---------------------------------------------------------------------------
+// Document subset: `docExtract` / `docMerge` expose the `intl-ai-docs`
+// extract/merge boundary as pure functions. The host JS drives the
+// segment FlatMap through the same fill/check leaves the locale demo
+// uses (`buildTranslateBody`, `parseTranslations`, `runChecks`), then
+// merges the translated map back — document structure is spliced
+// byte-identical by construction. `docMerge` re-runs extraction
+// internally so the two calls stay stateless.
+
+fn mdx_format(frontmatter_keys: JsValue) -> Result<intl_ai_docs::mdx::Mdx, JsError> {
+    let keys: Option<Vec<String>> = if frontmatter_keys.is_null() || frontmatter_keys.is_undefined()
+    {
+        None
+    } else {
+        from_js(frontmatter_keys)?
+    };
+    Ok(intl_ai_docs::mdx::Mdx::new(keys.unwrap_or_else(|| {
+        vec!["title".into(), "description".into()]
+    })))
+}
+
+/// Split a markdown/MDX document into its translatable segment FlatMap.
+/// Code fences, directives, frontmatter delimiters and markup stay in
+/// the skeleton and never reach the model.
+///
+/// `docExtract(markdownText, frontmatterKeys?):
+///   { segments: Record<segId, string>, order: string[],
+///     kinds: Record<segId, "heading"|"paragraph"|"cell"|"frontmatter">,
+///     warnings: string[] }`
+#[wasm_bindgen(js_name = docExtract)]
+pub fn doc_extract(text: &str, frontmatter_keys: JsValue) -> Result<JsValue, JsError> {
+    let format = mdx_format(frontmatter_keys)?;
+    let doc = format.extract(text, Path::new("doc.md")).map_err(js_err)?;
+    let kinds: BTreeMap<String, String> = doc
+        .spans
+        .iter()
+        .map(|s| {
+            (
+                s.seg.clone(),
+                match s.kind {
+                    intl_ai_docs::SegKind::Heading => "heading",
+                    intl_ai_docs::SegKind::Paragraph => "paragraph",
+                    intl_ai_docs::SegKind::Cell => "cell",
+                    intl_ai_docs::SegKind::Frontmatter => "frontmatter",
+                }
+                .to_string(),
+            )
+        })
+        .collect();
+    to_js(&serde_json::json!({
+        "segments": doc.segments,
+        "order": doc.order,
+        "kinds": kinds,
+        "warnings": doc.warnings,
+    }))
+}
+
+/// Splice a translated segment map back into the document skeleton.
+/// Segments with no target value keep the source text (po4a-style
+/// fallback). `linkPrefix` (e.g. `/es`) is prepended to `/`-rooted
+/// link destinations; empty disables rewriting.
+///
+/// `docMerge(markdownText, targetMap, linkPrefix?, frontmatterKeys?):
+///   { output: string, fellBack: string[] }`
+#[wasm_bindgen(js_name = docMerge)]
+pub fn doc_merge(
+    text: &str,
+    target: JsValue,
+    link_prefix: Option<String>,
+    frontmatter_keys: JsValue,
+) -> Result<JsValue, JsError> {
+    let format = mdx_format(frontmatter_keys)?;
+    let doc = format.extract(text, Path::new("doc.md")).map_err(js_err)?;
+    let target: FlatMap = if target.is_null() || target.is_undefined() {
+        FlatMap::new()
+    } else {
+        from_js(target)?
+    };
+    let out = format
+        .merge(&doc, &target, link_prefix.as_deref().unwrap_or(""))
+        .map_err(js_err)?;
+    let output = String::from_utf8(out.bytes)
+        .map_err(|e| JsError::new(&format!("merged document is not utf-8: {e}")))?;
+    to_js(&serde_json::json!({
+        "output": output,
+        "fellBack": out.fell_back,
+    }))
 }
 
 #[cfg(test)]

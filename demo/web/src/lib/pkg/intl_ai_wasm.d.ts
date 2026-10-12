@@ -22,6 +22,29 @@ export function buildJudgeBody(req: any): any;
 export function buildTranslateBody(req: any): any;
 
 /**
+ * Split a markdown/MDX document into its translatable segment FlatMap.
+ * Code fences, directives, frontmatter delimiters and markup stay in
+ * the skeleton and never reach the model.
+ *
+ * `docExtract(markdownText, frontmatterKeys?):
+ *   { segments: Record<segId, string>, order: string[],
+ *     kinds: Record<segId, "heading"|"paragraph"|"cell"|"frontmatter">,
+ *     warnings: string[] }`
+ */
+export function docExtract(text: string, frontmatter_keys: any): any;
+
+/**
+ * Splice a translated segment map back into the document skeleton.
+ * Segments with no target value keep the source text (po4a-style
+ * fallback). `linkPrefix` (e.g. `/es`) is prepended to `/`-rooted
+ * link destinations; empty disables rewriting.
+ *
+ * `docMerge(markdownText, targetMap, linkPrefix?, frontmatterKeys?):
+ *   { output: string, fellBack: string[] }`
+ */
+export function docMerge(text: string, target: any, link_prefix: string | null | undefined, frontmatter_keys: any): any;
+
+/**
  * Flatten a locale file's contents (JSON or YAML text) into a flat
  * `key -> string` map.
  *
@@ -116,6 +139,8 @@ export interface InitOutput {
     readonly memory: WebAssembly.Memory;
     readonly buildJudgeBody: (a: any) => [number, number, number];
     readonly buildTranslateBody: (a: any) => [number, number, number];
+    readonly docExtract: (a: number, b: number, c: any) => [number, number, number];
+    readonly docMerge: (a: number, b: number, c: any, d: number, e: number, f: any) => [number, number, number];
     readonly flatten: (a: number, b: number) => [number, number, number];
     readonly init: () => void;
     readonly missingKeys: (a: any, b: any) => [number, number, number];
