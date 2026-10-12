@@ -49,15 +49,22 @@ cd demo/wasm && python3 -m http.server 8080
 
 ## Studio SPA
 
-`demo/web/` is a fuller Svelte SPA on the same crate: a collapsible
-provider card (presets, `/models` pull, test button, `localStorage`
-persistence), source and target locale selects with file-name
-autodetect, streamed fill that lands row by row, a linear progress
-indicator, and a per-key judge view with expandable reasons and check
-findings.
-A **documents** tab runs the `intl-ai-docs` flow in the browser: paste a
-markdown document, watch its segments fill, then preview the merged
-file with links rewritten to the target locale prefix.
+`demo/web/` is a fuller Svelte SPA on the same crate, served at `/demo`
+on the docs site.
+It offers one tab per binary, so both translation surfaces are
+exercisable in the browser:
+
+- **locales** runs the `intl-ai` collection flow: a collapsible provider
+  card (presets, `/models` pull, test button, `localStorage`
+  persistence), source and target locale selects with file-name
+  autodetect, streamed fill that lands row by row, a linear progress
+  indicator, and a per-key judge view with expandable reasons and check
+  findings.
+- **documents** runs the `intl-ai-docs` document flow: paste a markdown
+  document, watch its segments fill with the same batch/check
+  machinery, then preview the merged file with links rewritten to the
+  target locale prefix.
+
 See `demo/web/README.md` for the commands (`pnpm dev`,
 `scripts/sync-wasm.sh`).
 
